@@ -13,7 +13,7 @@ namespace MLOps.NET.Storage
             this.storageAccount = EnsureStorageIsCreated.CreateStorageAccountFromConnectionString(connectionString);
         }
 
-        public async Task<Experiment> CreateExperiementAsync(Experiment experiment)
+        public async Task<Experiment> CreateExperimentAsync(Experiment experiment)
         {
             return await InsertOrMerge(experiment);
         }
