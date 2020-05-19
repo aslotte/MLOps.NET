@@ -19,7 +19,7 @@ namespace MLOps.NET
         {
             var newExperiment = new Experiment(name);
 
-            var insertedExperiment = await this.metaDataStore.CreateExperiementAsync(newExperiment);
+            var insertedExperiment = await this.metaDataStore.CreateExperimentAsync(newExperiment);
             return insertedExperiment.Id;
         }
 
