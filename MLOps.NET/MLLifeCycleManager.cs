@@ -23,9 +23,13 @@ namespace MLOps.NET
             return insertedExperiment.Id;
         }
 
-        public void CreateRun(Guid experimentId)
+        public async Task<Guid> CreateRun(Guid experimentId)
         {
+            var run = new Run(experimentId);
 
+            var insertedRun = await this.metaDataStore.CreateRunAsync(run);
+
+            return insertedRun.Id;
         }
 
         public void LogMetrics(Dictionary<string, string> metrics)

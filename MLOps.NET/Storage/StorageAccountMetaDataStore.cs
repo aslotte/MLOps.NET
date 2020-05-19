@@ -15,14 +15,12 @@ namespace MLOps.NET.Storage
 
         public async Task<Experiment> CreateExperiementAsync(Experiment experiment)
         {
-            var table = await GetTable(nameof(Experiment));
-            var insertOrMergeOperation = TableOperation.InsertOrMerge(experiment);
+            return await InsertOrMerge(experiment);
+        }
 
-            TableResult result = await table.ExecuteAsync(insertOrMergeOperation);
-
-            var insertedExperiement = result.Result as Experiment;
-
-            return insertedExperiement;
+        public async Task<Run> CreateRunAsync(Run run)
+        {
+            return await InsertOrMerge(run);
         }
 
         private async Task<CloudTable> GetTable(string tableName)
@@ -34,6 +32,16 @@ namespace MLOps.NET.Storage
             await table.CreateIfNotExistsAsync();
 
             return table;
+        }
+
+        private async Task<TEntity> InsertOrMerge<TEntity>(TEntity entity) where TEntity : TableEntity
+        {
+            var table = await GetTable(nameof(TEntity));
+            var insertOrMergeOperation = TableOperation.InsertOrMerge(entity);
+
+            TableResult result = await table.ExecuteAsync(insertOrMergeOperation);
+
+            return result.Result as TEntity;
         }
     }
 }
