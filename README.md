@@ -9,6 +9,7 @@ The project is intended to support:
 - Ability to store metrics and models both on-premise and in the cloud
 - Visualize experiments, run and metrics in a Web UI
 - Make models accesible for various ML.NET deployment scenarios
+- Track information about the data used during training
 
 ### How to we use it?
 Stay tuned for an MLOps.NET NuGet package which you can use in your .NET Core Console App when training your model.
