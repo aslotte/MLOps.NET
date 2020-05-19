@@ -7,3 +7,9 @@ Models created in ML.NET can however currently not be used in MLflow, and as suc
 The project is intended to support:
 - Track model metrics and artifacts from experiments and runs
 - Ability to store metrics and models both on-premise and in the cloud
+- Visualize experiments, run and metrics in a Web UI
+- Make models accesible for various ML.NET deployment scenarios
+
+### How to we use it?
+Stay tuned for an MLOps.NET NuGet package which you can use in your .NET Core Console App when training your model.
+All you'll need to do is to pass in the connectionstring to the Azure Storage account you would like to use and off you go!
