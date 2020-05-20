@@ -7,7 +7,7 @@ Models created in ML.NET can however currently not be used in MLflow, and as suc
 The project is intended to support:
 - Track model metrics and artifacts from experiments and runs
 - Ability to store metrics and models both on-premise and in the cloud
-- Visualize experiments, run and metrics in a Web UI
+- Visualize experiments, run and metrics in a Web UI (hosted on a Docker container?)
 - Make models accesible for various ML.NET deployment scenarios
 - Track information about the data used during training
 
