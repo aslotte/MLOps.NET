@@ -1,7 +1,6 @@
 ﻿using MLOps.NET.Entities;
 using MLOps.NET.Storage;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MLOps.NET
@@ -23,7 +22,7 @@ namespace MLOps.NET
             return insertedExperiment.Id;
         }
 
-        public async Task<Guid> CreateRun(Guid experimentId)
+        public async Task<Guid> CreateRunAsync(Guid experimentId)
         {
             var run = new Run(experimentId);
 
@@ -32,9 +31,11 @@ namespace MLOps.NET
             return insertedRun.Id;
         }
 
-        public void LogMetrics(Dictionary<string, string> metrics)
+        public async Task LogMetricAsync(Guid runId, string metricName, double metricValue)
         {
+            var metric = new Metric(runId, metricName, metricValue);
 
+            await this.metaDataStore.LogMetricAsync(metric);
         }
 
         public void LogModel()
