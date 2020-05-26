@@ -18,6 +18,6 @@ jobs:
       with:
         dotnet-version: 3.1.101
     - name: Install dependencies
-      run: dotnet restore MLOps.NET\MLOps.NET.csproj
+      run: dotnet restore MLOps.NET/MLOps.NET.csproj
     - name: Build
-      run: dotnet build MLOps.NET\MLOps.NET.csproj --configuration Release --no-restore
+      run: dotnet build MLOps.NET/MLOps.NET.csproj --configuration Release --no-restore
