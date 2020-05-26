@@ -1,4 +1,6 @@
 ﻿using MLOps.NET.Entities;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Storage
@@ -8,5 +10,7 @@ namespace MLOps.NET.Storage
         Task<Experiment> CreateExperiementAsync(Experiment experiment);
 
         Task<Run> CreateRunAsync(Run run);
+
+        Task LogMetricAsync(Metric run);
     }
 }

@@ -19,3 +19,6 @@ MLOps.NET/obj/MLOps.NET.csproj.nuget.g.props
 MLOps.NET/obj/MLOps.NET.csproj.nuget.g.targets
 MLOps.NET/obj/project.assets.json
 MLOps.NET/obj/project.nuget.cache
+*.nupkg
+*.nuspec
+MLOps.NET/obj/Debug/netstandard2.0/.NETStandard,Version=v2.0.AssemblyAttributes.cs
