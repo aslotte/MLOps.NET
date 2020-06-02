@@ -7,6 +7,5 @@ namespace MLOps.NET.Entities.Entities
     {
         string ExperimentName { get; set; }
         Guid Id { get; set; }
-        IList<IRun> Runs { get; set; }
     }
 }

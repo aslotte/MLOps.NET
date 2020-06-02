@@ -17,7 +17,5 @@ namespace MLOps.NET.Azure.Entities
         public Guid Id { get; set; }
 
         public string ExperimentName { get; set; }
-
-        public IList<IRun> Runs { get; set; }
     }
 }
