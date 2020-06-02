@@ -1,5 +1,5 @@
 ﻿using Microsoft.Azure.Cosmos.Table;
-using MLOps.NET.Entities;
+using MLOps.NET.Azure.Entities;
 using System;
 using System.Threading.Tasks;
 
@@ -14,18 +14,26 @@ namespace MLOps.NET.Storage
             this.storageAccount = EnsureStorageIsCreated.CreateStorageAccountFromConnectionString(connectionString);
         }
 
-        public async Task<Experiment> CreateExperimentAsync(Experiment experiment)
+        public async Task<Guid> CreateExperimentAsync(string name)
         {
-            return await InsertOrMerge(experiment, nameof(Experiment));
+            var experiment = new Experiment(name);
+            var addedExperiment = await InsertOrMerge(experiment, nameof(Experiment));
+
+            return addedExperiment.Id;
         }
 
-        public async Task<Run> CreateRunAsync(Run run)
+        public async Task<Guid> CreateRunAsync(Guid experimentId)
         {
-            return await InsertOrMerge(run, nameof(Run));
+            var run = new Run(experimentId);
+            var addedRun = await InsertOrMerge(run, nameof(Run));
+
+            return addedRun.Id;
         }
 
-        public async Task LogMetricAsync(Metric metric)
+        public async Task LogMetricAsync(Guid runId, string metricName, double metricValue)
         {
+            var metric = new Metric(runId, metricName, metricValue);
+
             await InsertOrMerge(metric, nameof(Metric));
         }
 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Azure.Cosmos.Table;
 using System;
 
-namespace MLOps.NET.Entities
+namespace MLOps.NET.Azure.Entities
 {
     internal sealed class Metric : TableEntity
     {

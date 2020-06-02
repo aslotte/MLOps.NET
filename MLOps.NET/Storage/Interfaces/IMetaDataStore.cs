@@ -1,16 +1,14 @@
-﻿using MLOps.NET.Entities;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Storage
 {
-    internal interface IMetaDataStore
+    public interface IMetaDataStore
     {
-        Task<Experiment> CreateExperimentAsync(Experiment experiment);
+        Task<Guid> CreateExperimentAsync(string name);
 
-        Task<Run> CreateRunAsync(Run run);
+        Task<Guid> CreateRunAsync(Guid experimentId);
 
-        Task LogMetricAsync(Metric run);
+        Task LogMetricAsync(Guid runId, string metricName, double metricValue);
     }
 }
