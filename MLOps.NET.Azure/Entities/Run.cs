@@ -20,5 +20,7 @@ namespace MLOps.NET.Azure.Entities
         public Guid Id { get; set; }
 
         public DateTime RunDate { get; set; }
+
+        public Guid ExperimentId { get; set; }
     }
 }

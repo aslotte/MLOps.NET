@@ -11,9 +11,13 @@ namespace MLOps.NET.Azure.Entities
             PartitionKey = runId.ToString();
             RowKey = MetricName = metricName;
             Value = value;
+            RunId = runId;
         }
 
         public string MetricName { get; set; }
+
         public double Value { get; set; }
+
+        public Guid RunId { get; set; }
     }
 }

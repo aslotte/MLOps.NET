@@ -6,5 +6,6 @@ namespace MLOps.NET.Entities.Entities
     {
         Guid Id { get; set; }
         DateTime RunDate { get; set; }
+        Guid ExperimentId { get; set; }
     }
 }
