@@ -1,9 +1,10 @@
 ﻿using Microsoft.Azure.Cosmos.Table;
+using MLOps.NET.Entities.Entities;
 using System;
 
 namespace MLOps.NET.Azure.Entities
 {
-    internal sealed class Metric : TableEntity
+    internal sealed class Metric : TableEntity, IMetric
     {
         public Metric(Guid runId, string metricName, double value)
         {
