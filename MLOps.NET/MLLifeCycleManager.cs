@@ -7,11 +7,18 @@ namespace MLOps.NET
 {
     public class MLLifeCycleManager
     {
-        private readonly IMetaDataStore metaDataStore;
+        // No readonly as a readonly field can only be set in a constructor.
+        private IMetaDataStore metaDataStore;
 
-        public MLLifeCycleManager(string connectionString)
+        /// <summary>
+        /// Ensures azure storage account is created from the connection string.
+        /// </summary>
+        /// <param name="connectionString">azure storage account connection string</param>
+        /// <returns></returns>
+        public MLLifeCycleManager UseAzureStorage(string connectionString)
         {
             this.metaDataStore = new StorageAccountMetaDataStore(connectionString);
+            return this;
         }
 
         public async Task<Guid> CreateExperimentAsync(string name)
