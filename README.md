@@ -14,5 +14,14 @@ The project is intended to support:
 - Track information about the data used during training
 
 ### How to we use it?
-Stay tuned for an MLOps.NET NuGet package which you can use in your .NET Core Console App when training your model.
-All you'll need to do is to pass in the connectionstring to the Azure Storage account you would like to use and off you go!
+
+```
+var lifecycleManager = new ModelLifeCycleManager().UseAzure(connectionString);
+var experimentId = await mlLifeCycleManager.CreateExperimentAsync("ModelName");
+var runId = await mlLifeCycleManager.CreateRunAsync(experimentId);
+
+...
+await mlLifeCycleManager.LogMetricAsync(runId,
+                nameof(metrics.Accuracy),
+                metrics.Accuracy);
+```
