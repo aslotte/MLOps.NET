@@ -6,4 +6,12 @@
     <Authors>Alexander Slotte</Authors>
   </PropertyGroup>
   
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.Cosmos.Table" Version="1.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MLOps.NET\MLOps.NET.csproj" />
+  </ItemGroup>
+  
 </Project>

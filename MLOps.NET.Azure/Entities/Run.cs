@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MLOps.NET.Entities
+namespace MLOps.NET.Azure.Entities
 {
     internal sealed class Run : TableEntity
     {
