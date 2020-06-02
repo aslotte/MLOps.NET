@@ -15,6 +15,7 @@ namespace MLOps.NET.Azure.Entities
             PartitionKey = experimentId.ToString();
             RowKey = Id.ToString();
             RunDate = DateTime.Now;
+            ExperimentId = experimentId;
         }
 
         public Guid Id { get; set; }
