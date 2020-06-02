@@ -1,13 +1,13 @@
 ﻿using Microsoft.Azure.Cosmos.Table;
+using MLOps.NET.Entities.Entities;
 using System;
-using System.Collections.Generic;
 
 namespace MLOps.NET.Azure.Entities
 {
-    internal sealed class Run : TableEntity
+    internal sealed class Run : TableEntity, IRun
     {
         public Run() { }
- 
+
         public Run(Guid experimentId)
         {
             Id = Guid.NewGuid();
@@ -15,10 +15,13 @@ namespace MLOps.NET.Azure.Entities
             PartitionKey = experimentId.ToString();
             RowKey = Id.ToString();
             RunDate = DateTime.Now;
+            ExperimentId = experimentId;
         }
 
         public Guid Id { get; set; }
 
         public DateTime RunDate { get; set; }
+
+        public Guid ExperimentId { get; set; }
     }
 }
