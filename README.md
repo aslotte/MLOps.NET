@@ -13,7 +13,7 @@ The project is intended to support:
 - Make models accesible for various ML.NET deployment scenarios
 - Track information about the data used during training
 
-### How to we use it?
+### How can I use it?
 
 ```
 var lifecycleManager = new ModelLifeCycleManager().UseAzure(connectionString);
