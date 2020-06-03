@@ -3,7 +3,7 @@ using System;
 
 namespace MLOps.NET.SQLite.Entities
 {
-    internal sealed class Run : IRun
+    public sealed class Run : IRun
     {
         public Run() { }
 
@@ -11,10 +11,13 @@ namespace MLOps.NET.SQLite.Entities
         {
             Id = Guid.NewGuid();
             RunDate = DateTime.Now;
+            ExperimentId = experimentId;
         }
 
         public Guid Id { get; set; }
 
         public DateTime RunDate { get; set; }
+
+        public Guid ExperimentId { get; set; }
     }
 }

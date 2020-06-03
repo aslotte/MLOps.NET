@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET", "MLOps.NET\MLOp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.Azure", "MLOps.NET.Azure\MLOps.NET.Azure.csproj", "{C2E3929C-AD77-48A9-AA0F-C4AE12B0A3DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MLOps.NET.SQLite", "MLOps.NET.SQLite\MLOps.NET.SQLite.csproj", "{C126F307-2D50-46AD-A1EA-4F9BFD224E60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.SQLite", "MLOps.NET.SQLite\MLOps.NET.SQLite.csproj", "{C126F307-2D50-46AD-A1EA-4F9BFD224E60}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
