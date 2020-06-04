@@ -1,19 +1,15 @@
-﻿using Microsoft.Azure.Cosmos.Table;
-using MLOps.NET.Entities.Entities;
+﻿using MLOps.NET.Entities.Entities;
 using System;
 
-namespace MLOps.NET.Azure.Entities
+namespace MLOps.NET.SQLite.Entities
 {
-    internal sealed class Run : TableEntity, IRun
+    internal sealed class Run : IRun
     {
         public Run() { }
 
         public Run(Guid experimentId)
         {
             Id = Guid.NewGuid();
-
-            PartitionKey = experimentId.ToString();
-            RowKey = Id.ToString();
             RunDate = DateTime.Now;
             ExperimentId = experimentId;
         }

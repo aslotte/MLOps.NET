@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET", "MLOps.NET\MLOps.NET.csproj", "{AEA62265-4EB6-4411-88A1-110C32D3C0D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MLOps.NET.Azure", "MLOps.NET.Azure\MLOps.NET.Azure.csproj", "{C2E3929C-AD77-48A9-AA0F-C4AE12B0A3DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.Azure", "MLOps.NET.Azure\MLOps.NET.Azure.csproj", "{C2E3929C-AD77-48A9-AA0F-C4AE12B0A3DB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.SQLite", "MLOps.NET.SQLite\MLOps.NET.SQLite.csproj", "{C126F307-2D50-46AD-A1EA-4F9BFD224E60}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{C2E3929C-AD77-48A9-AA0F-C4AE12B0A3DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2E3929C-AD77-48A9-AA0F-C4AE12B0A3DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2E3929C-AD77-48A9-AA0F-C4AE12B0A3DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C126F307-2D50-46AD-A1EA-4F9BFD224E60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C126F307-2D50-46AD-A1EA-4F9BFD224E60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C126F307-2D50-46AD-A1EA-4F9BFD224E60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C126F307-2D50-46AD-A1EA-4F9BFD224E60}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
