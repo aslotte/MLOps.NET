@@ -3,7 +3,7 @@ using System;
 
 namespace MLOps.NET.SQLite.Entities
 {
-    public sealed class Run : IRun
+    internal sealed class Run : IRun
     {
         public Run() { }
 

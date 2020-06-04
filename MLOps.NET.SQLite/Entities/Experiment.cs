@@ -3,7 +3,7 @@ using System;
 
 namespace MLOps.NET.SQLite.Entities
 {
-    public sealed class Experiment : IExperiment
+    internal sealed class Experiment : IExperiment
     {
         public Experiment(string experimentName)
         {

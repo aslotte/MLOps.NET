@@ -3,7 +3,7 @@ using MLOps.NET.SQLite.Entities;
 
 namespace MLOps.NET.SQLite.Storage
 {
-    public class LocalDbContext : DbContext
+    internal class LocalDbContext : DbContext
     {
         public LocalDbContext()
         {

@@ -3,7 +3,7 @@ using System;
 
 namespace MLOps.NET.SQLite.Entities
 {
-    public sealed class Metric : IMetric
+    internal sealed class Metric : IMetric
     {
         public Metric(Guid runId, string metricName, double value)
         {

@@ -5,11 +5,10 @@ using System.Threading.Tasks;
 
 namespace MLOps.NET.Storage
 {
-    public sealed class SQLiteMetaDataStore : IMetaDataStore
+    internal sealed class SQLiteMetaDataStore : IMetaDataStore
     {
         public async Task<Guid> CreateExperimentAsync(string name)
         {
-
             using (var db = new LocalDbContext())
             {
                 var experiment = new Experiment(name);
