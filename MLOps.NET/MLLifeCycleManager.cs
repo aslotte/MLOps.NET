@@ -32,10 +32,10 @@ namespace MLOps.NET
         }
 
         /// <summary>
-        /// Uploads the model zip file to azure blob storage model-repository container.
+        /// Uploads the model zip artifact to the desired storage location.
         /// </summary>
         /// <param name="runId"></param>
-        /// <param name="filePath"></param>
+        /// <param name="filePath">local file path where the model file is saved</param>
         /// <returns></returns>
         public async Task UploadModelAsync(Guid runId, string filePath)
         {
