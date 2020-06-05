@@ -3,21 +3,21 @@ MLOps.NET is an SDK tool to track and manage lifecycle of an ML.NET machine lear
 
 ![.NET Core](https://github.com/aslotte/MLOps.NET/workflows/.NET%20Core/badge.svg)
 
-#### Tell me more
+### Tell me more
 If you're used to creating machine learning models in libraries such as Tensorflow, Keras, Scikitlearn or H2O you may have come across libraries such as MLflow or Neptune to manage and track the life-cycle of your machine learning models. 
 
 Models created in ML.NET can however currently not be used in MLflow, and as such the idea of MLOps.NET was spawn.
 
-#### Currently supported storage providers
+### Currently supported storage providers
 
-##### Model Repository
+#### Model Repository
 - Azure Blob storage
 
-##### Metadata storage
+#### Metadata storage
 - Azure TableStorage (CosmosDB)
 - SQLite
 
-#### Roadmap
+### Roadmap
 - Add Blazor WebAssembly client to vizualize model training
 - Add support for SQL Server
 - Add support for file shares
@@ -25,8 +25,8 @@ Models created in ML.NET can however currently not be used in MLflow, and as suc
 - Add model deployment support
 - Add data tracking support
 
-#### Getting started
+### Getting started
 An alpha version of the NuGet package will be released shortly, stay tuned
 
-### Contribute
+## Contribute
 We welcome contributors! Before getting started, take a moment to read our [contributing guidelines](https://github.com/aslotte/MLOps.NET/blob/master/Contributing.md)
