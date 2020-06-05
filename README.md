@@ -1,27 +1,30 @@
+### MLOps.NET
+MLOps.NET is an SDK tool to track and manage lifecycle of an ML.NET machine learning model.
+
 ![.NET Core](https://github.com/aslotte/MLOps.NET/workflows/.NET%20Core/badge.svg)
 
-### What is MLOps.NET?
+#### Tell me more
 If you're used to creating machine learning models in libraries such as Tensorflow, Keras, Scikitlearn or H2O you may have come across libraries such as MLflow or Neptune to manage and track the life-cycle of your machine learning models. 
 
 Models created in ML.NET can however currently not be used in MLflow, and as such the idea of MLOps.NET was spawn.
 
-### Roadmap
-The project is intended to support:
-- Track model metrics and artifacts from experiments and runs
-- Ability to store metrics and models both on-premise and in the cloud
-- Visualize experiments, run and metrics in a Web UI (hosted on a Docker container?)
-- Make models accesible for various ML.NET deployment scenarios
-- Track information about the data used during training
+#### Currently supported storage providers
 
-### How can I use it?
+##### Model Repository
+- Azure Blob storage
 
-```
-var lifecycleManager = new ModelLifeCycleManager().UseAzure(connectionString);
-var experimentId = await mlLifeCycleManager.CreateExperimentAsync("ModelName");
-var runId = await mlLifeCycleManager.CreateRunAsync(experimentId);
+##### Metadata storage
+- Azure TableStorage (CosmosDB)
+- SQLite
 
-...
-await mlLifeCycleManager.LogMetricAsync(runId,
-                nameof(metrics.Accuracy),
-                metrics.Accuracy);
-```
+#### Roadmap
+- Add Blazor WebAssembly client to vizualize model training
+- Add support for SQL Server
+- Add support for file shares
+- Add support additional support for tracking a models performance
+- Add model deployment support
+- Add data tracking support
+
+#### Getting started
+An alpha version of the NuGet package will be released shortly, stay tuned
+
