@@ -22,3 +22,11 @@ We'll try to avoid being super strict about accepting PRs because we value contr
 * You should fork the project first and create a branch for your changes off of the `master` branch
 * We suggest creating a PR early in the progress and placing `WIP` or `In Progress` in the title of the PR (you can edit it later). This way, as you add changes, we can see the progress, and might be able to jump in to help if we see things going off the rails. This one's your call, though; do whatever suits you.
 * Try to make many small commits, with notes, at each step of the way. This will help us understand your thought process when we review the PR. We'll squash these changes at the end of the process, so no worries about being verbose throughout.
+
+
+## Coding style guide
+We generall will follow Microsoft's recommended standard. 
+
+A couple of things to keep in mind:
+- Start private member variables with lower case, e.g. no underscore
+- Keep method and variables names readible 
