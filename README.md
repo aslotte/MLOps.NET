@@ -28,3 +28,5 @@ Models created in ML.NET can however currently not be used in MLflow, and as suc
 #### Getting started
 An alpha version of the NuGet package will be released shortly, stay tuned
 
+### Contribute
+We welcome contributors! Before getting started, take a moment to read our [contributing guidelines](https://github.com/aslotte/MLOps.NET/blob/master/Contributing.md)
