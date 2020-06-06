@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MLOps.NET
 {
-    public class MLLifeCycleManager
+    public class MLLifeCycleManager : IMLLifeCycleManager
     {
         public IMetaDataStore MetaDataStore { get; set; }
 
