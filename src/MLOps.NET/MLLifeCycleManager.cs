@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MLOps.NET
 {
-    public class MLLifeCycleManager
+    public class MLLifeCycleManager : IMLLifeCycleManager
     {
         public IMetaDataStore MetaDataStore { get; set; }
 
@@ -25,11 +25,6 @@ namespace MLOps.NET
             return await MetaDataStore.CreateRunAsync(experimentId);
         }
 
-        /// <summary>
-        /// Creates a run and an experiment in one operation
-        /// </summary>
-        /// <param name="experimentName">Unique name of experiment</param>
-        /// <returns>RunId</returns>
         public async Task<Guid> CreateRunAsync(string experimentName)
         {
             EnsureStorageProviderConfigured();
@@ -38,13 +33,6 @@ namespace MLOps.NET
             return await CreateRunAsync(experimentId);
         }
 
-        /// <summary>
-        /// Log given metric
-        /// </summary>
-        /// <param name="runId"></param>
-        /// <param name="metricName"></param>
-        /// <param name="metricValue"></param>
-        /// <returns></returns>
         public async Task LogMetricAsync(Guid runId, string metricName, double metricValue)
         {
             EnsureStorageProviderConfigured();
@@ -52,13 +40,6 @@ namespace MLOps.NET
             await MetaDataStore.LogMetricAsync(runId, metricName, metricValue);
         }
 
-        /// <summary>
-        /// Logs all metrics of type double on provided input
-        /// </summary>
-        /// <typeparam name="T">Type of evaluation metric</typeparam>
-        /// <param name="runId"></param>
-        /// <param name="metrics">Evaluation metrics</param>
-        /// <returns></returns>
         public async Task LogMetricsAsync<T>(Guid runId, T metrics) where T : class
         {
             var metricsType = metrics.GetType();
@@ -71,12 +52,6 @@ namespace MLOps.NET
             }
         }
 
-        /// <summary>
-        /// Uploads the model zip artifact to the desired storage location.
-        /// </summary>
-        /// <param name="runId"></param>
-        /// <param name="filePath">local file path where the model file is saved</param>
-        /// <returns></returns>
         public async Task UploadModelAsync(Guid runId, string filePath)
         {
             EnsureStorageProviderConfigured();
