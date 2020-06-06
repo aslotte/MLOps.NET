@@ -18,8 +18,6 @@ jobs:
       with:
         dotnet-version: 3.1.101
     - name: Install dependencies
-      run: dotnet restore src/MLOps.NET/MLOps.NET.sln
+      run: dotnet restore src/MLOps.NET.sln
     - name: Build
-      run: dotnet build src/MLOps.NET/MLOps.NET.sln --configuration Release --no-restore
-    - name: Pack
-      run: dotnet pack src/MLOps.NET/MLOps.NET.sln --configuration Release --no-build
+      run: dotnet build src/MLOps.NET.sln --configuration Release --no-restore
