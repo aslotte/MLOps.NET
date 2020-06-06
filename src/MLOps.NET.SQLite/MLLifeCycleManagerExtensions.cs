@@ -7,6 +7,7 @@ namespace MLOps.NET.SQLite
         public static MLLifeCycleManager UseSQLite(this MLLifeCycleManager mLLifeCycleManager)
         {
             mLLifeCycleManager.MetaDataStore = new SQLiteMetaDataStore();
+            mLLifeCycleManager.ModelRepository = new LocalFileModelRepository();
 
             return mLLifeCycleManager;
         }

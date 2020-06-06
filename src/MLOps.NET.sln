@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.Azure", "MLOps.NE
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.SQLite", "MLOps.NET.SQLite\MLOps.NET.SQLite.csproj", "{C126F307-2D50-46AD-A1EA-4F9BFD224E60}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MLOps.NET.SQLite.IntegrationTests", "MLOps.NET.SQLite.IntegrationTests\MLOps.NET.SQLite.IntegrationTests.csproj", "{EEB4721E-0381-440C-84AA-88A94537D75F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{C126F307-2D50-46AD-A1EA-4F9BFD224E60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C126F307-2D50-46AD-A1EA-4F9BFD224E60}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C126F307-2D50-46AD-A1EA-4F9BFD224E60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEB4721E-0381-440C-84AA-88A94537D75F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEB4721E-0381-440C-84AA-88A94537D75F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEB4721E-0381-440C-84AA-88A94537D75F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEB4721E-0381-440C-84AA-88A94537D75F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
