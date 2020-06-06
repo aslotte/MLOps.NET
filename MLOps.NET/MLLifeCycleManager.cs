@@ -1,5 +1,6 @@
 ﻿using MLOps.NET.Storage;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MLOps.NET
@@ -24,11 +25,37 @@ namespace MLOps.NET
             return await MetaDataStore.CreateRunAsync(experimentId);
         }
 
+        /// <summary>
+        /// Log given metric
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <param name="metricName"></param>
+        /// <param name="metricValue"></param>
+        /// <returns></returns>
         public async Task LogMetricAsync(Guid runId, string metricName, double metricValue)
         {
             EnsureStorageProviderConfigured();
 
             await MetaDataStore.LogMetricAsync(runId, metricName, metricValue);
+        }
+
+        /// <summary>
+        /// Logs all metrics of type double on provided input
+        /// </summary>
+        /// <typeparam name="T">Type of evaluation metric</typeparam>
+        /// <param name="runId"></param>
+        /// <param name="metrics">Evaluation metrics</param>
+        /// <returns></returns>
+        public async Task LogMetricsAsync<T>(Guid runId, T metrics) where T : class
+        {
+            var metricsType = metrics.GetType();
+
+            var properties = metricsType.GetProperties().Where(x => x.PropertyType == typeof(double));
+
+            foreach (var metric in properties)
+            {
+                await LogMetricAsync(runId, metric.Name, (double)metric.GetValue(metrics));
+            }
         }
 
         /// <summary>
