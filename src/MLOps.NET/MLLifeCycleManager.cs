@@ -26,6 +26,19 @@ namespace MLOps.NET
         }
 
         /// <summary>
+        /// Creates a run and an experiment in one operation
+        /// </summary>
+        /// <param name="experimentName">Unique name of experiment</param>
+        /// <returns>RunId</returns>
+        public async Task<Guid> CreateRunAsync(string experimentName)
+        {
+            EnsureStorageProviderConfigured();
+
+            var experimentId = await CreateExperimentAsync(experimentName);
+            return await CreateRunAsync(experimentId);
+        }
+
+        /// <summary>
         /// Log given metric
         /// </summary>
         /// <param name="runId"></param>
