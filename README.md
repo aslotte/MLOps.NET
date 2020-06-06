@@ -3,6 +3,9 @@ MLOps.NET is an SDK tool to track and manage lifecycle of an ML.NET machine lear
 
 ![.NET Core](https://github.com/aslotte/MLOps.NET/workflows/.NET%20Core/badge.svg)
 
+## MLOps.NET NuGet Status
+![mlops.neticon](https://img.shields.io/nuget/v/MLOps.NET.svg)
+
 ### Tell me more
 If you're used to creating machine learning models in libraries such as Tensorflow, Keras, Scikitlearn or H2O you may have come across libraries such as MLflow or Neptune to manage and track the life-cycle of your machine learning models. 
 
