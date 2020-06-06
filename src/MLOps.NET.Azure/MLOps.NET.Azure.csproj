@@ -2,13 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.0.1-alpha</Version>
-    <Authors>Alexander Slotte</Authors>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/aslotte/MLOps.NET</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/aslotte/MLOps.NET</RepositoryUrl>
-    <PackageTags>mlops, mlnet, machinelearning, devops, azure</PackageTags>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>MLOps.NET Azure table storage provider</Description>
+    <PackageTags>$(PackageTags), azure</PackageTags>
   </PropertyGroup>
   
   <ItemGroup>
