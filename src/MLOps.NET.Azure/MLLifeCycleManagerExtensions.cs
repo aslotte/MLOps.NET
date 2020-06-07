@@ -4,7 +4,7 @@ namespace MLOps.NET.Azure
 {
     public static class MLLifeCycleManagerExtensions
     {
-        public static MLLifeCycleManager UseAzureStorage(this MLLifeCycleManager mLLifeCycleManager, string connectionString)
+        public static ModelContext UseAzureStorage(this ModelContext mLLifeCycleManager, string connectionString)
         {
             mLLifeCycleManager.MetaDataStore = new StorageAccountMetaDataStore(connectionString);
             mLLifeCycleManager.ModelRepository = new StorageAccountModelRepository(connectionString);
