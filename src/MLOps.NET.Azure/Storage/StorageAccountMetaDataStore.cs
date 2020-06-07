@@ -18,7 +18,7 @@ namespace MLOps.NET.Storage
         public async Task<Guid> CreateExperimentAsync(string name)
         {
             // Check if experiment exists
-            var existingExperiment = await RetrieveEntityAsync<Experiment>(name, name, "Experiment");
+            var existingExperiment = await RetrieveEntityAsync<Experiment>(name, name, nameof(Experiment));
 
             // Add if it doesn't exist
             if(existingExperiment == null)
