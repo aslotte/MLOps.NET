@@ -8,10 +8,14 @@ namespace MLOps.NET
     ///<inheritdoc cref="IMLLifeCycleManager"/>
     public class MLLifeCycleManager : IMLLifeCycleManager
     {
-        ///<inheritdoc/>
+        /// <summary>
+        /// Repository for model metadata 
+        /// </summary>
         public IMetaDataStore MetaDataStore { get; set; }
 
-        ///<inheritdoc/>
+        /// <summary>
+        /// Repository for run artifacts such as models
+        /// </summary>
         public IModelRepository ModelRepository { get; set; }
 
         ///<inheritdoc/>
