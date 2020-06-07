@@ -100,9 +100,9 @@ namespace MLOps.NET.Storage
             return await RetrieveEntities<Run>("ExperimentId", experimentId, nameof(Run));
         }
 
-        public async Task<IEnumerable<IRun>> GetAllMetricsByRunIdAsync(Guid runId)
+        public async Task<IEnumerable<IMetric>> GetAllMetricsByRunIdAsync(Guid runId)
         {
-            return await RetrieveEntities<Run>("RunId", runId, nameof(Metric));
+            return await RetrieveEntities<Metric>("RunId", runId, nameof(Metric));
         }
 
         public async Task<Dictionary<IRun,IEnumerable<IMetric>>> GetAllRunsAndMetricsByExperimentIdAsync(Guid experimentId)
