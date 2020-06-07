@@ -4,7 +4,6 @@
     <Authors>Alexander Slotte</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/aslotte/MLOps.NET</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/aslotte/MLOps.NET</RepositoryUrl>
     <PackageTags>mlops, mlnet, machinelearning, devops</PackageTags>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
