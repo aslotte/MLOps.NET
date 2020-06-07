@@ -95,6 +95,15 @@ namespace MLOps.NET.Storage
             return items;
         }
 
+        public async Task<IEnumerable<IRun>> GetAllRunsByExperimentIdAsync(Guid experimentId)
+        {
+            return await RetrieveEntities<Run>("ExperimentId", experimentId, nameof(Run));
+        }
+
+        public async Task<IEnumerable<IRun>> GetAllMetricsByRunIdAsync(Guid runId)
+        {
+            return await RetrieveEntities<Run>("RunId", runId, nameof(Metric));
+        }
 
         public async Task<Dictionary<IRun,IEnumerable<IMetric>>> GetAllRunsAndMetricsByExperimentIdAsync(Guid experimentId)
         {
