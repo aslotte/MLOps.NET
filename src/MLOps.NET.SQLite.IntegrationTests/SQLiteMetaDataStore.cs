@@ -2,6 +2,7 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace MLOps.NET.SQLite.IntegrationTests
 {
@@ -9,14 +10,15 @@ namespace MLOps.NET.SQLite.IntegrationTests
     public class SQLiteMetaDataStore
     {
         [TestMethod]
-        public void CreateExperimentAsync_Success()
+        public async Task CreateExperimentAsync_Always_ReturnsNonEmptyGuidAsync()
         {
             //Arrange
             MLLifeCycleManager mlm = new MLLifeCycleManager();
-            mlm.UseSQLite();
+            var destinationFolder = @"C:\MLOps";
+            mlm.UseSQLite(destinationFolder);
 
             //Act
-            var guid = mlm.CreateExperimentAsync("first experiment").Result;
+            var guid = await mlm.CreateExperimentAsync("first experiment");
 
             //Assert
             Guid.TryParse(guid.ToString(), out var parsedGuid);
@@ -24,11 +26,12 @@ namespace MLOps.NET.SQLite.IntegrationTests
         }
 
         [TestMethod]
-        public void UploadModelAsync_Success()
+        public async Task UploadModelAsync_ValidModelPath_UploadSuccessAsync()
         {
             //Arrange
             MLLifeCycleManager mlm = new MLLifeCycleManager();
-            mlm.UseSQLite();
+            var destinationFolder = @"C:\MLOps";
+            mlm.UseSQLite(destinationFolder);
             var guid = Guid.NewGuid();
             var modelPath = @"C:\data\model.zip";
             var modelStoragePath = @"C:\MLOps";
@@ -36,7 +39,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
             writer.Close();
 
             //Act
-            mlm.UploadModelAsync(guid, modelPath).Wait();
+            await mlm.UploadModelAsync(guid, modelPath);
 
             //Assert
             var fileExists = File.Exists(Path.Combine(modelStoragePath, $"{guid}.zip"));
