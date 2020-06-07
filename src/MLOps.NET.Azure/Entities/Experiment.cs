@@ -14,6 +14,12 @@ namespace MLOps.NET.Azure.Entities
             RowKey = experimentName;
         }
 
+        public Experiment()
+        {
+
+        }
+
+
         public Guid Id { get; set; }
 
         public string ExperimentName { get; set; }
