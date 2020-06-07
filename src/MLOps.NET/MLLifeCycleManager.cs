@@ -79,7 +79,7 @@ namespace MLOps.NET
             var allMetricsForAnExperiment = await MetaDataStore.GetAllRunsAndMetricsByExperimentIdAsync(experimentId);
             // Flattening the metrics for all the runs for a given experiment into one list and finding the best among them.
             var bestRunId = allMetricsForAnExperiment.Values.SelectMany(m => m)
-                .Where(m => m.MetricName == metricName)
+                .Where(m => m.MetricName.ToLowerInvariant() == metricName.ToLowerInvariant())
                 .OrderByDescending(m => m.Value)
                 .First().RunId;
             var bestRun = allMetricsForAnExperiment.Keys.Where(r => r.Id == bestRunId).First();
