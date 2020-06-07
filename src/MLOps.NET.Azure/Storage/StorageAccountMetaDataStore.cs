@@ -1,4 +1,5 @@
 ﻿using Microsoft.Azure.Cosmos.Table;
+using Microsoft.Azure.Documents.SystemFunctions;
 using MLOps.NET.Azure.Entities;
 using System;
 using System.Threading.Tasks;
@@ -16,10 +17,19 @@ namespace MLOps.NET.Storage
 
         public async Task<Guid> CreateExperimentAsync(string name)
         {
-            var experiment = new Experiment(name);
-            var addedExperiment = await InsertOrMergeAsync(experiment, nameof(Experiment));
+            // Check if experiment exists
+            var existingExperiment = await RetrieveEntityAsync<Experiment>(name, name, nameof(Experiment));
 
-            return addedExperiment.Id;
+            // Add if it doesn't exist
+            if(existingExperiment == null)
+            {
+                var experiment = new Experiment(name);
+                var addedExperiment = await InsertOrMergeAsync(experiment, nameof(Experiment));
+                return addedExperiment.Id;
+            }
+            
+            // Return existing id if exists
+            return existingExperiment.Id;
         }
 
         public async Task<Guid> CreateRunAsync(Guid experimentId)
@@ -65,6 +75,18 @@ namespace MLOps.NET.Storage
             CloudTable table = tableClient.GetTableReference(tableName);
 
             var retrieveOperation = TableOperation.Retrieve<TEntity>(partitionKey.ToString(), rowKey.ToString());
+            var result = await table.ExecuteAsync(retrieveOperation);
+
+            return result.Result as TEntity;
+        }
+
+        private async Task<TEntity> RetrieveEntityAsync<TEntity>(string partitionKey, string rowKey, string tableName) where TEntity : TableEntity
+        {
+            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
+
+            CloudTable table = tableClient.GetTableReference(tableName);
+
+            var retrieveOperation = TableOperation.Retrieve<TEntity>(partitionKey, rowKey);
             var result = await table.ExecuteAsync(retrieveOperation);
 
             return result.Result as TEntity;

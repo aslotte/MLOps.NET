@@ -6,11 +6,14 @@ namespace MLOps.NET.Azure.Entities
 {
     internal sealed class Experiment : TableEntity, IExperiment
     {
+
+        public Experiment() { }
+
         public Experiment(string experimentName)
         {
             Id = Guid.NewGuid();
             PartitionKey = experimentName;
-            RowKey = Id.ToString();
+            RowKey = experimentName;
             CreatedAt = DateTime.UtcNow;
         }
 
