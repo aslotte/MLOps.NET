@@ -24,7 +24,7 @@ namespace MLOps.NET.Storage
             if(existingExperiment == null)
             {
                 var experiment = new Experiment(name);
-                var addedExperiment = await InsertOrMerge(experiment, nameof(Experiment));
+                var addedExperiment = await InsertOrMergeAsync(experiment, nameof(Experiment));
                 return addedExperiment.Id;
             }
             
