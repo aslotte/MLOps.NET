@@ -17,7 +17,7 @@ namespace MLOps.NET.Storage
         public async Task<Guid> CreateExperimentAsync(string name)
         {
             var experiment = new Experiment(name);
-            var addedExperiment = await InsertOrMerge(experiment, nameof(Experiment));
+            var addedExperiment = await InsertOrMergeAsync(experiment, nameof(Experiment));
 
             return addedExperiment.Id;
         }
@@ -25,7 +25,7 @@ namespace MLOps.NET.Storage
         public async Task<Guid> CreateRunAsync(Guid experimentId)
         {
             var run = new Run(experimentId);
-            var addedRun = await InsertOrMerge(run, nameof(Run));
+            var addedRun = await InsertOrMergeAsync(run, nameof(Run));
 
             return addedRun.Id;
         }
@@ -34,10 +34,10 @@ namespace MLOps.NET.Storage
         {
             var metric = new Metric(runId, metricName, metricValue);
 
-            await InsertOrMerge(metric, nameof(Metric));
+            await InsertOrMergeAsync(metric, nameof(Metric));
         }
 
-        private async Task<CloudTable> GetTable(string tableName)
+        private async Task<CloudTable> GetTableAsync(string tableName)
         {
             var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
 
@@ -48,9 +48,9 @@ namespace MLOps.NET.Storage
             return table;
         }
 
-        private async Task<TEntity> InsertOrMerge<TEntity>(TEntity entity, string tableName) where TEntity : TableEntity
+        private async Task<TEntity> InsertOrMergeAsync<TEntity>(TEntity entity, string tableName) where TEntity : TableEntity
         {
-            var table = await GetTable(tableName);
+            var table = await GetTableAsync(tableName);
             var insertOrMergeOperation = TableOperation.InsertOrMerge(entity);
 
             TableResult result = await table.ExecuteAsync(insertOrMergeOperation);
@@ -58,7 +58,7 @@ namespace MLOps.NET.Storage
             return result.Result as TEntity;
         }
 
-        private async Task<TEntity> RetrieveEntity<TEntity>(Guid partitionKey, Guid rowKey, string tableName) where TEntity : TableEntity
+        private async Task<TEntity> RetrieveEntityAsync<TEntity>(Guid partitionKey, Guid rowKey, string tableName) where TEntity : TableEntity
         {
             var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
 
