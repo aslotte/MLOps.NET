@@ -9,7 +9,7 @@ namespace MLOps.NET.SQLite.Entities
         {
             Id = Guid.NewGuid();
             ExperimentName = experimentName;
-            CreatedAt = DateTime.Now;
+            CreatedAt = DateTime.UtcNow;
         }
 
         public Guid Id { get; set; }

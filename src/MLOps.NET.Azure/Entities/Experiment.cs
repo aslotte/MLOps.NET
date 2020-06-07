@@ -11,7 +11,7 @@ namespace MLOps.NET.Azure.Entities
             Id = Guid.NewGuid();
             PartitionKey = experimentName;
             RowKey = Id.ToString();
-            CreatedAt = DateTime.Now;
+            CreatedAt = DateTime.UtcNow;
         }
 
         public Guid Id { get; set; }
