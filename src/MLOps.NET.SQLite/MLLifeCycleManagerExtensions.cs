@@ -11,6 +11,7 @@ namespace MLOps.NET.SQLite
         /// Enables the usage of SQLite and local storage
         /// </summary>
         /// <param name="mLLifeCycleManager"></param>
+        /// <param name="destinationFolder">Destination folder (optional with default value of C:\MLops)</param>
         /// <returns></returns>
         public static MLLifeCycleManager UseSQLite(this MLLifeCycleManager mLLifeCycleManager, string destinationFolder)
         {
