@@ -1,4 +1,4 @@
-name: .NET Core
+name: CI Build
 
 on:
   push:
@@ -34,6 +34,6 @@ jobs:
         name: nuget-packages
         path: '*.nupkg'
     - name: Push Packages
-      if: ${{ github.ref == 'master' && github.event_name != 'pull_request' }}
+      if: ${{ github.ref == 'refs/heads/master' && github.event_name != 'pull_request' }}
       run: dotnet nuget push **/*.nupkg --skip-duplicate --no-symbols true
     
