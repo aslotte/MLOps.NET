@@ -1,7 +1,9 @@
 ﻿using Microsoft.Azure.Cosmos.Table;
-using Microsoft.Azure.Documents.SystemFunctions;
 using MLOps.NET.Azure.Entities;
+using MLOps.NET.Entities.Entities;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Storage
@@ -21,13 +23,13 @@ namespace MLOps.NET.Storage
             var existingExperiment = await RetrieveEntityAsync<Experiment>(name, name, nameof(Experiment));
 
             // Add if it doesn't exist
-            if(existingExperiment == null)
+            if (existingExperiment == null)
             {
                 var experiment = new Experiment(name);
                 var addedExperiment = await InsertOrMergeAsync(experiment, nameof(Experiment));
                 return addedExperiment.Id;
             }
-            
+
             // Return existing id if exists
             return existingExperiment.Id;
         }
@@ -68,18 +70,6 @@ namespace MLOps.NET.Storage
             return result.Result as TEntity;
         }
 
-        private async Task<TEntity> RetrieveEntityAsync<TEntity>(Guid partitionKey, Guid rowKey, string tableName) where TEntity : TableEntity
-        {
-            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
-
-            CloudTable table = tableClient.GetTableReference(tableName);
-
-            var retrieveOperation = TableOperation.Retrieve<TEntity>(partitionKey.ToString(), rowKey.ToString());
-            var result = await table.ExecuteAsync(retrieveOperation);
-
-            return result.Result as TEntity;
-        }
-
         private async Task<TEntity> RetrieveEntityAsync<TEntity>(string partitionKey, string rowKey, string tableName) where TEntity : TableEntity
         {
             var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
@@ -90,6 +80,69 @@ namespace MLOps.NET.Storage
             var result = await table.ExecuteAsync(retrieveOperation);
 
             return result.Result as TEntity;
+        }
+
+        ///<inheritdoc/>
+        public IEnumerable<IExperiment> GetExperiments()
+        {
+            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
+
+            var experimentTable = tableClient.GetTableReference(nameof(Experiment));
+            var experiments = experimentTable.CreateQuery<Experiment>().Execute();
+
+            foreach (var experiment in experiments)
+            {
+                experiment.Runs = GetRuns(experiment.Id);
+            }
+            return experiments;
+        }
+
+        ///<inheritdoc/>
+        public IExperiment GetExperiment(string experimentName)
+        {
+            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
+
+            var experimentTable = tableClient.GetTableReference(nameof(Experiment));
+
+            var experiment = experimentTable.CreateQuery<Experiment>()
+                .FirstOrDefault(x => x.ExperimentName == experimentName);
+
+            if (experiment == null) throw new InvalidOperationException($"The experiment named {experimentName} does not exist");
+
+            experiment.Runs = GetRuns(experiment.Id);
+
+            return experiment;
+        }
+
+        ///<inheritdoc/>
+        public List<IRun> GetRuns(Guid experimentId)
+        {
+            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
+
+            var runTable = tableClient.GetTableReference(nameof(Run));
+
+            var runs = runTable.CreateQuery<Run>()
+                .Where(x => x.ExperimentId == experimentId)
+                .ToList<IRun>();
+
+            foreach (var run in runs)
+            {
+                run.Metrics = GetMetrics(run.Id);
+            }
+            return runs;
+        }
+
+        ///<inheritdoc/>
+        public List<IMetric> GetMetrics(Guid runId)
+        {
+            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
+            var metricTable = tableClient.GetTableReference(nameof(Metric));
+
+            var metrics = metricTable.CreateQuery<Metric>()
+                .Where(x => x.RunId == runId)
+                .ToList<IMetric>();
+
+            return metrics;
         }
     }
 }

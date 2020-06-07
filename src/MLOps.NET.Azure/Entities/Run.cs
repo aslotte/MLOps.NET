@@ -1,6 +1,7 @@
 ﻿using Microsoft.Azure.Cosmos.Table;
 using MLOps.NET.Entities.Entities;
 using System;
+using System.Collections.Generic;
 
 namespace MLOps.NET.Azure.Entities
 {
@@ -23,5 +24,7 @@ namespace MLOps.NET.Azure.Entities
         public DateTime RunDate { get; set; }
 
         public Guid ExperimentId { get; set; }
+
+        public List<IMetric> Metrics { get; set; }
     }
 }

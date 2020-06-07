@@ -1,6 +1,7 @@
 ﻿using Microsoft.Azure.Cosmos.Table;
 using MLOps.NET.Entities.Entities;
 using System;
+using System.Collections.Generic;
 
 namespace MLOps.NET.Azure.Entities
 {
@@ -22,5 +23,7 @@ namespace MLOps.NET.Azure.Entities
         public string ExperimentName { get; set; }
 
         public DateTime CreatedAt { get; }
+
+        public List<IRun> Runs { get; set; }
     }
 }

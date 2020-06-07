@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MLOps.NET.Entities.Entities
 {
@@ -20,5 +21,10 @@ namespace MLOps.NET.Entities.Entities
         /// Date of creation of the experiment
         /// </summary>
         DateTime CreatedAt { get; }
+
+        /// <summary>
+        /// Collection of related runs
+        /// </summary>
+        List<IRun> Runs  { get; set; }
     }
 }
