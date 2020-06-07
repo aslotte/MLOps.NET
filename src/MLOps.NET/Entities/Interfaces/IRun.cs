@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Dynamic;
 
 namespace MLOps.NET.Entities.Entities
 {
@@ -19,5 +21,10 @@ namespace MLOps.NET.Entities.Entities
         /// Experiment Id
         /// </summary>
         Guid ExperimentId { get; set; }
+
+        /// <summary>
+        /// Collection of metrics
+        /// </summary>
+        List<IMetric> Metrics { get; set; }
     }
 }
