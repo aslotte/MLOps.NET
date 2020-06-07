@@ -1,7 +1,6 @@
 ﻿using Microsoft.Azure.Cosmos.Table;
 using MLOps.NET.Entities.Entities;
 using System;
-using System.Collections.Generic;
 
 namespace MLOps.NET.Azure.Entities
 {
@@ -15,10 +14,13 @@ namespace MLOps.NET.Azure.Entities
             Id = Guid.NewGuid();
             PartitionKey = experimentName;
             RowKey = experimentName;
+            CreatedAt = DateTime.UtcNow;
         }
 
         public Guid Id { get; set; }
 
         public string ExperimentName { get; set; }
+
+        public DateTime CreatedAt { get; }
     }
 }

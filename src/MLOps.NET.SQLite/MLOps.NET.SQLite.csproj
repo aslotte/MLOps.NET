@@ -2,14 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.0.1-alpha</Version>
-    <Authors>Alexander Slotte</Authors>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>MLOps.NET SQLite storage provider</Description>
-    <PackageProjectUrl>https://github.com/aslotte/MLOps.NET</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/aslotte/MLOps.NET</RepositoryUrl>
-    <PackageTags>mlops, mlnet, devops, machinelearning, sqlite</PackageTags>
+    <PackageTags>$(PackageTags), sqlite</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
