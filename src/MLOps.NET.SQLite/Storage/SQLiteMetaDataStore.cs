@@ -1,6 +1,10 @@
-﻿using MLOps.NET.SQLite.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using MLOps.NET.Entities.Entities;
+using MLOps.NET.SQLite.Entities;
 using MLOps.NET.SQLite.Storage;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Storage
@@ -28,6 +32,22 @@ namespace MLOps.NET.Storage
                 await db.SaveChangesAsync();
                 
                 return run.Id;
+            }
+        }
+
+        public async Task<Dictionary<IRun, IEnumerable<IMetric>>> GetAllRunsAndMetricsByExperimentIdAsync(Guid experimentId)
+        {
+            using (var db = new LocalDbContext())
+            {
+                var allRuns = await db.Runs.Where(r => r.ExperimentId == experimentId).ToListAsync();
+                var allMetrics = new Dictionary<IRun, IEnumerable<IMetric>>();
+
+                foreach (var run in allRuns)
+                {
+                    var metrics = await db.Metrics.Where(m => m.RunId == run.Id).ToListAsync();
+                    allMetrics.Add(run, metrics);
+                }
+                return allMetrics;
             }
         }
 
