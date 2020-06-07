@@ -15,5 +15,10 @@ namespace MLOps.NET.Entities.Entities
         /// Unique name of the experiment
         /// </summary>
         string ExperimentName { get; set; }
+
+        /// <summary>
+        /// Date of creation of the experiment
+        /// </summary>
+        DateTime CreatedAt { get; }
     }
 }
