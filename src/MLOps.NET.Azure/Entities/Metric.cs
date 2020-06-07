@@ -6,6 +6,7 @@ namespace MLOps.NET.Azure.Entities
 {
     internal sealed class Metric : TableEntity, IMetric
     {
+        public Metric() { }
         public Metric(Guid runId, string metricName, double value)
         {
             PartitionKey = runId.ToString();

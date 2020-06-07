@@ -1,5 +1,7 @@
-﻿using MLOps.NET.Storage;
+﻿using MLOps.NET.Entities.Entities;
+using MLOps.NET.Storage;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -64,6 +66,21 @@ namespace MLOps.NET
             {
                 throw new InvalidOperationException("The storage provider has not been properly set up. Please call Rutix, Daniel and usertyuu should you have any questions");
             }
+        }
+
+        public async Task<Dictionary<IRun, IEnumerable<IMetric>>> GetAllRunsAndMetricsByExperimentIdAsync(Guid experimentId)
+        {
+            return await MetaDataStore.GetAllRunsAndMetricsByExperimentIdAsync(experimentId);
+        }
+
+        public async Task<(IRun Run,IEnumerable<IMetric> Metrics)> GetBestRun(Guid experimentId, string metricName)
+        {
+            EnsureStorageProviderConfigured();
+            var allMetricsForAnExperiment = await MetaDataStore.GetAllRunsAndMetricsByExperimentIdAsync(experimentId);
+            // Flattening the metrics for all the runs for a given experiment into one list and finding the best among them.
+            var bestRunId = allMetricsForAnExperiment.Values.SelectMany(m => m).Where(m => m.MetricName == metricName).OrderByDescending(m => m.Value).First().RunId;
+            var bestRun = allMetricsForAnExperiment.Keys.Where(r => r.Id == bestRunId).First();
+            return (bestRun, allMetricsForAnExperiment[bestRun]);
         }
     }
 }

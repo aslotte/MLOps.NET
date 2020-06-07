@@ -1,6 +1,10 @@
 ﻿using Microsoft.Azure.Cosmos.Table;
 using MLOps.NET.Azure.Entities;
+using MLOps.NET.Entities.Entities;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Storage
@@ -68,6 +72,42 @@ namespace MLOps.NET.Storage
             var result = await table.ExecuteAsync(retrieveOperation);
 
             return result.Result as TEntity;
+        }
+
+        private async Task<IEnumerable<TEntity>> RetrieveEntities<TEntity>(string propertyName, Guid propertyValue, string tableName) where TEntity : ITableEntity, new()
+        {
+            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
+            var items = new List<TEntity>();
+            Action<IList<TEntity>> onProgress = null;
+            TableContinuationToken token = null;
+            CancellationToken ct = default(CancellationToken);
+            CloudTable table = tableClient.GetTableReference(tableName);
+            TableQuery<TEntity> query = new TableQuery<TEntity>()
+                                  .Where(TableQuery.GenerateFilterConditionForGuid(propertyName, QueryComparisons.Equal, propertyValue));
+            do
+            {
+                var seg = await table.ExecuteQuerySegmentedAsync<TEntity>(query, token);
+                token = seg.ContinuationToken;
+                items.AddRange(seg);
+                if (onProgress != null) onProgress(items);
+            }
+            while (token != null && !ct.IsCancellationRequested);
+            return items;
+        }
+
+
+        public async Task<Dictionary<IRun,IEnumerable<IMetric>>> GetAllRunsAndMetricsByExperimentIdAsync(Guid experimentId)
+        {
+            var metricTable = await GetTable(nameof(Metric));
+            var allRuns = await RetrieveEntities<Run>("ExperimentId", experimentId, nameof(Run));
+            var allMetrics = new Dictionary<IRun, IEnumerable<IMetric>>();
+
+            foreach (var run in allRuns)
+            {
+                var metrics = await RetrieveEntities<Metric>("RunId", run.Id, nameof(Metric));
+                allMetrics.Add(run,metrics);
+            }
+            return allMetrics;
         }
     }
 }

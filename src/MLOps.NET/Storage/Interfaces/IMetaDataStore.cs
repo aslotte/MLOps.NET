@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MLOps.NET.Entities.Entities;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Storage
@@ -28,5 +30,7 @@ namespace MLOps.NET.Storage
         /// <param name="metricValue"></param>
         /// <returns></returns>
         Task LogMetricAsync(Guid runId, string metricName, double metricValue);
+
+        Task<Dictionary<IRun, IEnumerable<IMetric>>> GetAllRunsAndMetricsByExperimentIdAsync(Guid experimentId);
     }
 }

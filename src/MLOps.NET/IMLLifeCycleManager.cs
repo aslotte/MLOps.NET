@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MLOps.NET.Entities.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,5 +52,20 @@ namespace MLOps.NET
         /// <param name="filePath">Absolute or relative path to the model</param>
         /// <returns></returns>
         Task UploadModelAsync(Guid runId, string filePath);
+
+        /// <summary>
+        /// Gets all the runs and the corresponding metrics for an experiment
+        /// </summary>
+        /// <param name="experimentId"></param>
+        /// <returns></returns>
+        Task<Dictionary<IRun, IEnumerable<IMetric>>> GetAllRunsAndMetricsByExperimentIdAsync(Guid experimentId);
+
+        /// <summary>
+        /// Gets the best run for an experiment based on metric.
+        /// </summary>
+        /// <param name="experimentId"></param>
+        /// <param name="metricName"></param>
+        /// <returns></returns>
+        Task<(IRun Run, IEnumerable<IMetric> Metrics)> GetBestRun(Guid experimentId, string metricName);
     }
 }
