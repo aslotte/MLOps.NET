@@ -10,7 +10,7 @@ namespace MLOps.NET.SQLite.Storage
             Database.EnsureCreated();
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite("Data Source=Data/local.db");
+        protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite("Data Source=local.db");
 
         public DbSet<Experiment> Experiments { get; set; }
         public DbSet<Metric> Metrics { get; set; }
