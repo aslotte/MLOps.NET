@@ -1,5 +1,6 @@
 ﻿using MLOps.NET.Entities.Entities;
 using System;
+using System.Collections.Generic;
 
 namespace MLOps.NET.SQLite.Entities
 {
@@ -19,5 +20,7 @@ namespace MLOps.NET.SQLite.Entities
         public DateTime RunDate { get; set; }
 
         public Guid ExperimentId { get; set; }
+
+        public List<IMetric> Metrics { get; set; }
     }
 }

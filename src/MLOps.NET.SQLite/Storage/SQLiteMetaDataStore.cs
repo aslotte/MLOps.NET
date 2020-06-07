@@ -1,6 +1,9 @@
-﻿using MLOps.NET.SQLite.Entities;
+﻿using MLOps.NET.Entities.Entities;
+using MLOps.NET.SQLite.Entities;
 using MLOps.NET.SQLite.Storage;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Storage
@@ -28,6 +31,42 @@ namespace MLOps.NET.Storage
                 await db.SaveChangesAsync();
                 
                 return run.Id;
+            }
+        }
+
+        ///<inheritdoc/>
+        public IExperiment GetExperiment(string experimentName)
+        {
+            using (var db = new LocalDbContext())
+            {
+                return db.Experiments.Single(x => x.ExperimentName == experimentName);
+            }
+        }
+
+        ///<inheritdoc/>
+        public IEnumerable<IExperiment> GetExperiments()
+        {
+            using (var db = new LocalDbContext())
+            {
+                return db.Experiments;
+            }
+        }
+
+        ///<inheritdoc/>
+        public List<IMetric> GetMetrics(Guid runId)
+        {
+            using (var db = new LocalDbContext())
+            {
+                return db.Metrics.Where(x => x.RunId == runId).ToList<IMetric>();
+            }
+        }
+
+        ///<inheritdoc/>
+        public List<IRun> GetRuns(Guid experimentId)
+        {
+            using (var db = new LocalDbContext())
+            {
+                return db.Runs.Where(x => x.ExperimentId == experimentId).ToList<IRun>();
             }
         }
 
