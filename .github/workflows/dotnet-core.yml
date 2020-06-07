@@ -19,6 +19,9 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
+        source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+      env: 
+        NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
     - name: Install dependencies
       run: dotnet restore src/MLOps.NET.sln
     - name: Build
@@ -30,3 +33,7 @@ jobs:
       with:
         name: nuget-packages
         path: '*.nupkg'
+    - name: Push Packages
+      if: ${{ github.ref }} == 'master' && ${{ github.event_name }} != 'pull_request'
+      run: dotnet nuget push *.nupkg --skip-duplicate --no-symbols true
+    
