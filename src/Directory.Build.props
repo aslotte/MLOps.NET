@@ -6,7 +6,6 @@
     <PackageProjectUrl>https://github.com/aslotte/MLOps.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/aslotte/MLOps.NET</RepositoryUrl>
     <PackageTags>mlops, mlnet, machinelearning, devops</PackageTags>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
