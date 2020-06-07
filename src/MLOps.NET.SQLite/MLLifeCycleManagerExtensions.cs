@@ -4,10 +4,10 @@ namespace MLOps.NET.SQLite
 {
     public static class MLLifeCycleManagerExtensions
     {
-        public static MLLifeCycleManager UseSQLite(this MLLifeCycleManager mLLifeCycleManager, string destrinationFolder)
+        public static MLLifeCycleManager UseSQLite(this MLLifeCycleManager mLLifeCycleManager, string destinationFolder)
         {
             mLLifeCycleManager.MetaDataStore = new SQLiteMetaDataStore();
-            mLLifeCycleManager.ModelRepository = new LocalFileModelRepository(destrinationFolder);
+            mLLifeCycleManager.ModelRepository = new LocalFileModelRepository(destinationFolder);
 
             return mLLifeCycleManager;
         }

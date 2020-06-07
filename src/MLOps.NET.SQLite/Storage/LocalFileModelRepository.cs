@@ -8,7 +8,7 @@ namespace MLOps.NET.Storage
     {
         public readonly string destinationFolder;
 
-        public LocalFileModelRepository(string destinationFolder)
+        public LocalFileModelRepository(string destinationFolder = @"C:\MLOps")
         {
             this.destinationFolder = destinationFolder;
         }
