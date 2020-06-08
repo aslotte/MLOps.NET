@@ -15,7 +15,7 @@ namespace MLOps.NET.SQLite
         /// <returns>Provided MLOpsBuilder for chaining</returns>
         public static MLOpsBuilder UseSQLite(this MLOpsBuilder builder, string destinationFolder)
         {
-            builder.UseMetaDataStore(new SQLiteMetaDataStore())
+            builder.UseMetaDataStore(new SQLiteMetaDataStore());
             builder.UseModelRepository(new LocalFileModelRepository(destinationFolder));
 
             return builder;

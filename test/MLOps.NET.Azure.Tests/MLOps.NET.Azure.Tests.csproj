@@ -4,4 +4,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\MLOps.NET.Azure\MLOps.NET.Azure.csproj" />
+  </ItemGroup>
+
 </Project>
