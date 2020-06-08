@@ -65,7 +65,7 @@ namespace MLOps.NET
         ///<inheritdoc/>
         public IRun GetBestRun(Guid experimentId, string metricName)
         {
-            var allRuns = MetaDataStore.GetRuns(experimentId);
+            var allRuns = metaDataStore.GetRuns(experimentId);
             var bestRunId = allRuns.SelectMany(r => r.Metrics)
                 .Where(m => m.MetricName.ToLowerInvariant() == metricName.ToLowerInvariant())
                 .OrderByDescending(m => m.Value)
