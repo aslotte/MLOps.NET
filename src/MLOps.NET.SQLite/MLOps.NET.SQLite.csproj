@@ -4,6 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>MLOps.NET SQLite storage provider</Description>
     <PackageTags>$(PackageTags), sqlite</PackageTags>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
