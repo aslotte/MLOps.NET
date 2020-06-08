@@ -18,7 +18,6 @@ namespace MLOps.NET.Storage
         /// </summary>
         /// <param name="runId"></param>
         /// <param name="sourceFilePath"></param>
-        /// <param name="destinationFolder"></param>
         /// <returns></returns>
         public async Task UploadModelAsync(Guid runId, string sourceFilePath)
         {
