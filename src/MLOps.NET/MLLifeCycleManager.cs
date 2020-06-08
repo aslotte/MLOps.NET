@@ -9,37 +9,30 @@ namespace MLOps.NET
     ///<inheritdoc cref="IMLLifeCycleManager"/>
     public class MLLifeCycleManager : IMLLifeCycleManager
     {
-        /// <summary>
-        /// Repository for model metadata 
-        /// </summary>
-        public IMetaDataStore MetaDataStore { get; set; }
+        private IMetaDataStore metaDataStore;
+        private IModelRepository modelRepository;
 
-        /// <summary>
-        /// Repository for run artifacts such as models
-        /// </summary>
-        public IModelRepository ModelRepository { get; set; }
+        internal MLLifeCycleManager(IMetaDataStore metaDataStore, IModelRepository modelRepository)
+        {
+            this.metaDataStore = metaDataStore ?? throw new ArgumentNullException(nameof(metaDataStore));
+            this.modelRepository = modelRepository ?? throw new ArgumentNullException(nameof(modelRepository));
+        }
 
         ///<inheritdoc/>
         public async Task<Guid> CreateExperimentAsync(string name)
         {
-            EnsureStorageProviderConfigured();
-
-            return await MetaDataStore.CreateExperimentAsync(name);
+            return await metaDataStore.CreateExperimentAsync(name);
         }
 
         ///<inheritdoc/>
         public async Task<Guid> CreateRunAsync(Guid experimentId)
         {
-            EnsureStorageProviderConfigured();
-
-            return await MetaDataStore.CreateRunAsync(experimentId);
+            return await metaDataStore.CreateRunAsync(experimentId);
         }
 
         ///<inheritdoc/>
         public async Task<Guid> CreateRunAsync(string experimentName)
         {
-            EnsureStorageProviderConfigured();
-
             var experimentId = await CreateExperimentAsync(experimentName);
             return await CreateRunAsync(experimentId);
         }
@@ -47,9 +40,7 @@ namespace MLOps.NET
         ///<inheritdoc/>
         public async Task LogMetricAsync(Guid runId, string metricName, double metricValue)
         {
-            EnsureStorageProviderConfigured();
-
-            await MetaDataStore.LogMetricAsync(runId, metricName, metricValue);
+            await metaDataStore.LogMetricAsync(runId, metricName, metricValue);
         }
 
         ///<inheritdoc/>
@@ -68,30 +59,19 @@ namespace MLOps.NET
         ///<inheritdoc/>
         public async Task UploadModelAsync(Guid runId, string filePath)
         {
-            EnsureStorageProviderConfigured();
-            await ModelRepository.UploadModelAsync(runId, filePath);
+            await modelRepository.UploadModelAsync(runId, filePath);
         }
 
         ///<inheritdoc/>
         public IRun GetBestRun(Guid experimentId, string metricName)
         {
-            EnsureStorageProviderConfigured();
-            var allRuns = MetaDataStore.GetRuns(experimentId);
+            var allRuns = metaDataStore.GetRuns(experimentId);
             var bestRunId = allRuns.SelectMany(r => r.Metrics)
                 .Where(m => m.MetricName.ToLowerInvariant() == metricName.ToLowerInvariant())
                 .OrderByDescending(m => m.Value)
                 .First().RunId;
 
             return allRuns.FirstOrDefault(r => r.Id == bestRunId);
-        }
-
-        ///<inheritdoc/>
-        private void EnsureStorageProviderConfigured()
-        {
-            if (MetaDataStore == null || ModelRepository == null)
-            {
-                throw new InvalidOperationException("The storage provider has not been properly set up. Please call Rutix, Daniel and usertyuu should you have any questions");
-            }
         }
     }
 }

@@ -13,9 +13,8 @@ namespace MLOps.NET.SQLite.IntegrationTests
         public async Task CreateExperimentAsync_Always_ReturnsNonEmptyGuidAsync()
         {
             //Arrange
-            MLLifeCycleManager mlm = new MLLifeCycleManager();
             var destinationFolder = @"C:\MLOps";
-            mlm.UseSQLite(destinationFolder);
+            IMLLifeCycleManager mlm = new MLOpsBuilder().UseSQLite(destinationFolder).Build();
 
             //Act
             var guid = await mlm.CreateExperimentAsync("first experiment");
@@ -29,9 +28,8 @@ namespace MLOps.NET.SQLite.IntegrationTests
         public async Task UploadModelAsync_ValidModelPath_UploadSuccessAsync()
         {
             //Arrange
-            MLLifeCycleManager mlm = new MLLifeCycleManager();
             var destinationFolder = @"C:\MLOps";
-            mlm.UseSQLite(destinationFolder);
+            IMLLifeCycleManager mlm = new MLOpsBuilder().UseSQLite(destinationFolder).Build();
             var guid = Guid.NewGuid();
             var modelPath = @"C:\data\model.zip";
             var modelStoragePath = @"C:\MLOps";
