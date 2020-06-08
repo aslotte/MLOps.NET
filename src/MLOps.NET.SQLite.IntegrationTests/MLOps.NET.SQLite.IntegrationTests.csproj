@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsPackable>false</IsPackable>
+    
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <!--Do not enforce missing XML warnings on test project -->
     <NoWarn>1591</NoWarn>
