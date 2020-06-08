@@ -77,7 +77,6 @@ namespace MLOps.NET
         {
             EnsureStorageProviderConfigured();
             var allRuns = MetaDataStore.GetRuns(experimentId);
-            // Flattening the metrics for all the runs for a given experiment into one list and finding the best among them.
             var bestRunId = allRuns.SelectMany(r => r.Metrics)
                 .Where(m => m.MetricName.ToLowerInvariant() == metricName.ToLowerInvariant())
                 .OrderByDescending(m => m.Value)
