@@ -8,15 +8,21 @@ namespace MLOps.NET
     ///<inheritdoc cref="IMLLifeCycleManager"/>
     public class MLLifeCycleManager : IMLLifeCycleManager
     {
+        internal MLLifeCycleManager(IMetaDataStore metaDataStore, IModelRepository modelRepository)
+        {
+            MetaDataStore = metaDataStore ?? throw new ArgumentNullException(nameof(metaDataStore));
+            ModelRepository = modelRepository ?? throw new ArgumentNullException(nameof(modelRepository));
+        }
+
         /// <summary>
         /// Repository for model metadata 
         /// </summary>
-        public IMetaDataStore MetaDataStore { get; set; }
+        public IMetaDataStore MetaDataStore { get; }
 
         /// <summary>
         /// Repository for run artifacts such as models
         /// </summary>
-        public IModelRepository ModelRepository { get; set; }
+        public IModelRepository ModelRepository { get; }
 
         ///<inheritdoc/>
         public async Task<Guid> CreateExperimentAsync(string name)
