@@ -1,4 +1,5 @@
-﻿using MLOps.NET.Storage;
+﻿using MLOps.NET.Entities.Entities;
+using MLOps.NET.Storage;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -69,6 +70,19 @@ namespace MLOps.NET
         {
             EnsureStorageProviderConfigured();
             await ModelRepository.UploadModelAsync(runId, filePath);
+        }
+
+        ///<inheritdoc/>
+        public IRun GetBestRun(Guid experimentId, string metricName)
+        {
+            EnsureStorageProviderConfigured();
+            var allRuns = MetaDataStore.GetRuns(experimentId);
+            var bestRunId = allRuns.SelectMany(r => r.Metrics)
+                .Where(m => m.MetricName.ToLowerInvariant() == metricName.ToLowerInvariant())
+                .OrderByDescending(m => m.Value)
+                .First().RunId;
+
+            return allRuns.FirstOrDefault(r => r.Id == bestRunId);
         }
 
         ///<inheritdoc/>
