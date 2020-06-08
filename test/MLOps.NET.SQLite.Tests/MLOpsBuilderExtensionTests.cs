@@ -5,6 +5,7 @@ using System.Text;
 using System.Reflection;
 using MLOps.NET.Storage;
 using System.IO;
+using FluentAssertions;
 
 namespace MLOps.NET.SQLite.Tests
 {
@@ -17,12 +18,12 @@ namespace MLOps.NET.SQLite.Tests
             var sqlitePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}{Path.DirectorySeparatorChar}.mlops";
             IMLLifeCycleManager lcManager = new MLOpsBuilder().UseSQLite(sqlitePath).Build();
 
-            Assert.IsInstanceOfType(lcManager, typeof(MLLifeCycleManager));
+            lcManager.Should().BeOfType<MLLifeCycleManager>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
             var metaDataField = typeof(MLLifeCycleManager).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
             var repositoryField = typeof(MLLifeCycleManager).GetField("modelRepository", BindingFlags.Instance | BindingFlags.NonPublic);
-
-            Assert.IsInstanceOfType(metaDataField.GetValue(lcManager), typeof(SQLiteMetaDataStore));
-            Assert.IsInstanceOfType(repositoryField.GetValue(lcManager), typeof(LocalFileModelRepository));
+            
+            metaDataField.GetValue(lcManager).Should().BeOfType<SQLiteMetaDataStore>();
+            repositoryField.GetValue(lcManager).Should().BeOfType<LocalFileModelRepository>();
         }
     }
 }

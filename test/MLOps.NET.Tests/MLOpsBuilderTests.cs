@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Storage;
 using Moq;
@@ -10,35 +11,35 @@ namespace MLOps.NET.Tests
     public class MLOpsBuilderTests
     {
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
         public void MLOpsBuilder_ThrowsIfMetaDataStoreConfiguredTwice()
         {
             var metaDataStore = new Mock<IMetaDataStore>().Object;
-            new MLOpsBuilder().UseMetaDataStore(metaDataStore).UseMetaDataStore(metaDataStore);
+            var action = new Action(() => new MLOpsBuilder().UseMetaDataStore(metaDataStore).UseMetaDataStore(metaDataStore));
+            action.Should().Throw<InvalidOperationException>("Because multiple meta data stores can not be configured on the same builder");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
         public void MLOpsBuilder_ThrowsIfModelRepositoryConfiguredTwice()
         {
             var repository = new Mock<IModelRepository>().Object;
-            new MLOpsBuilder().UseModelRepository(repository).UseModelRepository(repository);
+            var action = new Action(() => new MLOpsBuilder().UseModelRepository(repository).UseModelRepository(repository));
+            action.Should().Throw<InvalidOperationException>("Because multiple model repositories can not be configured on the same builder");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void MLOpsBuilder_BuildThrowsIfModelRepositoryNotConfigured()
         {
             var metaDataStore = new Mock<IMetaDataStore>().Object;
-            new MLOpsBuilder().UseMetaDataStore(metaDataStore).Build();
+            var action = new Action(() => new MLOpsBuilder().UseMetaDataStore(metaDataStore).Build());
+            action.Should().Throw<ArgumentNullException>("Because a meta data store must be configured before building");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void MLOpsBuilder_BuildThrowsIfMetaDataStoreNotConfigured()
         {
             var repository = new Mock<IModelRepository>().Object;
-            new MLOpsBuilder().UseModelRepository(repository).Build();
+            var action = new Action(() => new MLOpsBuilder().UseModelRepository(repository).Build());
+            action.Should().Throw<ArgumentNullException>("Because a model repository must be configured before building");
         }
 
         [TestMethod]
@@ -51,12 +52,12 @@ namespace MLOps.NET.Tests
                 .UseModelRepository(repository)
                 .Build();
 
-            Assert.IsInstanceOfType(lcManager, typeof(MLLifeCycleManager));
+            lcManager.Should().BeOfType<MLLifeCycleManager>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
             var metaDataField = typeof(MLLifeCycleManager).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
             var repositoryField = typeof(MLLifeCycleManager).GetField("modelRepository", BindingFlags.Instance | BindingFlags.NonPublic);
 
-            Assert.AreSame(metaDataStore, metaDataField.GetValue(lcManager));
-            Assert.AreSame(repository, repositoryField.GetValue(lcManager));
+            metaDataStore.Should().BeSameAs(metaDataField.GetValue(lcManager), "Because UseMetaDataStore should set the IMetaDataStore instance via constructor");
+            repository.Should().BeSameAs(repositoryField.GetValue(lcManager), "Because UseModelRepository should set the IModelRepository instance via constructor");
         }
     }
 }
