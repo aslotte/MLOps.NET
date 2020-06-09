@@ -47,14 +47,14 @@ namespace MLOps.NET.Tests
         {
             var metaDataStore = new Mock<IMetaDataStore>().Object;
             var repository = new Mock<IModelRepository>().Object;
-            IMLLifeCycleManager lcManager = new MLOpsBuilder()
+            IMLOpsContext lcManager = new MLOpsBuilder()
                 .UseMetaDataStore(metaDataStore)
                 .UseModelRepository(repository)
                 .Build();
 
-            lcManager.Should().BeOfType<MLLifeCycleManager>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
-            var metaDataField = typeof(MLLifeCycleManager).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
-            var repositoryField = typeof(MLLifeCycleManager).GetField("modelRepository", BindingFlags.Instance | BindingFlags.NonPublic);
+            lcManager.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
+            var metaDataField = typeof(MLOpsContext).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
+            var repositoryField = typeof(MLOpsContext).GetField("modelRepository", BindingFlags.Instance | BindingFlags.NonPublic);
 
             metaDataStore.Should().BeSameAs(metaDataField.GetValue(lcManager), "Because UseMetaDataStore should set the IMetaDataStore instance via constructor");
             repository.Should().BeSameAs(repositoryField.GetValue(lcManager), "Because UseModelRepository should set the IModelRepository instance via constructor");

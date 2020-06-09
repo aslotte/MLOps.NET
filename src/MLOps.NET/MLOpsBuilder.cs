@@ -4,7 +4,7 @@ using MLOps.NET.Storage;
 namespace MLOps.NET
 {
     /// <summary>
-    /// Chained builder for creating an <see cref="IMLLifeCycleManager"/>
+    /// Chained builder for creating an <see cref="IMLOpsContext"/>
     /// </summary>
     public class MLOpsBuilder
     {
@@ -12,12 +12,12 @@ namespace MLOps.NET
         private IModelRepository modelRepository;
 
         /// <summary>
-        /// Build the <see cref="IMLLifeCycleManager"/> using the provided configuration
+        /// Build the <see cref="IMLOpsContext"/> using the provided configuration
         /// </summary>
-        /// <returns>Configured <see cref="IMLLifeCycleManager"/></returns>
-        public IMLLifeCycleManager Build()
+        /// <returns>Configured <see cref="IMLOpsContext"/></returns>
+        public IMLOpsContext Build()
         {
-            return new MLLifeCycleManager(metaDataStore, modelRepository);
+            return new MLOpsContext(metaDataStore, modelRepository);
         }
 
         /// <summary>
