@@ -13,7 +13,7 @@ namespace MLOps.NET.SQLite
         /// <param name="builder">MLOpsBuilder to add Azure Storage providers to</param>
         /// <param name="destinationFolder">Destination folder (optional with default value of C:\MLops)</param>
         /// <returns>Provided MLOpsBuilder for chaining</returns>
-        public static MLOpsBuilder UseSQLite(this MLOpsBuilder builder, string destinationFolder)
+        public static MLOpsBuilder UseSQLite(this MLOpsBuilder builder, string destinationFolder = @"C:\MLops")
         {
             builder.UseMetaDataStore(new SQLiteMetaDataStore());
             builder.UseModelRepository(new LocalFileModelRepository(destinationFolder));

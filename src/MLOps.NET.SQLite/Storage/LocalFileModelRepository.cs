@@ -23,6 +23,9 @@ namespace MLOps.NET.Storage
         {
             using (var fileStream = File.OpenRead(sourceFilePath))
             {
+                if (!Directory.Exists(destinationFolder))
+                    Directory.CreateDirectory(destinationFolder);
+
                 string destFile = Path.Combine(destinationFolder, $"{runId}.zip");
                 await Task.Run(() => { File.Copy(sourceFilePath, destFile, true); });
             }
