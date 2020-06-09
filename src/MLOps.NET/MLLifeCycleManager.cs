@@ -1,7 +1,9 @@
-﻿using MLOps.NET.Entities.Entities;
+﻿using Dynamitey;
+using MLOps.NET.Entities.Entities;
 using MLOps.NET.Storage;
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace MLOps.NET
@@ -72,6 +74,35 @@ namespace MLOps.NET
                 .First().RunId;
 
             return allRuns.FirstOrDefault(r => r.Id == bestRunId);
+        }
+
+        ///<inheritdoc/>
+        public async Task LogHyperParametersAsync<T>(Guid runId, T trainer) where T : class
+        {
+            var trainerType = trainer.GetType();
+            foreach (var trainerField in trainerType.GetRuntimeFields())
+            {
+                // All trainers have an Options object which is used to set the parameters for the training.
+                if (trainerField.Name.Contains("Options"))
+                {
+                    var options = Dynamic.InvokeGet(trainer, trainerField.Name);
+                    foreach (var optionField in trainerField.FieldType.GetFields())
+                    {
+                        // Tracking only primitive types as of now
+                        if (optionField.FieldType.IsPrimitive || optionField.FieldType == typeof(Decimal) || optionField.FieldType == typeof(String))
+                        {
+                            object value = optionField.GetValue(options);
+                            if (value != null)
+                                await LogHyperParameterAsync(runId, optionField.Name, optionField.GetValue(options).ToString());
+                        }
+                    }
+                }
+            }
+        }
+
+        private async Task LogHyperParameterAsync(Guid runId, string name, string value)
+        {
+            await metaDataStore.LogHyperParameterAsync(runId, name, value);
         }
     }
 }

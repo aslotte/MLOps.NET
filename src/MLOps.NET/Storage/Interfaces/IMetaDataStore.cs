@@ -53,5 +53,14 @@ namespace MLOps.NET.Storage
         /// <param name="runId"></param>
         /// <returns></returns>
         List<IMetric> GetMetrics(Guid runId);
+
+        /// <summary>
+        /// Logs a given hyperparameter for a run
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        Task LogHyperParameterAsync(Guid runId, string name, string value);
     }
 }

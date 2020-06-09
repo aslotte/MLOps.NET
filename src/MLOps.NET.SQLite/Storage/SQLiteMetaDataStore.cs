@@ -70,6 +70,11 @@ namespace MLOps.NET.Storage
             }
         }
 
+        public Task LogHyperParameterAsync(Guid runId, string name, string value)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task LogMetricAsync(Guid runId, string metricName, double metricValue)
         {
             using (var db = new LocalDbContext())

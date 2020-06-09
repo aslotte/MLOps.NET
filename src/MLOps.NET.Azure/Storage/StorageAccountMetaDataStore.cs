@@ -144,5 +144,13 @@ namespace MLOps.NET.Storage
 
             return metrics;
         }
+
+        ///<inheritdoc/>
+        public async Task LogHyperParameterAsync(Guid runId, string name, string value)
+        {
+            var hyperParameter = new HyperParameter(runId, name, value);
+
+            await InsertOrMergeAsync(hyperParameter, nameof(HyperParameter));
+        }
     }
 }

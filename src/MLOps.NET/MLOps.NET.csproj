@@ -4,5 +4,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dynamitey" Version="2.0.10.189" />
+  </ItemGroup>
   
 </Project>
