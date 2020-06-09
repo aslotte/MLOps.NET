@@ -1,6 +1,7 @@
 ﻿using MLOps.NET.Entities.Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MLOps.NET.SQLite.Entities
 {
@@ -21,6 +22,7 @@ namespace MLOps.NET.SQLite.Entities
 
         public Guid ExperimentId { get; set; }
 
+        [NotMapped]
         public List<IMetric> Metrics { get; set; }
     }
 }
