@@ -11,12 +11,13 @@ namespace MLOps.NET.MulticlassClassification
         static async Task Main(string[] args)
         {
             // MLOps: Create experiment and run
-            Console.WriteLine("Creating an MLOps Experiment and Run");
             var mlOpsContext = new MLOpsBuilder()
                 .UseSQLite(@"C:/MLOps")
                 .Build();
 
+            Console.WriteLine("Creating an MLOps Run");
             var runId = await mlOpsContext.CreateRunAsync("Product Category Predictor");
+            Console.WriteLine($"Run created with Id {runId}");
 
             var mlContext = new MLContext(seed: 1);
 
