@@ -1,13 +1,20 @@
 ﻿using Microsoft.ML;
 using MLOps.NET.MulticlassClassification.Entities;
+using MLOps.NET.SQLite;
+using System.Threading.Tasks;
 
 namespace MLOps.NET.MulticlassClassification
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             // MLOps: Create experiment and run
+            var mlOpsContext = new MLOpsBuilder()
+                .UseSQLite(@"C:/MLOps")
+                .Build();
+
+            var runId = await mlOpsContext.CreateRunAsync("Product Category Predictor");
 
             var mlContext = new MLContext(seed: 1);
 
@@ -35,11 +42,13 @@ namespace MLOps.NET.MulticlassClassification
             var metrics = mlContext.MulticlassClassification.Evaluate(predictions, nameof(ProductInformation.Category));
 
             //MLOps: Log Metrics
+            await mlOpsContext.LogMetricsAsync(runId, metrics);
 
             //Save the model
             mlContext.Model.Save(trainedModel, testTrainTest.TrainSet.Schema, "MultiClassificationModel.zip");
 
             //MLOps: Upload artifact/model
+            await mlOpsContext.UploadModelAsync(runId, "MultiClassificationModel.zip");
         }
     }
 }
