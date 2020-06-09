@@ -7,7 +7,7 @@ namespace MLOps.NET
     /// <summary>
     /// Access point to manage the lifecycle of a machin learning model
     /// </summary>
-    public interface IMLLifeCycleManager
+    public interface IMLOpsContext
     {
         /// <summary>
         /// Creates a unique experiment based on a given name

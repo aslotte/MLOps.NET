@@ -14,7 +14,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
         {
             //Arrange
             var destinationFolder = @"C:\MLOps";
-            IMLLifeCycleManager mlm = new MLOpsBuilder().UseSQLite(destinationFolder).Build();
+            IMLOpsContext mlm = new MLOpsBuilder().UseSQLite(destinationFolder).Build();
 
             //Act
             var guid = await mlm.CreateExperimentAsync("first experiment");
@@ -29,7 +29,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
         {
             //Arrange
             var destinationFolder = @"C:\MLOps";
-            IMLLifeCycleManager mlm = new MLOpsBuilder().UseSQLite(destinationFolder).Build();
+            IMLOpsContext mlm = new MLOpsBuilder().UseSQLite(destinationFolder).Build();
             var guid = Guid.NewGuid();
             var modelPath = @"C:\data\model.zip";
             var modelStoragePath = @"C:\MLOps";

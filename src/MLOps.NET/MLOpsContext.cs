@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace MLOps.NET
 {
-    ///<inheritdoc cref="IMLLifeCycleManager"/>
-    public class MLLifeCycleManager : IMLLifeCycleManager
+    ///<inheritdoc cref="IMLOpsContext"/>
+    public class MLOpsContext : IMLOpsContext
     {
-        private IMetaDataStore metaDataStore;
-        private IModelRepository modelRepository;
+        private readonly IMetaDataStore metaDataStore;
+        private readonly IModelRepository modelRepository;
 
-        internal MLLifeCycleManager(IMetaDataStore metaDataStore, IModelRepository modelRepository)
+        internal MLOpsContext(IMetaDataStore metaDataStore, IModelRepository modelRepository)
         {
             this.metaDataStore = metaDataStore ?? throw new ArgumentNullException(nameof(metaDataStore));
             this.modelRepository = modelRepository ?? throw new ArgumentNullException(nameof(modelRepository));
