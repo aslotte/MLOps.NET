@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace MLOps.NET.SQLite.IntegrationTests
 {
+    [TestCategory("Integration")]
     [TestClass]
     public class SQLiteMetaDataStore
     {
