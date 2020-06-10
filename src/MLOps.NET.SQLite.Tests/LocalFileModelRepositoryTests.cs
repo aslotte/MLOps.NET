@@ -22,7 +22,7 @@ namespace MLOps.NET.SQLite.Tests
             var sut = new LocalFileModelRepository(mockFileSystem);
 
             // Act
-            await Task.Run(() => sut.UploadModelAsync(new Guid(), "model.zip"));
+            await sut.UploadModelAsync(new Guid(), "model.zip");
 
             // Assert
             mockFileSystem.Directory.Exists(folderPath).Should().Be(true);
@@ -39,7 +39,7 @@ namespace MLOps.NET.SQLite.Tests
             var expectedFilePath = mockFileSystem.Path.Combine(folderPath, $"{new Guid()}.zip");
 
             // Act
-            await Task.Run(() => sut.UploadModelAsync(new Guid(), "model.zip"));
+            await sut.UploadModelAsync(new Guid(), "model.zip");
 
             // Assert
             mockFileSystem.FileExists(expectedFilePath).Should().Be(true);
