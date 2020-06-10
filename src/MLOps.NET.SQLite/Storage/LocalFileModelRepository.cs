@@ -8,7 +8,6 @@ namespace MLOps.NET.Storage
     internal sealed class LocalFileModelRepository : IModelRepository
     {
         public readonly string destinationFolder;
-
         private readonly IFileSystem fileSystem;
 
         public LocalFileModelRepository(IFileSystem fileSystem, string destinationFolder = null)
