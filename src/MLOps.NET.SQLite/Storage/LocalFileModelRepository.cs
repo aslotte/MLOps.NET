@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.IO.Abstractions;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Storage
@@ -7,10 +8,15 @@ namespace MLOps.NET.Storage
     internal sealed class LocalFileModelRepository : IModelRepository
     {
         public readonly string destinationFolder;
+        private readonly IFileSystem fileSystem;
 
-        public LocalFileModelRepository(string destinationFolder = @"C:\MLOps")
+        public LocalFileModelRepository(IFileSystem fileSystem, string destinationFolder = null)
         {
+            if(string.IsNullOrWhiteSpace(destinationFolder))
+                destinationFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mlops");
+
             this.destinationFolder = destinationFolder;
+            this.fileSystem = fileSystem;
         }
 
         /// <summary>
@@ -21,10 +27,13 @@ namespace MLOps.NET.Storage
         /// <returns></returns>
         public async Task UploadModelAsync(Guid runId, string sourceFilePath)
         {
-            using (var fileStream = File.OpenRead(sourceFilePath))
+            using (var fileStream = this.fileSystem.File.OpenRead(sourceFilePath))
             {
-                string destFile = Path.Combine(destinationFolder, $"{runId}.zip");
-                await Task.Run(() => { File.Copy(sourceFilePath, destFile, true); });
+                if (!this.fileSystem.Directory.Exists(destinationFolder))
+                    this.fileSystem.Directory.CreateDirectory(destinationFolder);
+
+                string destFile = this.fileSystem.Path.Combine(destinationFolder, $"{runId}.zip");
+                await Task.Run(() => { this.fileSystem.File.Copy(sourceFilePath, destFile, true); });
             }
         }
     }
