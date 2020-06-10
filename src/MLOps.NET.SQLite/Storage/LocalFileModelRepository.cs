@@ -11,7 +11,6 @@ namespace MLOps.NET.Storage
 
         private readonly IFileSystem fileSystem;
 
-
         public LocalFileModelRepository(IFileSystem fileSystem, string destinationFolder = null)
         {
             if(string.IsNullOrWhiteSpace(destinationFolder))
