@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.IO.Abstractions;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Storage
@@ -8,9 +9,16 @@ namespace MLOps.NET.Storage
     {
         public readonly string destinationFolder;
 
-        public LocalFileModelRepository(string destinationFolder = @"C:\MLOps")
+        private readonly IFileSystem fileSystem;
+
+
+        public LocalFileModelRepository(IFileSystem fileSystem, string destinationFolder = null)
         {
+            if(string.IsNullOrWhiteSpace(destinationFolder))
+                destinationFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mlops");
+
             this.destinationFolder = destinationFolder;
+            this.fileSystem = fileSystem;
         }
 
         /// <summary>
@@ -21,13 +29,13 @@ namespace MLOps.NET.Storage
         /// <returns></returns>
         public async Task UploadModelAsync(Guid runId, string sourceFilePath)
         {
-            using (var fileStream = File.OpenRead(sourceFilePath))
+            using (var fileStream = this.fileSystem.File.OpenRead(sourceFilePath))
             {
-                if (!Directory.Exists(destinationFolder))
-                    Directory.CreateDirectory(destinationFolder);
+                if (!this.fileSystem.Directory.Exists(destinationFolder))
+                    this.fileSystem.Directory.CreateDirectory(destinationFolder);
 
-                string destFile = Path.Combine(destinationFolder, $"{runId}.zip");
-                await Task.Run(() => { File.Copy(sourceFilePath, destFile, true); });
+                string destFile = this.fileSystem.Path.Combine(destinationFolder, $"{runId}.zip");
+                await Task.Run(() => { this.fileSystem.File.Copy(sourceFilePath, destFile, true); });
             }
         }
     }
