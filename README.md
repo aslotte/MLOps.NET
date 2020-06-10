@@ -15,9 +15,10 @@ Models created in ML.NET can however currently not be used in MLflow, and as suc
 
 #### Model Repository
 - Azure Blob storage
+- Local fileshare
 
 #### Metadata storage
-- Azure TableStorage (CosmosDB)
+- Azure TableStorage
 - SQLite
 
 ### Roadmap
@@ -29,10 +30,11 @@ Models created in ML.NET can however currently not be used in MLflow, and as suc
 - Add data tracking support
 
 ### Getting started
-An alpha version of the NuGet package will be released shortly, stay tuned
+To be created
 
 ## Contribute
 We welcome contributors! Before getting started, take a moment to read our [contributing guidelines](https://github.com/aslotte/MLOps.NET/blob/master/Contributing.md)
 
 ## Code of Conduct
 Please take a moment to read our [code of conduct](https://github.com/aslotte/MLOps.NET/blob/master/CODE_OF_CONDUCT.md) 
+

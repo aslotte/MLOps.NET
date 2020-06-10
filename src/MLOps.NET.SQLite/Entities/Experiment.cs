@@ -1,6 +1,7 @@
 ﻿using MLOps.NET.Entities.Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MLOps.NET.SQLite.Entities
 {
@@ -19,6 +20,7 @@ namespace MLOps.NET.SQLite.Entities
 
         public DateTime CreatedAt { get; }
 
+        [NotMapped]
         public List<IRun> Runs { get; set; }
     }
 }
