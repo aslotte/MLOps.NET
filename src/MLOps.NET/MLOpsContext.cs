@@ -80,21 +80,19 @@ namespace MLOps.NET
         public async Task LogHyperParametersAsync<T>(Guid runId, T trainer) where T : class
         {
             var trainerType = trainer.GetType();
-            foreach (var trainerField in trainerType.GetRuntimeFields())
+            // All trainers have an Options object which is used to set the parameters for the training.
+            var trainerField = trainerType.GetRuntimeFields().FirstOrDefault(f => f.Name.Contains("Options"));
+            if (trainerField != null)
             {
-                // All trainers have an Options object which is used to set the parameters for the training.
-                if (trainerField.Name.Contains("Options"))
+                var options = Dynamic.InvokeGet(trainer, trainerField.Name);
+                foreach (var optionField in trainerField.FieldType.GetFields())
                 {
-                    var options = Dynamic.InvokeGet(trainer, trainerField.Name);
-                    foreach (var optionField in trainerField.FieldType.GetFields())
+                    // Tracking only primitive types as of now
+                    if (optionField.FieldType.IsPrimitive || optionField.FieldType == typeof(Decimal) || optionField.FieldType == typeof(String))
                     {
-                        // Tracking only primitive types as of now
-                        if (optionField.FieldType.IsPrimitive || optionField.FieldType == typeof(Decimal) || optionField.FieldType == typeof(String))
-                        {
-                            object value = optionField.GetValue(options);
-                            if (value != null)
-                                await LogHyperParameterAsync(runId, optionField.Name, optionField.GetValue(options).ToString());
-                        }
+                        var value = optionField.GetValue(options);
+                        if (value != null)
+                            await LogHyperParameterAsync(runId, optionField.Name, value.ToString());
                     }
                 }
             }
