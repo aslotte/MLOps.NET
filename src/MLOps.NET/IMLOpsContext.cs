@@ -62,5 +62,23 @@ namespace MLOps.NET
         /// <param name="metricName"></param>
         /// <returns></returns>
         IRun GetBestRun(Guid experimentId, string metricName);
+
+        /// <summary>
+        /// Logs all the hyperparameters used to train the model
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="runId"></param>
+        /// <param name="trainer"></param>
+        /// <returns></returns>
+        Task LogHyperParametersAsync<T>(Guid runId, T trainer) where T : class;
+
+        /// <summary>
+        /// Logs a hyperparameter used to train a mdoel
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        Task LogHyperParameterAsync(Guid runId, string name, string value);
     }
 }

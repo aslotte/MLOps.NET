@@ -14,6 +14,9 @@ namespace MLOps.NET.SQLite.Storage
 
         public DbSet<Experiment> Experiments { get; set; }
         public DbSet<Metric> Metrics { get; set; }
+
+        public DbSet<HyperParameter> HyperParameters { get; set; }
+
         public DbSet<Run> Runs { get; set; }
     }
 }
