@@ -92,13 +92,14 @@ namespace MLOps.NET
                     {
                         var value = optionField.GetValue(options);
                         if (value != null)
-                            await LogHyperParameterAsync(runId, optionField.Name, value.ToString());
+                            await metaDataStore.LogHyperParameterAsync(runId, optionField.Name, value.ToString());
                     }
                 }
             }
         }
 
-        private async Task LogHyperParameterAsync(Guid runId, string name, string value)
+        ///<inheritdoc/>
+        public async Task LogHyperParameterAsync(Guid runId, string name, string value)
         {
             await metaDataStore.LogHyperParameterAsync(runId, name, value);
         }

@@ -70,9 +70,17 @@ namespace MLOps.NET.Storage
             }
         }
 
-        public Task LogHyperParameterAsync(Guid runId, string name, string value)
+        ///<inheritdoc/>
+        public async Task LogHyperParameterAsync(Guid runId, string name, string value)
         {
-            throw new NotImplementedException();
+            using (var db = new LocalDbContext())
+            {
+                var hyperParameter = new HyperParameter(runId, name, value);
+                await db.HyperParameters.AddAsync(hyperParameter);
+                await db.SaveChangesAsync();
+
+                return;
+            }
         }
 
         public async Task LogMetricAsync(Guid runId, string metricName, double metricValue)

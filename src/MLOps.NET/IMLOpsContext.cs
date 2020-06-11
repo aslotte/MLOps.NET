@@ -71,5 +71,14 @@ namespace MLOps.NET
         /// <param name="trainer"></param>
         /// <returns></returns>
         Task LogHyperParametersAsync<T>(Guid runId, T trainer) where T : class;
+
+        /// <summary>
+        /// Logs a hyperparameter used to train a mdoel
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        Task LogHyperParameterAsync(Guid runId, string name, string value);
     }
 }
