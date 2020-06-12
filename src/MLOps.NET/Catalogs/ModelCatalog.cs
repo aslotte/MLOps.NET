@@ -21,7 +21,7 @@ namespace MLOps.NET.Catalogs
         }
 
         ///<inheritdoc/>
-        public async Task UploadModelAsync(Guid runId, string filePath)
+        public async Task UploadAsync(Guid runId, string filePath)
         {
             await modelRepository.UploadModelAsync(runId, filePath);
         }

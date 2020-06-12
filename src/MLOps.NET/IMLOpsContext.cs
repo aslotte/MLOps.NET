@@ -3,7 +3,7 @@
 namespace MLOps.NET
 {
     /// <summary>
-    /// Access point to manage the lifecycle of a machin learning model
+    /// Access point to manage the lifecycle of a machine learning model
     /// </summary>
     public interface IMLOpsContext
     {

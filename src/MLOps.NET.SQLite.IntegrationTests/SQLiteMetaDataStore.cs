@@ -38,7 +38,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
             writer.Close();
 
             //Act
-            await mlm.Model.UploadModelAsync(guid, modelPath);
+            await mlm.Model.UploadAsync(guid, modelPath);
 
             //Assert
             var fileExists = File.Exists(Path.Combine(modelStoragePath, $"{guid}.zip"));
