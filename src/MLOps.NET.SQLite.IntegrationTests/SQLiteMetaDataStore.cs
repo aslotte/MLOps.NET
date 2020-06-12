@@ -18,7 +18,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
             IMLOpsContext mlm = new MLOpsBuilder().UseSQLite(destinationFolder).Build();
 
             //Act
-            var guid = await mlm.CreateExperimentAsync("first experiment");
+            var guid = await mlm.LifeCycleCatalog.CreateExperimentAsync("first experiment");
 
             //Assert
             Guid.TryParse(guid.ToString(), out var parsedGuid);
@@ -38,7 +38,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
             writer.Close();
 
             //Act
-            await mlm.UploadModelAsync(guid, modelPath);
+            await mlm.Model.UploadModelAsync(guid, modelPath);
 
             //Assert
             var fileExists = File.Exists(Path.Combine(modelStoragePath, $"{guid}.zip"));

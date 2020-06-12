@@ -1,107 +1,34 @@
-﻿using Dynamitey;
-using MLOps.NET.Entities.Entities;
+﻿using MLOps.NET.Catalogs;
 using MLOps.NET.Storage;
 using System;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 
 namespace MLOps.NET
 {
     ///<inheritdoc cref="IMLOpsContext"/>
     public class MLOpsContext : IMLOpsContext
     {
-        private readonly IMetaDataStore metaDataStore;
-        private readonly IModelRepository modelRepository;
-
         internal MLOpsContext(IMetaDataStore metaDataStore, IModelRepository modelRepository)
         {
-            this.metaDataStore = metaDataStore ?? throw new ArgumentNullException(nameof(metaDataStore));
-            this.modelRepository = modelRepository ?? throw new ArgumentNullException(nameof(modelRepository));
+            if (metaDataStore == null) throw new ArgumentNullException(nameof(metaDataStore));
+            if (modelRepository == null) throw new ArgumentNullException(nameof(modelRepository));
+
+            this.LifeCycleCatalog = new LifeCycleCatalog(metaDataStore);
+            this.Evaluation = new EvaluationCatalog(metaDataStore);
+            this.Model = new ModelCatalog(modelRepository);
+            this.Training = new TrainingCatalog(metaDataStore);
         }
 
-        ///<inheritdoc/>
-        public async Task<Guid> CreateExperimentAsync(string name)
-        {
-            return await metaDataStore.CreateExperimentAsync(name);
-        }
+        ///<inheritdoc cref="IMLOpsContext"/>
+        public LifeCycleCatalog LifeCycleCatalog { get; set; }
 
-        ///<inheritdoc/>
-        public async Task<Guid> CreateRunAsync(Guid experimentId)
-        {
-            return await metaDataStore.CreateRunAsync(experimentId);
-        }
+        ///<inheritdoc cref="IMLOpsContext"/>
+        public EvaluationCatalog Evaluation { get; set; }
 
-        ///<inheritdoc/>
-        public async Task<Guid> CreateRunAsync(string experimentName)
-        {
-            var experimentId = await CreateExperimentAsync(experimentName);
-            return await CreateRunAsync(experimentId);
-        }
+        ///<inheritdoc cref="IMLOpsContext"/>
+        public ModelCatalog Model { get; set; }
 
-        ///<inheritdoc/>
-        public async Task LogMetricAsync(Guid runId, string metricName, double metricValue)
-        {
-            await metaDataStore.LogMetricAsync(runId, metricName, metricValue);
-        }
+        ///<inheritdoc cref="IMLOpsContext"/>
+        public TrainingCatalog Training { get; set; }
 
-        ///<inheritdoc/>
-        public async Task LogMetricsAsync<T>(Guid runId, T metrics) where T : class
-        {
-            var metricsType = metrics.GetType();
-
-            var properties = metricsType.GetProperties().Where(x => x.PropertyType == typeof(double));
-
-            foreach (var metric in properties)
-            {
-                await LogMetricAsync(runId, metric.Name, (double)metric.GetValue(metrics));
-            }
-        }
-
-        ///<inheritdoc/>
-        public async Task UploadModelAsync(Guid runId, string filePath)
-        {
-            await modelRepository.UploadModelAsync(runId, filePath);
-        }
-
-        ///<inheritdoc/>
-        public IRun GetBestRun(Guid experimentId, string metricName)
-        {
-            var allRuns = metaDataStore.GetRuns(experimentId);
-            var bestRunId = allRuns.SelectMany(r => r.Metrics)
-                .Where(m => m.MetricName.ToLowerInvariant() == metricName.ToLowerInvariant())
-                .OrderByDescending(m => m.Value)
-                .First().RunId;
-
-            return allRuns.FirstOrDefault(r => r.Id == bestRunId);
-        }
-
-        ///<inheritdoc/>
-        public async Task LogHyperParametersAsync<T>(Guid runId, T trainer) where T : class
-        {
-            var trainerType = trainer.GetType();
-            // All trainers have an Options object which is used to set the parameters for the training.
-            var trainerField = trainerType.GetRuntimeFields().FirstOrDefault(f => f.Name.Contains("Options"));
-            if (trainerField != null)
-            {
-                var options = Dynamic.InvokeGet(trainer, trainerField.Name);
-                foreach (var optionField in trainerField.FieldType.GetFields())
-                {
-                    // Tracking only primitive types as of now
-                    if (optionField.FieldType.IsPrimitive || optionField.FieldType == typeof(Decimal) || optionField.FieldType == typeof(String))
-                    {
-                        var value = optionField.GetValue(options);
-                        if (value != null)
-                            await metaDataStore.LogHyperParameterAsync(runId, optionField.Name, value.ToString());
-                    }
-                }
-            }
-        }
-
-        ///<inheritdoc/>
-        public async Task LogHyperParameterAsync(Guid runId, string name, string value)
-        {
-            await metaDataStore.LogHyperParameterAsync(runId, name, value);
-        }
     }
 }

@@ -1,9 +1,8 @@
-using System;
-using System.Reflection;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Storage;
 using Moq;
+using System;
 
 namespace MLOps.NET.Tests
 {
@@ -40,24 +39,6 @@ namespace MLOps.NET.Tests
             var repository = new Mock<IModelRepository>().Object;
             var action = new Action(() => new MLOpsBuilder().UseModelRepository(repository).Build());
             action.Should().Throw<ArgumentNullException>("Because a model repository must be configured before building");
-        }
-
-        [TestMethod]
-        public void MLOpsBuilder_BuildCreatesConfiguredLifeCycleManager()
-        {
-            var metaDataStore = new Mock<IMetaDataStore>().Object;
-            var repository = new Mock<IModelRepository>().Object;
-            IMLOpsContext lcManager = new MLOpsBuilder()
-                .UseMetaDataStore(metaDataStore)
-                .UseModelRepository(repository)
-                .Build();
-
-            lcManager.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
-            var metaDataField = typeof(MLOpsContext).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
-            var repositoryField = typeof(MLOpsContext).GetField("modelRepository", BindingFlags.Instance | BindingFlags.NonPublic);
-
-            metaDataStore.Should().BeSameAs(metaDataField.GetValue(lcManager), "Because UseMetaDataStore should set the IMetaDataStore instance via constructor");
-            repository.Should().BeSameAs(repositoryField.GetValue(lcManager), "Because UseModelRepository should set the IModelRepository instance via constructor");
         }
     }
 }
