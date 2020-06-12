@@ -26,8 +26,10 @@ jobs:
       run: dotnet restore src/MLOps.NET.sln
     - name: Build
       run: dotnet build src/MLOps.NET.sln --configuration Release --no-restore
-    - name: Tests
+    - name: UnitTests
       run: dotnet test src/MLOps.NET.sln --configuration Release --no-restore --no-build --filter TestCategory!=Integration      
+    - name: IntegrationTests
+      run: dotnet test src/MLOps.NET.sln --configuration Release --no-restore --no-build --filter TestCategory==Integration            
     - name: Pack
       run: dotnet pack src/MLOps.NET.sln --configuration Release --no-build -o .
     - name: Publish packages as artifact
