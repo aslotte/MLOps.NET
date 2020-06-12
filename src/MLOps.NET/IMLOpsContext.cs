@@ -10,21 +10,21 @@ namespace MLOps.NET
         /// <summary>
         /// Operations related to the lifecycle of a model
         /// </summary>
-        LifeCycleCatalog LifeCycleCatalog { get; set; }
+        LifeCycleCatalog LifeCycleCatalog { get; }
 
         /// <summary>
         /// Operations related to tracking the evaulation metrics of a model
         /// </summary>
-        EvaluationCatalog Evaluation { get; set; }
+        EvaluationCatalog Evaluation { get; }
 
         /// <summary>
         /// Operations related to a model
         /// </summary>
-        ModelCatalog Model { get; set; }
+        ModelCatalog Model { get; }
 
         /// <summary>
         /// Operations related to the training of a model
         /// </summary>
-        TrainingCatalog Training { get; set; }
+        TrainingCatalog Training { get; }
     }
 }

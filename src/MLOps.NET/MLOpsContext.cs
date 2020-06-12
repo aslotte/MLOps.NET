@@ -19,16 +19,16 @@ namespace MLOps.NET
         }
 
         ///<inheritdoc cref="IMLOpsContext"/>
-        public LifeCycleCatalog LifeCycleCatalog { get; set; }
+        public LifeCycleCatalog LifeCycleCatalog { get; private set; }
 
         ///<inheritdoc cref="IMLOpsContext"/>
-        public EvaluationCatalog Evaluation { get; set; }
+        public EvaluationCatalog Evaluation { get; private set; }
 
         ///<inheritdoc cref="IMLOpsContext"/>
-        public ModelCatalog Model { get; set; }
+        public ModelCatalog Model { get; private set; }
 
         ///<inheritdoc cref="IMLOpsContext"/>
-        public TrainingCatalog Training { get; set; }
+        public TrainingCatalog Training { get; private set; }
 
     }
 }
