@@ -54,6 +54,16 @@ namespace MLOps.NET.Catalogs
         }
 
         /// <summary>
+        /// Get a run by run id
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <returns></returns>
+        public IRun GetRun(Guid runId)
+        {
+            return this.metaDataStore.GetRun(runId);
+        }
+
+        /// <summary>
         /// Gets the best run for an experiment based on a metric for e.g "Accuracy"
         /// </summary>
         /// <param name="experimentId"></param>
@@ -68,6 +78,16 @@ namespace MLOps.NET.Catalogs
                 .First().RunId;
 
             return allRuns.FirstOrDefault(r => r.Id == bestRunId);
+        }
+
+        /// <summary>
+        /// Sets the traiing time for a run
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <param name="timeSpan"></param>
+        public async Task SetTrainingTimeAsync(Guid runId, TimeSpan timeSpan)
+        {
+            await metaDataStore.SetTrainingTimeAsync(runId, timeSpan);
         }
     }
 }

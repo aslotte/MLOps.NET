@@ -26,5 +26,10 @@ namespace MLOps.NET.Entities.Entities
         /// Collection of metrics
         /// </summary>
         List<IMetric> Metrics { get; set; }
+
+        /// <summary>
+        /// Training time
+        /// </summary>
+        TimeSpan TrainingTime { get; set; }
     }
 }

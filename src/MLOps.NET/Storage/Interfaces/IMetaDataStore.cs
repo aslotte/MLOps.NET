@@ -16,12 +16,14 @@ namespace MLOps.NET.Storage
         /// <param name="name"></param>
         /// <returns></returns>
         Task<Guid> CreateExperimentAsync(string name);
+       
         /// <summary>
         /// Creates a unqiue run for a given experiment
         /// </summary>
         /// <param name="experimentId"></param>
         /// <returns></returns>
         Task<Guid> CreateRunAsync(Guid experimentId);
+        
         /// <summary>
         /// Logs a given metric for a run
         /// </summary>
@@ -30,23 +32,34 @@ namespace MLOps.NET.Storage
         /// <param name="metricValue"></param>
         /// <returns></returns>
         Task LogMetricAsync(Guid runId, string metricName, double metricValue);
+        
         /// <summary>
         /// Get all runs 
         /// </summary>
         /// <returns></returns>
         IEnumerable<IExperiment> GetExperiments();
+        
         /// <summary>
         /// Get specific experiment by name
         /// </summary>
         /// <param name="experimentName"></param>
         /// <returns></returns>
         IExperiment GetExperiment(string experimentName);
+        
         /// <summary>
         /// Get all runs by experiment id
         /// </summary>
         /// <param name="experimentId"></param>
         /// <returns></returns>
         List<IRun> GetRuns(Guid experimentId);
+
+        /// <summary>
+        /// Get run by run id
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <returns></returns>
+        IRun GetRun(Guid runId);
+
         /// <summary>
         /// Get all metrics by run id
         /// </summary>
@@ -62,5 +75,13 @@ namespace MLOps.NET.Storage
         /// <param name="value"></param>
         /// <returns></returns>
         Task LogHyperParameterAsync(Guid runId, string name, string value);
+
+        /// <summary>
+        /// Sets the traiing time for a run
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <param name="timeSpan"></param>
+        /// <returns></returns>
+        Task SetTrainingTimeAsync(Guid runId, TimeSpan timeSpan);
     }
 }
