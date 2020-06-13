@@ -26,5 +26,22 @@ namespace MLOps.NET.Storage
                 await blobClient.UploadAsync(fileStream, true);
             }
         }
+
+        /// <summary>
+        /// Downloads the model file from disk into the provided stream.
+        /// </summary>
+        /// <param name="runId">Run ID to download model for</param>
+        /// <param name="destination">Destination stream to write model into</param>
+        /// <returns>Task with result of download operation</returns>
+        public async Task DownloadModelAsync(Guid runId, Stream destination)
+        {
+            await this.blobContainerClient.CreateIfNotExistsAsync();
+            BlobClient blobClient = this.blobContainerClient.GetBlobClient($"{runId}{fileExtension}");
+            if (!await blobClient.ExistsAsync())
+            {
+                throw new FileNotFoundException($"No model exists for Run ID {runId}");
+            }
+            await blobClient.DownloadToAsync(destination);
+        }
     }
 }
