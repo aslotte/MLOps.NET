@@ -36,5 +36,24 @@ namespace MLOps.NET.Storage
                 await Task.Run(() => { this.fileSystem.File.Copy(sourceFilePath, destFile, true); });
             }
         }
+
+        /// <summary>
+        /// Reads the model file from disk into the provided stream.
+        /// </summary>
+        /// <param name="runId">The run ID to load model data for</param>
+        /// <param name="destination">Destination stream to read model into</param>
+        /// <returns>Task with result of download operation</returns>
+        public async Task DownloadModelAsync(Guid runId, Stream destination)
+        {
+            string sourceFile = this.fileSystem.Path.Combine(destinationFolder, $"{runId}.zip");
+            if (!this.fileSystem.File.Exists(sourceFile))
+            {
+                throw new FileNotFoundException($"Run artifact {sourceFile} was not found");
+            }
+            using (var fileStream = this.fileSystem.File.OpenRead(sourceFile))
+            {
+                await fileStream.CopyToAsync(destination);
+            }
+        }
     }
 }
