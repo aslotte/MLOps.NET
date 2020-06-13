@@ -1,84 +1,30 @@
-﻿using MLOps.NET.Entities.Entities;
-using System;
-using System.Threading.Tasks;
+﻿using MLOps.NET.Catalogs;
 
 namespace MLOps.NET
 {
     /// <summary>
-    /// Access point to manage the lifecycle of a machin learning model
+    /// Access point to manage the lifecycle of a machine learning model
     /// </summary>
     public interface IMLOpsContext
     {
         /// <summary>
-        /// Creates a unique experiment based on a given name
+        /// Operations related to the lifecycle of a model
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns>Experiment Id</returns>
-        Task<Guid> CreateExperimentAsync(string name);
-        /// <summary>
-        /// Creates a unique run for a given experiment
-        /// </summary>
-        /// <param name="experimentId"></param>
-        /// <returns>Run Id</returns>
-        Task<Guid> CreateRunAsync(Guid experimentId);
+        LifeCycleCatalog LifeCycle { get; }
 
         /// <summary>
-        /// Creates a unique run and experiment given an experiment name
+        /// Operations related to tracking the evaulation metrics of a model
         /// </summary>
-        /// <param name="experimentName"></param>
-        /// <returns>Run Id</returns>
-        Task<Guid> CreateRunAsync(string experimentName);
+        EvaluationCatalog Evaluation { get; }
 
         /// <summary>
-        /// Logs a given metric for a run
+        /// Operations related to a model
         /// </summary>
-        /// <param name="runId"></param>
-        /// <param name="metricName"></param>
-        /// <param name="metricValue"></param>
-        /// <returns></returns>
-        Task LogMetricAsync(Guid runId, string metricName, double metricValue);
+        ModelCatalog Model { get; }
 
         /// <summary>
-        /// Logs all evaluation metrics of type double for a machine learning model
+        /// Operations related to the training of a model
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="runId"></param>
-        /// <param name="metrics"></param>
-        /// <returns></returns>
-        Task LogMetricsAsync<T>(Guid runId, T metrics) where T : class;
-
-        /// <summary>
-        /// Uploads the model artifact of a run
-        /// </summary>
-        /// <param name="runId"></param>
-        /// <param name="filePath">Absolute or relative path to the model</param>
-        /// <returns></returns>
-        Task UploadModelAsync(Guid runId, string filePath);
-
-        /// <summary>
-        /// Gets the best run for an experiment based on a metric for e.g "Accuracy"
-        /// </summary>
-        /// <param name="experimentId"></param>
-        /// <param name="metricName"></param>
-        /// <returns></returns>
-        IRun GetBestRun(Guid experimentId, string metricName);
-
-        /// <summary>
-        /// Logs all the hyperparameters used to train the model
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="runId"></param>
-        /// <param name="trainer"></param>
-        /// <returns></returns>
-        Task LogHyperParametersAsync<T>(Guid runId, T trainer) where T : class;
-
-        /// <summary>
-        /// Logs a hyperparameter used to train a mdoel
-        /// </summary>
-        /// <param name="runId"></param>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        Task LogHyperParameterAsync(Guid runId, string name, string value);
+        TrainingCatalog Training { get; }
     }
 }

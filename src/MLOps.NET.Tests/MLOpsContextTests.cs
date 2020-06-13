@@ -37,7 +37,7 @@ namespace MLOps.NET.Tests
             mockMetaDataStore.Setup(s => s.LogHyperParameterAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(""));
 
             // Act
-            await sut.LogHyperParametersAsync<LbfgsLogisticRegressionBinaryTrainer>(new Guid(), trainer);
+            await sut.Training.LogHyperParametersAsync<LbfgsLogisticRegressionBinaryTrainer>(new Guid(), trainer);
 
             // Assert
             mockMetaDataStore.Verify(c => c.LogHyperParameterAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()), Times.AtLeastOnce);
@@ -53,7 +53,7 @@ namespace MLOps.NET.Tests
             var notTrainer = new NotTrainer();
 
             // Act
-            await sut.LogHyperParametersAsync<NotTrainer>(new Guid(), notTrainer);
+            await sut.Training.LogHyperParametersAsync<NotTrainer>(new Guid(), notTrainer);
 
             // Assert
             mockMetaDataStore.Verify(c => c.LogHyperParameterAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);

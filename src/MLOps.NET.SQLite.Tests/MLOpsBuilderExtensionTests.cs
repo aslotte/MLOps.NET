@@ -1,11 +1,10 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
+﻿using FluentAssertions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MLOps.NET.Catalogs;
 using MLOps.NET.Storage;
+using System;
 using System.IO;
-using FluentAssertions;
+using System.Reflection;
 
 namespace MLOps.NET.SQLite.Tests
 {
@@ -13,17 +12,70 @@ namespace MLOps.NET.SQLite.Tests
     public class MLOpsBuilderExtensionTests
     {
         [TestMethod]
-        public void UseAzureStorage_ConfiguresManager()
+        public void UseAzureStorage_ConfiguresEvaluationCatalog()
         {
+            //Act
             var sqlitePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}{Path.DirectorySeparatorChar}.mlops";
-            IMLOpsContext lcManager = new MLOpsBuilder().UseSQLite(sqlitePath).Build();
+            IMLOpsContext unitUnderTest = new MLOpsBuilder().UseSQLite(sqlitePath).Build();
 
-            lcManager.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
-            var metaDataField = typeof(MLOpsContext).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
-            var repositoryField = typeof(MLOpsContext).GetField("modelRepository", BindingFlags.Instance | BindingFlags.NonPublic);
-            
-            metaDataField.GetValue(lcManager).Should().BeOfType<SQLiteMetaDataStore>();
-            repositoryField.GetValue(lcManager).Should().BeOfType<LocalFileModelRepository>();
+            unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
+
+            //Assert
+            unitUnderTest.Evaluation.Should().NotBeNull();
+
+            var metaDataField = typeof(EvaluationCatalog).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
+            metaDataField.GetValue(unitUnderTest.Evaluation).Should().BeOfType<SQLiteMetaDataStore>();
+        }
+
+
+        [TestMethod]
+        public void UseAzureStorage_ConfiguresTrainingCatalog()
+        {
+            //Act
+            var sqlitePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}{Path.DirectorySeparatorChar}.mlops";
+            IMLOpsContext unitUnderTest = new MLOpsBuilder().UseSQLite(sqlitePath).Build();
+
+            unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
+
+            //Assert
+            unitUnderTest.Training.Should().NotBeNull();
+
+            var metaDataField = typeof(TrainingCatalog).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            metaDataField.GetValue(unitUnderTest.Training).Should().BeOfType<SQLiteMetaDataStore>();
+        }
+
+        [TestMethod]
+        public void UseAzureStorage_ConfiguresLifeCycleCatalog()
+        {
+            //Act
+            var sqlitePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}{Path.DirectorySeparatorChar}.mlops";
+            IMLOpsContext unitUnderTest = new MLOpsBuilder().UseSQLite(sqlitePath).Build();
+
+            unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
+
+            //Assert
+            unitUnderTest.LifeCycle.Should().NotBeNull();
+
+            var metaDataField = typeof(LifeCycleCatalog).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            metaDataField.GetValue(unitUnderTest.LifeCycle).Should().BeOfType<SQLiteMetaDataStore>();
+        }
+
+        [TestMethod]
+        public void UseAzureStorage_ConfiguresModelCatalog()
+        {
+            //Act
+            var sqlitePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}{Path.DirectorySeparatorChar}.mlops";
+            IMLOpsContext unitUnderTest = new MLOpsBuilder().UseSQLite(sqlitePath).Build();
+
+            unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
+
+            //Assert
+            unitUnderTest.Model.Should().NotBeNull();
+
+            var repositoryField = typeof(ModelCatalog).GetField("modelRepository", BindingFlags.Instance | BindingFlags.NonPublic);
+            repositoryField.GetValue(unitUnderTest.Model).Should().BeOfType<LocalFileModelRepository>();
         }
     }
 }
