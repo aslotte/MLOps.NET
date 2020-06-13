@@ -18,7 +18,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
             IMLOpsContext mlm = new MLOpsBuilder().UseSQLite(destinationFolder).Build();
 
             //Act
-            var guid = await mlm.LifeCycleCatalog.CreateExperimentAsync("first experiment");
+            var guid = await mlm.LifeCycle.CreateExperimentAsync("first experiment");
 
             //Assert
             Guid.TryParse(guid.ToString(), out var parsedGuid);

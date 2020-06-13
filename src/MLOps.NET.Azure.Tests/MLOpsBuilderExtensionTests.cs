@@ -50,11 +50,11 @@ namespace MLOps.NET.Azure.Tests
             unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
 
             //Assert
-            unitUnderTest.LifeCycleCatalog.Should().NotBeNull();
+            unitUnderTest.LifeCycle.Should().NotBeNull();
 
             var metaDataField = typeof(LifeCycleCatalog).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
 
-            metaDataField.GetValue(unitUnderTest.LifeCycleCatalog).Should().BeOfType<StorageAccountMetaDataStore>();
+            metaDataField.GetValue(unitUnderTest.LifeCycle).Should().BeOfType<StorageAccountMetaDataStore>();
         }
 
         [TestMethod]
