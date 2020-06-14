@@ -46,5 +46,22 @@ namespace MLOps.NET.Tests
             var expectedTrainingTime = endTime.Subtract(runDate);
             metaDataStoreMock.Verify(x => x.SetTrainingTimeAsync(runId, expectedTrainingTime), Times.Once());
         }
+
+        [TestMethod]
+        public async Task SetTrainingTimeAsync_SetsTrainingTime_CallsMetaStoreWithTimeSpan()
+        {
+            //Arrange
+            var runId = Guid.NewGuid();
+            var runDate = DateTime.UtcNow.AddMinutes(-1);
+            var endTime = DateTime.UtcNow;
+
+            var trainingTime = endTime.Subtract(runDate);
+
+            //Act
+            await sut.SetTrainingTimeAsync(runId, trainingTime);
+
+            //Assert
+            metaDataStoreMock.Verify(x => x.SetTrainingTimeAsync(runId, trainingTime), Times.Once());
+        }
     }
 }
