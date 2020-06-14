@@ -77,7 +77,7 @@ namespace MLOps.NET.Storage
         Task LogHyperParameterAsync(Guid runId, string name, string value);
 
         /// <summary>
-        /// Sets the traiing time for a run
+        /// Sets the training time for a run
         /// </summary>
         /// <param name="runId"></param>
         /// <param name="timeSpan"></param>
