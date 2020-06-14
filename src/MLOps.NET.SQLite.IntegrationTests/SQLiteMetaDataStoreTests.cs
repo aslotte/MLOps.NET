@@ -8,7 +8,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
 {
     [TestCategory("Integration")]
     [TestClass]
-    public class SQLiteMetaDataStore
+    public class SQLiteMetaDataStoreTests
     {
         [TestMethod]
         public async Task CreateExperimentAsync_Always_ReturnsNonEmptyGuidAsync()
