@@ -26,5 +26,7 @@ namespace MLOps.NET.Azure.Entities
         public Guid ExperimentId { get; set; }
 
         public List<IMetric> Metrics { get; set; }
+
+        public TimeSpan TrainingTime { get; set; }
     }
 }

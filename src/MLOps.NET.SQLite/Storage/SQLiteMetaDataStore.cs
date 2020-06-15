@@ -61,6 +61,14 @@ namespace MLOps.NET.Storage
             }
         }
 
+        public IRun GetRun(Guid runId)
+        {
+            using (var db = new LocalDbContext())
+            {
+                return db.Runs.FirstOrDefault(x => x.Id == runId);
+            }
+        }
+
         ///<inheritdoc/>
         public List<IRun> GetRuns(Guid experimentId)
         {
@@ -105,6 +113,19 @@ namespace MLOps.NET.Storage
                 await db.SaveChangesAsync();
                 
                 return;
+            }
+        }
+
+        public async Task SetTrainingTimeAsync(Guid runId, TimeSpan timeSpan)
+        {
+            using (var db = new LocalDbContext())
+            {
+                var existingRun = db.Runs.FirstOrDefault(x => x.Id == runId);
+                if (existingRun == null) throw new InvalidOperationException($"The run with id {runId} does not exist");
+
+                existingRun.TrainingTime = timeSpan;
+
+                await db.SaveChangesAsync();
             }
         }
     }

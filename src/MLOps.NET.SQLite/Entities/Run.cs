@@ -24,5 +24,7 @@ namespace MLOps.NET.SQLite.Entities
 
         [NotMapped]
         public List<IMetric> Metrics { get; set; }
+
+        public TimeSpan TrainingTime { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using MLOps.NET.Catalogs;
 using MLOps.NET.Storage;
+using MLOps.NET.Utilities;
 using System;
 
 namespace MLOps.NET
@@ -12,7 +13,7 @@ namespace MLOps.NET
             if (metaDataStore == null) throw new ArgumentNullException(nameof(metaDataStore));
             if (modelRepository == null) throw new ArgumentNullException(nameof(modelRepository));
 
-            this.LifeCycle = new LifeCycleCatalog(metaDataStore);
+            this.LifeCycle = new LifeCycleCatalog(metaDataStore, new Clock());
             this.Evaluation = new EvaluationCatalog(metaDataStore);
             this.Model = new ModelCatalog(modelRepository);
             this.Training = new TrainingCatalog(metaDataStore);

@@ -133,6 +133,16 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc/>
+        public IRun GetRun(Guid runId)
+        {
+            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
+
+            var runTable = tableClient.GetTableReference(nameof(Run));
+
+            return runTable.CreateQuery<Run>().FirstOrDefault(x => x.Id == runId);
+        }
+
+        ///<inheritdoc/>
         public List<IMetric> GetMetrics(Guid runId)
         {
             var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
@@ -151,6 +161,17 @@ namespace MLOps.NET.Storage
             var hyperParameter = new HyperParameter(runId, name, value);
 
             await InsertOrMergeAsync(hyperParameter, nameof(HyperParameter));
+        }
+
+        ///<inheritdoc/>
+        public async Task SetTrainingTimeAsync(Guid runId, TimeSpan timeSpan)
+        {
+            var existingRun = GetRun(runId);
+            if (existingRun == null) throw new InvalidOperationException($"The run with id {runId} does not exist");
+
+            existingRun.TrainingTime = timeSpan;
+
+            await InsertOrMergeAsync(existingRun as Run, nameof(Run));
         }
 
         ///<inheritdoc/>

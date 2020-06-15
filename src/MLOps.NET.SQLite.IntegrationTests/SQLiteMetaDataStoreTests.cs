@@ -8,7 +8,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
 {
     [TestCategory("Integration")]
     [TestClass]
-    public class SQLiteMetaDataStore
+    public class SQLiteMetaDataStoreTests
     {
         [TestMethod]
         public async Task CreateExperimentAsync_Always_ReturnsNonEmptyGuidAsync()
@@ -43,6 +43,40 @@ namespace MLOps.NET.SQLite.IntegrationTests
             //Assert
             var fileExists = File.Exists(Path.Combine(modelStoragePath, $"{guid}.zip"));
             fileExists.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public async Task SetTrainingTimeAsync_SetsTrainingTimeOnRun()
+        {
+            //Arrange
+            var unitUnderTest = new MLOpsBuilder().UseSQLite().Build();
+            var runId = await unitUnderTest.LifeCycle.CreateRunAsync("Test");
+
+            var expectedTrainingTime = new TimeSpan(0, 5, 0);
+
+            //Act
+            await unitUnderTest.LifeCycle.SetTrainingTimeAsync(runId, expectedTrainingTime);
+
+            //Assert
+            var run = unitUnderTest.LifeCycle.GetRun(runId);
+            run.TrainingTime.Should().Be(expectedTrainingTime);
+        }
+
+        [TestMethod]
+        public void SetTrainingTimeAsync_NoRunProvided_ThrowsException()
+        {
+            //Arrange
+            var unitUnderTest = new MLOpsBuilder().UseSQLite().Build();
+
+            var expectedTrainingTime = new TimeSpan(0, 5, 0);
+
+            //Act and Assert
+            var runId = Guid.NewGuid();
+            var expectedMessage = $"The run with id {runId} does not exist";
+
+            Func<Task> func = new Func<Task>(async () => await unitUnderTest.LifeCycle.SetTrainingTimeAsync(runId, expectedTrainingTime));
+
+            func.Should().Throw<InvalidOperationException>(expectedMessage);
         }
     }
 }
