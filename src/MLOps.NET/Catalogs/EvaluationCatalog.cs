@@ -1,6 +1,9 @@
-﻿using MLOps.NET.Storage;
+﻿using Dynamitey;
+using Microsoft.ML.Data;
+using MLOps.NET.Storage;
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Catalogs
@@ -45,10 +48,21 @@ namespace MLOps.NET.Catalogs
             var metricsType = metrics.GetType();
 
             var properties = metricsType.GetProperties().Where(x => x.PropertyType == typeof(double));
-
+            
             foreach (var metric in properties)
             {
                 await LogMetricAsync(runId, metric.Name, (double)metric.GetValue(metrics));
+            }
+
+            if (metricsType.GetRuntimeProperties().Any(p => p.Name == nameof(ConfusionMatrix)))
+            {
+                var confusionMatrix = Dynamic.InvokeGet(metrics, nameof(ConfusionMatrix));
+
+                if (confusionMatrix != null)
+                {
+                    var confusionTable = Dynamic.InvokeMember(confusionMatrix, "GetFormattedConfusionTable");
+                    await metaDataStore.LogConfusionMatrixAsync(runId, confusionTable.ToString());
+                }
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using MLOps.NET.Entities.Entities;
+﻿using Microsoft.ML.Data;
+using MLOps.NET.Entities.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -53,6 +54,14 @@ namespace MLOps.NET.Storage
         /// <param name="runId"></param>
         /// <returns></returns>
         List<IMetric> GetMetrics(Guid runId);
+
+        /// <summary>
+        /// Logs the confusion matrix string representaion in the store
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <param name="value">string representaion of the confusion matrix</param>
+        /// <returns></returns>
+        Task LogConfusionMatrixAsync(Guid runId, string value);
 
         /// <summary>
         /// Logs a given hyperparameter for a run

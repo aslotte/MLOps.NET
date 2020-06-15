@@ -152,5 +152,13 @@ namespace MLOps.NET.Storage
 
             await InsertOrMergeAsync(hyperParameter, nameof(HyperParameter));
         }
+
+        ///<inheritdoc/>
+        public async Task LogConfusionMatrixAsync(Guid runId, string value)
+        {
+            var confusionMatrix = new ConfusionMatrix(runId, value);
+
+            await InsertOrMergeAsync(confusionMatrix, nameof(ConfusionMatrix));
+        }
     }
 }

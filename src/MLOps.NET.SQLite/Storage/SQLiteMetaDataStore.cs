@@ -71,6 +71,19 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc/>
+        public async Task LogConfusionMatrixAsync(Guid runId, string value)
+        {
+            using (var db = new LocalDbContext())
+            {
+                var confusionMatrix = new ConfusionMatrix(runId, value);
+                await db.ConfusionMatrix.AddAsync(confusionMatrix);
+                await db.SaveChangesAsync();
+
+                return;
+            }
+        }
+
+        ///<inheritdoc/>
         public async Task LogHyperParameterAsync(Guid runId, string name, string value)
         {
             using (var db = new LocalDbContext())
