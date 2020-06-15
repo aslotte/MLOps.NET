@@ -1,64 +1,30 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Reflection;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Microsoft.ML;
+﻿using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Trainers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MLOps.NET.Catalogs;
+using MLOps.NET.Entities.Entities;
 using MLOps.NET.Storage;
+using MLOps.NET.Utilities;
 using Moq;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MLOps.NET.Tests
 {
     [TestClass]
-    public class MLOpsContextTests
+    public class EvaluationCatalogTests
     {
-        private readonly IMLOpsContext sut;
-        private readonly Mock<IMetaDataStore> mockMetaDataStore = new Mock<IMetaDataStore>();
-        private readonly Mock<IModelRepository> mockModelRepository = new Mock<IModelRepository>();
+        private Mock<IMetaDataStore> metaDataStoreMock;
+        private EvaluationCatalog sut;
 
-        public MLOpsContextTests()
+        [TestInitialize]
+        public void Initialize()
         {
-            sut = new MLOpsBuilder()
-                .UseMetaDataStore(mockMetaDataStore.Object)
-                .UseModelRepository(mockModelRepository.Object)
-                .Build();
+            this.metaDataStoreMock = new Mock<IMetaDataStore>();
+            this.sut = new EvaluationCatalog(metaDataStoreMock.Object);
         }
-
-
-        [TestMethod]
-        public async Task MLOpsContext_ShouldCallLogHyperParameterIfPassedATrainerObject()
-        {
-            // Arrange
-            var mlContext = new MLContext(seed: 2);
-            var trainer = mlContext.BinaryClassification.Trainers.LbfgsLogisticRegression(labelColumnName: "Sentiment", featureColumnName: "Features");
-            mockMetaDataStore.Setup(s => s.LogHyperParameterAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(""));
-
-            // Act
-            await sut.Training.LogHyperParametersAsync<LbfgsLogisticRegressionBinaryTrainer>(new Guid(), trainer);
-
-            // Assert
-            mockMetaDataStore.Verify(c => c.LogHyperParameterAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()), Times.AtLeastOnce);
-        }
-
-        
-        [TestMethod]
-        public async Task MLOpsContext_ShouldNotCallLogHyperParameterIfPassedNotATrainerObject()
-        {
-            // Arrange
-            var mlContext = new MLContext(seed: 2);
-            mockMetaDataStore.Setup(s => s.LogHyperParameterAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(""));           
-            var notTrainer = new NotTrainer();
-
-            // Act
-            await sut.Training.LogHyperParametersAsync<NotTrainer>(new Guid(), notTrainer);
-            // Assert
-            mockMetaDataStore.Verify(c => c.LogHyperParameterAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-        }
-
 
         [TestMethod]
         public async Task MLOpsContext_ShouldSaveConfusionMatrixIfPassedABinaryClassifier()
@@ -75,13 +41,13 @@ namespace MLOps.NET.Tests
             var predicitions = model.Transform(data);
             var metrics = mlContext.BinaryClassification.Evaluate(predicitions, labelColumnName: "Label");
 
-            mockMetaDataStore.Setup(s => s.LogConfusionMatrixAsync(It.IsAny<Guid>(), It.IsAny<string>())).Returns(Task.FromResult(""));
+            metaDataStoreMock.Setup(s => s.LogConfusionMatrixAsync(It.IsAny<Guid>(), It.IsAny<string>())).Returns(Task.FromResult(""));
 
             // Act
-            await sut.Evaluation.LogMetricsAsync<CalibratedBinaryClassificationMetrics>(Guid.NewGuid(), metrics);
+            await sut.LogMetricsAsync<CalibratedBinaryClassificationMetrics>(Guid.NewGuid(), metrics);
 
             // Assert
-            mockMetaDataStore.Verify(c => c.LogConfusionMatrixAsync(It.IsAny<Guid>(), It.IsAny<string>()), Times.AtLeastOnce);
+            metaDataStoreMock.Verify(c => c.LogConfusionMatrixAsync(It.IsAny<Guid>(), It.IsAny<string>()), Times.AtLeastOnce);
         }
 
         [TestMethod]
@@ -107,13 +73,13 @@ namespace MLOps.NET.Tests
             var predicitions = model.Transform(data);
             var metrics = mlContext.AnomalyDetection.Evaluate(predicitions);
 
-            mockMetaDataStore.Setup(s => s.LogConfusionMatrixAsync(It.IsAny<Guid>(), It.IsAny<string>())).Returns(Task.FromResult(""));
+            metaDataStoreMock.Setup(s => s.LogConfusionMatrixAsync(It.IsAny<Guid>(), It.IsAny<string>())).Returns(Task.FromResult(""));
 
             // Act
-            await sut.Evaluation.LogMetricsAsync<AnomalyDetectionMetrics>(Guid.NewGuid(), metrics);
+            await sut.LogMetricsAsync<AnomalyDetectionMetrics>(Guid.NewGuid(), metrics);
 
             // Assert
-            mockMetaDataStore.Verify(c => c.LogConfusionMatrixAsync(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
+            metaDataStoreMock.Verify(c => c.LogConfusionMatrixAsync(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
         }
 
         private static List<DataPoint> GetSampleDataForTraining()
