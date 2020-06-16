@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Catalogs;
 using MLOps.NET.Storage;
+using Moq;
 using System;
 using System.IO;
 using System.Reflection;
@@ -12,11 +13,13 @@ namespace MLOps.NET.SQLite.Tests
     public class MLOpsBuilderExtensionTests
     {
         [TestMethod]
-        public void UseAzureStorage_ConfiguresEvaluationCatalog()
+        public void UseSqlLiteStorage_ConfiguresEvaluationCatalog()
         {
             //Act
-            var sqlitePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}{Path.DirectorySeparatorChar}.mlops";
-            IMLOpsContext unitUnderTest = new MLOpsBuilder().UseSQLite(sqlitePath).Build();
+            IMLOpsContext unitUnderTest = new MLOpsBuilder()
+                .UseSQLite()
+                .UseModelRepository(new Mock<IModelRepository>().Object)
+                .Build();
 
             unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
 
@@ -29,11 +32,13 @@ namespace MLOps.NET.SQLite.Tests
 
 
         [TestMethod]
-        public void UseAzureStorage_ConfiguresTrainingCatalog()
+        public void UseSqlLiteStorage_ConfiguresTrainingCatalog()
         {
             //Act
-            var sqlitePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}{Path.DirectorySeparatorChar}.mlops";
-            IMLOpsContext unitUnderTest = new MLOpsBuilder().UseSQLite(sqlitePath).Build();
+            IMLOpsContext unitUnderTest = new MLOpsBuilder()
+                .UseSQLite()
+                .UseModelRepository(new Mock<IModelRepository>().Object)
+                .Build();
 
             unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
 
@@ -46,11 +51,13 @@ namespace MLOps.NET.SQLite.Tests
         }
 
         [TestMethod]
-        public void UseAzureStorage_ConfiguresLifeCycleCatalog()
+        public void UseSqlLite_ConfiguresLifeCycleCatalog()
         {
             //Act
-            var sqlitePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}{Path.DirectorySeparatorChar}.mlops";
-            IMLOpsContext unitUnderTest = new MLOpsBuilder().UseSQLite(sqlitePath).Build();
+            IMLOpsContext unitUnderTest = new MLOpsBuilder()
+                .UseSQLite()
+                .UseModelRepository(new Mock<IModelRepository>().Object)
+                .Build();
 
             unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
 
@@ -60,22 +67,6 @@ namespace MLOps.NET.SQLite.Tests
             var metaDataField = typeof(LifeCycleCatalog).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
 
             metaDataField.GetValue(unitUnderTest.LifeCycle).Should().BeOfType<SQLiteMetaDataStore>();
-        }
-
-        [TestMethod]
-        public void UseAzureStorage_ConfiguresModelCatalog()
-        {
-            //Act
-            var sqlitePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}{Path.DirectorySeparatorChar}.mlops";
-            IMLOpsContext unitUnderTest = new MLOpsBuilder().UseSQLite(sqlitePath).Build();
-
-            unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
-
-            //Assert
-            unitUnderTest.Model.Should().NotBeNull();
-
-            var repositoryField = typeof(ModelCatalog).GetField("modelRepository", BindingFlags.Instance | BindingFlags.NonPublic);
-            repositoryField.GetValue(unitUnderTest.Model).Should().BeOfType<LocalFileModelRepository>();
         }
     }
 }

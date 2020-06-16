@@ -8,7 +8,7 @@ using System.IO.Abstractions.TestingHelpers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MLOps.NET.SQLite.Tests
+namespace MLOps.NET.Tests
 {
     [TestClass]
     public class LocalFileModelRepositoryTests

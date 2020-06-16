@@ -1,5 +1,4 @@
 ﻿using MLOps.NET.Storage;
-using System.IO.Abstractions;
 
 namespace MLOps.NET.SQLite
 {
@@ -9,15 +8,13 @@ namespace MLOps.NET.SQLite
     public static class MLOpsBuilderExtensions
     {
         /// <summary>
-        /// Enables the usage of SQLite and local storage
+        /// Enables the usage of SQLite
         /// </summary>
-        /// <param name="builder">MLOpsBuilder to add Azure Storage providers to</param>
-        /// <param name="destinationFolder">Destination folder, default location is .mlops under the current user</param>
+        /// <param name="builder">MLOpsBuilder for using SQLite</param>
         /// <returns>Provided MLOpsBuilder for chaining</returns>
-        public static MLOpsBuilder UseSQLite(this MLOpsBuilder builder, string destinationFolder = null)
+        public static MLOpsBuilder UseSQLite(this MLOpsBuilder builder)
         {
             builder.UseMetaDataStore(new SQLiteMetaDataStore());
-            builder.UseModelRepository(new LocalFileModelRepository(new FileSystem(), destinationFolder));
 
             return builder;
         }

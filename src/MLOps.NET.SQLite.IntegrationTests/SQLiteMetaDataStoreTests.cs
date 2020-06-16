@@ -1,5 +1,7 @@
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MLOps.NET.Storage;
+using Moq;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -14,8 +16,10 @@ namespace MLOps.NET.SQLite.IntegrationTests
         public async Task CreateExperimentAsync_Always_ReturnsNonEmptyGuidAsync()
         {
             //Arrange
-            var destinationFolder = @"C:\MLOps";
-            IMLOpsContext mlm = new MLOpsBuilder().UseSQLite(destinationFolder).Build();
+            IMLOpsContext mlm = new MLOpsBuilder()
+                .UseModelRepository(new Mock<IModelRepository>().Object)
+                .UseSQLite()
+                .Build();
 
             //Act
             var guid = await mlm.LifeCycle.CreateExperimentAsync("first experiment");
@@ -26,30 +30,13 @@ namespace MLOps.NET.SQLite.IntegrationTests
         }
 
         [TestMethod]
-        public async Task UploadModelAsync_ValidModelPath_UploadSuccessAsync()
-        {
-            //Arrange
-            var destinationFolder = @"C:\MLOps";
-            IMLOpsContext mlm = new MLOpsBuilder().UseSQLite(destinationFolder).Build();
-            var guid = Guid.NewGuid();
-            var modelPath = @"C:\data\model.zip";
-            var modelStoragePath = @"C:\MLOps";
-            using var writer = new StreamWriter(modelPath);
-            writer.Close();
-
-            //Act
-            await mlm.Model.UploadAsync(guid, modelPath);
-
-            //Assert
-            var fileExists = File.Exists(Path.Combine(modelStoragePath, $"{guid}.zip"));
-            fileExists.Should().BeTrue();
-        }
-
-        [TestMethod]
         public async Task SetTrainingTimeAsync_SetsTrainingTimeOnRun()
         {
             //Arrange
-            var unitUnderTest = new MLOpsBuilder().UseSQLite().Build();
+            var unitUnderTest = new MLOpsBuilder()
+                .UseSQLite()
+                .UseModelRepository(new Mock<IModelRepository>().Object)
+                .Build();
             var runId = await unitUnderTest.LifeCycle.CreateRunAsync("Test");
 
             var expectedTrainingTime = new TimeSpan(0, 5, 0);
@@ -66,7 +53,10 @@ namespace MLOps.NET.SQLite.IntegrationTests
         public void SetTrainingTimeAsync_NoRunProvided_ThrowsException()
         {
             //Arrange
-            var unitUnderTest = new MLOpsBuilder().UseSQLite().Build();
+            var unitUnderTest = new MLOpsBuilder()
+                .UseSQLite()
+                .UseModelRepository(new Mock<IModelRepository>().Object)
+                .Build();
 
             var expectedTrainingTime = new TimeSpan(0, 5, 0);
 
