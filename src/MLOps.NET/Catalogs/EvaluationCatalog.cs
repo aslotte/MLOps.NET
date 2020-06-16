@@ -1,5 +1,4 @@
 ﻿using Dynamitey;
-using Microsoft.ML.Data;
 using MLOps.NET.Storage;
 using System;
 using System.Linq;
@@ -14,6 +13,8 @@ namespace MLOps.NET.Catalogs
     public sealed class EvaluationCatalog
     {
         private readonly IMetaDataStore metaDataStore;
+
+        private readonly string consfusionMatrixPropertyName = "ConfusionMatrix";
 
         /// <summary>
         /// ctor
@@ -54,9 +55,9 @@ namespace MLOps.NET.Catalogs
                 await LogMetricAsync(runId, metric.Name, (double)metric.GetValue(metrics));
             }
 
-            if (metricsType.GetRuntimeProperties().Any(p => p.Name == nameof(ConfusionMatrix)))
+            if (metricsType.GetRuntimeProperties().Any(p => p.Name == consfusionMatrixPropertyName))
             {
-                var confusionMatrix = Dynamic.InvokeGet(metrics, nameof(ConfusionMatrix));
+                var confusionMatrix = Dynamic.InvokeGet(metrics, consfusionMatrixPropertyName);
 
                 if (confusionMatrix != null)
                 {
