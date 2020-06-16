@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30128.74
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MLOps.NET.MulticlassClassification", "MLOps.NET.Examples\MLOps.NET.MulticlassClassification.csproj", "{F2A8DC33-B820-4EB8-875F-7D75DCFFC19E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.MulticlassClassification", "MLOps.NET.MulticlassClassification\MLOps.NET.MulticlassClassification.csproj", "{F2A8DC33-B820-4EB8-875F-7D75DCFFC19E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MLOps.NET.BinaryClassification", "MLOps.NET.BinaryClassification\MLOps.NET.BinaryClassification.csproj", "{BD1076B9-D707-4C92-BB0D-D8D98E2AABEF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{F2A8DC33-B820-4EB8-875F-7D75DCFFC19E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2A8DC33-B820-4EB8-875F-7D75DCFFC19E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2A8DC33-B820-4EB8-875F-7D75DCFFC19E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD1076B9-D707-4C92-BB0D-D8D98E2AABEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD1076B9-D707-4C92-BB0D-D8D98E2AABEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD1076B9-D707-4C92-BB0D-D8D98E2AABEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD1076B9-D707-4C92-BB0D-D8D98E2AABEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
