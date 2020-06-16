@@ -13,7 +13,10 @@ namespace MLOps.NET.Azure.Tests
         public void UseAzureStorage_ConfiguresEvaluationCatalog()
         {
             //Act
-            IMLOpsContext unitUnderTest = new MLOpsBuilder().UseAzureStorage("UseDevelopmentStorage=true").Build();
+            IMLOpsContext unitUnderTest = new MLOpsBuilder()
+                .UseAzureBlobModelRepository("UseDevelopmentStorage=true")
+                .UseAzureTableStorage("UseDevelopmentStorage=true")
+                .Build();
 
             unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
 
@@ -29,7 +32,10 @@ namespace MLOps.NET.Azure.Tests
         public void UseAzureStorage_ConfiguresTrainingCatalog()
         {
             //Act
-            IMLOpsContext unitUnderTest = new MLOpsBuilder().UseAzureStorage("UseDevelopmentStorage=true").Build();
+            IMLOpsContext unitUnderTest = new MLOpsBuilder()
+                .UseAzureBlobModelRepository("UseDevelopmentStorage=true")
+                .UseAzureTableStorage("UseDevelopmentStorage=true")
+                .Build();
 
             unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
 
@@ -45,7 +51,10 @@ namespace MLOps.NET.Azure.Tests
         public void UseAzureStorage_ConfiguresLifeCycleCatalog()
         {
             //Act
-            IMLOpsContext unitUnderTest = new MLOpsBuilder().UseAzureStorage("UseDevelopmentStorage=true").Build();
+            IMLOpsContext unitUnderTest = new MLOpsBuilder()
+                .UseAzureBlobModelRepository("UseDevelopmentStorage=true")
+                .UseAzureTableStorage("UseDevelopmentStorage=true")
+                .Build();
 
             unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
 
@@ -61,7 +70,10 @@ namespace MLOps.NET.Azure.Tests
         public void UseAzureStorage_ConfiguresModelCatalog()
         {
             //Act
-            IMLOpsContext unitUnderTest = new MLOpsBuilder().UseAzureStorage("UseDevelopmentStorage=true").Build();
+            IMLOpsContext unitUnderTest = new MLOpsBuilder()
+                .UseAzureBlobModelRepository("UseDevelopmentStorage=true")
+                .UseAzureTableStorage("UseDevelopmentStorage=true")
+                .Build();
 
             unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
 
