@@ -1,5 +1,4 @@
-﻿using Microsoft.ML.Data;
-using MLOps.NET.Entities.Entities;
+﻿using MLOps.NET.Entities.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
