@@ -44,7 +44,7 @@ namespace MLOps.NET.Tests
             metaDataStoreMock.Setup(s => s.LogConfusionMatrixAsync(It.IsAny<Guid>(), It.IsAny<string>())).Returns(Task.FromResult(""));
 
             // Act
-            await sut.LogMetricsAsync<CalibratedBinaryClassificationMetrics>(Guid.NewGuid(), metrics);
+            await sut.LogConfusionMatrixAsync<CalibratedBinaryClassificationMetrics>(Guid.NewGuid(), metrics);
 
             // Assert
             metaDataStoreMock.Verify(c => c.LogConfusionMatrixAsync(It.IsAny<Guid>(), It.IsAny<string>()), Times.AtLeastOnce);
@@ -76,7 +76,7 @@ namespace MLOps.NET.Tests
             metaDataStoreMock.Setup(s => s.LogConfusionMatrixAsync(It.IsAny<Guid>(), It.IsAny<string>())).Returns(Task.FromResult(""));
 
             // Act
-            await sut.LogMetricsAsync<AnomalyDetectionMetrics>(Guid.NewGuid(), metrics);
+            await sut.LogConfusionMatrixAsync<AnomalyDetectionMetrics>(Guid.NewGuid(), metrics);
 
             // Assert
             metaDataStoreMock.Verify(c => c.LogConfusionMatrixAsync(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);

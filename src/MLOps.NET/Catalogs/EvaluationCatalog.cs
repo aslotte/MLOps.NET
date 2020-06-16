@@ -49,7 +49,7 @@ namespace MLOps.NET.Catalogs
             var metricsType = metrics.GetType();
 
             var properties = metricsType.GetProperties().Where(x => x.PropertyType == typeof(double));
-            
+
             foreach (var metric in properties)
             {
                 await LogMetricAsync(runId, metric.Name, (double)metric.GetValue(metrics));
@@ -65,6 +65,30 @@ namespace MLOps.NET.Catalogs
                     await metaDataStore.LogConfusionMatrixAsync(runId, confusionTable.ToString());
                 }
             }
+        }
+
+        /// <summary>
+        /// Logs confusion matrix for a binary classifier
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="runId"></param>
+        /// <param name="metrics"></param>
+        /// <returns></returns>
+        public async Task LogConfusionMatrixAsync<T>(Guid runId, T metrics) where T : class
+        {
+            var metricsType = metrics.GetType();
+
+            if (metricsType.GetRuntimeProperties().Any(p => p.Name == consfusionMatrixPropertyName))
+            {
+                var confusionMatrix = Dynamic.InvokeGet(metrics, consfusionMatrixPropertyName);
+
+                if (confusionMatrix != null)
+                {
+                    var confusionTable = Dynamic.InvokeMember(confusionMatrix, "GetFormattedConfusionTable");
+                    await metaDataStore.LogConfusionMatrixAsync(runId, confusionTable.ToString());
+                }
+            }
+
         }
     }
 }
