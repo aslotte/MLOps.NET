@@ -1,6 +1,5 @@
 ﻿using Microsoft.ML.Data;
 using MLOps.NET.Entities.Entities;
-using MLOps.NET.Entities.Interfaces;
 using MLOps.NET.SQLite.Entities;
 using MLOps.NET.SQLite.Storage;
 using Newtonsoft.Json;

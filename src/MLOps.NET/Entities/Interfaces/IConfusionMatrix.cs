@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MLOps.NET.Entities.Interfaces
+namespace MLOps.NET.Entities.Entities
 {
     /// <summary>
     /// Confusion matrix associated with a classifier.

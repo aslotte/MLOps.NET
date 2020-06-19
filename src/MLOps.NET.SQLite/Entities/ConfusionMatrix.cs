@@ -1,4 +1,4 @@
-﻿using MLOps.NET.Entities.Interfaces;
+﻿using MLOps.NET.Entities.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;

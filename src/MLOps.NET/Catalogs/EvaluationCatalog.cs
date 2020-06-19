@@ -1,5 +1,5 @@
 ﻿using Microsoft.ML.Data;
-using MLOps.NET.Entities.Interfaces;
+using MLOps.NET.Entities.Entities;
 using MLOps.NET.Storage;
 using System;
 using System.Linq;

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Azure.Cosmos.Table;
 using Microsoft.ML.Calibrators;
-using MLOps.NET.Entities.Interfaces;
+using MLOps.NET.Entities.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;

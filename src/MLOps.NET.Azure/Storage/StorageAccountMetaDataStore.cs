@@ -1,7 +1,6 @@
 ﻿using Microsoft.Azure.Cosmos.Table;
 using MLOps.NET.Azure.Entities;
 using MLOps.NET.Entities.Entities;
-using MLOps.NET.Entities.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
