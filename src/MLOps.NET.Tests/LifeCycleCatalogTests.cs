@@ -63,5 +63,29 @@ namespace MLOps.NET.Tests
             //Assert
             metaDataStoreMock.Verify(x => x.SetTrainingTimeAsync(runId, trainingTime), Times.Once());
         }
+
+        [TestMethod]
+        public async Task CreateRunAsync_WithGitCommitHash_SetsGitCommitHash()
+        {
+            //Arrange
+            var gitCommitHash = "12323239329392";
+
+            //Act
+            var runId = await sut.CreateRunAsync(Guid.NewGuid(), gitCommitHash);
+
+            //Assert
+            this.metaDataStoreMock.Verify(x => x.CreateRunAsync(It.IsAny<Guid>(), gitCommitHash), Times.Once());
+        }
+
+        [TestMethod]
+        public async Task CreateRunAsync_WithoutGitCommitHash_ShouldProvideEmptyGitCommitHash()
+        {
+            //Arrange
+            //Act
+            var runId = await sut.CreateRunAsync(Guid.NewGuid());
+
+            //Assert
+            this.metaDataStoreMock.Verify(x => x.CreateRunAsync(It.IsAny<Guid>(), string.Empty), Times.Once());
+        }
     }
 }

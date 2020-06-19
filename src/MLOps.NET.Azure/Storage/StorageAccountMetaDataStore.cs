@@ -34,9 +34,13 @@ namespace MLOps.NET.Storage
             return existingExperiment.Id;
         }
 
-        public async Task<Guid> CreateRunAsync(Guid experimentId)
+        public async Task<Guid> CreateRunAsync(Guid experimentId, string gitCommitHash = "")
         {
-            var run = new Run(experimentId);
+            var run = new Run(experimentId)
+            {
+                GitCommitHash = gitCommitHash
+            };
+
             var addedRun = await InsertOrMergeAsync(run, nameof(Run));
 
             return addedRun.Id;

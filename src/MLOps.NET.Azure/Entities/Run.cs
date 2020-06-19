@@ -28,5 +28,7 @@ namespace MLOps.NET.Azure.Entities
         public List<IMetric> Metrics { get; set; }
 
         public TimeSpan TrainingTime { get; set; }
+
+        public string GitCommitHash { get; set; }
     }
 }

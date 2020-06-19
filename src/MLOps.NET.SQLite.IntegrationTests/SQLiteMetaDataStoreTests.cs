@@ -16,13 +16,13 @@ namespace MLOps.NET.SQLite.IntegrationTests
         public async Task CreateExperimentAsync_Always_ReturnsNonEmptyGuidAsync()
         {
             //Arrange
-            IMLOpsContext mlm = new MLOpsBuilder()
+            IMLOpsContext sut = new MLOpsBuilder()
                 .UseModelRepository(new Mock<IModelRepository>().Object)
                 .UseSQLite()
                 .Build();
 
             //Act
-            var guid = await mlm.LifeCycle.CreateExperimentAsync("first experiment");
+            var guid = await sut.LifeCycle.CreateExperimentAsync("first experiment");
 
             //Assert
             Guid.TryParse(guid.ToString(), out var parsedGuid);
@@ -33,19 +33,19 @@ namespace MLOps.NET.SQLite.IntegrationTests
         public async Task SetTrainingTimeAsync_SetsTrainingTimeOnRun()
         {
             //Arrange
-            var unitUnderTest = new MLOpsBuilder()
+            var sut = new MLOpsBuilder()
                 .UseSQLite()
                 .UseModelRepository(new Mock<IModelRepository>().Object)
                 .Build();
-            var runId = await unitUnderTest.LifeCycle.CreateRunAsync("Test");
+            var runId = await sut.LifeCycle.CreateRunAsync("Test");
 
             var expectedTrainingTime = new TimeSpan(0, 5, 0);
 
             //Act
-            await unitUnderTest.LifeCycle.SetTrainingTimeAsync(runId, expectedTrainingTime);
+            await sut.LifeCycle.SetTrainingTimeAsync(runId, expectedTrainingTime);
 
             //Assert
-            var run = unitUnderTest.LifeCycle.GetRun(runId);
+            var run = sut.LifeCycle.GetRun(runId);
             run.TrainingTime.Should().Be(expectedTrainingTime);
         }
 
@@ -53,7 +53,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
         public void SetTrainingTimeAsync_NoRunProvided_ThrowsException()
         {
             //Arrange
-            var unitUnderTest = new MLOpsBuilder()
+            var sut = new MLOpsBuilder()
                 .UseSQLite()
                 .UseModelRepository(new Mock<IModelRepository>().Object)
                 .Build();
@@ -64,9 +64,45 @@ namespace MLOps.NET.SQLite.IntegrationTests
             var runId = Guid.NewGuid();
             var expectedMessage = $"The run with id {runId} does not exist";
 
-            Func<Task> func = new Func<Task>(async () => await unitUnderTest.LifeCycle.SetTrainingTimeAsync(runId, expectedTrainingTime));
+            Func<Task> func = new Func<Task>(async () => await sut.LifeCycle.SetTrainingTimeAsync(runId, expectedTrainingTime));
 
             func.Should().Throw<InvalidOperationException>(expectedMessage);
+        }
+
+        [TestMethod]
+        public async Task CreateRunAsync_WithGitCommitHash_SetsGitCommitHash()
+        {
+            //Arrange
+            var sut = new MLOpsBuilder()
+                .UseSQLite()
+                .UseModelRepository(new Mock<IModelRepository>().Object)
+                .Build();
+
+            var gitCommitHash = "12323239329392";
+
+            //Act
+            var runId = await sut.LifeCycle.CreateRunAsync(Guid.NewGuid(), gitCommitHash);
+
+            //Assert
+            var run = sut.LifeCycle.GetRun(runId);
+            run.GitCommitHash.Should().Be(gitCommitHash);
+        }
+
+        [TestMethod]
+        public async Task CreateRunAsync_WithoutGitCommitHash_ShouldProvideEmptyGitCommitHash()
+        {
+            //Arrange
+            var sut = new MLOpsBuilder()
+                .UseSQLite()
+                .UseModelRepository(new Mock<IModelRepository>().Object)
+                .Build();
+
+            //Act
+            var runId = await sut.LifeCycle.CreateRunAsync(Guid.NewGuid());
+
+            //Assert
+            var run = sut.LifeCycle.GetRun(runId);
+            run.GitCommitHash.Should().Be(string.Empty);
         }
     }
 }
