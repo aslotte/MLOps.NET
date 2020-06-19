@@ -18,13 +18,14 @@ namespace MLOps.NET.Storage
         /// <param name="name"></param>
         /// <returns></returns>
         Task<Guid> CreateExperimentAsync(string name);
-       
+
         /// <summary>
         /// Creates a unqiue run for a given experiment
         /// </summary>
         /// <param name="experimentId"></param>
+        /// <param name="gitCommitHash">Optional, sets the linked git commit hash</param>
         /// <returns></returns>
-        Task<Guid> CreateRunAsync(Guid experimentId);
+        Task<Guid> CreateRunAsync(Guid experimentId, string gitCommitHash = "");
         
         /// <summary>
         /// Logs a given metric for a run

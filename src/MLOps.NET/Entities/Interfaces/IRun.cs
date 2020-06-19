@@ -31,5 +31,10 @@ namespace MLOps.NET.Entities.Entities
         /// Training time
         /// </summary>
         TimeSpan TrainingTime { get; set; }
+
+        /// <summary>
+        /// Git Commit Hash
+        /// </summary>
+        string GitCommitHash { get; set; }
     }
 }

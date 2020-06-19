@@ -3,6 +3,7 @@ using MLOps.NET.Storage;
 using MLOps.NET.Utilities;
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Catalogs
@@ -40,21 +41,23 @@ namespace MLOps.NET.Catalogs
         /// Creates a unique run for a given experiment
         /// </summary>
         /// <param name="experimentId"></param>
+        /// <param name="gitCommitHash">Optional, set the linked git commit hash</param>
         /// <returns>Run Id</returns>
-        public async Task<Guid> CreateRunAsync(Guid experimentId)
+        public async Task<Guid> CreateRunAsync(Guid experimentId, string gitCommitHash = "")
         {
-            return await metaDataStore.CreateRunAsync(experimentId);
+            return await metaDataStore.CreateRunAsync(experimentId, gitCommitHash);
         }
 
         /// <summary>
         /// Creates a unique run and experiment given an experiment name
         /// </summary>
         /// <param name="experimentName"></param>
+        /// <param name="gitCommitHash">Optional, set the linked git commit hash</param>
         /// <returns>Run Id</returns>
-        public async Task<Guid> CreateRunAsync(string experimentName)
+        public async Task<Guid> CreateRunAsync(string experimentName, string gitCommitHash = "")
         {
             var experimentId = await CreateExperimentAsync(experimentName);
-            return await CreateRunAsync(experimentId);
+            return await CreateRunAsync(experimentId, gitCommitHash);
         }
 
         /// <summary>

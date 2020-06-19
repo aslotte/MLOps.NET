@@ -26,11 +26,15 @@ namespace MLOps.NET.Storage
             }
         }
 
-        public async Task<Guid> CreateRunAsync(Guid experimentId)
+        public async Task<Guid> CreateRunAsync(Guid experimentId, string gitCommitHash = "")
         {
             using (var db = new LocalDbContext())
             {
-                var run = new Run(experimentId);
+                var run = new Run(experimentId)
+                {
+                    GitCommitHash = gitCommitHash
+                };
+
                 await db.Runs.AddAsync(run);
                 await db.SaveChangesAsync();
                 
