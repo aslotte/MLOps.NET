@@ -197,7 +197,7 @@ namespace MLOps.NET.Storage
             var conMatrix = new ConfusionMatrix(runId, confusionMatrix.NumberOfClasses,
                                                 confusionMatrix.PerClassPrecision.ToList(),
                                                 confusionMatrix.PerClassRecall.ToList(),
-                                                (List<List<double>>)confusionMatrix.Counts);
+                                                confusionMatrix.Counts);
             conMatrix.SerializedDetails = JsonConvert.SerializeObject(conMatrix);
             await InsertOrMergeAsync(conMatrix, nameof(ConfusionMatrix));
         }
