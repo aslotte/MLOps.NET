@@ -3,6 +3,7 @@ using Microsoft.ML.Transforms;
 using MLOps.NET.Regression.Entities;
 using MLOps.NET.SQLite;
 using System;
+using System.Threading.Tasks;
 
 namespace MLOps.NET.Regression
 {
