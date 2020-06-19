@@ -9,7 +9,7 @@ namespace MLOps.NET.Regression
 {
     class Program
     {
-        static async System.Threading.Tasks.Task Main(string[] args)
+        static async Task Main(string[] args)
         {
             // MLOps: Create experiment and run
             var mlOpsContext = new MLOpsBuilder()
