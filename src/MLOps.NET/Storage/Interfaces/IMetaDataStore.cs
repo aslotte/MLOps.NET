@@ -1,4 +1,4 @@
-﻿using Microsoft.ML.Data;
+﻿using MLOps.NET.Entities;
 using MLOps.NET.Entities.Entities;
 using System;
 using System.Collections.Generic;
@@ -99,6 +99,6 @@ namespace MLOps.NET.Storage
         /// </summary>
         /// <param name="runId"></param>
         /// <returns></returns>
-        IConfusionMatrix GetConfusionMatrix(Guid runId);
+        IConfusionMatrixEntity GetConfusionMatrix(Guid runId);
     }
 }

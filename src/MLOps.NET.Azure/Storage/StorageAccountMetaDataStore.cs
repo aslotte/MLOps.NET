@@ -1,5 +1,6 @@
 ﻿using Microsoft.Azure.Cosmos.Table;
 using MLOps.NET.Azure.Entities;
+using MLOps.NET.Entities;
 using MLOps.NET.Entities.Entities;
 using Newtonsoft.Json;
 using System;
@@ -164,12 +165,12 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc/>
-        public IConfusionMatrix GetConfusionMatrix(Guid runId)
+        public IConfusionMatrixEntity GetConfusionMatrix(Guid runId)
         {
             var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
             var confusionMatrixTable = tableClient.GetTableReference(nameof(ConfusionMatrix));
 
-            var confusionMatrix = confusionMatrixTable.CreateQuery<ConfusionMatrix>()
+            var confusionMatrix = confusionMatrixTable.CreateQuery<ConfusionMatrixEntity>()
                 .FirstOrDefault(x => x.RunId == runId);
 
             return confusionMatrix;
@@ -195,13 +196,10 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc/>
-        public async Task LogConfusionMatrixAsync(Guid runId, Microsoft.ML.Data.ConfusionMatrix confusionMatrix)
+        public async Task LogConfusionMatrixAsync(Guid runId, ConfusionMatrix confusionMatrix)
         {
-            var conMatrix = new ConfusionMatrix(runId, confusionMatrix.NumberOfClasses,
-                                                confusionMatrix.PerClassPrecision.ToList(),
-                                                confusionMatrix.PerClassRecall.ToList(),
-                                                confusionMatrix.Counts);
-            conMatrix.SerializedDetails = JsonConvert.SerializeObject(conMatrix);
+            var conMatrix = new ConfusionMatrixEntity(runId);           
+            conMatrix.SerializedMatrix = JsonConvert.SerializeObject(confusionMatrix);
             await InsertOrMergeAsync(conMatrix, nameof(ConfusionMatrix));
         }
     }

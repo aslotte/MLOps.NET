@@ -15,7 +15,7 @@ namespace MLOps.NET.SQLite.Storage
         public DbSet<Experiment> Experiments { get; set; }
         public DbSet<Metric> Metrics { get; set; }
 
-        public DbSet<ConfusionMatrix> ConfusionMatrices { get; set; }
+        public DbSet<ConfusionMatrixEntity> ConfusionMatrices { get; set; }
 
         public DbSet<HyperParameter> HyperParameters { get; set; }
 

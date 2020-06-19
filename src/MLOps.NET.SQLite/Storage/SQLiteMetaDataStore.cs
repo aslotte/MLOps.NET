@@ -1,4 +1,4 @@
-﻿using Microsoft.ML.Data;
+﻿using MLOps.NET.Entities;
 using MLOps.NET.Entities.Entities;
 using MLOps.NET.SQLite.Entities;
 using MLOps.NET.SQLite.Storage;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ConfusionMatrix = MLOps.NET.SQLite.Entities.ConfusionMatrix;
+using ConfusionMatrixEntity = MLOps.NET.SQLite.Entities.ConfusionMatrixEntity;
 
 namespace MLOps.NET.Storage
 {
@@ -42,7 +42,7 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc/>
-        public IConfusionMatrix GetConfusionMatrix(Guid runId)
+        public IConfusionMatrixEntity GetConfusionMatrix(Guid runId)
         {
             using (var db = new LocalDbContext())
             {
@@ -94,15 +94,12 @@ namespace MLOps.NET.Storage
             }
         }
 
-        public async Task LogConfusionMatrixAsync(Guid runId, Microsoft.ML.Data.ConfusionMatrix confusionMatrix)
+        public async Task LogConfusionMatrixAsync(Guid runId, ConfusionMatrix confusionMatrix)
         {
             using (var db = new LocalDbContext())
             {
-                var conMatrix = new ConfusionMatrix(runId, confusionMatrix.NumberOfClasses,
-                                                confusionMatrix.PerClassPrecision.ToList(),
-                                                confusionMatrix.PerClassRecall.ToList(),
-                                                confusionMatrix.Counts);
-                conMatrix.SerializedDetails = JsonConvert.SerializeObject(conMatrix);
+                var conMatrix = new ConfusionMatrixEntity(runId);
+                conMatrix.SerializedMatrix = JsonConvert.SerializeObject(confusionMatrix);
                 await db.ConfusionMatrices.AddAsync(conMatrix);
                 await db.SaveChangesAsync();
                 return;

@@ -78,7 +78,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
             //Assert
             var confusionMatrix = unitUnderTest.Evaluation.GetConfusionMatrix(runId);
             confusionMatrix.Should().NotBeNull();
-            confusionMatrix.SerializedDetails.Should().NotBeNullOrEmpty();
+            confusionMatrix.SerializedMatrix.Should().NotBeNullOrEmpty();
         }
 
             [TestMethod]

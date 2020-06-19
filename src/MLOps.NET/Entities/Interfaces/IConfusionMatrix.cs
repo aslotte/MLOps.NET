@@ -7,7 +7,7 @@ namespace MLOps.NET.Entities.Entities
     /// <summary>
     /// Confusion matrix associated with a classifier.
     /// </summary>
-    public interface IConfusionMatrix
+    public interface IConfusionMatrixEntity
     {
         /// <summary>
         /// 
@@ -17,26 +17,6 @@ namespace MLOps.NET.Entities.Entities
         /// <summary>
         /// 
         /// </summary>
-        int NumberOfClasses { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        IReadOnlyList<double> PerClassPrecision { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        IReadOnlyList<double> PerClassRecall { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        IReadOnlyList<IReadOnlyList<double>> Counts { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        string SerializedDetails { get; set; }
+        string SerializedMatrix { get; set; }
     }
 }

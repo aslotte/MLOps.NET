@@ -62,7 +62,14 @@ namespace MLOps.NET.Catalogs
         /// <returns></returns>
         public async Task LogConfusionMatrixAsync(Guid runId, ConfusionMatrix confusionMatrix)
         {
-            await metaDataStore.LogConfusionMatrixAsync(runId, confusionMatrix);
+            var conMatrix = new MLOps.NET.Entities.ConfusionMatrix()
+            {
+                Counts = confusionMatrix.Counts,
+                NumberOfClasses = confusionMatrix.NumberOfClasses,
+                PerClassPrecision = confusionMatrix.PerClassPrecision,
+                PerClassRecall = confusionMatrix.PerClassRecall
+            };
+            await metaDataStore.LogConfusionMatrixAsync(runId, conMatrix);
         }
 
         /// <summary>
@@ -70,7 +77,7 @@ namespace MLOps.NET.Catalogs
         /// </summary>
         /// <param name="runId"></param>
         /// <returns></returns>
-        public IConfusionMatrix GetConfusionMatrix(Guid runId)
+        public IConfusionMatrixEntity GetConfusionMatrix(Guid runId)
         {
             return metaDataStore.GetConfusionMatrix(runId);
         }
