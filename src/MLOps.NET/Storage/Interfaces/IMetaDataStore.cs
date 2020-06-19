@@ -1,4 +1,6 @@
-﻿using MLOps.NET.Entities.Entities;
+﻿using Microsoft.ML.Data;
+using MLOps.NET.Entities.Entities;
+using MLOps.NET.Entities.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -61,6 +63,14 @@ namespace MLOps.NET.Storage
         IRun GetRun(Guid runId);
 
         /// <summary>
+        /// Saves confusion matrix as a json serialized string to the store
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <param name="confusionMatrix"></param>
+        /// <returns></returns>
+        Task LogConfusionMatrixAsync(Guid runId, ConfusionMatrix confusionMatrix);
+
+        /// <summary>
         /// Get all metrics by run id
         /// </summary>
         /// <param name="runId"></param>
@@ -83,5 +93,12 @@ namespace MLOps.NET.Storage
         /// <param name="timeSpan"></param>
         /// <returns></returns>
         Task SetTrainingTimeAsync(Guid runId, TimeSpan timeSpan);
+
+        /// <summary>
+        /// Gets confusion matrix for a run.
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <returns></returns>
+        IConfusionMatrix GetConfusionMatrix(Guid runId);
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.Azure.Cosmos.Table;
 using MLOps.NET.Azure.Entities;
 using MLOps.NET.Entities.Entities;
+using MLOps.NET.Entities.Interfaces;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -139,7 +141,10 @@ namespace MLOps.NET.Storage
 
             var runTable = tableClient.GetTableReference(nameof(Run));
 
-            return runTable.CreateQuery<Run>().FirstOrDefault(x => x.Id == runId);
+            var run = runTable.CreateQuery<Run>().FirstOrDefault(x => x.Id == runId);
+            run.Metrics = GetMetrics(run.Id);
+
+            return run;
         }
 
         ///<inheritdoc/>
@@ -153,6 +158,18 @@ namespace MLOps.NET.Storage
                 .ToList<IMetric>();
 
             return metrics;
+        }
+
+        ///<inheritdoc/>
+        public IConfusionMatrix GetConfusionMatrix(Guid runId)
+        {
+            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
+            var confusionMatrixTable = tableClient.GetTableReference(nameof(ConfusionMatrix));
+
+            var confusionMatrix = confusionMatrixTable.CreateQuery<ConfusionMatrix>()
+                .FirstOrDefault(x => x.RunId == runId);
+
+            return confusionMatrix;
         }
 
         ///<inheritdoc/>
@@ -172,6 +189,17 @@ namespace MLOps.NET.Storage
             existingRun.TrainingTime = timeSpan;
 
             await InsertOrMergeAsync(existingRun as Run, nameof(Run));
+        }
+
+        ///<inheritdoc/>
+        public async Task LogConfusionMatrixAsync(Guid runId, Microsoft.ML.Data.ConfusionMatrix confusionMatrix)
+        {
+            var conMatrix = new ConfusionMatrix(runId, confusionMatrix.NumberOfClasses,
+                                                confusionMatrix.PerClassPrecision.ToList(),
+                                                confusionMatrix.PerClassRecall.ToList(),
+                                                (List<List<double>>)confusionMatrix.Counts);
+            conMatrix.SerializedDetails = JsonConvert.SerializeObject(conMatrix);
+            await InsertOrMergeAsync(conMatrix, nameof(ConfusionMatrix));
         }
     }
 }
