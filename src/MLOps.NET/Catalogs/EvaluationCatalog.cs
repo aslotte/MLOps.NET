@@ -1,5 +1,4 @@
 ﻿using Microsoft.ML.Data;
-using MLOps.NET.Entities.Entities;
 using MLOps.NET.Storage;
 using System;
 using System.Linq;
@@ -55,7 +54,7 @@ namespace MLOps.NET.Catalogs
         }
 
         /// <summary>
-        /// Saves confusion matrix as a json serialized string to the store
+        /// Saves the confusion matrix as a json serialized string
         /// </summary>
         /// <param name="runId"></param>
         /// <param name="confusionMatrix"></param>
@@ -73,11 +72,11 @@ namespace MLOps.NET.Catalogs
         }
 
         /// <summary>
-        /// Gets confusion matrix for a run
+        /// Gets the confusion matrix for a run
         /// </summary>
         /// <param name="runId"></param>
         /// <returns></returns>
-        public IConfusionMatrixEntity GetConfusionMatrix(Guid runId)
+        public MLOps.NET.Entities.ConfusionMatrix GetConfusionMatrix(Guid runId)
         {
             return metaDataStore.GetConfusionMatrix(runId);
         }

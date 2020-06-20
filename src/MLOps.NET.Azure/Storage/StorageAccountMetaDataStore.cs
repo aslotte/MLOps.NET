@@ -145,10 +145,7 @@ namespace MLOps.NET.Storage
 
             var runTable = tableClient.GetTableReference(nameof(Run));
 
-            var run = runTable.CreateQuery<Run>().FirstOrDefault(x => x.Id == runId);
-            run.Metrics = GetMetrics(run.Id);
-
-            return run;
+            return runTable.CreateQuery<Run>().FirstOrDefault(x => x.Id == runId);
         }
 
         ///<inheritdoc/>
@@ -165,7 +162,7 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc/>
-        public IConfusionMatrixEntity GetConfusionMatrix(Guid runId)
+        public ConfusionMatrix GetConfusionMatrix(Guid runId)
         {
             var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
             var confusionMatrixTable = tableClient.GetTableReference(nameof(ConfusionMatrix));
@@ -173,7 +170,7 @@ namespace MLOps.NET.Storage
             var confusionMatrix = confusionMatrixTable.CreateQuery<ConfusionMatrixEntity>()
                 .FirstOrDefault(x => x.RunId == runId);
 
-            return confusionMatrix;
+            return JsonConvert.DeserializeObject<ConfusionMatrix>(confusionMatrix.SerializedMatrix);
         }
 
         ///<inheritdoc/>

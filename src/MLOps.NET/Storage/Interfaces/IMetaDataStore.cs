@@ -63,7 +63,7 @@ namespace MLOps.NET.Storage
         IRun GetRun(Guid runId);
 
         /// <summary>
-        /// Saves confusion matrix as a json serialized string to the store
+        /// Saves the confusion matrix as a json serialized string
         /// </summary>
         /// <param name="runId"></param>
         /// <param name="confusionMatrix"></param>
@@ -95,10 +95,10 @@ namespace MLOps.NET.Storage
         Task SetTrainingTimeAsync(Guid runId, TimeSpan timeSpan);
 
         /// <summary>
-        /// Gets confusion matrix for a run.
+        /// Gets the confusion matrix for a run.
         /// </summary>
         /// <param name="runId"></param>
         /// <returns></returns>
-        IConfusionMatrixEntity GetConfusionMatrix(Guid runId);
+        ConfusionMatrix GetConfusionMatrix(Guid runId);
     }
 }

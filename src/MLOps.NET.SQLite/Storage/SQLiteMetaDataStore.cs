@@ -42,11 +42,12 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc/>
-        public IConfusionMatrixEntity GetConfusionMatrix(Guid runId)
+        public ConfusionMatrix GetConfusionMatrix(Guid runId)
         {
             using (var db = new LocalDbContext())
             {
-                return db.ConfusionMatrices.Single(x => x.RunId == runId);
+                var confusionMatrixEntity = db.ConfusionMatrices.SingleOrDefault(x => x.RunId == runId);
+                return JsonConvert.DeserializeObject<ConfusionMatrix>(confusionMatrixEntity.SerializedMatrix);
             }
         }
 
@@ -102,7 +103,6 @@ namespace MLOps.NET.Storage
                 conMatrix.SerializedMatrix = JsonConvert.SerializeObject(confusionMatrix);
                 await db.ConfusionMatrices.AddAsync(conMatrix);
                 await db.SaveChangesAsync();
-                return;
             }
         }
 
@@ -114,8 +114,6 @@ namespace MLOps.NET.Storage
                 var hyperParameter = new HyperParameter(runId, name, value);
                 await db.HyperParameters.AddAsync(hyperParameter);
                 await db.SaveChangesAsync();
-
-                return;
             }
         }
 
@@ -126,8 +124,6 @@ namespace MLOps.NET.Storage
                 var metric = new Metric(runId, metricName, metricValue);
                 await db.Metrics.AddAsync(metric);
                 await db.SaveChangesAsync();
-                
-                return;
             }
         }
 
