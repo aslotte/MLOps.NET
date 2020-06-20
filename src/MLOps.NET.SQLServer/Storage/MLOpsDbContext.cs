@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using MLOps.NET.SQLServer.Entities;
 using System;
 using System.Threading.Tasks;
@@ -24,8 +25,8 @@ namespace MLOps.NET.SQLServer.Storage
 
         public MLOpsDbContext(string connectionString)
         {
-            Database.EnsureCreated();
             this.connectionString = connectionString;
+            Database.EnsureCreated();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlServer(this.connectionString);
