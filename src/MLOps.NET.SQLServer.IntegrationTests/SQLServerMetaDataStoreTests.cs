@@ -52,6 +52,17 @@ namespace MLOps.NET.SQLServer.IntegrationTests
         }
 
         [TestMethod]
+        public async Task CreateExperimentAsync_Twice_ShouldNotAddDuplicate()
+        {
+            //Act
+            var experimentId = await sut.CreateExperimentAsync("test");
+            var experimentId2 = await sut.CreateExperimentAsync("test");
+
+            //Assert
+            experimentId.Should().Be(experimentId2);
+        }
+
+        [TestMethod]
         public async Task CreateRunAsync_ShouldCreateRun()
         {
             //Act
