@@ -10,28 +10,28 @@ namespace MLOps.NET.Storage
 {
     internal sealed class SQLServerMetaDataStore : IMetaDataStore
     {
-        private readonly string connectionString;
+        private readonly IDbContextFactory contextFactory;
 
-        public SQLServerMetaDataStore(string connectionString)
+        public SQLServerMetaDataStore(IDbContextFactory contextFactory)
         {
-            this.connectionString = connectionString;
+            this.contextFactory = contextFactory;
         }
 
         public async Task<Guid> CreateExperimentAsync(string name)
         {
-            using (var db = new MLOpsDbContext(this.connectionString))
+            using (var db = this.contextFactory.CreateDbContext())
             {
                 var experiment = new Experiment(name);
                 await db.Experiments.AddAsync(experiment);
                 await db.SaveChangesAsync();
-                
+
                 return experiment.Id;
             }
         }
 
         public async Task<Guid> CreateRunAsync(Guid experimentId, string gitCommitHash = "")
         {
-            using (var db = new MLOpsDbContext(this.connectionString))
+            using (var db = this.contextFactory.CreateDbContext())
             {
                 var run = new Run(experimentId)
                 {
@@ -40,7 +40,7 @@ namespace MLOps.NET.Storage
 
                 await db.Runs.AddAsync(run);
                 await db.SaveChangesAsync();
-                
+
                 return run.Id;
             }
         }
@@ -48,7 +48,7 @@ namespace MLOps.NET.Storage
         ///<inheritdoc/>
         public IExperiment GetExperiment(string experimentName)
         {
-            using (var db = new MLOpsDbContext(this.connectionString))
+            using (var db = this.contextFactory.CreateDbContext())
             {
                 return db.Experiments.Single(x => x.ExperimentName == experimentName);
             }
@@ -57,7 +57,7 @@ namespace MLOps.NET.Storage
         ///<inheritdoc/>
         public IEnumerable<IExperiment> GetExperiments()
         {
-            using (var db = new MLOpsDbContext(this.connectionString))
+            using (var db = this.contextFactory.CreateDbContext())
             {
                 return db.Experiments;
             }
@@ -66,7 +66,7 @@ namespace MLOps.NET.Storage
         ///<inheritdoc/>
         public List<IMetric> GetMetrics(Guid runId)
         {
-            using (var db = new MLOpsDbContext(this.connectionString))
+            using (var db = this.contextFactory.CreateDbContext())
             {
                 return db.Metrics.Where(x => x.RunId == runId).ToList<IMetric>();
             }
@@ -74,7 +74,7 @@ namespace MLOps.NET.Storage
 
         public IRun GetRun(Guid runId)
         {
-            using (var db = new MLOpsDbContext(this.connectionString))
+            using (var db = this.contextFactory.CreateDbContext())
             {
                 return db.Runs.FirstOrDefault(x => x.Id == runId);
             }
@@ -83,7 +83,7 @@ namespace MLOps.NET.Storage
         ///<inheritdoc/>
         public List<IRun> GetRuns(Guid experimentId)
         {
-            using (var db = new MLOpsDbContext(this.connectionString))
+            using (var db = this.contextFactory.CreateDbContext())
             {
                 return db.Runs.Where(x => x.ExperimentId == experimentId).ToList<IRun>();
             }
@@ -92,7 +92,7 @@ namespace MLOps.NET.Storage
         ///<inheritdoc/>
         public async Task LogHyperParameterAsync(Guid runId, string name, string value)
         {
-            using (var db = new MLOpsDbContext(this.connectionString))
+            using (var db = this.contextFactory.CreateDbContext())
             {
                 var hyperParameter = new HyperParameter(runId, name, value);
                 await db.HyperParameters.AddAsync(hyperParameter);
@@ -104,19 +104,19 @@ namespace MLOps.NET.Storage
 
         public async Task LogMetricAsync(Guid runId, string metricName, double metricValue)
         {
-            using (var db = new MLOpsDbContext(this.connectionString))
+            using (var db = this.contextFactory.CreateDbContext())
             {
                 var metric = new Metric(runId, metricName, metricValue);
                 await db.Metrics.AddAsync(metric);
                 await db.SaveChangesAsync();
-                
+
                 return;
             }
         }
 
         public async Task SetTrainingTimeAsync(Guid runId, TimeSpan timeSpan)
         {
-            using (var db = new MLOpsDbContext(this.connectionString))
+            using (var db = this.contextFactory.CreateDbContext())
             {
                 var existingRun = db.Runs.FirstOrDefault(x => x.Id == runId);
                 if (existingRun == null) throw new InvalidOperationException($"The run with id {runId} does not exist");

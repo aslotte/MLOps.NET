@@ -1,4 +1,5 @@
-﻿using MLOps.NET.Storage;
+﻿using MLOps.NET.SQLServer.Storage;
+using MLOps.NET.Storage;
 
 namespace MLOps.NET.SQLServer
 {
@@ -15,7 +16,7 @@ namespace MLOps.NET.SQLServer
         /// <returns>Provided MLOpsBuilder for chaining</returns>
         public static MLOpsBuilder UseSQLServer(this MLOpsBuilder builder, string connectionString)
         {
-            builder.UseMetaDataStore(new SQLServerMetaDataStore(connectionString));
+            builder.UseMetaDataStore(new SQLServerMetaDataStore(new DbContextFactory(connectionString)));
 
             return builder;
         }
