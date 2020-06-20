@@ -171,7 +171,6 @@ namespace MLOps.NET.Storage
                 .FirstOrDefault(x => x.RunId == runId);
                 
             if (confusionMatrix  == null) return null;         
-                
 
             return JsonConvert.DeserializeObject<ConfusionMatrix>(confusionMatrix.SerializedMatrix);
         }
