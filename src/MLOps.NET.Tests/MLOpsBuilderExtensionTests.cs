@@ -10,6 +10,7 @@ using Moq;
 
 namespace MLOps.NET.Tests
 {
+    [TestCategory("UnitTests")]
     [TestClass]
     public class MLOpsBuilderExtensionTests
     {

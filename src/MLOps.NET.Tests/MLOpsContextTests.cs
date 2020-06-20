@@ -1,17 +1,14 @@
-using System;
-using System.Data;
-using System.Reflection;
-using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.ML;
-using Microsoft.ML.Data;
 using Microsoft.ML.Trainers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Storage;
 using Moq;
+using System;
+using System.Threading.Tasks;
 
 namespace MLOps.NET.Tests
 {
+    [TestCategory("UnitTests")]
     [TestClass]
     public class MLOpsContextTests
     {
@@ -43,7 +40,7 @@ namespace MLOps.NET.Tests
             mockMetaDataStore.Verify(c => c.LogHyperParameterAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()), Times.AtLeastOnce);
         }
 
-        
+
         [TestMethod]
         public async Task MLOpsContext_ShouldNotCallLogHyperParameterIfPassedNotATrainerObject()
         {

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace MLOps.NET.Tests
 {
+    [TestCategory("UnitTests")]
     [TestClass]
     public class LocalFileModelRepositoryTests
     {

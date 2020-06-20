@@ -3,12 +3,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Catalogs;
 using MLOps.NET.Storage;
 using Moq;
-using System;
-using System.IO;
 using System.Reflection;
 
 namespace MLOps.NET.SQLite.Tests
 {
+    [TestCategory("UnitTests")]
     [TestClass]
     public class MLOpsBuilderExtensionTests
     {
