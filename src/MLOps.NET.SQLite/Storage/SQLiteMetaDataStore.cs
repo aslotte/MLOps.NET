@@ -46,7 +46,8 @@ namespace MLOps.NET.Storage
         {
             using (var db = new LocalDbContext())
             {
-                var confusionMatrixEntity = db.ConfusionMatrices.SingleOrDefault(x => x.RunId == runId);
+                var confusionMatrixEntity = db.ConfusionMatrices.SingleOrDefault(x => x.RunId == runId);         
+                if (confusionMatrixEntity == null) return null;
                 return JsonConvert.DeserializeObject<ConfusionMatrix>(confusionMatrixEntity.SerializedMatrix);
             }
         }
