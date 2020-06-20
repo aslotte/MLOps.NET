@@ -1,4 +1,5 @@
-﻿using MLOps.NET.Storage;
+﻿using Microsoft.ML.Data;
+using MLOps.NET.Storage;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -50,6 +51,34 @@ namespace MLOps.NET.Catalogs
             {
                 await LogMetricAsync(runId, metric.Name, (double)metric.GetValue(metrics));
             }
+        }
+
+        /// <summary>
+        /// Saves the confusion matrix as a json serialized string
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <param name="confusionMatrix"></param>
+        /// <returns></returns>
+        public async Task LogConfusionMatrixAsync(Guid runId, ConfusionMatrix confusionMatrix)
+        {
+            var conMatrix = new MLOps.NET.Entities.ConfusionMatrix()
+            {
+                Counts = confusionMatrix.Counts,
+                NumberOfClasses = confusionMatrix.NumberOfClasses,
+                PerClassPrecision = confusionMatrix.PerClassPrecision,
+                PerClassRecall = confusionMatrix.PerClassRecall
+            };
+            await metaDataStore.LogConfusionMatrixAsync(runId, conMatrix);
+        }
+
+        /// <summary>
+        /// Gets the confusion matrix for a run
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <returns></returns>
+        public MLOps.NET.Entities.ConfusionMatrix GetConfusionMatrix(Guid runId)
+        {
+            return metaDataStore.GetConfusionMatrix(runId);
         }
     }
 }

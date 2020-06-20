@@ -1,6 +1,8 @@
 ﻿using Microsoft.Azure.Cosmos.Table;
 using MLOps.NET.Azure.Entities;
+using MLOps.NET.Entities;
 using MLOps.NET.Entities.Entities;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -160,6 +162,20 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc/>
+        public ConfusionMatrix GetConfusionMatrix(Guid runId)
+        {
+            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
+            var confusionMatrixTable = tableClient.GetTableReference(nameof(ConfusionMatrix));
+
+            var confusionMatrix = confusionMatrixTable.CreateQuery<ConfusionMatrixEntity>()
+                .FirstOrDefault(x => x.RunId == runId);
+                
+            if (confusionMatrix  == null) return null;         
+
+            return JsonConvert.DeserializeObject<ConfusionMatrix>(confusionMatrix.SerializedMatrix);
+        }
+
+        ///<inheritdoc/>
         public async Task LogHyperParameterAsync(Guid runId, string name, string value)
         {
             var hyperParameter = new HyperParameter(runId, name, value);
@@ -176,6 +192,14 @@ namespace MLOps.NET.Storage
             existingRun.TrainingTime = timeSpan;
 
             await InsertOrMergeAsync(existingRun as Run, nameof(Run));
+        }
+
+        ///<inheritdoc/>
+        public async Task LogConfusionMatrixAsync(Guid runId, ConfusionMatrix confusionMatrix)
+        {
+            var conMatrix = new ConfusionMatrixEntity(runId);           
+            conMatrix.SerializedMatrix = JsonConvert.SerializeObject(confusionMatrix);
+            await InsertOrMergeAsync(conMatrix, nameof(ConfusionMatrix));
         }
     }
 }

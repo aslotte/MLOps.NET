@@ -1,10 +1,13 @@
-﻿using MLOps.NET.Entities.Entities;
+﻿using MLOps.NET.Entities;
+using MLOps.NET.Entities.Entities;
 using MLOps.NET.SQLite.Entities;
 using MLOps.NET.SQLite.Storage;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ConfusionMatrixEntity = MLOps.NET.SQLite.Entities.ConfusionMatrixEntity;
 
 namespace MLOps.NET.Storage
 {
@@ -35,6 +38,17 @@ namespace MLOps.NET.Storage
                 await db.SaveChangesAsync();
                 
                 return run.Id;
+            }
+        }
+
+        ///<inheritdoc/>
+        public ConfusionMatrix GetConfusionMatrix(Guid runId)
+        {
+            using (var db = new LocalDbContext())
+            {
+                var confusionMatrixEntity = db.ConfusionMatrices.SingleOrDefault(x => x.RunId == runId);         
+                if (confusionMatrixEntity == null) return null;
+                return JsonConvert.DeserializeObject<ConfusionMatrix>(confusionMatrixEntity.SerializedMatrix);
             }
         }
 
@@ -82,6 +96,17 @@ namespace MLOps.NET.Storage
             }
         }
 
+        public async Task LogConfusionMatrixAsync(Guid runId, ConfusionMatrix confusionMatrix)
+        {
+            using (var db = new LocalDbContext())
+            {
+                var conMatrix = new ConfusionMatrixEntity(runId);
+                conMatrix.SerializedMatrix = JsonConvert.SerializeObject(confusionMatrix);
+                await db.ConfusionMatrices.AddAsync(conMatrix);
+                await db.SaveChangesAsync();
+            }
+        }
+
         ///<inheritdoc/>
         public async Task LogHyperParameterAsync(Guid runId, string name, string value)
         {
@@ -90,8 +115,6 @@ namespace MLOps.NET.Storage
                 var hyperParameter = new HyperParameter(runId, name, value);
                 await db.HyperParameters.AddAsync(hyperParameter);
                 await db.SaveChangesAsync();
-
-                return;
             }
         }
 
@@ -102,8 +125,6 @@ namespace MLOps.NET.Storage
                 var metric = new Metric(runId, metricName, metricValue);
                 await db.Metrics.AddAsync(metric);
                 await db.SaveChangesAsync();
-                
-                return;
             }
         }
 
