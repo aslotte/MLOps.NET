@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ConfusionMatrixEntity = MLOps.NET.SQLite.Entities.ConfusionMatrixEntity;
 
 namespace MLOps.NET.Storage
 {
@@ -41,7 +40,6 @@ namespace MLOps.NET.Storage
             }
         }
 
-        ///<inheritdoc/>
         public ConfusionMatrix GetConfusionMatrix(Guid runId)
         {
             using (var db = new LocalDbContext())
@@ -52,7 +50,6 @@ namespace MLOps.NET.Storage
             }
         }
 
-        ///<inheritdoc/>
         public IExperiment GetExperiment(string experimentName)
         {
             using (var db = new LocalDbContext())
@@ -61,7 +58,6 @@ namespace MLOps.NET.Storage
             }
         }
 
-        ///<inheritdoc/>
         public IEnumerable<IExperiment> GetExperiments()
         {
             using (var db = new LocalDbContext())
@@ -70,7 +66,6 @@ namespace MLOps.NET.Storage
             }
         }
 
-        ///<inheritdoc/>
         public List<IMetric> GetMetrics(Guid runId)
         {
             using (var db = new LocalDbContext())
@@ -87,7 +82,6 @@ namespace MLOps.NET.Storage
             }
         }
 
-        ///<inheritdoc/>
         public List<IRun> GetRuns(Guid experimentId)
         {
             using (var db = new LocalDbContext())
@@ -107,7 +101,6 @@ namespace MLOps.NET.Storage
             }
         }
 
-        ///<inheritdoc/>
         public async Task LogHyperParameterAsync(Guid runId, string name, string value)
         {
             using (var db = new LocalDbContext())

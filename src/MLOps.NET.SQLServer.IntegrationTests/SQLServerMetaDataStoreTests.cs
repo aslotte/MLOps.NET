@@ -1,7 +1,9 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MLOps.NET.Entities;
 using MLOps.NET.SQLServer.Storage;
 using MLOps.NET.Storage;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -107,6 +109,49 @@ namespace MLOps.NET.SQLServer.IntegrationTests
             //Assert
             var run = sut.GetRun(id);
             run.TrainingTime.Should().Be(trainingTime);
+        }
+
+        [TestMethod]
+        public async Task LogConfusionMatrixAsync_SavesConfusionMatrixOnRun()
+        {
+            //Arrange
+            var experimentId = await sut.CreateExperimentAsync("test");
+            var runId = await sut.CreateRunAsync(experimentId);
+
+            var expectedConfusionMatrix = new ConfusionMatrix
+            {
+                PerClassPrecision = new List<double> { 0.99d, 0.44d },
+                PerClassRecall = new List<double> { 0.77d, 0.88d },
+                Counts = new List<List<double>>
+                {
+                    new List<double> { 9, 1 },
+                    new List<double> { 4, 33}
+                },
+                NumberOfClasses = 2
+            };
+
+            //Act
+            await sut.LogConfusionMatrixAsync(runId, expectedConfusionMatrix);
+
+            //Assert
+            var confusionMatrix = sut.GetConfusionMatrix(runId);
+
+            confusionMatrix.Should().NotBeNull();
+            confusionMatrix.Should().BeEquivalentTo(expectedConfusionMatrix);
+        }
+
+        [TestMethod]
+        public async Task GetConfusionMatrix_NoConfusionMatrixExist_ShouldReturnNull()
+        {
+            //Arrange
+            var experimentId = await sut.CreateExperimentAsync("test");
+            var runId = await sut.CreateRunAsync(experimentId);
+
+            //Act
+            var confusionMatrix = sut.GetConfusionMatrix(runId);
+
+            //Assert
+            confusionMatrix.Should().BeNull();
         }
     }
 }

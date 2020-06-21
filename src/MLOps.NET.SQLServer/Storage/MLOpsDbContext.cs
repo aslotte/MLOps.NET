@@ -1,24 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 using MLOps.NET.SQLServer.Entities;
-using System;
+using MLOps.NET.SQLServer.Storage.Interfaces;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.SQLServer.Storage
 {
-    internal interface IMLOpsDbContext : IDisposable
-    {
-        DbSet<Experiment> Experiments { get; set; }
-
-        DbSet<Metric> Metrics { get; set; }
-
-        DbSet<HyperParameter> HyperParameters { get; set; }
-
-        DbSet<Run> Runs { get; set; }
-
-        Task SaveChangesAsync();
-    }
-
     internal class MLOpsDbContext : DbContext, IMLOpsDbContext
     {
         private readonly string connectionString;
@@ -43,5 +29,7 @@ namespace MLOps.NET.SQLServer.Storage
         public DbSet<HyperParameter> HyperParameters { get; set; }
 
         public DbSet<Run> Runs { get; set; }
+
+        public DbSet<ConfusionMatrixEntity> ConfusionMatrices { get; set; }
     }
 }

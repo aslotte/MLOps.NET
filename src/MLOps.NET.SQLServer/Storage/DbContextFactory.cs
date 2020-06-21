@@ -1,4 +1,6 @@
-﻿namespace MLOps.NET.SQLServer.Storage
+﻿using MLOps.NET.SQLServer.Storage.Interfaces;
+
+namespace MLOps.NET.SQLServer.Storage
 {
     /// <summary>
     /// Factory to create Db Context

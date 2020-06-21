@@ -1,6 +1,8 @@
-﻿using MLOps.NET.Entities.Entities;
+﻿using MLOps.NET.Entities;
+using MLOps.NET.Entities.Entities;
 using MLOps.NET.SQLServer.Entities;
 using MLOps.NET.SQLServer.Storage;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,7 +52,6 @@ namespace MLOps.NET.Storage
             }
         }
 
-        ///<inheritdoc/>
         public IExperiment GetExperiment(string experimentName)
         {
             using (var db = this.contextFactory.CreateDbContext())
@@ -59,7 +60,6 @@ namespace MLOps.NET.Storage
             }
         }
 
-        ///<inheritdoc/>
         public IEnumerable<IExperiment> GetExperiments()
         {
             using (var db = this.contextFactory.CreateDbContext())
@@ -68,7 +68,6 @@ namespace MLOps.NET.Storage
             }
         }
 
-        ///<inheritdoc/>
         public List<IMetric> GetMetrics(Guid runId)
         {
             using (var db = this.contextFactory.CreateDbContext())
@@ -85,7 +84,6 @@ namespace MLOps.NET.Storage
             }
         }
 
-        ///<inheritdoc/>
         public List<IRun> GetRuns(Guid experimentId)
         {
             using (var db = this.contextFactory.CreateDbContext())
@@ -94,7 +92,6 @@ namespace MLOps.NET.Storage
             }
         }
 
-        ///<inheritdoc/>
         public async Task LogHyperParameterAsync(Guid runId, string name, string value)
         {
             using (var db = this.contextFactory.CreateDbContext())
@@ -129,6 +126,32 @@ namespace MLOps.NET.Storage
                 existingRun.TrainingTime = timeSpan;
 
                 await db.SaveChangesAsync();
+            }
+        }
+
+        public async Task LogConfusionMatrixAsync(Guid runId, ConfusionMatrix confusionMatrix)
+        {
+            using (var db = this.contextFactory.CreateDbContext())
+            {
+                var conMatrix = new ConfusionMatrixEntity(runId)
+                {
+                    SerializedMatrix = JsonConvert.SerializeObject(confusionMatrix)
+                };
+
+                await db.ConfusionMatrices.AddAsync(conMatrix);
+                await db.SaveChangesAsync();
+            }
+        }
+
+        public ConfusionMatrix GetConfusionMatrix(Guid runId)
+        {
+            using (var db = this.contextFactory.CreateDbContext())
+            {
+                var confusionMatrixEntity = db.ConfusionMatrices.SingleOrDefault(x => x.RunId == runId);
+
+                if (confusionMatrixEntity == null) return null;
+
+                return JsonConvert.DeserializeObject<ConfusionMatrix>(confusionMatrixEntity.SerializedMatrix);
             }
         }
     }

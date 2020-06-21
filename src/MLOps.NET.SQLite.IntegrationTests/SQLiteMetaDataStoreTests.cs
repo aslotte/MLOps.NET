@@ -140,24 +140,20 @@ namespace MLOps.NET.SQLite.IntegrationTests
         {
             return new List<DataPoint>()
             {
-                new DataPoint(){ Features = new float[3] {0, 2, 1} , Label = false },
-                new DataPoint(){ Features = new float[3] {0, 2, 3} , Label = false },
-                new DataPoint(){ Features = new float[3] {0, 2, 4} , Label = true  },
-                new DataPoint(){ Features = new float[3] {0, 2, 1} , Label = false },
-                new DataPoint(){ Features = new float[3] {0, 2, 2} , Label = false },
-                new DataPoint(){ Features = new float[3] {0, 2, 3} , Label = false },
-                new DataPoint(){ Features = new float[3] {0, 2, 4} , Label = true  },
-                new DataPoint(){ Features = new float[3] {1, 0, 0} , Label = true  }
+                new DataPoint { Features = new float[3] {0, 2, 1} , Label = false },
+                new DataPoint { Features = new float[3] {0, 2, 3} , Label = false },
+                new DataPoint { Features = new float[3] {0, 2, 4} , Label = true  },
+                new DataPoint { Features = new float[3] {0, 2, 1} , Label = false },
+                new DataPoint { Features = new float[3] {0, 2, 2} , Label = false },
+                new DataPoint { Features = new float[3] {0, 2, 3} , Label = false },
+                new DataPoint { Features = new float[3] {0, 2, 4} , Label = true  },
+                new DataPoint { Features = new float[3] {1, 0, 0} , Label = true  }
             };
         }       
     }
 
     internal class DataPoint
     {
-        public DataPoint()
-        {
-        }
-
         [VectorType(3)]
         public float[] Features { get; set; }
 
