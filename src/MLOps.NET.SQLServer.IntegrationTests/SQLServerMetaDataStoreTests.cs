@@ -13,7 +13,7 @@ namespace MLOps.NET.SQLServer.IntegrationTests
     [TestCategory("IntegrationTestSqlServer")]
     public class SQLServerMetaDataStoreTests
     {
-        private const string connectionString = "Server=localhost;Database=MLOpsNET_IntegrationTests;Trusted_Connection=True;";
+        private const string connectionString = "Server=localhost,1433;Database=MLOpsNET_IntegrationTests;User Id=sa;Password=MLOps4TheWin!;";
         private SQLServerMetaDataStore sut;
 
         [TestInitialize]
