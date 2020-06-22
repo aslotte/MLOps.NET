@@ -99,8 +99,6 @@ namespace MLOps.NET.Storage
                 var hyperParameter = new HyperParameter(runId, name, value);
                 await db.HyperParameters.AddAsync(hyperParameter);
                 await db.SaveChangesAsync();
-
-                return;
             }
         }
 
@@ -111,8 +109,6 @@ namespace MLOps.NET.Storage
                 var metric = new Metric(runId, metricName, metricValue);
                 await db.Metrics.AddAsync(metric);
                 await db.SaveChangesAsync();
-
-                return;
             }
         }
 
