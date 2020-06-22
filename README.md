@@ -14,17 +14,18 @@ Models created in ML.NET can however currently not be used in MLflow, and as suc
 ### Currently supported storage providers
 
 #### Model Repository
-- Azure Blob storage
+- Azure Blob Storage
 - Local fileshare
 
-#### Metadata storage
-- Azure TableStorage
+#### Model Data Storage
+- Azure Table Storage
+- SQL Server
 - SQLite
 
 ### Roadmap
 - Add Blazor WebAssembly client to vizualize model training
-- Add support for SQL Server
-- Add support for file shares
+~~- Add support for SQL Server~~
+~~- Add support for file shares~~
 - Add support additional support for tracking a models performance
 - Add model deployment support
 - Add data tracking support
