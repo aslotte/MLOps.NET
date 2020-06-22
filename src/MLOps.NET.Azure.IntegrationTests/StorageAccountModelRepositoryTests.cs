@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace MLOps.NET.Azure.IntegrationTests
 {
+    [TestCategory("IntegrationTestsAzure")]
     [TestClass]
     public class StorageAccountModelRepositoryTests
     {
