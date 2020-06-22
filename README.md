@@ -24,8 +24,8 @@ Models created in ML.NET can however currently not be used in MLflow, and as suc
 
 ### Roadmap
 - Add Blazor WebAssembly client to vizualize model training
-~~- Add support for SQL Server~~
-~~- Add support for file shares~~
+- ~~Add support for SQL Server~~
+- ~~Add support for file shares~~
 - Add support additional support for tracking a models performance
 - Add model deployment support
 - Add data tracking support
