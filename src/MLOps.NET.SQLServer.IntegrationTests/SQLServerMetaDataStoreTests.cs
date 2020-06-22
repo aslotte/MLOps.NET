@@ -32,11 +32,13 @@ namespace MLOps.NET.SQLServer.IntegrationTests
             var runs = context.Runs;
             var metrics = context.Metrics;
             var hyperParameters = context.HyperParameters;
+            var confusionMatrices = context.ConfusionMatrices;
 
             context.Experiments.RemoveRange(experiments);
             context.Runs.RemoveRange(runs);
             context.Metrics.RemoveRange(metrics);
             context.HyperParameters.RemoveRange(hyperParameters);
+            context.ConfusionMatrices.RemoveRange(confusionMatrices);
 
             await context.SaveChangesAsync();
         }
