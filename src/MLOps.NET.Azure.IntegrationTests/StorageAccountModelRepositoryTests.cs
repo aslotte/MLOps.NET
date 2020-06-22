@@ -26,7 +26,7 @@ namespace MLOps.NET.Azure.IntegrationTests
             var runId = Guid.NewGuid();
 
             //Act
-            await sut.UploadModelAsync(runId, @"Data\model.txt");
+            await sut.UploadModelAsync(runId, @"Data/model.txt");
 
             //Assert
             using var memoryStream = new MemoryStream();
