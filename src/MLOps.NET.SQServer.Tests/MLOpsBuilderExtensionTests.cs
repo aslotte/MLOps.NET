@@ -5,18 +5,18 @@ using MLOps.NET.Storage;
 using Moq;
 using System.Reflection;
 
-namespace MLOps.NET.SQLite.Tests
+namespace MLOps.NET.SQLServer.Tests
 {
     [TestCategory("UnitTests")]
     [TestClass]
     public class MLOpsBuilderExtensionTests
     {
         [TestMethod]
-        public void UseSqlLiteStorage_ConfiguresEvaluationCatalog()
+        public void UseSQLServerStorage_ConfiguresEvaluationCatalog()
         {
             //Act
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
-                .UseSQLite()
+                .UseSQLServer("connectionString")
                 .UseModelRepository(new Mock<IModelRepository>().Object)
                 .Build();
 
@@ -26,16 +26,16 @@ namespace MLOps.NET.SQLite.Tests
             unitUnderTest.Evaluation.Should().NotBeNull();
 
             var metaDataField = typeof(EvaluationCatalog).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
-            metaDataField.GetValue(unitUnderTest.Evaluation).Should().BeOfType<SQLiteMetaDataStore>();
+            metaDataField.GetValue(unitUnderTest.Evaluation).Should().BeOfType<SQLServerMetaDataStore>();
         }
 
 
         [TestMethod]
-        public void UseSqlLiteStorage_ConfiguresTrainingCatalog()
+        public void UseSQLServerStorage_ConfiguresTrainingCatalog()
         {
             //Act
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
-                .UseSQLite()
+                .UseSQLServer("connectionString")
                 .UseModelRepository(new Mock<IModelRepository>().Object)
                 .Build();
 
@@ -46,15 +46,15 @@ namespace MLOps.NET.SQLite.Tests
 
             var metaDataField = typeof(TrainingCatalog).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
 
-            metaDataField.GetValue(unitUnderTest.Training).Should().BeOfType<SQLiteMetaDataStore>();
+            metaDataField.GetValue(unitUnderTest.Training).Should().BeOfType<SQLServerMetaDataStore>();
         }
 
         [TestMethod]
-        public void UseSqlLite_ConfiguresLifeCycleCatalog()
+        public void UseSQLServer_ConfiguresLifeCycleCatalog()
         {
             //Act
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
-                .UseSQLite()
+                .UseSQLServer("connectionString")
                 .UseModelRepository(new Mock<IModelRepository>().Object)
                 .Build();
 
@@ -65,7 +65,7 @@ namespace MLOps.NET.SQLite.Tests
 
             var metaDataField = typeof(LifeCycleCatalog).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
 
-            metaDataField.GetValue(unitUnderTest.LifeCycle).Should().BeOfType<SQLiteMetaDataStore>();
+            metaDataField.GetValue(unitUnderTest.LifeCycle).Should().BeOfType<SQLServerMetaDataStore>();
         }
     }
 }

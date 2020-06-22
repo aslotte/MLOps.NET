@@ -6,6 +6,7 @@ using System;
 
 namespace MLOps.NET.Tests
 {
+    [TestCategory("UnitTests")]
     [TestClass]
     public class MLOpsBuilderTests
     {

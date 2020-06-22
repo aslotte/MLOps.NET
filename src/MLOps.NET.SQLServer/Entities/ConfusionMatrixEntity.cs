@@ -1,7 +1,7 @@
 ﻿using MLOps.NET.Entities.Entities;
 using System;
 
-namespace MLOps.NET.SQLite.Entities
+namespace MLOps.NET.SQLServer.Entities
 {
     internal sealed class ConfusionMatrixEntity : IConfusionMatrixEntity
     {

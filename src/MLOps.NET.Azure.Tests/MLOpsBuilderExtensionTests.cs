@@ -6,6 +6,7 @@ using System.Reflection;
 
 namespace MLOps.NET.Azure.Tests
 {
+    [TestCategory("UnitTests")]
     [TestClass]
     public class MLOpsBuilderExtensionTests
     {
