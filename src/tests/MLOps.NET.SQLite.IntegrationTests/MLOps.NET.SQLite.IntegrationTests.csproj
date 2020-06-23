@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MLOps.NET.SQLite\MLOps.NET.SQLite.csproj" />
+    <ProjectReference Include="..\..\source\MLOps.NET.SQLite\MLOps.NET.SQLite.csproj" />
   </ItemGroup>
 
 </Project>

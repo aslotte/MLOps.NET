@@ -3,31 +3,31 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET", "MLOps.NET\MLOps.NET.csproj", "{AEA62265-4EB6-4411-88A1-110C32D3C0D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET", "source\MLOps.NET\MLOps.NET.csproj", "{AEA62265-4EB6-4411-88A1-110C32D3C0D3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.Azure", "MLOps.NET.Azure\MLOps.NET.Azure.csproj", "{C2E3929C-AD77-48A9-AA0F-C4AE12B0A3DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.Azure", "source\MLOps.NET.Azure\MLOps.NET.Azure.csproj", "{C2E3929C-AD77-48A9-AA0F-C4AE12B0A3DB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.SQLite", "MLOps.NET.SQLite\MLOps.NET.SQLite.csproj", "{C126F307-2D50-46AD-A1EA-4F9BFD224E60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.SQLite", "source\MLOps.NET.SQLite\MLOps.NET.SQLite.csproj", "{C126F307-2D50-46AD-A1EA-4F9BFD224E60}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.SQLite.IntegrationTests", "MLOps.NET.SQLite.IntegrationTests\MLOps.NET.SQLite.IntegrationTests.csproj", "{EEB4721E-0381-440C-84AA-88A94537D75F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.SQLite.IntegrationTests", "tests\MLOps.NET.SQLite.IntegrationTests\MLOps.NET.SQLite.IntegrationTests.csproj", "{EEB4721E-0381-440C-84AA-88A94537D75F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.Tests", "MLOps.NET.Tests\MLOps.NET.Tests.csproj", "{A3BA43F4-846D-4E88-92D7-5DD28D2904AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.Tests", "tests\MLOps.NET.Tests\MLOps.NET.Tests.csproj", "{A3BA43F4-846D-4E88-92D7-5DD28D2904AB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.SQLite.Tests", "MLOps.NET.SQLite.Tests\MLOps.NET.SQLite.Tests.csproj", "{E814C1C1-36E0-4C5A-88E5-EC3D416729CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.SQLite.Tests", "tests\MLOps.NET.SQLite.Tests\MLOps.NET.SQLite.Tests.csproj", "{E814C1C1-36E0-4C5A-88E5-EC3D416729CF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.Azure.Tests", "MLOps.NET.Azure.Tests\MLOps.NET.Azure.Tests.csproj", "{5B41851D-96B4-41B4-A4F9-4A0F5C36111B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.Azure.Tests", "tests\MLOps.NET.Azure.Tests\MLOps.NET.Azure.Tests.csproj", "{5B41851D-96B4-41B4-A4F9-4A0F5C36111B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D826364F-D0C6-4FB9-A4D1-837372F6367C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{BFA1E5BE-95E8-4A9B-BE55-8EFA8F8488F1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.IntegrationTests", "MLOps.NET.IntegrationTests\MLOps.NET.IntegrationTests.csproj", "{6C3F1C4A-220A-4F8E-AFBE-57AF9CEF8810}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.IntegrationTests", "tests\MLOps.NET.IntegrationTests\MLOps.NET.IntegrationTests.csproj", "{6C3F1C4A-220A-4F8E-AFBE-57AF9CEF8810}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MLOps.NET.SQLServer", "MLOps.NET.SQLServer\MLOps.NET.SQLServer.csproj", "{755E2247-0EF5-4739-B2B3-8BD8D93B6991}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MLOps.NET.SQLServer", "source\MLOps.NET.SQLServer\MLOps.NET.SQLServer.csproj", "{755E2247-0EF5-4739-B2B3-8BD8D93B6991}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MLOps.NET.SQLServer.Tests", "MLOps.NET.SQServer.Tests\MLOps.NET.SQLServer.Tests.csproj", "{354E0E10-3E1F-4E01-B90C-AFE9CA2E97A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MLOps.NET.SQLServer.Tests", "tests\MLOps.NET.SQServer.Tests\MLOps.NET.SQLServer.Tests.csproj", "{354E0E10-3E1F-4E01-B90C-AFE9CA2E97A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MLOps.NET.SQLServer.IntegrationTests", "MLOps.NET.SQLServer.IntegrationTests\MLOps.NET.SQLServer.IntegrationTests.csproj", "{A1369DA3-A7D4-45CF-A404-538FBAFED7C6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MLOps.NET.SQLServer.IntegrationTests", "tests\MLOps.NET.SQLServer.IntegrationTests\MLOps.NET.SQLServer.IntegrationTests.csproj", "{A1369DA3-A7D4-45CF-A404-538FBAFED7C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

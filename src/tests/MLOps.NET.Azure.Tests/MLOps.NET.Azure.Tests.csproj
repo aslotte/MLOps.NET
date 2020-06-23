@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MLOps.NET.Azure\MLOps.NET.Azure.csproj" />
+    <ProjectReference Include="..\..\source\MLOps.NET.Azure\MLOps.NET.Azure.csproj" />
   </ItemGroup>
 
 </Project>
