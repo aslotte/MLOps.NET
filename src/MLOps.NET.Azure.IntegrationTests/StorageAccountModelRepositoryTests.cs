@@ -1,6 +1,8 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MLOps.NET.Azure.IntegrationTests.Constants;
 using MLOps.NET.Storage;
+using MLOps.NET.Tests.Common.Configuration;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -16,7 +18,9 @@ namespace MLOps.NET.Azure.IntegrationTests
         [TestInitialize]
         public void TestInitialize()
         {
-            sut = new StorageAccountModelRepository("DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;");
+            var configuration = ConfigurationFactory.GetConfiguration();
+
+            sut = new StorageAccountModelRepository(configuration[ConfigurationKeys.StorageAccount]);
         }
 
         [TestMethod]
