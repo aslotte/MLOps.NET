@@ -31,10 +31,10 @@ jobs:
       env: 
         NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
     - name: Install dependencies
-      run: dotnet restore src/MLOps.NET.sln
+      run: dotnet restore MLOps.NET.sln
     - name: Build
-      run: dotnet build src/MLOps.NET.sln --configuration Release --no-restore 
+      run: dotnet build MLOps.NET.sln --configuration Release --no-restore 
     - name: Tests
-      run: dotnet test src/MLOps.NET.sln --configuration Release --no-restore --no-build --filter TestCategory=IntegrationTestSqlServer            
+      run: dotnet test MLOps.NET.sln --configuration Release --no-restore --no-build --filter TestCategory=IntegrationTestSqlServer            
 
     

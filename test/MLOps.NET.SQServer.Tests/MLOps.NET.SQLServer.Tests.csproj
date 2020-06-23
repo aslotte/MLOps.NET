@@ -2,10 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-
-    <IsPackable>false</IsPackable>
-    <!-- Don't warn about documentation for test projects -->
-    <NoWarn>1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MLOps.NET.SQLServer\MLOps.NET.SQLServer.csproj" />
+    <ProjectReference Include="..\..\src\MLOps.NET.SQLServer\MLOps.NET.SQLServer.csproj" />
   </ItemGroup>
   
 </Project>
