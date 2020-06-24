@@ -25,7 +25,9 @@ namespace MLOps.NET.Storage
         {
             var bucketExists = await AmazonS3Util.DoesS3BucketExistV2Async(amazonS3Client, bucketName);
             if (!bucketExists)
+            {
                 await this.amazonS3Client.PutBucketAsync(bucketName);
+            }
 
             var fileUploadRequest = new PutObjectRequest
             {
