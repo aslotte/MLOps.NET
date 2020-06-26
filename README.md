@@ -1,6 +1,8 @@
 ## MLOps.NET
 MLOps.NET is an SDK tool to track and manage lifecycle of an ML.NET machine learning model.
 
+[![Join the chat at https://gitter.im/aslotte/mlops.net](https://badges.gitter.im/aslotte/mlops.net.svg)](https://gitter.im/aslotte/mlops.net?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ![.NET Core](https://github.com/aslotte/MLOps.NET/workflows/.NET%20Core/badge.svg)
 
 ## MLOps.NET NuGet Status
