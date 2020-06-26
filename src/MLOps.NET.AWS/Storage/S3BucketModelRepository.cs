@@ -12,10 +12,10 @@ namespace MLOps.NET.Storage
 {
     internal sealed class S3BucketModelRepository : IModelRepository
     {
-        private readonly AmazonS3Client amazonS3Client;
+        private readonly IAmazonS3 amazonS3Client;
         private string bucketName;
 
-        public S3BucketModelRepository(AmazonS3Client amazonS3Client, string bucketName)
+        public S3BucketModelRepository(IAmazonS3 amazonS3Client, string bucketName)
         {           
             this.bucketName = bucketName;
             this.amazonS3Client = amazonS3Client;
@@ -51,7 +51,7 @@ namespace MLOps.NET.Storage
                 var response = await amazonS3Client.GetObjectMetadataAsync(request);
                 return true;
             }
-            catch (Amazon.S3.AmazonS3Exception)
+            catch (AmazonS3Exception)
             {
                     return false;               
             }
