@@ -7,6 +7,8 @@ using System.IO;
 using System.Security.AccessControl;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
+using Amazon.S3.Model.Internal.MarshallTransformations;
 
 namespace MLOps.NET.Storage
 {
@@ -41,20 +43,8 @@ namespace MLOps.NET.Storage
         }
 
         private async Task<bool> DoesS3BucketExists(string bucketName)
-        {
-            try
-            {
-                var request = new GetObjectMetadataRequest()
-                {
-                    BucketName = bucketName
-                };
-                var response = await amazonS3Client.GetObjectMetadataAsync(request);
-                return true;
-            }
-            catch (AmazonS3Exception)
-            {
-                    return false;               
-            }
+        {                
+            return (await amazonS3Client.ListBucketsAsync()).Buckets.Any(b => b.BucketName == bucketName);                
         }
 
         public async Task DownloadModelAsync(Guid runId, Stream destination)

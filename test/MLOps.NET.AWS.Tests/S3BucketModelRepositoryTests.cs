@@ -23,10 +23,17 @@ namespace MLOps.NET.AWS.Tests
         {
             // Arrange
             var mockAmzonClient = new Mock<IAmazonS3>();
-            mockAmzonClient.Setup(a => a.GetObjectMetadataAsync(It.IsAny<GetObjectMetadataRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new GetObjectMetadataResponse()
-            {
-                ContentLength = 100
-            });
+            mockAmzonClient.Setup(a => a.ListBucketsAsync(It.IsAny<CancellationToken>()))
+                           .ReturnsAsync(new ListBucketsResponse
+                           {
+                               Buckets = new List<S3Bucket>()
+                               {
+                                   new S3Bucket
+                                   {
+                                       BucketName = "model-repository"
+                                   }
+                               }
+                           });
             var sut = new S3BucketModelRepository(mockAmzonClient.Object,"model-repository");
 
             // Act
@@ -41,8 +48,11 @@ namespace MLOps.NET.AWS.Tests
         {
             // Arrange
             var mockAmzonClient = new Mock<IAmazonS3>();
-            mockAmzonClient.Setup(a => a.GetObjectMetadataAsync(It.IsAny<GetObjectMetadataRequest>(), It.IsAny<CancellationToken>()))
-                           .ThrowsAsync(new AmazonS3Exception("Bucket does not exist"));
+            mockAmzonClient.Setup(a => a.ListBucketsAsync(It.IsAny<CancellationToken>()))
+                           .ReturnsAsync(new ListBucketsResponse
+                           {
+                               Buckets = new List<S3Bucket>()
+                           });
 
             var sut = new S3BucketModelRepository(mockAmzonClient.Object, "model-repository");
 
