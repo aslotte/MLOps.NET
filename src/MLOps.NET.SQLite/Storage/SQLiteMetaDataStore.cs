@@ -16,11 +16,17 @@ namespace MLOps.NET.Storage
         {
             using (var db = new LocalDbContext())
             {
-                var experiment = new Experiment(name);
-                await db.Experiments.AddAsync(experiment);
-                await db.SaveChangesAsync();
-                
-                return experiment.Id;
+	            var existingExperiment = db.Experiments.FirstOrDefault(x => x.ExperimentName == name);
+
+	            if (existingExperiment == null)
+	            {
+		            var experiment = new Experiment(name);
+		            await db.Experiments.AddAsync(experiment);
+		            await db.SaveChangesAsync();
+		            return experiment.Id;
+                }
+
+	            return existingExperiment.Id;
             }
         }
 
