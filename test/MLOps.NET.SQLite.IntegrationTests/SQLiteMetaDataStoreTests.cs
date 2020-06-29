@@ -141,16 +141,16 @@ namespace MLOps.NET.SQLite.IntegrationTests
         {
             // Arrange
             var sut = new MLOpsBuilder()
-	            .UseSQLite()
-	            .UseModelRepository(new Mock<IModelRepository>().Object)
-	            .Build();
+                .UseSQLite()
+                .UseModelRepository(new Mock<IModelRepository>().Object)
+                .Build();
 
             //Act
             var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
-	        var experimentId2 = await sut.LifeCycle.CreateExperimentAsync("test");
+            var experimentId2 = await sut.LifeCycle.CreateExperimentAsync("test");
 
-	        //Assert
-	        experimentId.Should().Be(experimentId2);
+            //Assert
+            experimentId.Should().Be(experimentId2);
         }
 
         private static List<DataPoint> GetSampleDataForTraining()
