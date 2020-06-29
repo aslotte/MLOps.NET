@@ -15,7 +15,7 @@ jobs:
         image: mcr.microsoft.com/mssql/server:2019-CU4-ubuntu-16.04
         env:
           ACCEPT_EULA: Y
-          SA_PASSWORD: ${{ secrets.SQLServer_PASSWORD }}
+          SA_PASSWORD: MLOps4TheWin!
         ports:
           - 1433:1433
 
