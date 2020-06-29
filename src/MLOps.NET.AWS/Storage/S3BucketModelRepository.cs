@@ -56,7 +56,9 @@ namespace MLOps.NET.Storage
             };
             var response = await amazonS3Client.GetObjectAsync(downloadFileRequest);
             if (response == null)
-                throw new FileNotFoundException($"The model file for run id {runId} not found");
+            {
+                throw new FileNotFoundException($"The model file for run id {runId} was not found");
+            }
 
             using (var stream = response.ResponseStream)
             {

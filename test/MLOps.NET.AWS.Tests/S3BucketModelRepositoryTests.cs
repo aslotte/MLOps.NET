@@ -1,21 +1,17 @@
-﻿using Amazon;
-using Amazon.Runtime;
-using Amazon.S3;
+﻿using Amazon.S3;
 using Amazon.S3.Model;
-using Amazon.S3.Util;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Storage;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.IO.Abstractions.TestingHelpers;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.AWS.Tests
 {
     [TestClass]
+    [TestCategory("UnitTests")]
     public class S3BucketModelRepositoryTests
     {
         [TestMethod]
@@ -40,7 +36,7 @@ namespace MLOps.NET.AWS.Tests
             await sut.UploadModelAsync(new Guid(), "model.zip");
 
             // Assert
-            mockAmzonClient.Verify(a => a.PutObjectAsync(It.IsAny<PutObjectRequest>(), It.IsAny<CancellationToken>()), Times.AtLeastOnce);
+            mockAmzonClient.Verify(a => a.PutObjectAsync(It.Is<PutObjectRequest>(o => o.BucketName == "model-repository"), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [TestMethod]
@@ -60,7 +56,7 @@ namespace MLOps.NET.AWS.Tests
             await sut.UploadModelAsync(new Guid(), "model.zip");
 
             // Assert
-            mockAmzonClient.Verify(a => a.PutBucketAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.AtLeastOnce);
+            mockAmzonClient.Verify(a => a.PutBucketAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }
