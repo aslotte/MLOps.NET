@@ -162,7 +162,6 @@ namespace MLOps.NET.Storage
 
                 var dataSchema = new DataSchema(data.Id)
                 {
-                    RowCount = dataView.GetRowCount() ?? 0,
                     ColumnCount = dataView.Schema.Count()
                 };
 

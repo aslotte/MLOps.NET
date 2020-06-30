@@ -24,11 +24,6 @@ namespace MLOps.NET.Entities.Interfaces
         int ColumnCount { get; set; }
 
         /// <summary>
-        /// The row count of the data
-        /// </summary>
-        long RowCount { get; set; }
-
-        /// <summary>
         /// Collection of related data columns
         /// </summary>
         List<IDataColumn> DataColumns { get; set; }

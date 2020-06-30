@@ -19,8 +19,6 @@ namespace MLOps.NET.SQLServer.Entities
 
         public int ColumnCount { get; set; }
 
-        public long RowCount { get; set; }
-
         [NotMapped]
         public List<IDataColumn> DataColumns { get; set; }
     }

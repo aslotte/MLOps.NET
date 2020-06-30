@@ -5,6 +5,7 @@ using MLOps.NET.Entities;
 using MLOps.NET.SQLServer.IntegrationTests.Data;
 using MLOps.NET.SQLServer.Storage;
 using MLOps.NET.Storage;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,12 +36,17 @@ namespace MLOps.NET.SQLServer.IntegrationTests
             var metrics = context.Metrics;
             var hyperParameters = context.HyperParameters;
             var confusionMatrices = context.ConfusionMatrices;
+            var data = context.Data;
+            var dataSchema = context.DataSchemas;
+            var dataColumns = context.DataColumns;
 
             context.Experiments.RemoveRange(experiments);
             context.Runs.RemoveRange(runs);
             context.Metrics.RemoveRange(metrics);
             context.HyperParameters.RemoveRange(hyperParameters);
-            context.ConfusionMatrices.RemoveRange(confusionMatrices);
+            context.Data.RemoveRange(data);
+            context.DataSchemas.RemoveRange(dataSchema);
+            context.DataColumns.RemoveRange(dataColumns);
 
             await context.SaveChangesAsync();
         }
@@ -173,7 +179,13 @@ namespace MLOps.NET.SQLServer.IntegrationTests
             //Assert
             var savedData = sut.GetData(runId);
 
-            savedData.DataSchema.ColumnCount.Should().Be(2);     
+            savedData.DataSchema.ColumnCount.Should().Be(2);
+
+            savedData.DataSchema.DataColumns[0].Type.Should().Be(nameof(Boolean));
+            savedData.DataSchema.DataColumns[0].Name.Should().Be("Sentiment");
+
+            savedData.DataSchema.DataColumns[1].Type.Should().Be(nameof(String));
+            savedData.DataSchema.DataColumns[1].Name.Should().Be("Review");
         }
 
         private IDataView LoadData()
