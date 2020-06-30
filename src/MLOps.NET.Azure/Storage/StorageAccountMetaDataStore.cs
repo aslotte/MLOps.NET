@@ -1,7 +1,9 @@
 ﻿using Microsoft.Azure.Cosmos.Table;
+using Microsoft.ML;
 using MLOps.NET.Azure.Entities;
 using MLOps.NET.Entities;
 using MLOps.NET.Entities.Entities;
+using MLOps.NET.Entities.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -88,7 +90,6 @@ namespace MLOps.NET.Storage
             return result.Result as TEntity;
         }
 
-        ///<inheritdoc/>
         public IEnumerable<IExperiment> GetExperiments()
         {
             var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
@@ -103,7 +104,6 @@ namespace MLOps.NET.Storage
             return experiments;
         }
 
-        ///<inheritdoc/>
         public IExperiment GetExperiment(string experimentName)
         {
             var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
@@ -120,7 +120,6 @@ namespace MLOps.NET.Storage
             return experiment;
         }
 
-        ///<inheritdoc/>
         public List<IRun> GetRuns(Guid experimentId)
         {
             var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
@@ -138,7 +137,6 @@ namespace MLOps.NET.Storage
             return runs;
         }
 
-        ///<inheritdoc/>
         public IRun GetRun(Guid runId)
         {
             var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
@@ -148,7 +146,6 @@ namespace MLOps.NET.Storage
             return runTable.CreateQuery<Run>().FirstOrDefault(x => x.Id == runId);
         }
 
-        ///<inheritdoc/>
         public List<IMetric> GetMetrics(Guid runId)
         {
             var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
@@ -161,7 +158,6 @@ namespace MLOps.NET.Storage
             return metrics;
         }
 
-        ///<inheritdoc/>
         public ConfusionMatrix GetConfusionMatrix(Guid runId)
         {
             var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
@@ -175,7 +171,6 @@ namespace MLOps.NET.Storage
             return JsonConvert.DeserializeObject<ConfusionMatrix>(confusionMatrix.SerializedMatrix);
         }
 
-        ///<inheritdoc/>
         public async Task LogHyperParameterAsync(Guid runId, string name, string value)
         {
             var hyperParameter = new HyperParameter(runId, name, value);
@@ -183,7 +178,6 @@ namespace MLOps.NET.Storage
             await InsertOrMergeAsync(hyperParameter, nameof(HyperParameter));
         }
 
-        ///<inheritdoc/>
         public async Task SetTrainingTimeAsync(Guid runId, TimeSpan timeSpan)
         {
             var existingRun = GetRun(runId);
@@ -194,12 +188,21 @@ namespace MLOps.NET.Storage
             await InsertOrMergeAsync(existingRun as Run, nameof(Run));
         }
 
-        ///<inheritdoc/>
         public async Task LogConfusionMatrixAsync(Guid runId, ConfusionMatrix confusionMatrix)
         {
             var conMatrix = new ConfusionMatrixEntity(runId);           
             conMatrix.SerializedMatrix = JsonConvert.SerializeObject(confusionMatrix);
             await InsertOrMergeAsync(conMatrix, nameof(ConfusionMatrix));
+        }
+
+        public Task LogDataAsync(Guid runId, IDataView dataView)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IData GetData(Guid runId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

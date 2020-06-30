@@ -1,5 +1,7 @@
-﻿using MLOps.NET.Entities;
+﻿using Microsoft.ML;
+using MLOps.NET.Entities;
 using MLOps.NET.Entities.Entities;
+using MLOps.NET.Entities.Interfaces;
 using MLOps.NET.SQLite.Entities;
 using MLOps.NET.SQLite.Storage;
 using Newtonsoft.Json;
@@ -132,6 +134,16 @@ namespace MLOps.NET.Storage
 
                 await db.SaveChangesAsync();
             }
+        }
+
+        public Task LogDataAsync(Guid runId, IDataView dataView)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IData GetData(Guid runId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

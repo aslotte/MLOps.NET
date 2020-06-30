@@ -1,5 +1,7 @@
-﻿using MLOps.NET.Entities;
+﻿using Microsoft.ML;
+using MLOps.NET.Entities;
 using MLOps.NET.Entities.Entities;
+using MLOps.NET.Entities.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -100,5 +102,20 @@ namespace MLOps.NET.Storage
         /// <param name="runId"></param>
         /// <returns></returns>
         ConfusionMatrix GetConfusionMatrix(Guid runId);
+
+        /// <summary>
+        /// Logs the data
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <param name="dataView"></param>
+        /// <returns></returns>
+        Task LogDataAsync(Guid runId, IDataView dataView);
+
+        /// <summary>
+        /// Gets the data associated with a Run
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <returns></returns>
+        IData GetData(Guid runId);
     }
 }

@@ -17,6 +17,12 @@ namespace MLOps.NET.SQLServer.Storage.Interfaces
 
         DbSet<ConfusionMatrixEntity> ConfusionMatrices { get; set; }
 
+        DbSet<Data> Data { get; set; }
+
+        DbSet<DataSchema> DataSchemas { get; set; }
+
+        DbSet<DataColumn> DataColumns { get; set; }
+
         Task SaveChangesAsync();
     }
 }

@@ -14,6 +14,7 @@ namespace MLOps.NET
             if (modelRepository == null) throw new ArgumentNullException(nameof(modelRepository));
 
             this.LifeCycle = new LifeCycleCatalog(metaDataStore, new Clock());
+            this.Data = new DataCatalog(metaDataStore);
             this.Evaluation = new EvaluationCatalog(metaDataStore);
             this.Model = new ModelCatalog(modelRepository);
             this.Training = new TrainingCatalog(metaDataStore);
@@ -21,6 +22,9 @@ namespace MLOps.NET
 
         ///<inheritdoc cref="IMLOpsContext"/>
         public LifeCycleCatalog LifeCycle { get; private set; }
+
+        ///<inheritdoc cref="IMLOpsContext"/>
+        public DataCatalog Data { get; set; }
 
         ///<inheritdoc cref="IMLOpsContext"/>
         public EvaluationCatalog Evaluation { get; private set; }

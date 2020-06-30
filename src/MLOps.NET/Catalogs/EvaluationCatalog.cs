@@ -61,7 +61,7 @@ namespace MLOps.NET.Catalogs
         /// <returns></returns>
         public async Task LogConfusionMatrixAsync(Guid runId, ConfusionMatrix confusionMatrix)
         {
-            var conMatrix = new MLOps.NET.Entities.ConfusionMatrix()
+            var conMatrix = new Entities.ConfusionMatrix()
             {
                 Counts = confusionMatrix.Counts,
                 NumberOfClasses = confusionMatrix.NumberOfClasses,
@@ -76,7 +76,7 @@ namespace MLOps.NET.Catalogs
         /// </summary>
         /// <param name="runId"></param>
         /// <returns></returns>
-        public MLOps.NET.Entities.ConfusionMatrix GetConfusionMatrix(Guid runId)
+        public Entities.ConfusionMatrix GetConfusionMatrix(Guid runId)
         {
             return metaDataStore.GetConfusionMatrix(runId);
         }

@@ -1,6 +1,8 @@
 ﻿using FluentAssertions;
+using Microsoft.ML;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Entities;
+using MLOps.NET.SQLServer.IntegrationTests.Data;
 using MLOps.NET.SQLServer.Storage;
 using MLOps.NET.Storage;
 using System.Collections.Generic;
@@ -154,6 +156,31 @@ namespace MLOps.NET.SQLServer.IntegrationTests
 
             //Assert
             confusionMatrix.Should().BeNull();
+        }
+
+        [TestMethod]
+        public async Task LogDataAsync_GivenValidDatView_ShouldLogData()
+        {
+            //Arrange
+            var experimentId = await sut.CreateExperimentAsync("test");
+            var runId = await sut.CreateRunAsync(experimentId);
+
+            var data = LoadData();
+
+            //Act
+            await sut.LogDataAsync(runId, data);
+
+            //Assert
+            var savedData = sut.GetData(runId);
+
+            savedData.DataSchema.ColumnCount.Should().Be(2);     
+        }
+
+        private IDataView LoadData()
+        {
+            var mlContext = new MLContext(seed: 1);
+
+            return mlContext.Data.LoadFromTextFile<ProductReview>("Data/product_reviews.csv", hasHeader: true, separatorChar: ',');
         }
     }
 }

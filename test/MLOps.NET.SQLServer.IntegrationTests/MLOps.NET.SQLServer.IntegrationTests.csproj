@@ -22,4 +22,10 @@
     <ProjectReference Include="..\..\src\MLOps.NET.SQLServer\MLOps.NET.SQLServer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Data\product_reviews.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

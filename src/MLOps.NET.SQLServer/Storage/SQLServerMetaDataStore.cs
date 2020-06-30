@@ -1,5 +1,8 @@
-﻿using MLOps.NET.Entities;
+﻿using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.ML;
+using MLOps.NET.Entities;
 using MLOps.NET.Entities.Entities;
+using MLOps.NET.Entities.Interfaces;
 using MLOps.NET.SQLServer.Entities;
 using MLOps.NET.SQLServer.Storage;
 using Newtonsoft.Json;
@@ -148,6 +151,53 @@ namespace MLOps.NET.Storage
                 if (confusionMatrixEntity == null) return null;
 
                 return JsonConvert.DeserializeObject<ConfusionMatrix>(confusionMatrixEntity.SerializedMatrix);
+            }
+        }
+
+        public async Task LogDataAsync(Guid runId, IDataView dataView)
+        {
+            using (var db = this.contextFactory.CreateDbContext())
+            {
+                var data = new Data(runId);
+
+                var dataSchema = new DataSchema(data.Id)
+                {
+                    RowCount = dataView.GetRowCount() ?? 0,
+                    ColumnCount = dataView.Schema.Count()
+                };
+
+                db.Data.Add(data);
+                db.DataSchemas.Add(dataSchema);
+
+                foreach (var column in dataView.Schema)
+                {
+                    var dataColumn = new DataColumn(dataSchema.Id)
+                    {
+                        Name = column.Name,
+                        Type = column.Type.ToString()
+                    };
+
+                    db.DataColumns.Add(dataColumn);
+                }
+
+                await db.SaveChangesAsync();
+            }
+        }
+
+        public IData GetData(Guid runId)
+        {
+            using (var db = this.contextFactory.CreateDbContext())
+            {
+                var data = db.Data.FirstOrDefault(x => x.RunId == runId);
+                if (data == null) return null;
+
+                data.DataSchema = db.DataSchemas.FirstOrDefault(x => x.DataId == data.Id);
+                data.DataSchema.DataColumns = db.DataColumns
+                    .Where(x => x.DataSchemaId == data.DataSchema.Id)
+                    .AsEnumerable<IDataColumn>()
+                    .ToList();
+
+                return data;
             }
         }
     }

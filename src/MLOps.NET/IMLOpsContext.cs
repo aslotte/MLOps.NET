@@ -13,6 +13,11 @@ namespace MLOps.NET
         LifeCycleCatalog LifeCycle { get; }
 
         /// <summary>
+        /// Operations related to tracking the data used to train a model
+        /// </summary>
+        DataCatalog Data { get;  }
+
+        /// <summary>
         /// Operations related to tracking the evaulation metrics of a model
         /// </summary>
         EvaluationCatalog Evaluation { get; }
