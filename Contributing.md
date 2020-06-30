@@ -1,7 +1,7 @@
 # How to Contribute to this Project
 
 ## How to Submit an Issue
-Please submit an issue if you have an idea or something that doesn't seem to working correctly.
+Please submit an issue if you have an idea or something that does not seem to work correctly.
 
 We'll do our best to work with you and help you, whatever the issue is. For the best possible results:
 
@@ -14,19 +14,19 @@ We suggest [submitting an issue](https://github.com/aslotte/MLOps.NET/issues/new
 
 ## Contributing Code via a Pull Request
 
-So you've got some code you'd like to contribute to the project. First off -- Thank you! It means a lot to us that you'd take your time to help improve this project.
+So, you've got some code you'd like to contribute to the project. First off -- Thank you! It means a lot to us that you'd take your time to help improve this project.
 
 We'll try to avoid being super strict about accepting PRs because we value contributions from others, but some general guidelines are below:
 
 * You should [submit an issue](https://github.com/aslotte/MLOps.NET/issues/new) before beginning a pull request. This makes sure that we have a good heads up that you want to contribute, and also makes sure that if we don't think the idea is a good fit, you don't spend time writing code only to have the PR rejected later.
-* You should fork the project first and create a branch for your changes off of the `master` branch
+* You should fork the project first and create a branch for your changes off the `master` branch
 * We suggest creating a PR early in the progress and placing `WIP` or `In Progress` in the title of the PR (you can edit it later). This way, as you add changes, we can see the progress, and might be able to jump in to help if we see things going off the rails. This one's your call, though; do whatever suits you.
 * Try to make many small commits, with notes, at each step of the way. This will help us understand your thought process when we review the PR. We'll squash these changes at the end of the process, so no worries about being verbose throughout.
 
 
 ## Coding style guide
-We generall will follow Microsoft's recommended standard. 
+We generally will follow Microsoft's recommended standard. 
 
 A couple of things to keep in mind:
 - Start private member variables with lower case, e.g. no underscore
-- Keep method and variables names readible 
+- Keep method and variables names readable  
