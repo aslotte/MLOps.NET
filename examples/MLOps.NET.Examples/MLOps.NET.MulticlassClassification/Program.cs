@@ -12,11 +12,11 @@ namespace MLOps.NET.MulticlassClassification
         {
             // MLOps: Create experiment and run
             var mlOpsContext = new MLOpsBuilder()
-                .UseSQLite(@"C:/MLOps")
+                .UseSQLite()
                 .Build();
 
             Console.WriteLine("Creating an MLOps Run");
-            var runId = await mlOpsContext.CreateRunAsync("Product Category Predictor");
+            var runId = await mlOpsContext.LifeCycle.CreateRunAsync("Product Category Predictor");
             Console.WriteLine($"Run created with Id {runId}");
 
             var mlContext = new MLContext(seed: 1);
@@ -46,14 +46,14 @@ namespace MLOps.NET.MulticlassClassification
 
             //MLOps: Log Metrics
             Console.WriteLine("Logging metrics");
-            await mlOpsContext.LogMetricsAsync(runId, metrics);
+            await mlOpsContext.Evaluation.LogMetricsAsync(runId, metrics);
 
             //Save the model
             mlContext.Model.Save(trainedModel, testTrainTest.TrainSet.Schema, "MultiClassificationModel.zip");
 
             //MLOps: Upload artifact/model
             Console.WriteLine("Uploading artifact");
-            await mlOpsContext.UploadModelAsync(runId, "MultiClassificationModel.zip");
+            await mlOpsContext.Model.UploadAsync(runId, "MultiClassificationModel.zip");
         }
     }
 }
