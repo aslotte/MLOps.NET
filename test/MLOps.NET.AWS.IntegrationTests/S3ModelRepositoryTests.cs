@@ -7,7 +7,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace MLOps.NET.Azure.IntegrationTests
+namespace MLOps.NET.AWS.IntegrationTests
 {
     [TestCategory("IntegrationTestsAWS")]
     [TestClass]
