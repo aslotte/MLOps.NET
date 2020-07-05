@@ -13,6 +13,9 @@ If you're used to creating machine learning models in libraries such as Tensorfl
 
 Models created in ML.NET can however currently not be used in MLflow, and as such the idea of MLOps.NET was spawn.
 
+## Roadmap 
+![roadmap](https://github.com/aslotte/MLOps.NET/blob/master/images/roadmap.png)
+
 ### Currently supported storage providers
 
 #### Model Repository

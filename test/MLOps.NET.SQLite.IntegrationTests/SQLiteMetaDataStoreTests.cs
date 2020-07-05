@@ -137,6 +137,23 @@ namespace MLOps.NET.SQLite.IntegrationTests
         }
 
         [TestMethod]
+        public async Task CreateExperimentAsync_Twice_ShouldNotAddDuplicate()
+        {
+            // Arrange
+            var sut = new MLOpsBuilder()
+                .UseSQLite()
+                .UseModelRepository(new Mock<IModelRepository>().Object)
+                .Build();
+
+            //Act
+            var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
+            var experimentId2 = await sut.LifeCycle.CreateExperimentAsync("test");
+
+            //Assert
+            experimentId.Should().Be(experimentId2);
+        }
+
+        [TestMethod]
         public async Task LogDataAsync_GivenValidDatView_ShouldLogData()
         {
             //Arrange
@@ -167,6 +184,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
                 .Should()
                 .BeTrue();
         }
+
         private IDataView LoadData()
         {
             var mlContext = new MLContext(seed: 1);
