@@ -157,11 +157,15 @@ namespace MLOps.NET.SQLite.IntegrationTests
 
             savedData.DataSchema.ColumnCount.Should().Be(2);
 
-            savedData.DataSchema.DataColumns[0].Type.Should().Be(nameof(Boolean));
-            savedData.DataSchema.DataColumns[0].Name.Should().Be("Sentiment");
+            savedData.DataSchema.DataColumns
+                .Any(x => x.Type == nameof(Boolean) && x.Name == "Sentiment")
+                .Should()
+                .BeTrue();
 
-            savedData.DataSchema.DataColumns[1].Type.Should().Be(nameof(String));
-            savedData.DataSchema.DataColumns[1].Name.Should().Be("Review");
+            savedData.DataSchema.DataColumns
+                .Any(x => x.Type == nameof(String) && x.Name == "Review")
+                .Should()
+                .BeTrue();
         }
         private IDataView LoadData()
         {
