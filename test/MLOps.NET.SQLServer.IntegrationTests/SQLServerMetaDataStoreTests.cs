@@ -166,7 +166,7 @@ namespace MLOps.NET.SQLServer.IntegrationTests
         }
 
         [TestMethod]
-        public async Task LogDataAsync_GivenValidDatView_ShouldLogData()
+        public async Task LogDataAsync_GivenValidDataView_ShouldLogData()
         {
             //Arrange
             var experimentId = await sut.CreateExperimentAsync("test");

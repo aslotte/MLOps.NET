@@ -155,7 +155,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
         }
 
         [TestMethod]
-        public async Task LogDataAsync_GivenValidDatView_ShouldLogData()
+        public async Task LogDataAsync_GivenValidDataView_ShouldLogData()
         {
             //Arrange
             var sut = new MLOpsBuilder()
