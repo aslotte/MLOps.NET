@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Storage
@@ -23,10 +24,8 @@ namespace MLOps.NET.Storage
 
         public async Task<Guid> CreateExperimentAsync(string name)
         {
-            // Check if experiment exists
-            var existingExperiment = await RetrieveEntityAsync<Experiment>(name, name, nameof(Experiment));
+            var existingExperiment = RetrieveEntity<Experiment>(x => x.ExperimentName == name, nameof(Experiment));
 
-            // Add if it doesn't exist
             if (existingExperiment == null)
             {
                 var experiment = new Experiment(name);
@@ -34,7 +33,6 @@ namespace MLOps.NET.Storage
                 return addedExperiment.Id;
             }
 
-            // Return existing id if exists
             return existingExperiment.Id;
         }
 
@@ -74,18 +72,6 @@ namespace MLOps.NET.Storage
             var insertOrMergeOperation = TableOperation.InsertOrMerge(entity);
 
             TableResult result = await table.ExecuteAsync(insertOrMergeOperation);
-
-            return result.Result as TEntity;
-        }
-
-        private async Task<TEntity> RetrieveEntityAsync<TEntity>(string partitionKey, string rowKey, string tableName) where TEntity : TableEntity
-        {
-            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
-
-            CloudTable table = tableClient.GetTableReference(tableName);
-
-            var retrieveOperation = TableOperation.Retrieve<TEntity>(partitionKey, rowKey);
-            var result = await table.ExecuteAsync(retrieveOperation);
 
             return result.Result as TEntity;
         }
@@ -190,19 +176,65 @@ namespace MLOps.NET.Storage
 
         public async Task LogConfusionMatrixAsync(Guid runId, ConfusionMatrix confusionMatrix)
         {
-            var conMatrix = new ConfusionMatrixEntity(runId);           
-            conMatrix.SerializedMatrix = JsonConvert.SerializeObject(confusionMatrix);
+            var conMatrix = new ConfusionMatrixEntity(runId)
+            {
+                SerializedMatrix = JsonConvert.SerializeObject(confusionMatrix)
+            };
             await InsertOrMergeAsync(conMatrix, nameof(ConfusionMatrix));
         }
 
-        public Task LogDataAsync(Guid runId, IDataView dataView)
+        public async Task LogDataAsync(Guid runId, IDataView dataView)
         {
-            throw new NotImplementedException();
+            var data = new Data(runId);
+            await InsertOrMergeAsync(data, nameof(Data));
+
+            var dataSchema = new DataSchema(data.Id)
+            {
+                ColumnCount = dataView.Schema.Count()
+            };
+            await InsertOrMergeAsync(dataSchema, nameof(DataSchema));
+
+            foreach (var column in dataView.Schema)
+            {
+                var dataColumn = new DataColumn(dataSchema.Id)
+                {
+                    Name = column.Name,
+                    Type = column.Type.ToString()
+                };
+                await InsertOrMergeAsync(dataColumn, nameof(DataColumn));
+            }
         }
 
         public IData GetData(Guid runId)
         {
-            throw new NotImplementedException();
+            var data = RetrieveEntity<Data>(x => x.RunId == runId, nameof(Data));
+            if (data == null) return null;
+
+            data.DataSchema = RetrieveEntity<DataSchema>(x => x.DataId == data.Id, nameof(DataSchema));
+
+            var dataColumns = RetrieveEntities<DataColumn>(x => x.DataSchemaId == data.DataSchema.Id, nameof(DataSchema))
+                .AsEnumerable<IDataColumn>()
+                .ToList();
+
+            data.DataSchema.DataColumns = dataColumns;
+
+            return data;
+        }
+
+        private TEntity RetrieveEntity<TEntity>(Func<TEntity, bool> predicate, string tableName) where TEntity : TableEntity, new()
+        {
+            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
+            var table = tableClient.GetTableReference(tableName);
+
+            return table.CreateQuery<TEntity>().FirstOrDefault(predicate);
+        }
+
+        private IEnumerable<TEntity> RetrieveEntities<TEntity>(Func<TEntity, bool> predicate, string tableName) where TEntity : TableEntity, new()
+        {
+            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
+            var table = tableClient.GetTableReference(tableName);
+
+            return table.CreateQuery<TEntity>().Where(predicate);
         }
     }
 }
