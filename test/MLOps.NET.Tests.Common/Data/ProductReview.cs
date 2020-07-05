@@ -1,6 +1,6 @@
 ﻿using Microsoft.ML.Data;
 
-namespace MLOps.NET.SQLServer.IntegrationTests.Data
+namespace MLOps.NET.Tests.Common.Data
 {
     public class ProductReview
     {

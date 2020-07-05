@@ -2,9 +2,9 @@
 using Microsoft.ML;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Entities;
-using MLOps.NET.SQLServer.IntegrationTests.Data;
 using MLOps.NET.SQLServer.Storage;
 using MLOps.NET.Storage;
+using MLOps.NET.Tests.Common.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +44,7 @@ namespace MLOps.NET.SQLServer.IntegrationTests
             context.Runs.RemoveRange(runs);
             context.Metrics.RemoveRange(metrics);
             context.HyperParameters.RemoveRange(hyperParameters);
+            context.ConfusionMatrices.RemoveRange(confusionMatrices);
             context.Data.RemoveRange(data);
             context.DataSchemas.RemoveRange(dataSchema);
             context.DataColumns.RemoveRange(dataColumns);

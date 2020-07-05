@@ -21,5 +21,11 @@ namespace MLOps.NET.SQLite.Storage
         public DbSet<HyperParameter> HyperParameters { get; set; }
 
         public DbSet<Run> Runs { get; set; }
+
+        public DbSet<Data> Data { get; set; }
+
+        public DbSet<DataSchema> DataSchemas { get; set; }
+
+        public DbSet<DataColumn> DataColumns { get; set; }
     }
 }

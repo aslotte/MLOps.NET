@@ -1,4 +1,5 @@
 ﻿using Microsoft.ML;
+using MLOps.NET.Entities.Interfaces;
 using MLOps.NET.Storage;
 using System;
 using System.Threading.Tasks;
@@ -30,6 +31,16 @@ namespace MLOps.NET.Catalogs
         public async Task LogDataAsync(Guid runId, IDataView dataView)
         {
             await this.metaDataStore.LogDataAsync(runId, dataView);
+        }
+
+        /// <summary>
+        /// Gets logged data related to a run
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <returns></returns>
+        public IData GetData(Guid runId)
+        {
+            return this.metaDataStore.GetData(runId);
         }
     }
 }

@@ -136,14 +136,50 @@ namespace MLOps.NET.Storage
             }
         }
 
-        public Task LogDataAsync(Guid runId, IDataView dataView)
+        public async Task LogDataAsync(Guid runId, IDataView dataView)
         {
-            throw new NotImplementedException();
+            using (var db = new LocalDbContext())
+            {
+                var data = new Data(runId);
+
+                var dataSchema = new DataSchema(data.Id)
+                {
+                    ColumnCount = dataView.Schema.Count()
+                };
+
+                db.Data.Add(data);
+                db.DataSchemas.Add(dataSchema);
+
+                foreach (var column in dataView.Schema)
+                {
+                    var dataColumn = new DataColumn(dataSchema.Id)
+                    {
+                        Name = column.Name,
+                        Type = column.Type.ToString()
+                    };
+
+                    db.DataColumns.Add(dataColumn);
+                }
+
+                await db.SaveChangesAsync();
+            }
         }
 
         public IData GetData(Guid runId)
         {
-            throw new NotImplementedException();
+            using (var db = new LocalDbContext())
+            {
+                var data = db.Data.FirstOrDefault(x => x.RunId == runId);
+                if (data == null) return null;
+
+                data.DataSchema = db.DataSchemas.FirstOrDefault(x => x.DataId == data.Id);
+                data.DataSchema.DataColumns = db.DataColumns
+                    .Where(x => x.DataSchemaId == data.DataSchema.Id)
+                    .AsEnumerable<IDataColumn>()
+                    .ToList();
+
+                return data;
+            }
         }
     }
 }
