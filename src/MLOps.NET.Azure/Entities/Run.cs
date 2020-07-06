@@ -1,5 +1,5 @@
 ﻿using Microsoft.Azure.Cosmos.Table;
-using MLOps.NET.Entities.Entities;
+using MLOps.NET.Entities.Interfaces;
 using System;
 using System.Collections.Generic;
 

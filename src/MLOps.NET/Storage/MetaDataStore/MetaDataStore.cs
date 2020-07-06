@@ -1,10 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.ML;
+﻿using Microsoft.ML;
 using MLOps.NET.Entities;
-using MLOps.NET.Entities.Entities;
+using MLOps.NET.Entities.Impl;
 using MLOps.NET.Entities.Interfaces;
-using MLOps.NET.SQLServer.Entities;
-using MLOps.NET.SQLServer.Storage;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,15 +10,18 @@ using System.Threading.Tasks;
 
 namespace MLOps.NET.Storage
 {
-    internal sealed class SQLServerMetaDataStore : IMetaDataStore
+    ///<inheritdoc cref="IMetaDataStore"/>
+    public sealed class MetaDataStore : IMetaDataStore
     {
         private readonly IDbContextFactory contextFactory;
 
-        public SQLServerMetaDataStore(IDbContextFactory contextFactory)
+        ///<inheritdoc cref="IMetaDataStore"/>
+        public MetaDataStore(IDbContextFactory contextFactory)
         {
             this.contextFactory = contextFactory;
         }
 
+        ///<inheritdoc cref="IMetaDataStore"/>
         public async Task<Guid> CreateExperimentAsync(string name)
         {
             using (var db = this.contextFactory.CreateDbContext())
@@ -39,6 +39,7 @@ namespace MLOps.NET.Storage
             }
         }
 
+        ///<inheritdoc cref="IMetaDataStore"/>
         public async Task<Guid> CreateRunAsync(Guid experimentId, string gitCommitHash = "")
         {
             using (var db = this.contextFactory.CreateDbContext())
@@ -55,6 +56,7 @@ namespace MLOps.NET.Storage
             }
         }
 
+        ///<inheritdoc cref="IMetaDataStore"/>
         public IExperiment GetExperiment(string experimentName)
         {
             using (var db = this.contextFactory.CreateDbContext())
@@ -63,6 +65,7 @@ namespace MLOps.NET.Storage
             }
         }
 
+        ///<inheritdoc cref="IMetaDataStore"/>
         public IEnumerable<IExperiment> GetExperiments()
         {
             using (var db = this.contextFactory.CreateDbContext())
@@ -71,6 +74,7 @@ namespace MLOps.NET.Storage
             }
         }
 
+        ///<inheritdoc cref="IMetaDataStore"/>
         public List<IMetric> GetMetrics(Guid runId)
         {
             using (var db = this.contextFactory.CreateDbContext())
@@ -78,6 +82,8 @@ namespace MLOps.NET.Storage
                 return db.Metrics.Where(x => x.RunId == runId).ToList<IMetric>();
             }
         }
+
+        ///<inheritdoc cref="IMetaDataStore"/>
 
         public IRun GetRun(Guid runId)
         {
@@ -87,6 +93,7 @@ namespace MLOps.NET.Storage
             }
         }
 
+        ///<inheritdoc cref="IMetaDataStore"/>
         public List<IRun> GetRuns(Guid experimentId)
         {
             using (var db = this.contextFactory.CreateDbContext())
@@ -95,6 +102,7 @@ namespace MLOps.NET.Storage
             }
         }
 
+        ///<inheritdoc cref="IMetaDataStore"/>
         public async Task LogHyperParameterAsync(Guid runId, string name, string value)
         {
             using (var db = this.contextFactory.CreateDbContext())
@@ -105,6 +113,7 @@ namespace MLOps.NET.Storage
             }
         }
 
+        ///<inheritdoc cref="IMetaDataStore"/>
         public async Task LogMetricAsync(Guid runId, string metricName, double metricValue)
         {
             using (var db = this.contextFactory.CreateDbContext())
@@ -115,6 +124,7 @@ namespace MLOps.NET.Storage
             }
         }
 
+        ///<inheritdoc cref="IMetaDataStore"/>
         public async Task SetTrainingTimeAsync(Guid runId, TimeSpan timeSpan)
         {
             using (var db = this.contextFactory.CreateDbContext())
@@ -128,6 +138,7 @@ namespace MLOps.NET.Storage
             }
         }
 
+        ///<inheritdoc cref="IMetaDataStore"/>
         public async Task LogConfusionMatrixAsync(Guid runId, ConfusionMatrix confusionMatrix)
         {
             using (var db = this.contextFactory.CreateDbContext())
@@ -142,6 +153,7 @@ namespace MLOps.NET.Storage
             }
         }
 
+        ///<inheritdoc cref="IMetaDataStore"/>
         public ConfusionMatrix GetConfusionMatrix(Guid runId)
         {
             using (var db = this.contextFactory.CreateDbContext())
@@ -154,6 +166,7 @@ namespace MLOps.NET.Storage
             }
         }
 
+        ///<inheritdoc cref="IMetaDataStore"/>
         public async Task LogDataAsync(Guid runId, IDataView dataView)
         {
             using (var db = this.contextFactory.CreateDbContext())
@@ -183,6 +196,7 @@ namespace MLOps.NET.Storage
             }
         }
 
+        ///<inheritdoc cref="IMetaDataStore"/>
         public IData GetData(Guid runId)
         {
             using (var db = this.contextFactory.CreateDbContext())

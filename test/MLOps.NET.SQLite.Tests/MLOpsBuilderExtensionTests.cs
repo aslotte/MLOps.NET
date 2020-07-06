@@ -1,9 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MLOps.NET.Catalogs;
 using MLOps.NET.Storage;
 using Moq;
-using System.Reflection;
 
 namespace MLOps.NET.SQLite.Tests
 {
@@ -24,9 +22,6 @@ namespace MLOps.NET.SQLite.Tests
 
             //Assert
             unitUnderTest.Evaluation.Should().NotBeNull();
-
-            var metaDataField = typeof(EvaluationCatalog).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
-            metaDataField.GetValue(unitUnderTest.Evaluation).Should().BeOfType<SQLiteMetaDataStore>();
         }
 
 
@@ -43,10 +38,6 @@ namespace MLOps.NET.SQLite.Tests
 
             //Assert
             unitUnderTest.Training.Should().NotBeNull();
-
-            var metaDataField = typeof(TrainingCatalog).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
-
-            metaDataField.GetValue(unitUnderTest.Training).Should().BeOfType<SQLiteMetaDataStore>();
         }
 
         [TestMethod]
@@ -62,10 +53,6 @@ namespace MLOps.NET.SQLite.Tests
 
             //Assert
             unitUnderTest.LifeCycle.Should().NotBeNull();
-
-            var metaDataField = typeof(LifeCycleCatalog).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
-
-            metaDataField.GetValue(unitUnderTest.LifeCycle).Should().BeOfType<SQLiteMetaDataStore>();
         }
     }
 }

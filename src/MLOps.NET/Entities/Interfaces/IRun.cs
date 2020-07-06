@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
 
-namespace MLOps.NET.Entities.Entities
+namespace MLOps.NET.Entities.Interfaces
 {
     /// <summary>
     /// Unique run for a given experiment

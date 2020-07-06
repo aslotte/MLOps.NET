@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MLOps.NET.Entities.Entities
+namespace MLOps.NET.Entities.Interfaces
 {
     /// <summary>
     /// Entity holding information about a unique experiment
