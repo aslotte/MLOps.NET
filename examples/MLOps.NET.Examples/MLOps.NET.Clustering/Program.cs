@@ -3,12 +3,13 @@ using Microsoft.ML.Trainers;
 using MLOps.NET.Clustering.Entities;
 using MLOps.NET.SQLite;
 using System;
+using System.Threading.Tasks;
 
 namespace MLOps.NET.Clustering
 {
     class Program
     {
-        static async System.Threading.Tasks.Task Main(string[] args)
+        static async Task Main(string[] args)
         {
             // MLOps: Create experiment and run
             var mlOpsContext = new MLOpsBuilder()
@@ -45,7 +46,7 @@ namespace MLOps.NET.Clustering
 
             Console.WriteLine("Evaluating the model");
             var predictions = trainedModel.Transform(testTrainTest.TestSet);
-            var metrics = mlContext.Clustering.Evaluate(predictions, "Label", "Score", "Features");
+            var metrics = mlContext.Clustering.Evaluate(predictions);
 
             //MLOps: Log Metrics
             Console.WriteLine("Logging metrics");
