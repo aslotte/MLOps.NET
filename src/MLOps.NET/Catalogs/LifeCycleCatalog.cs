@@ -13,8 +13,7 @@ namespace MLOps.NET.Catalogs
     /// </summary>
     public sealed class LifeCycleCatalog
     {
-        private readonly IMetaDataStore metaDataStore;
-        private readonly IClock clock;
+        
 
         /// <summary>
         /// ctor       
