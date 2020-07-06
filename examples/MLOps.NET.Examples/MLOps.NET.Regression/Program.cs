@@ -1,8 +1,10 @@
 ﻿using Microsoft.ML;
+using Microsoft.ML.Trainers.FastTree;
 using Microsoft.ML.Transforms;
 using MLOps.NET.Regression.Entities;
 using MLOps.NET.SQLite;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Regression
@@ -11,6 +13,8 @@ namespace MLOps.NET.Regression
     {
         static async Task Main(string[] args)
         {
+            var stopwatch = new Stopwatch();
+
             // MLOps: Create experiment and run
             var mlOpsContext = new MLOpsBuilder()
                 .UseSQLite()
@@ -34,10 +38,19 @@ namespace MLOps.NET.Regression
                 .Append(mlContext.Transforms.Concatenate("Features", "VendorIdEncoded", "RateCodeEncoded", "PassengerCount", "TripDistance", "PaymentTypeEncoded"));
 
             Console.WriteLine("Training the model, please stand-by...");
+            stopwatch.Start();
+            var trainer = mlContext.Regression.Trainers.FastTree();
             var trainingPipeline = dataProcessingPipeline
-                .Append(mlContext.Regression.Trainers.FastTree());
+                .Append(trainer);
 
             var trainedModel = trainingPipeline.Fit(testTrainTest.TrainSet);
+
+            await mlOpsContext.Training.LogHyperParametersAsync<FastTreeRegressionTrainer>(runId, trainer);
+            stopwatch.Stop();
+
+            //MLOps: Training time
+            await mlOpsContext.LifeCycle.SetTrainingTimeAsync(runId, stopwatch.Elapsed);
+            Console.WriteLine($"Training time:{mlOpsContext.LifeCycle.GetRun(runId).TrainingTime}");
 
             Console.WriteLine("Evaluating the model");
             var predictions = trainedModel.Transform(testTrainTest.TestSet);

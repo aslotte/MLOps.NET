@@ -10,12 +10,12 @@ namespace MLOps.NET.Entities.Entities
     public interface IConfusionMatrixEntity
     {
         /// <summary>
-        /// 
+        /// RunId
         /// </summary>
         Guid RunId { get; set; }
 
         /// <summary>
-        /// 
+        /// SerializedMatrix
         /// </summary>
         string SerializedMatrix { get; set; }
     }

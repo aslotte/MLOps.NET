@@ -1,7 +1,10 @@
 ﻿using Microsoft.ML;
+using Microsoft.ML.Trainers;
 using MLOps.NET.MulticlassClassification.Entities;
 using MLOps.NET.SQLite;
+using MLOps.NET.Storage;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.MulticlassClassification
@@ -10,6 +13,8 @@ namespace MLOps.NET.MulticlassClassification
     {
         static async Task Main(string[] args)
         {
+            var stopwatch = new Stopwatch();
+            
             // MLOps: Create experiment and run
             var mlOpsContext = new MLOpsBuilder()
                 .UseSQLite()
@@ -34,11 +39,20 @@ namespace MLOps.NET.MulticlassClassification
                 .Append(mlContext.Transforms.NormalizeMinMax("Features"))));
 
             Console.WriteLine("Training the model, please stand-by...");
+            stopwatch.Start();
+            var trainer = mlContext.MulticlassClassification.Trainers.SdcaMaximumEntropy(nameof(ProductInformation.Category), "Features");
             var trainingPipeline = dataProcessingPipeline
-                .Append(mlContext.MulticlassClassification.Trainers.SdcaMaximumEntropy(nameof(ProductInformation.Category), "Features")
-                .Append(mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel")));
-
+                .Append(trainer)
+                .Append(mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel"));
+            
             var trainedModel = trainingPipeline.Fit(testTrainTest.TrainSet);
+
+            await mlOpsContext.Training.LogHyperParametersAsync<SdcaMaximumEntropyMulticlassTrainer>(runId, trainer);
+            stopwatch.Stop();
+
+            //MLOps: Training time
+            await mlOpsContext.LifeCycle.SetTrainingTimeAsync(runId, stopwatch.Elapsed);
+            Console.WriteLine($"Training time(H:M:S:Ms):{mlOpsContext.LifeCycle.GetRun(runId).TrainingTime}");
 
             Console.WriteLine("Evaluating the model");
             var predictions = trainedModel.Transform(testTrainTest.TestSet);
@@ -47,6 +61,7 @@ namespace MLOps.NET.MulticlassClassification
             //MLOps: Log Metrics
             Console.WriteLine("Logging metrics");
             await mlOpsContext.Evaluation.LogMetricsAsync(runId, metrics);
+            await mlOpsContext.Evaluation.LogConfusionMatrixAsync(runId, metrics.ConfusionMatrix);
 
             //Save the model
             mlContext.Model.Save(trainedModel, testTrainTest.TrainSet.Schema, "MultiClassificationModel.zip");
