@@ -21,7 +21,7 @@ namespace MLOps.NET.Regression
                 .Build();
 
             Console.WriteLine("Creating an MLOps Run");
-            var runId = await mlOpsContext.LifeCycle.CreateRunAsync("Taxi Fare Predictor");
+            var runId = await mlOpsContext.LifeCycle.CreateRunAsync("Product Category Predictor");
             Console.WriteLine($"Run created with Id {runId}");
 
             var mlContext = new MLContext(seed: 1);
