@@ -18,7 +18,7 @@ namespace MLOps.NET
         DataCatalog Data { get;  }
 
         /// <summary>
-        /// Operations related to tracking the evaulation metrics of a model
+        /// Operations related to tracking the evaluation metrics of a model
         /// </summary>
         EvaluationCatalog Evaluation { get; }
 
