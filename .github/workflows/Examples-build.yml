@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  integration-tests-aws:
+  Examples-build:
     runs-on: ubuntu-latest
 
     steps:
