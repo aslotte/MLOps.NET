@@ -1,11 +1,14 @@
 ﻿using Microsoft.Azure.Cosmos.Table;
+using Microsoft.ML;
 using MLOps.NET.Azure.Entities;
 using MLOps.NET.Entities;
 using MLOps.NET.Entities.Entities;
+using MLOps.NET.Entities.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Storage
@@ -21,10 +24,8 @@ namespace MLOps.NET.Storage
 
         public async Task<Guid> CreateExperimentAsync(string name)
         {
-            // Check if experiment exists
-            var existingExperiment = await RetrieveEntityAsync<Experiment>(name, name, nameof(Experiment));
+            var existingExperiment = RetrieveEntity<Experiment>(x => x.ExperimentName == name, nameof(Experiment));
 
-            // Add if it doesn't exist
             if (existingExperiment == null)
             {
                 var experiment = new Experiment(name);
@@ -32,7 +33,6 @@ namespace MLOps.NET.Storage
                 return addedExperiment.Id;
             }
 
-            // Return existing id if exists
             return existingExperiment.Id;
         }
 
@@ -76,19 +76,6 @@ namespace MLOps.NET.Storage
             return result.Result as TEntity;
         }
 
-        private async Task<TEntity> RetrieveEntityAsync<TEntity>(string partitionKey, string rowKey, string tableName) where TEntity : TableEntity
-        {
-            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
-
-            CloudTable table = tableClient.GetTableReference(tableName);
-
-            var retrieveOperation = TableOperation.Retrieve<TEntity>(partitionKey, rowKey);
-            var result = await table.ExecuteAsync(retrieveOperation);
-
-            return result.Result as TEntity;
-        }
-
-        ///<inheritdoc/>
         public IEnumerable<IExperiment> GetExperiments()
         {
             var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
@@ -103,7 +90,6 @@ namespace MLOps.NET.Storage
             return experiments;
         }
 
-        ///<inheritdoc/>
         public IExperiment GetExperiment(string experimentName)
         {
             var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
@@ -120,7 +106,6 @@ namespace MLOps.NET.Storage
             return experiment;
         }
 
-        ///<inheritdoc/>
         public List<IRun> GetRuns(Guid experimentId)
         {
             var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
@@ -138,7 +123,6 @@ namespace MLOps.NET.Storage
             return runs;
         }
 
-        ///<inheritdoc/>
         public IRun GetRun(Guid runId)
         {
             var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
@@ -148,7 +132,6 @@ namespace MLOps.NET.Storage
             return runTable.CreateQuery<Run>().FirstOrDefault(x => x.Id == runId);
         }
 
-        ///<inheritdoc/>
         public List<IMetric> GetMetrics(Guid runId)
         {
             var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
@@ -161,7 +144,6 @@ namespace MLOps.NET.Storage
             return metrics;
         }
 
-        ///<inheritdoc/>
         public ConfusionMatrix GetConfusionMatrix(Guid runId)
         {
             var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
@@ -175,7 +157,6 @@ namespace MLOps.NET.Storage
             return JsonConvert.DeserializeObject<ConfusionMatrix>(confusionMatrix.SerializedMatrix);
         }
 
-        ///<inheritdoc/>
         public async Task LogHyperParameterAsync(Guid runId, string name, string value)
         {
             var hyperParameter = new HyperParameter(runId, name, value);
@@ -183,7 +164,6 @@ namespace MLOps.NET.Storage
             await InsertOrMergeAsync(hyperParameter, nameof(HyperParameter));
         }
 
-        ///<inheritdoc/>
         public async Task SetTrainingTimeAsync(Guid runId, TimeSpan timeSpan)
         {
             var existingRun = GetRun(runId);
@@ -194,12 +174,67 @@ namespace MLOps.NET.Storage
             await InsertOrMergeAsync(existingRun as Run, nameof(Run));
         }
 
-        ///<inheritdoc/>
         public async Task LogConfusionMatrixAsync(Guid runId, ConfusionMatrix confusionMatrix)
         {
-            var conMatrix = new ConfusionMatrixEntity(runId);           
-            conMatrix.SerializedMatrix = JsonConvert.SerializeObject(confusionMatrix);
+            var conMatrix = new ConfusionMatrixEntity(runId)
+            {
+                SerializedMatrix = JsonConvert.SerializeObject(confusionMatrix)
+            };
             await InsertOrMergeAsync(conMatrix, nameof(ConfusionMatrix));
+        }
+
+        public async Task LogDataAsync(Guid runId, IDataView dataView)
+        {
+            var data = new Data(runId);
+            await InsertOrMergeAsync(data, nameof(Data));
+
+            var dataSchema = new DataSchema(data.Id)
+            {
+                ColumnCount = dataView.Schema.Count()
+            };
+            await InsertOrMergeAsync(dataSchema, nameof(DataSchema));
+
+            foreach (var column in dataView.Schema)
+            {
+                var dataColumn = new DataColumn(dataSchema.Id)
+                {
+                    Name = column.Name,
+                    Type = column.Type.ToString()
+                };
+                await InsertOrMergeAsync(dataColumn, nameof(DataColumn));
+            }
+        }
+
+        public IData GetData(Guid runId)
+        {
+            var data = RetrieveEntity<Data>(x => x.RunId == runId, nameof(Data));
+            if (data == null) return null;
+
+            data.DataSchema = RetrieveEntity<DataSchema>(x => x.DataId == data.Id, nameof(DataSchema));
+
+            var dataColumns = RetrieveEntities<DataColumn>(x => x.DataSchemaId == data.DataSchema.Id, nameof(DataSchema))
+                .AsEnumerable<IDataColumn>()
+                .ToList();
+
+            data.DataSchema.DataColumns = dataColumns;
+
+            return data;
+        }
+
+        private TEntity RetrieveEntity<TEntity>(Func<TEntity, bool> predicate, string tableName) where TEntity : TableEntity, new()
+        {
+            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
+            var table = tableClient.GetTableReference(tableName);
+
+            return table.CreateQuery<TEntity>().FirstOrDefault(predicate);
+        }
+
+        private IEnumerable<TEntity> RetrieveEntities<TEntity>(Func<TEntity, bool> predicate, string tableName) where TEntity : TableEntity, new()
+        {
+            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
+            var table = tableClient.GetTableReference(tableName);
+
+            return table.CreateQuery<TEntity>().Where(predicate);
         }
     }
 }

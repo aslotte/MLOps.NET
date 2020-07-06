@@ -31,5 +31,11 @@ namespace MLOps.NET.SQLServer.Storage
         public DbSet<Run> Runs { get; set; }
 
         public DbSet<ConfusionMatrixEntity> ConfusionMatrices { get; set; }
+
+        public DbSet<Data> Data { get; set; }
+
+        public DbSet<DataSchema> DataSchemas { get; set; }
+
+        public DbSet<DataColumn> DataColumns { get; set; }
     }
 }

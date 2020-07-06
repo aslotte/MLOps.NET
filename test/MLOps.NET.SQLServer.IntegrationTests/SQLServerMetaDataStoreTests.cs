@@ -1,8 +1,11 @@
 ﻿using FluentAssertions;
+using Microsoft.ML;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Entities;
 using MLOps.NET.SQLServer.Storage;
 using MLOps.NET.Storage;
+using MLOps.NET.Tests.Common.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,12 +36,18 @@ namespace MLOps.NET.SQLServer.IntegrationTests
             var metrics = context.Metrics;
             var hyperParameters = context.HyperParameters;
             var confusionMatrices = context.ConfusionMatrices;
+            var data = context.Data;
+            var dataSchema = context.DataSchemas;
+            var dataColumns = context.DataColumns;
 
             context.Experiments.RemoveRange(experiments);
             context.Runs.RemoveRange(runs);
             context.Metrics.RemoveRange(metrics);
             context.HyperParameters.RemoveRange(hyperParameters);
             context.ConfusionMatrices.RemoveRange(confusionMatrices);
+            context.Data.RemoveRange(data);
+            context.DataSchemas.RemoveRange(dataSchema);
+            context.DataColumns.RemoveRange(dataColumns);
 
             await context.SaveChangesAsync();
         }
@@ -154,6 +163,41 @@ namespace MLOps.NET.SQLServer.IntegrationTests
 
             //Assert
             confusionMatrix.Should().BeNull();
+        }
+
+        [TestMethod]
+        public async Task LogDataAsync_GivenValidDataView_ShouldLogData()
+        {
+            //Arrange
+            var experimentId = await sut.CreateExperimentAsync("test");
+            var runId = await sut.CreateRunAsync(experimentId);
+
+            var data = LoadData();
+
+            //Act
+            await sut.LogDataAsync(runId, data);
+
+            //Assert
+            var savedData = sut.GetData(runId);
+
+            savedData.DataSchema.ColumnCount.Should().Be(2);
+
+            savedData.DataSchema.DataColumns
+                .Any(x => x.Type == nameof(Boolean) && x.Name == "Sentiment")
+                .Should()
+                .BeTrue();
+
+            savedData.DataSchema.DataColumns
+                .Any(x => x.Type == nameof(String) && x.Name == "Review")
+                .Should()
+                .BeTrue();
+        }
+
+        private IDataView LoadData()
+        {
+            var mlContext = new MLContext(seed: 1);
+
+            return mlContext.Data.LoadFromTextFile<ProductReview>("Data/product_reviews.csv", hasHeader: true, separatorChar: ',');
         }
     }
 }

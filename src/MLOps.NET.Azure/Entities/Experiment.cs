@@ -7,7 +7,6 @@ namespace MLOps.NET.Azure.Entities
 {
     internal sealed class Experiment : TableEntity, IExperiment
     {
-
         public Experiment() { }
 
         public Experiment(string experimentName)

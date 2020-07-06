@@ -3,10 +3,11 @@ using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Storage;
+using MLOps.NET.Tests.Common.Data;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.SQLite.IntegrationTests
@@ -151,6 +152,45 @@ namespace MLOps.NET.SQLite.IntegrationTests
 
             //Assert
             experimentId.Should().Be(experimentId2);
+        }
+
+        [TestMethod]
+        public async Task LogDataAsync_GivenValidDataView_ShouldLogData()
+        {
+            //Arrange
+            var sut = new MLOpsBuilder()
+                .UseSQLite()
+                .UseModelRepository(new Mock<IModelRepository>().Object)
+                .Build();
+
+            var runId = await sut.LifeCycle.CreateRunAsync("test");
+
+            var data = LoadData();
+
+            //Act
+            await sut.Data.LogDataAsync(runId, data);
+
+            //Assert
+            var savedData = sut.Data.GetData(runId);
+
+            savedData.DataSchema.ColumnCount.Should().Be(2);
+
+            savedData.DataSchema.DataColumns
+                .Any(x => x.Type == nameof(Boolean) && x.Name == "Sentiment")
+                .Should()
+                .BeTrue();
+
+            savedData.DataSchema.DataColumns
+                .Any(x => x.Type == nameof(String) && x.Name == "Review")
+                .Should()
+                .BeTrue();
+        }
+
+        private IDataView LoadData()
+        {
+            var mlContext = new MLContext(seed: 1);
+
+            return mlContext.Data.LoadFromTextFile<ProductReview>("Data/product_reviews.csv", hasHeader: true, separatorChar: ',');
         }
 
         private static List<DataPoint> GetSampleDataForTraining()
