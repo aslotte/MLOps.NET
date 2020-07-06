@@ -1,8 +1,10 @@
 ﻿using Microsoft.ML;
+using Microsoft.ML.Trainers;
 using Microsoft.ML.Transforms;
 using MLOps.NET.BinaryClassification.Entities;
 using MLOps.NET.SQLite;
 using System;
+using System.Diagnostics;
 
 namespace MLOps.NET.BinaryClassification
 {
@@ -10,13 +12,15 @@ namespace MLOps.NET.BinaryClassification
     {
         static async System.Threading.Tasks.Task Main(string[] args)
         {
+            var stopwatch = new Stopwatch();
+
             // MLOps: Create experiment and run
             var mlOpsContext = new MLOpsBuilder()
-                .UseSQLite(@"C:/MLOps")
+                .UseSQLite()
                 .Build();
 
             Console.WriteLine("Creating an MLOps Run");
-            var runId = await mlOpsContext.CreateRunAsync("Product Category Predictor");
+            var runId = await mlOpsContext.LifeCycle.CreateRunAsync("Product Category Predictor");
             Console.WriteLine($"Run created with Id {runId}");
 
             var mlContext = new MLContext(seed: 1);
@@ -37,10 +41,19 @@ namespace MLOps.NET.BinaryClassification
                 .Append(mlContext.Transforms.NormalizeMinMax("Features"));
 
             Console.WriteLine("Training the model, please stand-by...");
+            stopwatch.Start();
+            var trainer = mlContext.BinaryClassification.Trainers.SdcaLogisticRegression("Label", "Features");
             var trainingPipeline = dataProcessingPipeline
-                .Append(mlContext.BinaryClassification.Trainers.SdcaLogisticRegression("Label", "Features"));
+                .Append(trainer);
 
             var trainedModel = trainingPipeline.Fit(testTrainTest.TrainSet);
+
+            await mlOpsContext.Training.LogHyperParametersAsync<SdcaLogisticRegressionBinaryTrainer>(runId, trainer);
+            stopwatch.Stop();
+
+            //MLOps: Training time
+            await mlOpsContext.LifeCycle.SetTrainingTimeAsync(runId, stopwatch.Elapsed);
+            Console.WriteLine($"Training time:{mlOpsContext.LifeCycle.GetRun(runId).TrainingTime}");
 
             Console.WriteLine("Evaluating the model");
             var predictions = trainedModel.Transform(testTrainTest.TestSet);
@@ -48,14 +61,15 @@ namespace MLOps.NET.BinaryClassification
 
             //MLOps: Log Metrics
             Console.WriteLine("Logging metrics");
-            await mlOpsContext.LogMetricsAsync(runId, metrics);
+            await mlOpsContext.Evaluation.LogMetricsAsync(runId, metrics);
+            await mlOpsContext.Evaluation.LogConfusionMatrixAsync(runId, metrics.ConfusionMatrix);
 
             //Save the model
             mlContext.Model.Save(trainedModel, testTrainTest.TrainSet.Schema, "BinaryClassificationModel.zip");
 
             //MLOps: Upload artifact/model
             Console.WriteLine("Uploading artifact");
-            await mlOpsContext.UploadModelAsync(runId, "BinaryClassificationModel.zip");
+            await mlOpsContext.Model.UploadAsync(runId, "BinaryClassificationModel.zip");
         }
     }
 }
