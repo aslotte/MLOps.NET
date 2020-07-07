@@ -16,16 +16,13 @@ namespace MLOps.NET.Azure.Tests
             //Act
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
                 .UseAzureBlobModelRepository("UseDevelopmentStorage=true")
-                .UseAzureTableStorage("UseDevelopmentStorage=true")
+                .UseAzureTableStorage("endPoint", "key")
                 .Build();
 
             unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
 
             //Assert
             unitUnderTest.Evaluation.Should().NotBeNull();
-
-            var metaDataField = typeof(EvaluationCatalog).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
-            metaDataField.GetValue(unitUnderTest.Evaluation).Should().BeOfType<StorageAccountMetaDataStore>();
         }
 
         
@@ -35,17 +32,13 @@ namespace MLOps.NET.Azure.Tests
             //Act
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
                 .UseAzureBlobModelRepository("UseDevelopmentStorage=true")
-                .UseAzureTableStorage("UseDevelopmentStorage=true")
+                .UseAzureTableStorage("endPoint", "key")
                 .Build();
 
             unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
 
             //Assert
             unitUnderTest.Training.Should().NotBeNull();
-
-            var metaDataField = typeof(TrainingCatalog).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
-
-            metaDataField.GetValue(unitUnderTest.Training).Should().BeOfType<StorageAccountMetaDataStore>();
         }
 
         [TestMethod]
@@ -54,17 +47,13 @@ namespace MLOps.NET.Azure.Tests
             //Act
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
                 .UseAzureBlobModelRepository("UseDevelopmentStorage=true")
-                .UseAzureTableStorage("UseDevelopmentStorage=true")
+                .UseAzureTableStorage("endPoint", "key")
                 .Build();
 
             unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
 
             //Assert
             unitUnderTest.LifeCycle.Should().NotBeNull();
-
-            var metaDataField = typeof(LifeCycleCatalog).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
-
-            metaDataField.GetValue(unitUnderTest.LifeCycle).Should().BeOfType<StorageAccountMetaDataStore>();
         }
 
         [TestMethod]
@@ -73,7 +62,7 @@ namespace MLOps.NET.Azure.Tests
             //Act
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
                 .UseAzureBlobModelRepository("UseDevelopmentStorage=true")
-                .UseAzureTableStorage("UseDevelopmentStorage=true")
+                .UseAzureTableStorage("endPoint", "key")
                 .Build();
 
             unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
