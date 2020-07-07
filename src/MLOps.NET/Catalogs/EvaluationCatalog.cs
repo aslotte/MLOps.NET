@@ -51,7 +51,11 @@ namespace MLOps.NET.Catalogs
 
             foreach (var metric in properties)
             {
-                await LogMetricAsync(runId, metric.Name, (double)metric.GetValue(metrics));
+                var value = (double)metric.GetValue(metrics);
+
+                if (double.IsNaN(value)) continue;
+
+                await LogMetricAsync(runId, metric.Name, value);
             }
         }
 
