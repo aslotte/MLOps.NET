@@ -11,7 +11,7 @@ namespace MLOps.NET.Tests
 {
     [TestCategory("UnitTests")]
     [TestClass]
-    public class EvaluationCycleCatalogTests
+    public class EvaluationCatalogTests
     {
         private Mock<IMetaDataStore> metaDataStoreMock;
         private EvaluationCatalog sut;
