@@ -16,7 +16,7 @@ namespace MLOps.NET.Azure.Tests
             //Act
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
                 .UseAzureBlobModelRepository("UseDevelopmentStorage=true")
-                .UseAzureTableStorage("endPoint", "key")
+                .UseCosmosDb("endPoint", "key")
                 .Build();
 
             unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
@@ -32,7 +32,7 @@ namespace MLOps.NET.Azure.Tests
             //Act
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
                 .UseAzureBlobModelRepository("UseDevelopmentStorage=true")
-                .UseAzureTableStorage("endPoint", "key")
+                .UseCosmosDb("endPoint", "key")
                 .Build();
 
             unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
@@ -47,7 +47,7 @@ namespace MLOps.NET.Azure.Tests
             //Act
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
                 .UseAzureBlobModelRepository("UseDevelopmentStorage=true")
-                .UseAzureTableStorage("endPoint", "key")
+                .UseCosmosDb("endPoint", "key")
                 .Build();
 
             unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
@@ -62,7 +62,7 @@ namespace MLOps.NET.Azure.Tests
             //Act
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
                 .UseAzureBlobModelRepository("UseDevelopmentStorage=true")
-                .UseAzureTableStorage("endPoint", "key")
+                .UseCosmosDb("endPoint", "key")
                 .Build();
 
             unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");

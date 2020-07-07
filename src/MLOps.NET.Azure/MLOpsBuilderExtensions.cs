@@ -9,13 +9,13 @@ namespace MLOps.NET.Azure
     public static class MLOpsBuilderExtensions
     {
         /// <summary>
-        /// Enables the usage of TableStorage as a storage provider for model meta data
+        /// Enables the usage of CosmosDb as a storage provider for model meta data
         /// </summary>
         /// <param name="builder">MLOpsBuilder to add Azure Storage providers to</param>
         /// <param name="accountEndpoint"></param>
         /// <param name="accountKey"></param>
         /// <returns>Provided MLOpsBuilder for chaining</returns>
-        public static MLOpsBuilder UseAzureTableStorage(this MLOpsBuilder builder, string accountEndpoint, string accountKey)
+        public static MLOpsBuilder UseCosmosDb(this MLOpsBuilder builder, string accountEndpoint, string accountKey)
         {
             var options = new DbContextOptionsBuilder()
                 .UseCosmos(accountEndpoint, accountKey, databaseName: "MLOpsNET")
