@@ -14,17 +14,22 @@ namespace MLOps.NET.SQLite.IntegrationTests
 {
     [TestCategory("Integration")]
     [TestClass]
-    public class SQLiteMetaDataStoreTests
+    public class MetaDataStoreTests
     {
-        [TestMethod]
-        public async Task CreateExperimentAsync_Always_ReturnsNonEmptyGuidAsync()
+        private IMLOpsContext sut;
+
+        [TestInitialize]
+        public void Initialize()
         {
-            //Arrange
-            IMLOpsContext sut = new MLOpsBuilder()
+            sut = new MLOpsBuilder()
                 .UseModelRepository(new Mock<IModelRepository>().Object)
                 .UseSQLite()
                 .Build();
+        }
 
+        [TestMethod]
+        public async Task CreateExperimentAsync_Always_ReturnsNonEmptyGuidAsync()
+        {
             //Act
             var guid = await sut.LifeCycle.CreateExperimentAsync("first experiment");
 
@@ -36,11 +41,6 @@ namespace MLOps.NET.SQLite.IntegrationTests
         [TestMethod]
         public async Task SetTrainingTimeAsync_SetsTrainingTimeOnRun()
         {
-            //Arrange
-            var sut = new MLOpsBuilder()
-                .UseSQLite()
-                .UseModelRepository(new Mock<IModelRepository>().Object)
-                .Build();
             var runId = await sut.LifeCycle.CreateRunAsync("Test");
 
             var expectedTrainingTime = new TimeSpan(0, 5, 0);
@@ -56,12 +56,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
         [TestMethod]
         public async Task LogConfusionMatrixAsync_SavesConfusionMatrixOnRun()
         {
-            //Arrange
-            var unitUnderTest = new MLOpsBuilder()
-                .UseSQLite()
-                .UseModelRepository(new Mock<IModelRepository>().Object)
-                .Build();
-            var runId = await unitUnderTest.LifeCycle.CreateRunAsync("Test");
+            var runId = await sut.LifeCycle.CreateRunAsync("Test");
             var mlContext = new MLContext(seed: 2);
             List<DataPoint> samples = GetSampleDataForTraining();
 
@@ -74,22 +69,16 @@ namespace MLOps.NET.SQLite.IntegrationTests
             var metrics = mlContext.BinaryClassification.Evaluate(predicitions, labelColumnName: "Label");
 
             //Act
-            await unitUnderTest.Evaluation.LogConfusionMatrixAsync(runId, metrics.ConfusionMatrix);
+            await sut.Evaluation.LogConfusionMatrixAsync(runId, metrics.ConfusionMatrix);
 
             //Assert
-            var confusionMatrix = unitUnderTest.Evaluation.GetConfusionMatrix(runId);
+            var confusionMatrix = sut.Evaluation.GetConfusionMatrix(runId);
             confusionMatrix.Should().NotBeNull();
         }
 
-            [TestMethod]
+       [TestMethod]
         public void SetTrainingTimeAsync_NoRunProvided_ThrowsException()
         {
-            //Arrange
-            var sut = new MLOpsBuilder()
-                .UseSQLite()
-                .UseModelRepository(new Mock<IModelRepository>().Object)
-                .Build();
-
             var expectedTrainingTime = new TimeSpan(0, 5, 0);
 
             //Act and Assert
@@ -104,12 +93,6 @@ namespace MLOps.NET.SQLite.IntegrationTests
         [TestMethod]
         public async Task CreateRunAsync_WithGitCommitHash_SetsGitCommitHash()
         {
-            //Arrange
-            var sut = new MLOpsBuilder()
-                .UseSQLite()
-                .UseModelRepository(new Mock<IModelRepository>().Object)
-                .Build();
-
             var gitCommitHash = "12323239329392";
 
             //Act
@@ -123,12 +106,6 @@ namespace MLOps.NET.SQLite.IntegrationTests
         [TestMethod]
         public async Task CreateRunAsync_WithoutGitCommitHash_ShouldProvideEmptyGitCommitHash()
         {
-            //Arrange
-            var sut = new MLOpsBuilder()
-                .UseSQLite()
-                .UseModelRepository(new Mock<IModelRepository>().Object)
-                .Build();
-
             //Act
             var runId = await sut.LifeCycle.CreateRunAsync(Guid.NewGuid());
 
@@ -140,12 +117,6 @@ namespace MLOps.NET.SQLite.IntegrationTests
         [TestMethod]
         public async Task CreateExperimentAsync_Twice_ShouldNotAddDuplicate()
         {
-            // Arrange
-            var sut = new MLOpsBuilder()
-                .UseSQLite()
-                .UseModelRepository(new Mock<IModelRepository>().Object)
-                .Build();
-
             //Act
             var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
             var experimentId2 = await sut.LifeCycle.CreateExperimentAsync("test");
@@ -157,12 +128,6 @@ namespace MLOps.NET.SQLite.IntegrationTests
         [TestMethod]
         public async Task LogDataAsync_GivenValidDataView_ShouldLogData()
         {
-            //Arrange
-            var sut = new MLOpsBuilder()
-                .UseSQLite()
-                .UseModelRepository(new Mock<IModelRepository>().Object)
-                .Build();
-
             var runId = await sut.LifeCycle.CreateRunAsync("test");
 
             var data = LoadData();

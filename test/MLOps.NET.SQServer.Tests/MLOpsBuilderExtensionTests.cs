@@ -24,9 +24,6 @@ namespace MLOps.NET.SQLServer.Tests
 
             //Assert
             unitUnderTest.Evaluation.Should().NotBeNull();
-
-            var metaDataField = typeof(EvaluationCatalog).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
-            metaDataField.GetValue(unitUnderTest.Evaluation).Should().BeOfType<SQLServerMetaDataStore>();
         }
 
 
@@ -43,10 +40,6 @@ namespace MLOps.NET.SQLServer.Tests
 
             //Assert
             unitUnderTest.Training.Should().NotBeNull();
-
-            var metaDataField = typeof(TrainingCatalog).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
-
-            metaDataField.GetValue(unitUnderTest.Training).Should().BeOfType<SQLServerMetaDataStore>();
         }
 
         [TestMethod]
@@ -62,10 +55,6 @@ namespace MLOps.NET.SQLServer.Tests
 
             //Assert
             unitUnderTest.LifeCycle.Should().NotBeNull();
-
-            var metaDataField = typeof(LifeCycleCatalog).GetField("metaDataStore", BindingFlags.Instance | BindingFlags.NonPublic);
-
-            metaDataField.GetValue(unitUnderTest.LifeCycle).Should().BeOfType<SQLServerMetaDataStore>();
         }
     }
 }

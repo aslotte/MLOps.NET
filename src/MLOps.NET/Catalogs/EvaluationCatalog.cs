@@ -1,6 +1,8 @@
 ﻿using Microsoft.ML.Data;
+using MLOps.NET.Entities.Interfaces;
 using MLOps.NET.Storage;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -79,6 +81,16 @@ namespace MLOps.NET.Catalogs
         public Entities.ConfusionMatrix GetConfusionMatrix(Guid runId)
         {
             return metaDataStore.GetConfusionMatrix(runId);
+        }
+
+        /// <summary>
+        /// Get the metrics for a run
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <returns></returns>
+        public List<IMetric> GetMetrics(Guid runId)
+        {
+            return metaDataStore.GetMetrics(runId);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using MLOps.NET.Storage;
+﻿using Microsoft.EntityFrameworkCore;
+using MLOps.NET.Storage;
 
 namespace MLOps.NET.SQLite
 {
@@ -14,7 +15,11 @@ namespace MLOps.NET.SQLite
         /// <returns>Provided MLOpsBuilder for chaining</returns>
         public static MLOpsBuilder UseSQLite(this MLOpsBuilder builder)
         {
-            builder.UseMetaDataStore(new SQLiteMetaDataStore());
+            var options = new DbContextOptionsBuilder()
+                .UseSqlite("Data Source=local.db")
+                .Options;
+
+            builder.UseMetaDataStore(new MetaDataStore(new DbContextFactory(options)));
 
             return builder;
         }

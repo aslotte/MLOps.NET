@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MLOps.NET.Entities.Entities
+namespace MLOps.NET.Entities.Interfaces
 {
     /// <summary>
     /// Metric associated with a given training run

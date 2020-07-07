@@ -1,10 +1,12 @@
-﻿using MLOps.NET.Entities.Entities;
+﻿using MLOps.NET.Entities.Interfaces;
 using System;
 
-namespace MLOps.NET.SQLServer.Entities
+namespace MLOps.NET.Entities.Impl
 {
-    internal sealed class HyperParameter : IHyperParameter
+    ///<inheritdoc cref="IHyperParameter"/>
+    public sealed class HyperParameter : IHyperParameter
     {
+        ///<inheritdoc cref="IHyperParameter"/>
         public HyperParameter(Guid runId, string parameterName, string value)
         {
             ParameterName = parameterName;
@@ -13,12 +15,16 @@ namespace MLOps.NET.SQLServer.Entities
             Id = Guid.NewGuid();
         }
 
+        ///<inheritdoc cref="IHyperParameter"/>
         public Guid Id { get; set; }
 
+        ///<inheritdoc cref="IHyperParameter"/>
         public string ParameterName { get; set; }
 
+        ///<inheritdoc cref="IHyperParameter"/>
         public string Value { get; set; }
 
+        ///<inheritdoc cref="IHyperParameter"/>
         public Guid RunId { get; set; }
     }
 }

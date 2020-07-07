@@ -1,9 +1,8 @@
-﻿using MLOps.NET.Entities.Entities;
+﻿using MLOps.NET.Entities.Interfaces;
 using MLOps.NET.Storage;
 using MLOps.NET.Utilities;
 using System;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Catalogs
@@ -58,6 +57,16 @@ namespace MLOps.NET.Catalogs
         {
             var experimentId = await CreateExperimentAsync(experimentName);
             return await CreateRunAsync(experimentId, gitCommitHash);
+        }
+
+        /// <summary>
+        /// Gets experiment by name
+        /// </summary>
+        /// <param name="experimentName"></param>
+        /// <returns></returns>
+        public IExperiment GetExperiment(string experimentName)
+        {
+            return this.metaDataStore.GetExperiment(experimentName);
         }
 
         /// <summary>

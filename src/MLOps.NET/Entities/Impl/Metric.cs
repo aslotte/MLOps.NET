@@ -1,10 +1,12 @@
-﻿using MLOps.NET.Entities.Entities;
+﻿using MLOps.NET.Entities.Interfaces;
 using System;
 
-namespace MLOps.NET.SQLServer.Entities
+namespace MLOps.NET.Entities.Impl
 {
-    internal sealed class Metric : IMetric
+    ///<inheritdoc cref="IMetric"/>
+    public sealed class Metric : IMetric
     {
+        ///<inheritdoc cref="IMetric"/>
         public Metric(Guid runId, string metricName, double value)
         {
             MetricName = metricName;
@@ -13,9 +15,16 @@ namespace MLOps.NET.SQLServer.Entities
             Id = Guid.NewGuid();
         }
 
+        ///<inheritdoc cref="IMetric"/>
         public Guid Id { get; set; }
+
+        ///<inheritdoc cref="IMetric"/>
         public string MetricName { get; set; }
+
+        ///<inheritdoc cref="IMetric"/>
         public double Value { get; set; }
+
+        ///<inheritdoc cref="IMetric"/>
         public Guid RunId { get; set; }
     }
 }

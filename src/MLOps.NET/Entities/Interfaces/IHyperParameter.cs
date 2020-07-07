@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MLOps.NET.Entities.Entities
+namespace MLOps.NET.Entities.Interfaces
 {
     /// <summary>
     /// HyperParameters associated with a given training run

@@ -1,4 +1,5 @@
-﻿using MLOps.NET.Storage;
+﻿using Microsoft.EntityFrameworkCore;
+using MLOps.NET.Storage;
 
 namespace MLOps.NET.Azure
 {
@@ -8,14 +9,19 @@ namespace MLOps.NET.Azure
     public static class MLOpsBuilderExtensions
     {
         /// <summary>
-        /// Enables the usage of TableStorage as a storage provider for model meta data
+        /// Enables the usage of CosmosDb as a storage provider for model meta data
         /// </summary>
         /// <param name="builder">MLOpsBuilder to add Azure Storage providers to</param>
-        /// <param name="connectionString">The connection string for the azure storage account</param>
+        /// <param name="accountEndpoint"></param>
+        /// <param name="accountKey"></param>
         /// <returns>Provided MLOpsBuilder for chaining</returns>
-        public static MLOpsBuilder UseAzureTableStorage(this MLOpsBuilder builder, string connectionString)
+        public static MLOpsBuilder UseCosmosDb(this MLOpsBuilder builder, string accountEndpoint, string accountKey)
         {
-            builder.UseMetaDataStore(new StorageAccountMetaDataStore(connectionString));
+            var options = new DbContextOptionsBuilder()
+                .UseCosmos(accountEndpoint, accountKey, databaseName: "MLOpsNET")
+                .Options;
+
+            builder.UseMetaDataStore(new MetaDataStore(new DbContextFactory(options)));
 
             return builder;
         }
