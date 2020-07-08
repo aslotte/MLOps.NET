@@ -19,7 +19,10 @@ namespace MLOps.NET.SQLite
                 .UseSqlite("Data Source=local.db")
                 .Options;
 
-            builder.UseMetaDataStore(new MetaDataStore(new DbContextFactory(options)));
+            var contextFactory = new DbContextFactory(options);
+            contextFactory.CreateDbContext().EnsureCreated();
+
+            builder.UseMetaDataStore(new MetaDataStore(contextFactory));
 
             return builder;
         }
