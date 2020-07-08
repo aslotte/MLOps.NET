@@ -16,7 +16,7 @@ namespace MLOps.NET.Azure.Tests
             //Act
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
                 .UseAzureBlobModelRepository("UseDevelopmentStorage=true")
-                .UseCosmosDb("https://localhost:8081", "key")
+                .UseCosmosDb("https://localhost:8081", "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==")
                 .Build();
 
             unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
@@ -32,7 +32,7 @@ namespace MLOps.NET.Azure.Tests
             //Act
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
                 .UseAzureBlobModelRepository("UseDevelopmentStorage=true")
-                .UseCosmosDb("https://localhost:8081", "key")
+                .UseCosmosDb("https://localhost:8081", "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==")
                 .Build();
 
             unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
@@ -47,7 +47,7 @@ namespace MLOps.NET.Azure.Tests
             //Act
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
                 .UseAzureBlobModelRepository("UseDevelopmentStorage=true")
-                .UseCosmosDb("https://localhost:8081", "key")
+                .UseCosmosDb("https://localhost:8081", "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==")
                 .Build();
 
             unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
@@ -62,7 +62,7 @@ namespace MLOps.NET.Azure.Tests
             //Act
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
                 .UseAzureBlobModelRepository("UseDevelopmentStorage=true")
-                .UseCosmosDb("https://localhost:8081", "key")
+                .UseCosmosDb("https://localhost:8081", "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==")
                 .Build();
 
             unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
