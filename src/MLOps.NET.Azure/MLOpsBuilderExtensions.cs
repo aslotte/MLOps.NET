@@ -21,7 +21,10 @@ namespace MLOps.NET.Azure
                 .UseCosmos(accountEndpoint, accountKey, databaseName: "MLOpsNET")
                 .Options;
 
-            builder.UseMetaDataStore(new MetaDataStore(new DbContextFactory(options)));
+            var contextFactory = new DbContextFactory(options);
+            contextFactory.CreateDbContext().EnsureCreated();
+
+            builder.UseMetaDataStore(new MetaDataStore(contextFactory));
 
             return builder;
         }

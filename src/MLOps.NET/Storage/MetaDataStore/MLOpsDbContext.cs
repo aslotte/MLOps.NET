@@ -11,13 +11,21 @@ namespace MLOps.NET.Storage
         ///<inheritdoc cref="IMLOpsDbContext"/>
         public MLOpsDbContext(DbContextOptions options) : base (options)
         {
-            Database.EnsureCreated();
         }
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
         public async Task SaveChangesAsync()
         {
             await base.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Ensured that the database is created
+        /// </summary>
+        /// <returns></returns>
+        public void EnsureCreated()
+        {
+            Database.EnsureCreated();
         }
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
