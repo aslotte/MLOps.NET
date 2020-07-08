@@ -2,12 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.ML;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MLOps.NET.Entities;
 using MLOps.NET.Storage;
 using MLOps.NET.Tests.Common.Data;
 using Moq;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 

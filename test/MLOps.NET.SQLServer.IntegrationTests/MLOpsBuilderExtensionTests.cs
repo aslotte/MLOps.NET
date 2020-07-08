@@ -1,13 +1,11 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MLOps.NET.Catalogs;
 using MLOps.NET.Storage;
 using Moq;
-using System.Reflection;
 
 namespace MLOps.NET.SQLServer.Tests
 {
-    [TestCategory("UnitTests")]
+    [TestCategory("IntegrationTestSqlServer")]
     [TestClass]
     public class MLOpsBuilderExtensionTests
     {
