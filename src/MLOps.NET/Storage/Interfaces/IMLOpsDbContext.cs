@@ -55,5 +55,11 @@ namespace MLOps.NET.Storage.Interfaces
         /// </summary>
         /// <returns></returns>
         Task SaveChangesAsync();
+
+        /// <summary>
+        /// Creates the database if it does not exist
+        /// </summary>
+        /// <returns></returns>
+        void EnsureCreated();
     }
 }

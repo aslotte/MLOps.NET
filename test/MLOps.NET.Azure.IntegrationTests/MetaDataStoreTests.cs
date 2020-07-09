@@ -2,36 +2,43 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.ML;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MLOps.NET.Azure.IntegrationTests.Constants;
 using MLOps.NET.Storage;
+using MLOps.NET.Tests.Common.Configuration;
 using MLOps.NET.Tests.Common.Data;
 using Moq;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MLOps.NET.SQLServer.IntegrationTests
+namespace MLOps.NET.Azure.IntegrationTests
 {
     [TestClass]
-    [TestCategory("IntegrationTestSqlServer")]
+    [TestCategory("IntegrationTestCosmosDb")]
     public class MetaDataStoreTests
     {
-        private const string connectionString = "Server=localhost,1433;Database=MLOpsNET_IntegrationTests;User Id=sa;Password=MLOps4TheWin!;";
         private IMLOpsContext sut;
 
         [TestInitialize]
         public void Initialize()
         {
+            var configuration = ConfigurationFactory.GetConfiguration();
+
             sut = new MLOpsBuilder()
                 .UseModelRepository(new Mock<IModelRepository>().Object)
-                .UseSQLServer(connectionString)
+                .UseCosmosDb(configuration[ConfigurationKeys.CosmosEndPoint], 
+                configuration[ConfigurationKeys.CosmosAccountKey])
                 .Build();
         }
 
         [TestCleanup]
         public async Task TearDown()
         {
+            var configuration = ConfigurationFactory.GetConfiguration();
+
             var options = new DbContextOptionsBuilder()
-                .UseSqlServer(connectionString)
+                .UseCosmos(configuration[ConfigurationKeys.CosmosEndPoint],
+                configuration[ConfigurationKeys.CosmosAccountKey], "MLOpsNET")
                 .Options;
 
             var contextFactory = new DbContextFactory(options);
@@ -127,35 +134,6 @@ namespace MLOps.NET.SQLServer.IntegrationTests
             var run = sut.LifeCycle.GetRun(id);
             run.TrainingTime.Should().Be(trainingTime);
         }
-
-        //[TestMethod]
-        //public async Task LogConfusionMatrixAsync_SavesConfusionMatrixOnRun()
-        //{
-        //    //Arrange
-        //    var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
-        //    var runId = await sut.LifeCycle.CreateRunAsync(experimentId);
-
-        //    var expectedConfusionMatrix = new ConfusionMatrix
-        //    {
-        //        PerClassPrecision = new List<double> { 0.99d, 0.44d },
-        //        PerClassRecall = new List<double> { 0.77d, 0.88d },
-        //        Counts = new List<List<double>>
-        //        {
-        //            new List<double> { 9, 1 },
-        //            new List<double> { 4, 33}
-        //        },
-        //        NumberOfClasses = 2
-        //    };
-
-        //    //Act
-        //    await sut.Evaluation.LogConfusionMatrixAsync(runId, expectedConfusionMatrix);
-
-        //    //Assert
-        //    var confusionMatrix = sut.Evaluation.GetConfusionMatrix(runId);
-
-        //    confusionMatrix.Should().NotBeNull();
-        //    confusionMatrix.Should().BeEquivalentTo(expectedConfusionMatrix);
-        //}
 
         [TestMethod]
         public async Task GetConfusionMatrix_NoConfusionMatrixExist_ShouldReturnNull()

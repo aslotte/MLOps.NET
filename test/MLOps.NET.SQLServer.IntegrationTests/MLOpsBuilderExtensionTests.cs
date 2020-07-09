@@ -1,22 +1,22 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MLOps.NET.Catalogs;
 using MLOps.NET.Storage;
 using Moq;
-using System.Reflection;
 
 namespace MLOps.NET.SQLServer.Tests
 {
-    [TestCategory("UnitTests")]
+    [TestCategory("IntegrationTestSqlServer")]
     [TestClass]
     public class MLOpsBuilderExtensionTests
     {
+        private const string connectionString = "Server=localhost,1433;Database=MLOpsNET_IntegrationTests;User Id=sa;Password=MLOps4TheWin!;";
+
         [TestMethod]
         public void UseSQLServerStorage_ConfiguresEvaluationCatalog()
         {
             //Act
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
-                .UseSQLServer("connectionString")
+                .UseSQLServer(connectionString)
                 .UseModelRepository(new Mock<IModelRepository>().Object)
                 .Build();
 
@@ -32,7 +32,7 @@ namespace MLOps.NET.SQLServer.Tests
         {
             //Act
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
-                .UseSQLServer("connectionString")
+                .UseSQLServer(connectionString)
                 .UseModelRepository(new Mock<IModelRepository>().Object)
                 .Build();
 
@@ -47,7 +47,7 @@ namespace MLOps.NET.SQLServer.Tests
         {
             //Act
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
-                .UseSQLServer("connectionString")
+                .UseSQLServer(connectionString)
                 .UseModelRepository(new Mock<IModelRepository>().Object)
                 .Build();
 
