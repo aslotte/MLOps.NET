@@ -128,6 +128,20 @@ namespace MLOps.NET.SQLServer.IntegrationTests
             run.TrainingTime.Should().Be(trainingTime);
         }
 
+        [TestMethod]
+        public async Task GivenARunWithGitCommitHash_ShouldBeAbleToGetRun()
+        {
+            //Arrange
+            var commitHash = "123456789";
+            var runId = await sut.LifeCycle.CreateRunAsync("Experiment", commitHash);
+
+            //Act
+            var savedRun = sut.LifeCycle.GetRun(commitHash);
+
+            //Assert
+            savedRun.Id.Should().Be(runId);
+        }
+
         //[TestMethod]
         //public async Task LogConfusionMatrixAsync_SavesConfusionMatrixOnRun()
         //{

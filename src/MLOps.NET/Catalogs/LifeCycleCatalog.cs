@@ -80,6 +80,16 @@ namespace MLOps.NET.Catalogs
         }
 
         /// <summary>
+        /// Get a run by commit hash
+        /// </summary>
+        /// <param name="commitHash"></param>
+        /// <returns></returns>
+        public IRun GetRun(string commitHash)
+        {
+            return this.metaDataStore.GetRun(commitHash);
+        }
+
+        /// <summary>
         /// Gets the best run for an experiment based on a metric for e.g "Accuracy"
         /// </summary>
         /// <param name="experimentId"></param>

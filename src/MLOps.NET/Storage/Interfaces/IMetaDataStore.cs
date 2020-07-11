@@ -65,6 +65,13 @@ namespace MLOps.NET.Storage
         IRun GetRun(Guid runId);
 
         /// <summary>
+        /// Get a run by commit hash
+        /// </summary>
+        /// <param name="commitHash"></param>
+        /// <returns></returns>
+        IRun GetRun(string commitHash);
+
+        /// <summary>
         /// Saves the confusion matrix as a json serialized string
         /// </summary>
         /// <param name="runId"></param>

@@ -94,6 +94,15 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc cref="IMetaDataStore"/>
+        public IRun GetRun(string commitHash)
+        {
+            using (var db = this.contextFactory.CreateDbContext())
+            {
+                return db.Runs.FirstOrDefault(x => x.GitCommitHash == commitHash);
+            }
+        }
+
+        ///<inheritdoc cref="IMetaDataStore"/>
         public List<IRun> GetRuns(Guid experimentId)
         {
             using (var db = this.contextFactory.CreateDbContext())

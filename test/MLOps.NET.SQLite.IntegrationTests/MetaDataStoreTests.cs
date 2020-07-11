@@ -151,6 +151,20 @@ namespace MLOps.NET.SQLite.IntegrationTests
                 .BeTrue();
         }
 
+        [TestMethod]
+        public async Task GivenARunWithGitCommitHash_ShouldBeAbleToGetRun()
+        {
+            //Arrange
+            var commitHash = "123456789";
+            var runId = await sut.LifeCycle.CreateRunAsync("Experiment", commitHash);
+
+            //Act
+            var savedRun = sut.LifeCycle.GetRun(commitHash);
+
+            //Assert
+            savedRun.Id.Should().Be(runId);
+        }
+
         private IDataView LoadData()
         {
             var mlContext = new MLContext(seed: 1);
