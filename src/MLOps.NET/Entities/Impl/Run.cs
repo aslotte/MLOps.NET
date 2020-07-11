@@ -40,6 +40,16 @@ namespace MLOps.NET.Entities.Impl
         public List<Metric> Metrics { get; set; }
 
         /// <summary>
+        /// Hyperparameters
+        /// </summary>
+        public List<HyperParameter> HyperParameters { get; set; }
+
+        /// <summary>
+        /// ConfusionMatrix
+        /// </summary>
+        public ConfusionMatrixEntity ConfusionMatrix { get; set; }
+
+        /// <summary>
         /// TrainingTime
         /// </summary>
         public TimeSpan TrainingTime { get; set; }

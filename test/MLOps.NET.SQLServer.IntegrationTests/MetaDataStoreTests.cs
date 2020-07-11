@@ -213,6 +213,29 @@ namespace MLOps.NET.SQLServer.IntegrationTests
                 .BeTrue();
         }
 
+        [TestMethod]
+        public async Task CreateRunWithMetrics_GetRunShouldIncludeAssociatedData()
+        {
+            //Arrange
+            var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
+            var id = await sut.LifeCycle.CreateRunAsync(experimentId);
+
+            await sut.Evaluation.LogMetricAsync(id, "F1Score", 0.56d);
+            await sut.Training.LogHyperParameterAsync(id, "Trainer", "SupportVectorMachine");
+
+            //Act
+            var run = sut.LifeCycle.GetRun(id);
+
+            //Assert
+            var metric = run.Metrics.First();
+            metric.MetricName.Should().Be("F1Score");
+            metric.Value.Should().Be(0.56d);
+
+            var hyperParameter = run.HyperParameters.First();
+            hyperParameter.ParameterName.Should().Be("Trainer");
+            hyperParameter.Value.Should().Be("SupportVectorMachine");
+        }
+
         private IDataView LoadData()
         {
             var mlContext = new MLContext(seed: 1);
