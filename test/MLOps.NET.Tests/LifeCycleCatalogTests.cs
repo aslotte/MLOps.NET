@@ -33,12 +33,15 @@ namespace MLOps.NET.Tests
             var runDate = DateTime.UtcNow.AddMinutes(-1);
             var endTime = DateTime.UtcNow;
 
-            var runMock = new Mock<Run>();
-            runMock.SetupGet(x => x.RunDate).Returns(runDate);
+            var run = new Run(Guid.NewGuid())
+            {
+                RunDate = runDate
+            };
+
             clockMock.SetupGet(x => x.UtcNow).Returns(endTime);
             
             metaDataStoreMock.Setup(x => x.GetRun(runId))
-                .Returns(runMock.Object);
+                .Returns(run);
 
             //Act
             await sut.SetTrainingTimeAsync(runId);
