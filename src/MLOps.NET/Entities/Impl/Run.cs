@@ -50,11 +50,6 @@ namespace MLOps.NET.Entities.Impl
         public ConfusionMatrixEntity ConfusionMatrix { get; set; }
 
         /// <summary>
-        /// Data
-        /// </summary>
-        public Data Data { get; set; }
-
-        /// <summary>
         /// TrainingTime
         /// </summary>
         public TimeSpan TrainingTime { get; set; }

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.ML;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Azure.IntegrationTests.Constants;
+using MLOps.NET.Azure.Storage;
 using MLOps.NET.Storage;
 using MLOps.NET.Tests.Common.Configuration;
 using MLOps.NET.Tests.Common.Data;
@@ -26,7 +27,7 @@ namespace MLOps.NET.Azure.IntegrationTests
 
             sut = new MLOpsBuilder()
                 .UseModelRepository(new Mock<IModelRepository>().Object)
-                .UseCosmosDb(configuration[ConfigurationKeys.CosmosEndPoint], 
+                .UseCosmosDb(configuration[ConfigurationKeys.CosmosEndPoint],
                 configuration[ConfigurationKeys.CosmosAccountKey])
                 .Build();
         }
@@ -41,7 +42,7 @@ namespace MLOps.NET.Azure.IntegrationTests
                 configuration[ConfigurationKeys.CosmosAccountKey], "MLOpsNET")
                 .Options;
 
-            var contextFactory = new DbContextFactory(options);
+            var contextFactory = new DbContextFactory(options, CosmosEntityConfigurator.OnModelCreating);
             var context = contextFactory.CreateDbContext();
 
             var experiments = context.Experiments;

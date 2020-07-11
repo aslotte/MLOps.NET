@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.ML;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Storage;
+using MLOps.NET.Storage.EntityConfiguration;
 using MLOps.NET.Tests.Common.Data;
 using Moq;
 using System;
@@ -34,7 +35,7 @@ namespace MLOps.NET.SQLServer.IntegrationTests
                 .UseSqlServer(connectionString)
                 .Options;
 
-            var contextFactory = new DbContextFactory(options);
+            var contextFactory = new DbContextFactory(options, RelationalEntityConfigurator.OnModelCreating);
             var context = contextFactory.CreateDbContext();
 
             var experiments = context.Experiments;

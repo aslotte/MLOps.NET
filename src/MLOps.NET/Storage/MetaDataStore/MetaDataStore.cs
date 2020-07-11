@@ -2,6 +2,7 @@
 using Microsoft.ML;
 using MLOps.NET.Entities;
 using MLOps.NET.Entities.Impl;
+using MLOps.NET.Storage.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -62,9 +63,6 @@ namespace MLOps.NET.Storage
             using (var db = this.contextFactory.CreateDbContext())
             {
                 return db.Experiments
-                    .Include(x => x.Runs).ThenInclude(y => y.HyperParameters)
-                    .Include(x => x.Runs).ThenInclude(y => y.ConfusionMatrix)
-                    .Include(x => x.Runs).ThenInclude(y => y.Metrics)
                 .Single(x => x.ExperimentName == experimentName);
             }
         }
@@ -93,11 +91,10 @@ namespace MLOps.NET.Storage
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
-                return db.Runs
-                    .Include(y => y.HyperParameters)
-                    .Include(y => y.ConfusionMatrix)
-                    .Include(y => y.Metrics)
-                    .FirstOrDefault(x => x.RunId == runId);
+                var run = db.Runs.FirstOrDefault(x => x.RunId == runId);
+
+                PopulateRun(db, run);
+                return run;
             }
         }
 
@@ -106,11 +103,10 @@ namespace MLOps.NET.Storage
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
-                return db.Runs
-                    .Include(y => y.HyperParameters)
-                    .Include(y => y.ConfusionMatrix)
-                    .Include(y => y.Metrics)
-                    .FirstOrDefault(x => x.GitCommitHash == commitHash);
+                var run = db.Runs.FirstOrDefault(x => x.GitCommitHash == commitHash);
+
+                PopulateRun(db, run);
+                return run;
             }
         }
 
@@ -119,11 +115,10 @@ namespace MLOps.NET.Storage
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
-                return db.Runs
-                    .Include(y => y.HyperParameters)
-                    .Include(y => y.ConfusionMatrix)
-                    .Include(y => y.Metrics)
-                    .Where(x => x.ExperimentId == experimentId).ToList();
+                var runs = db.Runs.Where(x => x.ExperimentId == experimentId).ToList();
+                runs.ForEach(run => PopulateRun(db, run));
+
+                return runs;
             }
         }
 
@@ -225,10 +220,25 @@ namespace MLOps.NET.Storage
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
-                return db.Data
-                    .Include(x => x.DataSchema.DataColumns)
-                    .FirstOrDefault(x => x.RunId == runId);
+                var data = db.Data.FirstOrDefault(x => x.RunId == runId);
+                if (data == null) return null;
+
+                data.DataSchema = db.DataSchemas.FirstOrDefault(x => x.DataId == data.DataId);
+                data.DataSchema.DataColumns = db.DataColumns
+                    .Where(x => x.DataSchemaId == data.DataSchema.DataSchemaId)
+                    .ToList();
+
+                return data;
             }
+        }
+
+        private void PopulateRun(IMLOpsDbContext db, Run run)
+        {
+            if (run == null) return;
+
+            run.HyperParameters = db.HyperParameters.Where(x => x.RunId == run.RunId).ToList();
+            run.Metrics = db.Metrics.Where(x => x.RunId == run.RunId).ToList();
+            run.ConfusionMatrix = db.ConfusionMatrices.FirstOrDefault(x => x.RunId == run.RunId);
         }
     }
 }
