@@ -1,7 +1,6 @@
 ﻿using Microsoft.ML;
 using MLOps.NET.Entities;
 using MLOps.NET.Entities.Impl;
-using MLOps.NET.Entities.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -57,7 +56,7 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc cref="IMetaDataStore"/>
-        public IExperiment GetExperiment(string experimentName)
+        public Experiment GetExperiment(string experimentName)
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
@@ -66,7 +65,7 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc cref="IMetaDataStore"/>
-        public IEnumerable<IExperiment> GetExperiments()
+        public IEnumerable<Experiment> GetExperiments()
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
@@ -75,17 +74,17 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc cref="IMetaDataStore"/>
-        public List<IMetric> GetMetrics(Guid runId)
+        public List<Metric> GetMetrics(Guid runId)
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
-                return db.Metrics.Where(x => x.RunId == runId).ToList<IMetric>();
+                return db.Metrics.Where(x => x.RunId == runId).ToList<Metric>();
             }
         }
 
         ///<inheritdoc cref="IMetaDataStore"/>
 
-        public IRun GetRun(Guid runId)
+        public Run GetRun(Guid runId)
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
@@ -94,7 +93,7 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc cref="IMetaDataStore"/>
-        public IRun GetRun(string commitHash)
+        public Run GetRun(string commitHash)
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
@@ -103,11 +102,11 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc cref="IMetaDataStore"/>
-        public List<IRun> GetRuns(Guid experimentId)
+        public List<Run> GetRuns(Guid experimentId)
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
-                return db.Runs.Where(x => x.ExperimentId == experimentId).ToList<IRun>();
+                return db.Runs.Where(x => x.ExperimentId == experimentId).ToList<Run>();
             }
         }
 
@@ -206,7 +205,7 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc cref="IMetaDataStore"/>
-        public IData GetData(Guid runId)
+        public Data GetData(Guid runId)
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
@@ -216,7 +215,7 @@ namespace MLOps.NET.Storage
                 data.DataSchema = db.DataSchemas.FirstOrDefault(x => x.DataId == data.Id);
                 data.DataSchema.DataColumns = db.DataColumns
                     .Where(x => x.DataSchemaId == data.DataSchema.Id)
-                    .AsEnumerable<IDataColumn>()
+                    .AsEnumerable<DataColumn>()
                     .ToList();
 
                 return data;

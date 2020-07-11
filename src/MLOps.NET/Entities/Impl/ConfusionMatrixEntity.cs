@@ -1,28 +1,36 @@
-﻿using MLOps.NET.Entities.Entities;
-using System;
+﻿using System;
 
 namespace MLOps.NET.Entities.Impl
 {
-    ///<inheritdoc cref="IConfusionMatrixEntity"/>
-    public sealed class ConfusionMatrixEntity : IConfusionMatrixEntity
+    /// <summary>
+    /// Confusion matrix associated with a classifier.
+    /// </summary>
+    public sealed class ConfusionMatrixEntity
     {
-        ///<inheritdoc cref="IConfusionMatrixEntity"/>
-        public ConfusionMatrixEntity() { }
 
-        ///<inheritdoc cref="IConfusionMatrixEntity"/>
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="runId"></param>
         public ConfusionMatrixEntity(Guid runId)
         {
             RunId = runId;
             Id = Guid.NewGuid();
         }
 
-        ///<inheritdoc cref="IConfusionMatrixEntity"/>
+        /// <summary>
+        /// Id
+        /// </summary>
         public Guid Id { get; set; }
 
-        ///<inheritdoc cref="IConfusionMatrixEntity"/>
-        public Guid RunId { get ; set ; }
+        /// <summary>
+        /// RunId
+        /// </summary>
+        public Guid RunId { get; set; }
 
-        ///<inheritdoc cref="IConfusionMatrixEntity"/>
-        public string SerializedMatrix { get ; set ; }
+        /// <summary>
+        /// SerializedMatrix
+        /// </summary>
+        public string SerializedMatrix { get; set; }
     }
 }

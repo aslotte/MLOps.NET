@@ -1,31 +1,41 @@
-﻿using MLOps.NET.Entities.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MLOps.NET.Entities.Impl
 {
-    ///<inheritdoc cref="IDataSchema"/>
-    public sealed class DataSchema : IDataSchema
+    /// <summary>
+    /// Entity describing the data schema
+    /// </summary>
+    public sealed class DataSchema
     {
-        ///<inheritdoc cref="IDataSchema"/>
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="dataId"></param>
         public DataSchema(Guid dataId)
         {
             Id = Guid.NewGuid();
             DataId = dataId;
         }
 
-        ///<inheritdoc cref="IDataSchema"/>
+        /// <summary>
+        /// RunId
+        /// </summary>
         public Guid Id { get; set; }
 
-        ///<inheritdoc cref="IDataSchema"/>
+        /// <summary>
+        /// DataId
+        /// </summary>
         public Guid DataId { get; set; }
 
-        ///<inheritdoc cref="IDataSchema"/>
+        /// <summary>
+        /// ColumnCount
+        /// </summary>
         public int ColumnCount { get; set; }
 
-        ///<inheritdoc cref="IDataSchema"/>
-        [NotMapped]
-        public List<IDataColumn> DataColumns { get; set; }
+        /// <summary>
+        /// DataColumns
+        /// </summary>
+        public List<DataColumn> DataColumns { get; set; }
     }
 }

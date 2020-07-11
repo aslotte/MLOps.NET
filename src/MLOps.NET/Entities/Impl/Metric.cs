@@ -1,12 +1,18 @@
-﻿using MLOps.NET.Entities.Interfaces;
-using System;
+﻿using System;
 
 namespace MLOps.NET.Entities.Impl
 {
-    ///<inheritdoc cref="IMetric"/>
-    public sealed class Metric : IMetric
+    /// <summary>
+    /// Metric associated with a given training run
+    /// </summary>
+    public sealed class Metric
     {
-        ///<inheritdoc cref="IMetric"/>
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <param name="metricName"></param>
+        /// <param name="value"></param>
         public Metric(Guid runId, string metricName, double value)
         {
             MetricName = metricName;
@@ -15,16 +21,24 @@ namespace MLOps.NET.Entities.Impl
             Id = Guid.NewGuid();
         }
 
-        ///<inheritdoc cref="IMetric"/>
+        /// <summary>
+        /// Id
+        /// </summary>
         public Guid Id { get; set; }
 
-        ///<inheritdoc cref="IMetric"/>
+        /// <summary>
+        /// Name of metric, e.g. Accurarcy, F1Score or Precision/Recall
+        /// </summary>
         public string MetricName { get; set; }
 
-        ///<inheritdoc cref="IMetric"/>
+        /// <summary>
+        /// Value
+        /// </summary>
         public double Value { get; set; }
 
-        ///<inheritdoc cref="IMetric"/>
+        /// <summary>
+        /// RunId
+        /// </summary>
         public Guid RunId { get; set; }
     }
 }

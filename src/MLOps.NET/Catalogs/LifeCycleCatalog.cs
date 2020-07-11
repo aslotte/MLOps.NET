@@ -1,4 +1,4 @@
-﻿using MLOps.NET.Entities.Interfaces;
+﻿using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage;
 using MLOps.NET.Utilities;
 using System;
@@ -64,7 +64,7 @@ namespace MLOps.NET.Catalogs
         /// </summary>
         /// <param name="experimentName"></param>
         /// <returns></returns>
-        public IExperiment GetExperiment(string experimentName)
+        public Experiment GetExperiment(string experimentName)
         {
             return this.metaDataStore.GetExperiment(experimentName);
         }
@@ -74,7 +74,7 @@ namespace MLOps.NET.Catalogs
         /// </summary>
         /// <param name="runId"></param>
         /// <returns></returns>
-        public IRun GetRun(Guid runId)
+        public Run GetRun(Guid runId)
         {
             return this.metaDataStore.GetRun(runId);
         }
@@ -84,7 +84,7 @@ namespace MLOps.NET.Catalogs
         /// </summary>
         /// <param name="commitHash"></param>
         /// <returns></returns>
-        public IRun GetRun(string commitHash)
+        public Run GetRun(string commitHash)
         {
             return this.metaDataStore.GetRun(commitHash);
         }
@@ -95,7 +95,7 @@ namespace MLOps.NET.Catalogs
         /// <param name="experimentId"></param>
         /// <param name="metricName"></param>
         /// <returns></returns>
-        public IRun GetBestRun(Guid experimentId, string metricName)
+        public Run GetBestRun(Guid experimentId, string metricName)
         {
             var allRuns = metaDataStore.GetRuns(experimentId);
             var bestRunId = allRuns.SelectMany(r => r.Metrics)

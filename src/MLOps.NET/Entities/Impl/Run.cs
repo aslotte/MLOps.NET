@@ -1,17 +1,17 @@
-﻿using MLOps.NET.Entities.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MLOps.NET.Entities.Impl
 {
-    ///<inheritdoc cref="IRun"/>
-    public sealed class Run : IRun
+    /// <summary>
+    /// Unique run for a given experiment
+    /// </summary>
+    public sealed class Run
     {
-        ///<inheritdoc cref="IRun"/>
-        public Run() { }
-
-        ///<inheritdoc cref="IRun"/>
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="experimentId"></param>
         public Run(Guid experimentId)
         {
             Id = Guid.NewGuid();
@@ -19,23 +19,34 @@ namespace MLOps.NET.Entities.Impl
             ExperimentId = experimentId;
         }
 
-        ///<inheritdoc cref="IRun"/>
+        /// <summary>
+        /// Id
+        /// </summary>
         public Guid Id { get; set; }
 
-        ///<inheritdoc cref="IRun"/>
+        /// <summary>
+        /// RunDate
+        /// </summary>
         public DateTime RunDate { get; set; }
 
-        ///<inheritdoc cref="IRun"/>
+        /// <summary>
+        /// ExperimentId
+        /// </summary>
         public Guid ExperimentId { get; set; }
 
-        ///<inheritdoc cref="IRun"/>
-        [NotMapped]
-        public List<IMetric> Metrics { get; set; }
+        /// <summary>
+        /// Metrics
+        /// </summary>
+        public List<Metric> Metrics { get; set; }
 
-        ///<inheritdoc cref="IRun"/>
+        /// <summary>
+        /// TrainingTime
+        /// </summary>
         public TimeSpan TrainingTime { get; set; }
 
-        ///<inheritdoc cref="IRun"/>
+        /// <summary>
+        /// GitCommitHash
+        /// </summary>
         public string GitCommitHash { get; set; }
     }
 }

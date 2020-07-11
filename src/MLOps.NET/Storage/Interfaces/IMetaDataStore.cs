@@ -1,7 +1,6 @@
 ﻿using Microsoft.ML;
 using MLOps.NET.Entities;
-using MLOps.NET.Entities.Entities;
-using MLOps.NET.Entities.Interfaces;
+using MLOps.NET.Entities.Impl;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -27,7 +26,7 @@ namespace MLOps.NET.Storage
         /// <param name="gitCommitHash">Optional, sets the linked git commit hash</param>
         /// <returns></returns>
         Task<Guid> CreateRunAsync(Guid experimentId, string gitCommitHash = "");
-        
+
         /// <summary>
         /// Logs a given metric for a run
         /// </summary>
@@ -36,40 +35,40 @@ namespace MLOps.NET.Storage
         /// <param name="metricValue"></param>
         /// <returns></returns>
         Task LogMetricAsync(Guid runId, string metricName, double metricValue);
-        
+
         /// <summary>
         /// Get all runs 
         /// </summary>
         /// <returns></returns>
-        IEnumerable<IExperiment> GetExperiments();
-        
+        IEnumerable<Experiment> GetExperiments();
+
         /// <summary>
         /// Get specific experiment by name
         /// </summary>
         /// <param name="experimentName"></param>
         /// <returns></returns>
-        IExperiment GetExperiment(string experimentName);
-        
+        Experiment GetExperiment(string experimentName);
+
         /// <summary>
         /// Get all runs by experiment id
         /// </summary>
         /// <param name="experimentId"></param>
         /// <returns></returns>
-        List<IRun> GetRuns(Guid experimentId);
+        List<Run> GetRuns(Guid experimentId);
 
         /// <summary>
         /// Get run by run id
         /// </summary>
         /// <param name="runId"></param>
         /// <returns></returns>
-        IRun GetRun(Guid runId);
+        Run GetRun(Guid runId);
 
         /// <summary>
         /// Get a run by commit hash
         /// </summary>
         /// <param name="commitHash"></param>
         /// <returns></returns>
-        IRun GetRun(string commitHash);
+        Run GetRun(string commitHash);
 
         /// <summary>
         /// Saves the confusion matrix as a json serialized string
@@ -84,7 +83,7 @@ namespace MLOps.NET.Storage
         /// </summary>
         /// <param name="runId"></param>
         /// <returns></returns>
-        List<IMetric> GetMetrics(Guid runId);
+        List<Metric> GetMetrics(Guid runId);
 
         /// <summary>
         /// Logs a given hyperparameter for a run
@@ -123,6 +122,6 @@ namespace MLOps.NET.Storage
         /// </summary>
         /// <param name="runId"></param>
         /// <returns></returns>
-        IData GetData(Guid runId);
+        Data GetData(Guid runId);
     }
 }

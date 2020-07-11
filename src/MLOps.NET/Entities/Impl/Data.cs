@@ -1,27 +1,35 @@
-﻿using MLOps.NET.Entities.Interfaces;
-using System;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
 
 namespace MLOps.NET.Entities.Impl
 {
-    ///<inheritdoc cref="IData"/>
-    public sealed class Data : IData
+    /// <summary>
+    /// Entity holding data information
+    /// </summary>
+    public sealed class Data
     {
-        ///<inheritdoc cref="IData"/>
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="runId"></param>
         public Data(Guid runId)
         {
             Id = Guid.NewGuid();
             RunId = runId;
         }
 
-        ///<inheritdoc cref="IData"/>
+        /// <summary>
+        /// Id
+        /// </summary>
         public Guid Id { get; set; }
 
-        ///<inheritdoc cref="IData"/>
+        /// <summary>
+        /// RunId
+        /// </summary>
         public Guid RunId { get; set; }
 
-        ///<inheritdoc cref="IData"/>
-        [NotMapped]
-        public IDataSchema DataSchema { get; set; } 
+        /// <summary>
+        /// DataSchema
+        /// </summary>
+        public DataSchema DataSchema { get; set; }
     }
 }
