@@ -1,32 +1,42 @@
-﻿using MLOps.NET.Entities.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MLOps.NET.Entities.Impl
 {
-    ///<inheritdoc cref="IExperiment"/>
-    public sealed class Experiment : IExperiment
+    /// <summary>
+    /// Entity holding information about a unique experiment
+    /// </summary>
+    public sealed class Experiment
     {
-        ///<inheritdoc cref="Experiment"/>
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="experimentName"></param>
         public Experiment(string experimentName)
         {
-            Id = Guid.NewGuid();
+            ExperimentId = Guid.NewGuid();
             ExperimentName = experimentName;
             CreatedAt = DateTime.UtcNow;
         }
 
-        ///<inheritdoc cref="Experiment"/>
-        public Guid Id { get; set; }
+        /// <summary>
+        /// Id
+        /// </summary>
+        public Guid ExperimentId { get; set; }
 
-        ///<inheritdoc cref="Experiment"/>
+        /// <summary>
+        /// ExperimentName
+        /// </summary>
         public string ExperimentName { get; set; }
 
-        ///<inheritdoc cref="Experiment"/>
+        /// <summary>
+        /// CreatedAt
+        /// </summary>
         public DateTime CreatedAt { get; }
 
-        ///<inheritdoc cref="Experiment"/>
-        [NotMapped]
-        public List<IRun> Runs { get; set; }
+        /// <summary>
+        /// Runs
+        /// </summary>
+        public List<Run> Runs { get; set; }
     }
 }

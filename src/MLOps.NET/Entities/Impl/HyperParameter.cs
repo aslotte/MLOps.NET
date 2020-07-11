@@ -1,30 +1,44 @@
-﻿using MLOps.NET.Entities.Interfaces;
-using System;
+﻿using System;
 
 namespace MLOps.NET.Entities.Impl
 {
-    ///<inheritdoc cref="IHyperParameter"/>
-    public sealed class HyperParameter : IHyperParameter
+    /// <summary>
+    /// HyperParameters associated with a given training run
+    /// </summary>
+    public sealed class HyperParameter
     {
-        ///<inheritdoc cref="IHyperParameter"/>
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <param name="parameterName"></param>
+        /// <param name="value"></param>
         public HyperParameter(Guid runId, string parameterName, string value)
         {
             ParameterName = parameterName;
             Value = value;
             RunId = runId;
-            Id = Guid.NewGuid();
+            HyperParameterId = Guid.NewGuid();
         }
 
-        ///<inheritdoc cref="IHyperParameter"/>
-        public Guid Id { get; set; }
+        /// <summary>
+        /// Id
+        /// </summary>
+        public Guid HyperParameterId { get; set; }
 
-        ///<inheritdoc cref="IHyperParameter"/>
+        /// <summary>
+        /// ParameterName
+        /// </summary>
         public string ParameterName { get; set; }
 
-        ///<inheritdoc cref="IHyperParameter"/>
+        /// <summary>
+        /// Value
+        /// </summary>
         public string Value { get; set; }
 
-        ///<inheritdoc cref="IHyperParameter"/>
+        /// <summary>
+        /// RunId
+        /// </summary>
         public Guid RunId { get; set; }
     }
 }

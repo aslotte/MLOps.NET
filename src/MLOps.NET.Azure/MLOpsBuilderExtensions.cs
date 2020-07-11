@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MLOps.NET.Azure.Storage;
 using MLOps.NET.Storage;
 
 namespace MLOps.NET.Azure
@@ -21,7 +22,8 @@ namespace MLOps.NET.Azure
                 .UseCosmos(accountEndpoint, accountKey, databaseName: "MLOpsNET")
                 .Options;
 
-            var contextFactory = new DbContextFactory(options);
+            var contextFactory = new DbContextFactory(options, CosmosEntityConfigurator.OnModelCreating);
+
             contextFactory.CreateDbContext().EnsureCreated();
 
             builder.UseMetaDataStore(new MetaDataStore(contextFactory));

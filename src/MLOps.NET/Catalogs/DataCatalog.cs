@@ -1,5 +1,5 @@
 ﻿using Microsoft.ML;
-using MLOps.NET.Entities.Interfaces;
+using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage;
 using System;
 using System.Threading.Tasks;
@@ -38,7 +38,7 @@ namespace MLOps.NET.Catalogs
         /// </summary>
         /// <param name="runId"></param>
         /// <returns></returns>
-        public IData GetData(Guid runId)
+        public Data GetData(Guid runId)
         {
             return this.metaDataStore.GetData(runId);
         }

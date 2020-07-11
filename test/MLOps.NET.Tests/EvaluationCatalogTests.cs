@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Catalogs;
-using MLOps.NET.Entities.Interfaces;
 using MLOps.NET.Storage;
 using MLOps.NET.Utilities;
 using Moq;

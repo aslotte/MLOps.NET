@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MLOps.NET.Storage.Interfaces;
+using System;
 
 namespace MLOps.NET.Storage
 {
@@ -19,14 +20,16 @@ namespace MLOps.NET.Storage
     public sealed class DbContextFactory : IDbContextFactory
     {
         private readonly DbContextOptions options;
+        private readonly Action<ModelBuilder> OnModelCreatingAction;
 
         ///<inheritdoc cref="IDbContextFactory"/>
-        public DbContextFactory(DbContextOptions options)
+        public DbContextFactory(DbContextOptions options, Action<ModelBuilder> OnModelCreatingAction)
         {
             this.options = options;
+            this.OnModelCreatingAction = OnModelCreatingAction;
         }
 
         ///<inheritdoc cref="IDbContextFactory"/>
-        public IMLOpsDbContext CreateDbContext() => new MLOpsDbContext(this.options);
+        public IMLOpsDbContext CreateDbContext() => new MLOpsDbContext(this.options, this.OnModelCreatingAction);
     }
 }

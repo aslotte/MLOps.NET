@@ -41,16 +41,6 @@ namespace MLOps.NET.Storage.Interfaces
         DbSet<Data> Data { get; set; }
 
         /// <summary>
-        /// DataSchemas
-        /// </summary>
-        DbSet<DataSchema> DataSchemas { get; set; }
-
-        /// <summary>
-        /// DataColumns
-        /// </summary>
-        DbSet<DataColumn> DataColumns { get; set; }
-
-        /// <summary>
         /// Save changes
         /// </summary>
         /// <returns></returns>

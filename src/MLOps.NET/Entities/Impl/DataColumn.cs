@@ -1,28 +1,48 @@
-﻿using MLOps.NET.Entities.Interfaces;
-using System;
+﻿using System;
 
 namespace MLOps.NET.Entities.Impl
 {
-    ///<inheritdoc cref="IDataColumn"/>
-    public sealed class DataColumn : IDataColumn
+    /// <summary>
+    /// Entity to hold information about a data column in a dataset
+    /// </summary>
+    public sealed class DataColumn
     {
-        ///<inheritdoc cref="IDataColumn"/>
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        public DataColumn()
+        {
+            DataColumnId = Guid.NewGuid();
+        }
+
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="dataSchemaId"></param>
         public DataColumn(Guid dataSchemaId)
         {
-            Id = Guid.NewGuid();
+            DataColumnId = Guid.NewGuid();
             DataSchemaId = dataSchemaId;
         }
 
-        ///<inheritdoc cref="IDataColumn"/>
-        public Guid Id { get; set; }
+        /// <summary>
+        /// Id
+        /// </summary>
+        public Guid DataColumnId { get; set; }
 
-        ///<inheritdoc cref="IDataColumn"/>
+        /// <summary>
+        /// DataSchemaId
+        /// </summary>
         public Guid DataSchemaId { get; set; }
 
-        ///<inheritdoc cref="IDataColumn"/>
+        /// <summary>
+        /// Name
+        /// </summary>
         public string Name { get; set; }
 
-        ///<inheritdoc cref="IDataColumn"/>
+        /// <summary>
+        /// Type
+        /// </summary>
         public string Type { get; set; }
     }
 }

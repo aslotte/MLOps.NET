@@ -1,7 +1,8 @@
-﻿using Microsoft.ML;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.ML;
 using MLOps.NET.Entities;
 using MLOps.NET.Entities.Impl;
-using MLOps.NET.Entities.Interfaces;
+using MLOps.NET.Storage.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -33,9 +34,9 @@ namespace MLOps.NET.Storage
                     await db.Experiments.AddAsync(experiment);
                     await db.SaveChangesAsync();
 
-                    return experiment.Id;
+                    return experiment.ExperimentId;
                 }
-                return existingExperiment.Id;
+                return existingExperiment.ExperimentId;
             }
         }
 
@@ -52,21 +53,22 @@ namespace MLOps.NET.Storage
                 await db.Runs.AddAsync(run);
                 await db.SaveChangesAsync();
 
-                return run.Id;
+                return run.RunId;
             }
         }
 
         ///<inheritdoc cref="IMetaDataStore"/>
-        public IExperiment GetExperiment(string experimentName)
+        public Experiment GetExperiment(string experimentName)
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
-                return db.Experiments.Single(x => x.ExperimentName == experimentName);
+                return db.Experiments
+                .Single(x => x.ExperimentName == experimentName);
             }
         }
 
         ///<inheritdoc cref="IMetaDataStore"/>
-        public IEnumerable<IExperiment> GetExperiments()
+        public IEnumerable<Experiment> GetExperiments()
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
@@ -75,30 +77,48 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc cref="IMetaDataStore"/>
-        public List<IMetric> GetMetrics(Guid runId)
+        public List<Metric> GetMetrics(Guid runId)
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
-                return db.Metrics.Where(x => x.RunId == runId).ToList<IMetric>();
+                return db.Metrics.Where(x => x.RunId == runId).ToList();
             }
         }
 
         ///<inheritdoc cref="IMetaDataStore"/>
 
-        public IRun GetRun(Guid runId)
+        public Run GetRun(Guid runId)
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
-                return db.Runs.FirstOrDefault(x => x.Id == runId);
+                var run = db.Runs.FirstOrDefault(x => x.RunId == runId);
+
+                PopulateRun(db, run);
+                return run;
             }
         }
 
         ///<inheritdoc cref="IMetaDataStore"/>
-        public List<IRun> GetRuns(Guid experimentId)
+        public Run GetRun(string commitHash)
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
-                return db.Runs.Where(x => x.ExperimentId == experimentId).ToList<IRun>();
+                var run = db.Runs.FirstOrDefault(x => x.GitCommitHash == commitHash);
+
+                PopulateRun(db, run);
+                return run;
+            }
+        }
+
+        ///<inheritdoc cref="IMetaDataStore"/>
+        public List<Run> GetRuns(Guid experimentId)
+        {
+            using (var db = this.contextFactory.CreateDbContext())
+            {
+                var runs = db.Runs.Where(x => x.ExperimentId == experimentId).ToList();
+                runs.ForEach(run => PopulateRun(db, run));
+
+                return runs;
             }
         }
 
@@ -129,7 +149,7 @@ namespace MLOps.NET.Storage
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
-                var existingRun = db.Runs.FirstOrDefault(x => x.Id == runId);
+                var existingRun = db.Runs.FirstOrDefault(x => x.RunId == runId);
                 if (existingRun == null) throw new InvalidOperationException($"The run with id {runId} does not exist");
 
                 existingRun.TrainingTime = timeSpan;
@@ -171,47 +191,49 @@ namespace MLOps.NET.Storage
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
-                var data = new Data(runId);
-
-                var dataSchema = new DataSchema(data.Id)
+                var data = new Data(runId)
                 {
-                    ColumnCount = dataView.Schema.Count()
+                    DataSchema = new DataSchema()
+                    {
+                        ColumnCount = dataView.Schema.Count()
+                    }
                 };
-
-                db.Data.Add(data);
-                db.DataSchemas.Add(dataSchema);
 
                 foreach (var column in dataView.Schema)
                 {
-                    var dataColumn = new DataColumn(dataSchema.Id)
+                    var dataColumn = new DataColumn()
                     {
                         Name = column.Name,
                         Type = column.Type.ToString()
                     };
-
-                    db.DataColumns.Add(dataColumn);
+                    data.DataSchema.DataColumns.Add(dataColumn);
                 }
-
+                db.Data.Add(data);
                 await db.SaveChangesAsync();
             }
         }
 
         ///<inheritdoc cref="IMetaDataStore"/>
-        public IData GetData(Guid runId)
+        public Data GetData(Guid runId)
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
-                var data = db.Data.FirstOrDefault(x => x.RunId == runId);
+                var data = db.Data
+                    .Include(x => x.DataSchema.DataColumns)
+                    .FirstOrDefault(x => x.RunId == runId);
                 if (data == null) return null;
-
-                data.DataSchema = db.DataSchemas.FirstOrDefault(x => x.DataId == data.Id);
-                data.DataSchema.DataColumns = db.DataColumns
-                    .Where(x => x.DataSchemaId == data.DataSchema.Id)
-                    .AsEnumerable<IDataColumn>()
-                    .ToList();
 
                 return data;
             }
+        }
+
+        private void PopulateRun(IMLOpsDbContext db, Run run)
+        {
+            if (run == null) return;
+
+            run.HyperParameters = db.HyperParameters.Where(x => x.RunId == run.RunId).ToList();
+            run.Metrics = db.Metrics.Where(x => x.RunId == run.RunId).ToList();
+            run.ConfusionMatrix = db.ConfusionMatrices.FirstOrDefault(x => x.RunId == run.RunId);
         }
     }
 }
