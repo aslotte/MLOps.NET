@@ -44,8 +44,6 @@ namespace MLOps.NET.SQLServer.IntegrationTests
             var hyperParameters = context.HyperParameters;
             var confusionMatrices = context.ConfusionMatrices;
             var data = context.Data;
-            var dataSchema = context.DataSchemas;
-            var dataColumns = context.DataColumns;
 
             context.Experiments.RemoveRange(experiments);
             context.Runs.RemoveRange(runs);
@@ -53,8 +51,6 @@ namespace MLOps.NET.SQLServer.IntegrationTests
             context.HyperParameters.RemoveRange(hyperParameters);
             context.ConfusionMatrices.RemoveRange(confusionMatrices);
             context.Data.RemoveRange(data);
-            context.DataSchemas.RemoveRange(dataSchema);
-            context.DataColumns.RemoveRange(dataColumns);
 
             await context.SaveChangesAsync();
         }

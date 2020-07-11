@@ -191,26 +191,24 @@ namespace MLOps.NET.Storage
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
-                var data = new Data(runId);
-
-                var dataSchema = new DataSchema(data.DataId)
+                var data = new Data(runId)
                 {
-                    ColumnCount = dataView.Schema.Count()
+                    DataSchema = new DataSchema()
+                    {
+                        ColumnCount = dataView.Schema.Count()
+                    }
                 };
-
-                db.Data.Add(data);
-                db.DataSchemas.Add(dataSchema);
 
                 foreach (var column in dataView.Schema)
                 {
-                    var dataColumn = new DataColumn(dataSchema.DataSchemaId)
+                    var dataColumn = new DataColumn()
                     {
                         Name = column.Name,
                         Type = column.Type.ToString()
                     };
-
-                    db.DataColumns.Add(dataColumn);
+                    data.DataSchema.DataColumns.Add(dataColumn);
                 }
+                db.Data.Add(data);
                 await db.SaveChangesAsync();
             }
         }
@@ -220,13 +218,10 @@ namespace MLOps.NET.Storage
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
-                var data = db.Data.FirstOrDefault(x => x.RunId == runId);
+                var data = db.Data
+                    .Include(x => x.DataSchema.DataColumns)
+                    .FirstOrDefault(x => x.RunId == runId);
                 if (data == null) return null;
-
-                data.DataSchema = db.DataSchemas.FirstOrDefault(x => x.DataId == data.DataId);
-                data.DataSchema.DataColumns = db.DataColumns
-                    .Where(x => x.DataSchemaId == data.DataSchema.DataSchemaId)
-                    .ToList();
 
                 return data;
             }

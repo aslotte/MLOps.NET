@@ -51,8 +51,6 @@ namespace MLOps.NET.Azure.IntegrationTests
             var hyperParameters = context.HyperParameters;
             var confusionMatrices = context.ConfusionMatrices;
             var data = context.Data;
-            var dataSchema = context.DataSchemas;
-            var dataColumns = context.DataColumns;
 
             context.Experiments.RemoveRange(experiments);
             context.Runs.RemoveRange(runs);
@@ -60,8 +58,6 @@ namespace MLOps.NET.Azure.IntegrationTests
             context.HyperParameters.RemoveRange(hyperParameters);
             context.ConfusionMatrices.RemoveRange(confusionMatrices);
             context.Data.RemoveRange(data);
-            context.DataSchemas.RemoveRange(dataSchema);
-            context.DataColumns.RemoveRange(dataColumns);
 
             await context.SaveChangesAsync();
         }
@@ -149,7 +145,7 @@ namespace MLOps.NET.Azure.IntegrationTests
             var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
             var id = await sut.LifeCycle.CreateRunAsync(experimentId);
 
-            var trainingTime = new System.TimeSpan(0, 5, 0);
+            var trainingTime = new TimeSpan(0, 5, 0);
 
             //Act
             await sut.LifeCycle.SetTrainingTimeAsync(id, trainingTime);

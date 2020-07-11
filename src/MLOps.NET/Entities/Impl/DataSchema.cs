@@ -9,6 +9,14 @@ namespace MLOps.NET.Entities.Impl
     public sealed class DataSchema
     {
         /// <summary>
+        /// Ctr
+        /// </summary>
+        public DataSchema()
+        {
+            DataSchemaId = Guid.NewGuid();
+        }
+
+        /// <summary>
         /// Ctor
         /// </summary>
         /// <param name="dataId"></param>
@@ -36,6 +44,6 @@ namespace MLOps.NET.Entities.Impl
         /// <summary>
         /// DataColumns
         /// </summary>
-        public List<DataColumn> DataColumns { get; set; }
+        public List<DataColumn> DataColumns { get; set; } = new List<DataColumn>();
     }
 }

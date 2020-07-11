@@ -10,6 +10,14 @@ namespace MLOps.NET.Entities.Impl
         /// <summary>
         /// Ctor
         /// </summary>
+        public DataColumn()
+        {
+            DataColumnId = Guid.NewGuid();
+        }
+
+        /// <summary>
+        /// Ctor
+        /// </summary>
         /// <param name="dataSchemaId"></param>
         public DataColumn(Guid dataSchemaId)
         {
