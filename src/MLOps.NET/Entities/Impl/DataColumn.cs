@@ -13,14 +13,14 @@ namespace MLOps.NET.Entities.Impl
         /// <param name="dataSchemaId"></param>
         public DataColumn(Guid dataSchemaId)
         {
-            Id = Guid.NewGuid();
+            DataColumnId = Guid.NewGuid();
             DataSchemaId = dataSchemaId;
         }
 
         /// <summary>
         /// Id
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid DataColumnId { get; set; }
 
         /// <summary>
         /// DataSchemaId

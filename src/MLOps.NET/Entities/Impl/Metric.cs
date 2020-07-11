@@ -18,13 +18,13 @@ namespace MLOps.NET.Entities.Impl
             MetricName = metricName;
             Value = value;
             RunId = runId;
-            Id = Guid.NewGuid();
+            MetricId = Guid.NewGuid();
         }
 
         /// <summary>
         /// Id
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid MetricId { get; set; }
 
         /// <summary>
         /// Name of metric, e.g. Accurarcy, F1Score or Precision/Recall

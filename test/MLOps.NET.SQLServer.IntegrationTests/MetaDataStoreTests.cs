@@ -67,7 +67,7 @@ namespace MLOps.NET.SQLServer.IntegrationTests
             //Assert
             var experiement = sut.LifeCycle.GetExperiment("test");
             experiement.Should().NotBeNull();
-            experiement.Id.Should().Be(id);
+            experiement.ExperimentId.Should().Be(id);
         }
 
         [TestMethod]
@@ -91,7 +91,7 @@ namespace MLOps.NET.SQLServer.IntegrationTests
             //Assert
             var run = sut.LifeCycle.GetRun(id);
             run.Should().NotBeNull();
-            run.Id.Should().Be(id);
+            run.RunId.Should().Be(id);
         }
 
         [TestMethod]
@@ -139,7 +139,7 @@ namespace MLOps.NET.SQLServer.IntegrationTests
             var savedRun = sut.LifeCycle.GetRun(commitHash);
 
             //Assert
-            savedRun.Id.Should().Be(runId);
+            savedRun.RunId.Should().Be(runId);
         }
 
         //[TestMethod]

@@ -103,7 +103,7 @@ namespace MLOps.NET.Catalogs
                 .OrderByDescending(m => m.Value)
                 .First().RunId;
 
-            return allRuns.FirstOrDefault(r => r.Id == bestRunId);
+            return allRuns.FirstOrDefault(r => r.RunId == bestRunId);
         }
 
         /// <summary>

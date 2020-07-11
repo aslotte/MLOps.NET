@@ -33,9 +33,9 @@ namespace MLOps.NET.Storage
                     await db.Experiments.AddAsync(experiment);
                     await db.SaveChangesAsync();
 
-                    return experiment.Id;
+                    return experiment.ExperimentId;
                 }
-                return existingExperiment.Id;
+                return existingExperiment.ExperimentId;
             }
         }
 
@@ -52,7 +52,7 @@ namespace MLOps.NET.Storage
                 await db.Runs.AddAsync(run);
                 await db.SaveChangesAsync();
 
-                return run.Id;
+                return run.RunId;
             }
         }
 
@@ -97,7 +97,7 @@ namespace MLOps.NET.Storage
                     .Include(y => y.HyperParameters)
                     .Include(y => y.ConfusionMatrix)
                     .Include(y => y.Metrics)
-                    .FirstOrDefault(x => x.Id == runId);
+                    .FirstOrDefault(x => x.RunId == runId);
             }
         }
 
@@ -154,7 +154,7 @@ namespace MLOps.NET.Storage
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
-                var existingRun = db.Runs.FirstOrDefault(x => x.Id == runId);
+                var existingRun = db.Runs.FirstOrDefault(x => x.RunId == runId);
                 if (existingRun == null) throw new InvalidOperationException($"The run with id {runId} does not exist");
 
                 existingRun.TrainingTime = timeSpan;
@@ -198,7 +198,7 @@ namespace MLOps.NET.Storage
             {
                 var data = new Data(runId);
 
-                var dataSchema = new DataSchema(data.Id)
+                var dataSchema = new DataSchema(data.DataId)
                 {
                     ColumnCount = dataView.Schema.Count()
                 };
@@ -208,7 +208,7 @@ namespace MLOps.NET.Storage
 
                 foreach (var column in dataView.Schema)
                 {
-                    var dataColumn = new DataColumn(dataSchema.Id)
+                    var dataColumn = new DataColumn(dataSchema.DataSchemaId)
                     {
                         Name = column.Name,
                         Type = column.Type.ToString()

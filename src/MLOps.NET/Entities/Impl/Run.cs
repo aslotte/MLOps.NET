@@ -14,7 +14,7 @@ namespace MLOps.NET.Entities.Impl
         /// <param name="experimentId"></param>
         public Run(Guid experimentId)
         {
-            Id = Guid.NewGuid();
+            RunId = Guid.NewGuid();
             RunDate = DateTime.UtcNow;
             ExperimentId = experimentId;
         }
@@ -22,7 +22,7 @@ namespace MLOps.NET.Entities.Impl
         /// <summary>
         /// Id
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid RunId { get; set; }
 
         /// <summary>
         /// RunDate
@@ -48,6 +48,11 @@ namespace MLOps.NET.Entities.Impl
         /// ConfusionMatrix
         /// </summary>
         public ConfusionMatrixEntity ConfusionMatrix { get; set; }
+
+        /// <summary>
+        /// Data
+        /// </summary>
+        public Data Data { get; set; }
 
         /// <summary>
         /// TrainingTime

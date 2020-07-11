@@ -15,13 +15,13 @@ namespace MLOps.NET.Entities.Impl
         public ConfusionMatrixEntity(Guid runId)
         {
             RunId = runId;
-            Id = Guid.NewGuid();
+            ConfusionMatrixEntityId = Guid.NewGuid();
         }
 
         /// <summary>
         /// Id
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid ConfusionMatrixEntityId { get; set; }
 
         /// <summary>
         /// RunId

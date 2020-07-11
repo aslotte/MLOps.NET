@@ -14,7 +14,7 @@ namespace MLOps.NET.Entities.Impl
         /// <param name="experimentName"></param>
         public Experiment(string experimentName)
         {
-            Id = Guid.NewGuid();
+            ExperimentId = Guid.NewGuid();
             ExperimentName = experimentName;
             CreatedAt = DateTime.UtcNow;
         }
@@ -22,7 +22,7 @@ namespace MLOps.NET.Entities.Impl
         /// <summary>
         /// Id
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid ExperimentId { get; set; }
 
         /// <summary>
         /// ExperimentName

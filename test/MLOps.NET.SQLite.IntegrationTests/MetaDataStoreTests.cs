@@ -186,7 +186,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
             var savedRun = sut.LifeCycle.GetRun(commitHash);
 
             //Assert
-            savedRun.Id.Should().Be(runId);
+            savedRun.RunId.Should().Be(runId);
         }
 
         private IDataView LoadData()

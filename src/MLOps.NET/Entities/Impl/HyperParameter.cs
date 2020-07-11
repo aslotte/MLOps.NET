@@ -18,13 +18,13 @@ namespace MLOps.NET.Entities.Impl
             ParameterName = parameterName;
             Value = value;
             RunId = runId;
-            Id = Guid.NewGuid();
+            HyperParameterId = Guid.NewGuid();
         }
 
         /// <summary>
         /// Id
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid HyperParameterId { get; set; }
 
         /// <summary>
         /// ParameterName

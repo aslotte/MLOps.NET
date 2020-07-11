@@ -13,14 +13,14 @@ namespace MLOps.NET.Entities.Impl
         /// <param name="runId"></param>
         public Data(Guid runId)
         {
-            Id = Guid.NewGuid();
+            DataId = Guid.NewGuid();
             RunId = runId;
         }
 
         /// <summary>
         /// Id
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid DataId { get; set; }
 
         /// <summary>
         /// RunId
