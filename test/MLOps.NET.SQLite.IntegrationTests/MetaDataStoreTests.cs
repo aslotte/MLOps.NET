@@ -1,5 +1,4 @@
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -100,7 +99,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
             confusionMatrix.Should().NotBeNull();
         }
 
-       [TestMethod]
+        [TestMethod]
         public void SetTrainingTimeAsync_NoRunProvided_ThrowsException()
         {
             var expectedTrainingTime = new TimeSpan(0, 5, 0);
@@ -118,9 +117,10 @@ namespace MLOps.NET.SQLite.IntegrationTests
         public async Task CreateRunAsync_WithGitCommitHash_SetsGitCommitHash()
         {
             var gitCommitHash = "12323239329392";
+            var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
 
             //Act
-            var runId = await sut.LifeCycle.CreateRunAsync(Guid.NewGuid(), gitCommitHash);
+            var runId = await sut.LifeCycle.CreateRunAsync(experimentId, gitCommitHash);
 
             //Assert
             var run = sut.LifeCycle.GetRun(runId);
@@ -131,7 +131,8 @@ namespace MLOps.NET.SQLite.IntegrationTests
         public async Task CreateRunAsync_WithoutGitCommitHash_ShouldProvideEmptyGitCommitHash()
         {
             //Act
-            var runId = await sut.LifeCycle.CreateRunAsync(Guid.NewGuid());
+            var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
+            var runId = await sut.LifeCycle.CreateRunAsync(experimentId);
 
             //Assert
             var run = sut.LifeCycle.GetRun(runId);
@@ -209,7 +210,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
                 new DataPoint { Features = new float[3] {0, 2, 4} , Label = true  },
                 new DataPoint { Features = new float[3] {1, 0, 0} , Label = true  }
             };
-        }       
+        }
     }
 
     internal class DataPoint

@@ -202,6 +202,32 @@ namespace MLOps.NET.Azure.IntegrationTests
         }
 
         [TestMethod]
+        public async Task CreateRunAsync_WithGitCommitHash_SetsGitCommitHash()
+        {
+            var gitCommitHash = "12323239329392";
+            var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
+
+            //Act
+            var runId = await sut.LifeCycle.CreateRunAsync(experimentId, gitCommitHash);
+
+            //Assert
+            var run = sut.LifeCycle.GetRun(runId);
+            run.GitCommitHash.Should().Be(gitCommitHash);
+        }
+
+        [TestMethod]
+        public async Task CreateRunAsync_WithoutGitCommitHash_ShouldProvideEmptyGitCommitHash()
+        {
+            //Act
+            var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
+            var runId = await sut.LifeCycle.CreateRunAsync(experimentId);
+
+            //Assert
+            var run = sut.LifeCycle.GetRun(runId);
+            run.GitCommitHash.Should().Be(string.Empty);
+        }
+
+        [TestMethod]
         public async Task GivenARunWithGitCommitHash_ShouldBeAbleToGetRun()
         {
             //Arrange
