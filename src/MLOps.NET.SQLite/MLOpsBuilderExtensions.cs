@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MLOps.NET.Storage;
+using MLOps.NET.Storage.Database;
 using MLOps.NET.Storage.EntityConfiguration;
 
 namespace MLOps.NET.SQLite
@@ -24,7 +24,7 @@ namespace MLOps.NET.SQLite
 
             contextFactory.CreateDbContext().EnsureCreated();
 
-            builder.UseMetaDataStore(new MetaDataStore(contextFactory));
+            builder.UseMetaDataRepositories(contextFactory);
 
             return builder;
         }

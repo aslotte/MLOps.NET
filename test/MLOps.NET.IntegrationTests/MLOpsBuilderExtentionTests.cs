@@ -1,12 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Threading.Tasks;
-
+﻿using FluentAssertions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Extensions;
-using System.IO;
-using FluentAssertions;
-using MLOps.NET.Storage;
+using MLOps.NET.Storage.Database;
 using Moq;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace MLOps.NET.IntegrationTests
 {
@@ -20,7 +19,7 @@ namespace MLOps.NET.IntegrationTests
             //Arrange
             var destinationFolder = @"C:\MLOps";
             IMLOpsContext mlm = new MLOpsBuilder()
-                .UseMetaDataStore(new Mock<IMetaDataStore>().Object)
+                .UseMetaDataRepositories(new Mock<IDbContextFactory>().Object)
                 .UseLocalFileModelRepository(destinationFolder)
                 .Build();
 

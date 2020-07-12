@@ -11,15 +11,15 @@ namespace MLOps.NET.Catalogs
     /// </summary>
     public sealed class DataCatalog
     {
-        private readonly IMetaDataStore metaDataStore;
+        private readonly IDataRepository dataRepository;
 
         /// <summary>
         /// ctor
         /// </summary>
-        /// <param name="metaDataStore"></param>
-        public DataCatalog(IMetaDataStore metaDataStore)
+        /// <param name="dataRepository"></param>
+        public DataCatalog(IDataRepository dataRepository)
         {
-            this.metaDataStore = metaDataStore;
+            this.dataRepository = dataRepository;
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace MLOps.NET.Catalogs
         /// <returns></returns>
         public async Task LogDataAsync(Guid runId, IDataView dataView)
         {
-            await this.metaDataStore.LogDataAsync(runId, dataView);
+            await this.dataRepository.LogDataAsync(runId, dataView);
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace MLOps.NET.Catalogs
         /// <returns></returns>
         public Data GetData(Guid runId)
         {
-            return this.metaDataStore.GetData(runId);
+            return this.dataRepository.GetData(runId);
         }
     }
 }

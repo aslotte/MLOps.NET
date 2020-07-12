@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Catalogs;
 using MLOps.NET.Storage;
-using MLOps.NET.Utilities;
 using Moq;
 using System;
 using System.Threading.Tasks;
@@ -12,14 +11,16 @@ namespace MLOps.NET.Tests
     [TestClass]
     public class EvaluationCatalogTests
     {
-        private Mock<IMetaDataStore> metaDataStoreMock;
+        private Mock<IMetricRepository> metricRepositoryMock;
+        private Mock<IConfusionMatrixRepository> confusionMatrixRepositoryMock;
         private EvaluationCatalog sut;
 
         [TestInitialize]
         public void Initialize()
         {
-            this.metaDataStoreMock = new Mock<IMetaDataStore>();
-            this.sut = new EvaluationCatalog(metaDataStoreMock.Object);
+            this.metricRepositoryMock = new Mock<IMetricRepository>();
+            this.confusionMatrixRepositoryMock = new Mock<IConfusionMatrixRepository>();
+            this.sut = new EvaluationCatalog(metricRepositoryMock.Object, confusionMatrixRepositoryMock.Object);
         }
 
         [TestMethod]
@@ -33,7 +34,7 @@ namespace MLOps.NET.Tests
             await sut.LogMetricsAsync(runId, metric);
 
             //Assert
-            metaDataStoreMock.Verify(x => x.LogMetricAsync(runId, It.IsAny<string>(), It.IsAny<double>()), Times.Never());
+            metricRepositoryMock.Verify(x => x.LogMetricAsync(runId, It.IsAny<string>(), It.IsAny<double>()), Times.Never());
         }
 
         [TestMethod]
@@ -47,7 +48,7 @@ namespace MLOps.NET.Tests
             await sut.LogMetricsAsync(runId, metric);
 
             //Assert
-            metaDataStoreMock.Verify(x => x.LogMetricAsync(runId, It.IsAny<string>(), 0.56d), Times.Once());
+            metricRepositoryMock.Verify(x => x.LogMetricAsync(runId, It.IsAny<string>(), 0.56d), Times.Once());
         }
     }
 }
