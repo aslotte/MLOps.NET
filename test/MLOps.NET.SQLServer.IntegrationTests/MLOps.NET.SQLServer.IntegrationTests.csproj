@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\MLOps.NET.SQLServer\MLOps.NET.SQLServer.csproj" />
+    <ProjectReference Include="..\MLOps.NET.IntegrationTests\MLOps.NET.IntegrationTests.csproj" />
     <ProjectReference Include="..\MLOps.NET.Tests.Common\MLOps.NET.Tests.Common.csproj" />
   </ItemGroup>
 

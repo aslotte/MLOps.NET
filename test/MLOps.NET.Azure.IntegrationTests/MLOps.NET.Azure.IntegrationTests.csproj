@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\MLOps.NET.Azure\MLOps.NET.Azure.csproj" />
+    <ProjectReference Include="..\MLOps.NET.IntegrationTests\MLOps.NET.IntegrationTests.csproj" />
     <ProjectReference Include="..\MLOps.NET.Tests.Common\MLOps.NET.Tests.Common.csproj" />
   </ItemGroup>
 

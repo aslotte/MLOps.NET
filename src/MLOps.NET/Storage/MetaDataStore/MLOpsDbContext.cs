@@ -58,11 +58,5 @@ namespace MLOps.NET.Storage
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
         public DbSet<Data> Data { get; set; }
-
-        ///<inheritdoc cref="IMLOpsDbContext"/>
-        public DbSet<DataSchema> DataSchemas { get; set; }
-
-        ///<inheritdoc cref="IMLOpsDbContext"/>
-        public DbSet<DataColumn> DataColumns { get; set; }
     }
 }

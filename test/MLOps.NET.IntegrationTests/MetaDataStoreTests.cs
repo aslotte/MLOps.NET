@@ -2,29 +2,36 @@ using FluentAssertions;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MLOps.NET.Storage;
+using MLOps.NET.Storage.Interfaces;
 using MLOps.NET.Tests.Common.Data;
-using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MLOps.NET.SQLite.IntegrationTests
+namespace MLOps.NET.IntegrationTests
 {
-    [TestCategory("Integration")]
-    [TestClass]
     public class MetaDataStoreTests
     {
-        private IMLOpsContext sut;
+        protected IMLOpsContext sut;
 
-        [TestInitialize]
-        public void Initialize()
+        protected async Task TearDown(IMLOpsDbContext context)
         {
-            sut = new MLOpsBuilder()
-                .UseModelRepository(new Mock<IModelRepository>().Object)
-                .UseSQLite()
-                .Build();
+            var experiments = context.Experiments;
+            var runs = context.Runs;
+            var metrics = context.Metrics;
+            var hyperParameters = context.HyperParameters;
+            var confusionMatrices = context.ConfusionMatrices;
+            var data = context.Data;
+
+            context.Experiments.RemoveRange(experiments);
+            context.Runs.RemoveRange(runs);
+            context.Metrics.RemoveRange(metrics);
+            context.HyperParameters.RemoveRange(hyperParameters);
+            context.ConfusionMatrices.RemoveRange(confusionMatrices);
+            context.Data.RemoveRange(data);
+
+            await context.SaveChangesAsync();
         }
 
         [TestMethod]
@@ -111,6 +118,37 @@ namespace MLOps.NET.SQLite.IntegrationTests
             Func<Task> func = new Func<Task>(async () => await sut.LifeCycle.SetTrainingTimeAsync(runId, expectedTrainingTime));
 
             func.Should().Throw<InvalidOperationException>(expectedMessage);
+        }
+
+        [TestMethod]
+        public async Task LogMetricAsync_ShouldLogMetric()
+        {
+            //Arrange
+            var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
+            var id = await sut.LifeCycle.CreateRunAsync(experimentId);
+
+            //Act
+            await sut.Evaluation.LogMetricAsync(id, "F1Score", 0.78d);
+
+            //Assert
+            var metric = sut.Evaluation.GetMetrics(id).First();
+            metric.Should().NotBeNull();
+            metric.MetricName.Should().Be("F1Score");
+            metric.Value.Should().Be(0.78d);
+        }
+
+        [TestMethod]
+        public async Task GetConfusionMatrix_NoConfusionMatrixExist_ShouldReturnNull()
+        {
+            //Arrange
+            var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
+            var runId = await sut.LifeCycle.CreateRunAsync(experimentId);
+
+            //Act
+            var confusionMatrix = sut.Evaluation.GetConfusionMatrix(runId);
+
+            //Assert
+            confusionMatrix.Should().BeNull();
         }
 
         [TestMethod]
