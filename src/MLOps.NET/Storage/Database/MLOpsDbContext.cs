@@ -38,7 +38,7 @@ namespace MLOps.NET.Storage.Database
         /// <returns></returns>
         public void EnsureCreated()
         {
-            Database.EnsureCreated();
+            Database.Migrate();
         }
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
