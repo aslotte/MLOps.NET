@@ -13,15 +13,18 @@ namespace MLOps.NET.Catalogs
     /// </summary>
     public sealed class EvaluationCatalog
     {
-        private readonly IMetaDataStore metaDataStore;
+        private readonly IMetricRepository metricRepository;
+        private readonly IConfusionMatrixRepository confusionMatrixRepository;
 
         /// <summary>
         /// ctor
         /// </summary>
-        /// <param name="metaDataStore"></param>
-        public EvaluationCatalog(IMetaDataStore metaDataStore)
+        /// <param name="metricRepository"></param>
+        /// <param name="confusionMatrixRepository"></param>
+        public EvaluationCatalog(IMetricRepository metricRepository, IConfusionMatrixRepository confusionMatrixRepository)
         {
-            this.metaDataStore = metaDataStore;
+            this.metricRepository = metricRepository;
+            this.confusionMatrixRepository = confusionMatrixRepository;
         }
 
         /// <summary>
@@ -33,7 +36,7 @@ namespace MLOps.NET.Catalogs
         /// <returns></returns>
         public async Task LogMetricAsync(Guid runId, string metricName, double metricValue)
         {
-            await metaDataStore.LogMetricAsync(runId, metricName, metricValue);
+            await metricRepository.LogMetricAsync(runId, metricName, metricValue);
         }
 
         /// <summary>
@@ -74,7 +77,7 @@ namespace MLOps.NET.Catalogs
                 PerClassPrecision = confusionMatrix.PerClassPrecision,
                 PerClassRecall = confusionMatrix.PerClassRecall
             };
-            await metaDataStore.LogConfusionMatrixAsync(runId, conMatrix);
+            await confusionMatrixRepository.LogConfusionMatrixAsync(runId, conMatrix);
         }
 
         /// <summary>
@@ -84,7 +87,7 @@ namespace MLOps.NET.Catalogs
         /// <returns></returns>
         public Entities.ConfusionMatrix GetConfusionMatrix(Guid runId)
         {
-            return metaDataStore.GetConfusionMatrix(runId);
+            return confusionMatrixRepository.GetConfusionMatrix(runId);
         }
 
         /// <summary>
@@ -94,7 +97,7 @@ namespace MLOps.NET.Catalogs
         /// <returns></returns>
         public List<Metric> GetMetrics(Guid runId)
         {
-            return metaDataStore.GetMetrics(runId);
+            return metricRepository.GetMetrics(runId);
         }
     }
 }

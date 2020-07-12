@@ -4,7 +4,7 @@ using MLOps.NET.Storage.Interfaces;
 using System;
 using System.Threading.Tasks;
 
-namespace MLOps.NET.Storage
+namespace MLOps.NET.Storage.Database
 {
     ///<inheritdoc cref="IMLOpsDbContext"/>
     public class MLOpsDbContext : DbContext, IMLOpsDbContext

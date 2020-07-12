@@ -1,5 +1,6 @@
-using System;
 using MLOps.NET.Storage;
+using MLOps.NET.Storage.Database;
+using System;
 
 namespace MLOps.NET
 {
@@ -8,7 +9,13 @@ namespace MLOps.NET
     /// </summary>
     public class MLOpsBuilder
     {
-        private IMetaDataStore metaDataStore;
+        private IExperimentRepository experimentRepository;
+        private IRunRepository runRepository;
+        private IDataRepository dataRepository;
+        private IMetricRepository metricRepository;
+        private IConfusionMatrixRepository confusionMatrixRepository;
+        private IHyperParameterRepository hyperParameterRepository;
+
         private IModelRepository modelRepository;
 
         /// <summary>
@@ -17,19 +24,22 @@ namespace MLOps.NET
         /// <returns>Configured <see cref="IMLOpsContext"/></returns>
         public IMLOpsContext Build()
         {
-            return new MLOpsContext(metaDataStore, modelRepository);
+            return new MLOpsContext(modelRepository, experimentRepository, runRepository, dataRepository, metricRepository, confusionMatrixRepository, hyperParameterRepository);
         }
 
         /// <summary>
-        /// Configures the builder to use the provided <see cref="IMetaDataStore"/>
+        /// Configures the builder to use a repository
         /// </summary>
-        /// <param name="metaDataStore"><see cref="IMetaDataStore"/> to use in the MLOps pipeline</param>
         /// <returns>The current builder for chaining</returns>
-        public MLOpsBuilder UseMetaDataStore(IMetaDataStore metaDataStore)
+        public MLOpsBuilder UseMetaDataRepositories(IDbContextFactory contextFactory)
         {
-            if (this.metaDataStore != null) throw new InvalidOperationException("MetaDataStore is already configured");
+            this.experimentRepository = new ExperimentRepository(contextFactory);
+            this.runRepository = new RunRepository(contextFactory);
+            this.dataRepository = new DataRepository(contextFactory);
+            this.metricRepository = new MetricRepository(contextFactory);
+            this.confusionMatrixRepository = new ConfusionMatrixRepository(contextFactory);
+            this.hyperParameterRepository = new HyperParameterRepository(contextFactory);
 
-            this.metaDataStore = metaDataStore ?? throw new ArgumentNullException(nameof(metaDataStore));
             return this;
         }
 

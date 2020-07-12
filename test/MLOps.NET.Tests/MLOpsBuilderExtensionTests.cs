@@ -7,6 +7,7 @@ using MLOps.NET.Catalogs;
 using System.Reflection;
 using MLOps.NET.Storage;
 using Moq;
+using MLOps.NET.Storage.Database;
 
 namespace MLOps.NET.Tests
 {
@@ -20,7 +21,7 @@ namespace MLOps.NET.Tests
             //Act
             var storagePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}{Path.DirectorySeparatorChar}.mlops";
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
-                .UseMetaDataStore(new Mock<IMetaDataStore>().Object)
+                .UseMetaDataRepositories(new Mock<IDbContextFactory>().Object)
                 .UseLocalFileModelRepository(storagePath)
                 .Build();
 

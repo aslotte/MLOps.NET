@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Catalogs;
 using MLOps.NET.Storage;
+using MLOps.NET.Storage.Database;
 using Moq;
 using System.Reflection;
 
@@ -17,7 +18,7 @@ namespace MLOps.NET.AWS.Tests
             //Act
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
                 .UseAWSS3Repository("access-key-id","secret-access-key","region-name","bucket-name")
-                .UseMetaDataStore(new Mock<IMetaDataStore>().Object)
+                .UseMetaDataRepositories(new Mock<IDbContextFactory>().Object)
                 .Build();
 
             unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLOpsContext is MLOpsContext");

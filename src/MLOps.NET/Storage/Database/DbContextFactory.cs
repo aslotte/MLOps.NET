@@ -2,7 +2,7 @@
 using MLOps.NET.Storage.Interfaces;
 using System;
 
-namespace MLOps.NET.Storage
+namespace MLOps.NET.Storage.Database
 {
     /// <summary>
     /// Factory to create Db Context

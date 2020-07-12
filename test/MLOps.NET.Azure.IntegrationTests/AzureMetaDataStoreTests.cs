@@ -4,6 +4,7 @@ using MLOps.NET.Azure.IntegrationTests.Constants;
 using MLOps.NET.Azure.Storage;
 using MLOps.NET.IntegrationTests;
 using MLOps.NET.Storage;
+using MLOps.NET.Storage.Database;
 using MLOps.NET.Tests.Common.Configuration;
 using Moq;
 using System.Threading.Tasks;

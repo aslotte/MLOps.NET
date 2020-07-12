@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.IntegrationTests;
 using MLOps.NET.Storage;
+using MLOps.NET.Storage.Database;
 using MLOps.NET.Storage.EntityConfiguration;
 using Moq;
 using System.Threading.Tasks;

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MLOps.NET.Entities.Impl;
-using MLOps.NET.Storage;
+using MLOps.NET.Storage.Database;
 using MLOps.NET.Storage.EntityConfiguration;
 
 namespace MLOps.NET.SQLServer
@@ -26,7 +25,7 @@ namespace MLOps.NET.SQLServer
 
             contextFactory.CreateDbContext().EnsureCreated();
 
-            builder.UseMetaDataStore(new MetaDataStore(contextFactory));
+            builder.UseMetaDataRepositories(contextFactory);
 
             return builder;
         }

@@ -12,14 +12,14 @@ namespace MLOps.NET.Catalogs
     /// </summary>
     public sealed class TrainingCatalog
     {
-        private readonly IMetaDataStore metaDataStore;
+        private readonly IHyperParameterRepository hyperParameterRepository;
 
         /// <summary>
         /// ctor
         /// </summary>
-        public TrainingCatalog(IMetaDataStore metaDataStore)
+        public TrainingCatalog(IHyperParameterRepository hyperParameterRepository)
         {
-            this.metaDataStore = metaDataStore;
+            this.hyperParameterRepository = hyperParameterRepository;
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace MLOps.NET.Catalogs
                     {
                         var value = optionField.GetValue(options);
                         if (value != null)
-                            await metaDataStore.LogHyperParameterAsync(runId, optionField.Name, value.ToString());
+                            await hyperParameterRepository.LogHyperParameterAsync(runId, optionField.Name, value.ToString());
                     }
                 }
             }
@@ -59,7 +59,7 @@ namespace MLOps.NET.Catalogs
         /// <returns></returns>
         public async Task LogHyperParameterAsync(Guid runId, string name, string value)
         {
-            await metaDataStore.LogHyperParameterAsync(runId, name, value);
+            await hyperParameterRepository.LogHyperParameterAsync(runId, name, value);
         }
     }
 }

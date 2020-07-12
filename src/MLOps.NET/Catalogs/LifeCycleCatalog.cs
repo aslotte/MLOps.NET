@@ -12,17 +12,20 @@ namespace MLOps.NET.Catalogs
     /// </summary>
     public sealed class LifeCycleCatalog
     {
-        private readonly IMetaDataStore metaDataStore;
+        private readonly IExperimentRepository experimentRepository;
+        private readonly IRunRepository runRepository;
         private readonly IClock clock;
 
         /// <summary>
         /// ctor       
         /// </summary>
-        /// <param name="metaDataStore"></param>
+        /// <param name="experimentRepository"></param>
+        /// <param name="runRepository"></param>
         /// <param name="clock">Abstraction of DateTime</param>
-        public LifeCycleCatalog(IMetaDataStore metaDataStore, IClock clock)
+        public LifeCycleCatalog(IExperimentRepository experimentRepository, IRunRepository runRepository, IClock clock)
         {
-            this.metaDataStore = metaDataStore;
+            this.experimentRepository = experimentRepository;
+            this.runRepository = runRepository;
             this.clock = clock;
         }
 
@@ -33,7 +36,7 @@ namespace MLOps.NET.Catalogs
         /// <returns>Experiment Id</returns>
         public async Task<Guid> CreateExperimentAsync(string name)
         {
-            return await metaDataStore.CreateExperimentAsync(name);
+            return await experimentRepository.CreateExperimentAsync(name);
         }
 
         /// <summary>
@@ -44,7 +47,7 @@ namespace MLOps.NET.Catalogs
         /// <returns>Run Id</returns>
         public async Task<Guid> CreateRunAsync(Guid experimentId, string gitCommitHash = "")
         {
-            return await metaDataStore.CreateRunAsync(experimentId, gitCommitHash);
+            return await runRepository.CreateRunAsync(experimentId, gitCommitHash);
         }
 
         /// <summary>
@@ -66,7 +69,7 @@ namespace MLOps.NET.Catalogs
         /// <returns></returns>
         public Experiment GetExperiment(string experimentName)
         {
-            return this.metaDataStore.GetExperiment(experimentName);
+            return this.experimentRepository.GetExperiment(experimentName);
         }
 
         /// <summary>
@@ -76,7 +79,7 @@ namespace MLOps.NET.Catalogs
         /// <returns></returns>
         public Run GetRun(Guid runId)
         {
-            return this.metaDataStore.GetRun(runId);
+            return this.runRepository.GetRun(runId);
         }
 
         /// <summary>
@@ -86,7 +89,7 @@ namespace MLOps.NET.Catalogs
         /// <returns></returns>
         public Run GetRun(string commitHash)
         {
-            return this.metaDataStore.GetRun(commitHash);
+            return this.runRepository.GetRun(commitHash);
         }
 
         /// <summary>
@@ -97,7 +100,7 @@ namespace MLOps.NET.Catalogs
         /// <returns></returns>
         public Run GetBestRun(Guid experimentId, string metricName)
         {
-            var allRuns = metaDataStore.GetRuns(experimentId);
+            var allRuns = runRepository.GetRuns(experimentId);
             var bestRunId = allRuns.SelectMany(r => r.Metrics)
                 .Where(m => m.MetricName.ToLowerInvariant() == metricName.ToLowerInvariant())
                 .OrderByDescending(m => m.Value)
@@ -114,7 +117,7 @@ namespace MLOps.NET.Catalogs
         public async Task SetTrainingTimeAsync(Guid runId)
         {
             var endTime = this.clock.UtcNow;
-            var run = metaDataStore.GetRun(runId);
+            var run = runRepository.GetRun(runId);
 
             var trainingTime = endTime.Subtract(run.RunDate);
 
@@ -128,7 +131,7 @@ namespace MLOps.NET.Catalogs
         /// <param name="timeSpan">Training time</param>
         public async Task SetTrainingTimeAsync(Guid runId, TimeSpan timeSpan)
         {
-            await metaDataStore.SetTrainingTimeAsync(runId, timeSpan);
+            await runRepository.SetTrainingTimeAsync(runId, timeSpan);
         }
     }
 }

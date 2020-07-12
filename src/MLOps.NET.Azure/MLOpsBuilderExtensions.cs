@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MLOps.NET.Azure.Storage;
 using MLOps.NET.Storage;
+using MLOps.NET.Storage.Database;
 
 namespace MLOps.NET.Azure
 {
@@ -26,7 +27,7 @@ namespace MLOps.NET.Azure
 
             contextFactory.CreateDbContext().EnsureCreated();
 
-            builder.UseMetaDataStore(new MetaDataStore(contextFactory));
+            builder.UseMetaDataRepositories(contextFactory);
 
             return builder;
         }

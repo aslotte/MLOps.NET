@@ -8,16 +8,27 @@ namespace MLOps.NET
     ///<inheritdoc cref="IMLOpsContext"/>
     public class MLOpsContext : IMLOpsContext
     {
-        internal MLOpsContext(IMetaDataStore metaDataStore, IModelRepository modelRepository)
+        internal MLOpsContext(IModelRepository modelRepository, 
+            IExperimentRepository experimentRepository, 
+            IRunRepository runRepository,
+            IDataRepository dataRepository,
+            IMetricRepository metricRepository,
+            IConfusionMatrixRepository confusionMatrixRepository,
+            IHyperParameterRepository hyperParameterRepository)
         {
-            if (metaDataStore == null) throw new ArgumentNullException(nameof(metaDataStore));
             if (modelRepository == null) throw new ArgumentNullException(nameof(modelRepository));
+            if (experimentRepository == null) throw new ArgumentNullException(nameof(experimentRepository));
+            if (runRepository == null) throw new ArgumentNullException(nameof(runRepository));
+            if (dataRepository == null) throw new ArgumentNullException(nameof(dataRepository));
+            if (metricRepository == null) throw new ArgumentNullException(nameof(metricRepository));
+            if (confusionMatrixRepository == null) throw new ArgumentNullException(nameof(confusionMatrixRepository));
+            if (hyperParameterRepository == null) throw new ArgumentNullException(nameof(hyperParameterRepository));
 
-            this.LifeCycle = new LifeCycleCatalog(metaDataStore, new Clock());
-            this.Data = new DataCatalog(metaDataStore);
-            this.Evaluation = new EvaluationCatalog(metaDataStore);
+            this.LifeCycle = new LifeCycleCatalog(experimentRepository, runRepository, new Clock());
+            this.Data = new DataCatalog(dataRepository);
+            this.Evaluation = new EvaluationCatalog(metricRepository, confusionMatrixRepository);
             this.Model = new ModelCatalog(modelRepository);
-            this.Training = new TrainingCatalog(metaDataStore);
+            this.Training = new TrainingCatalog(hyperParameterRepository);
         }
 
         ///<inheritdoc cref="IMLOpsContext"/>

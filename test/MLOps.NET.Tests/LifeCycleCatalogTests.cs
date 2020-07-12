@@ -14,15 +14,17 @@ namespace MLOps.NET.Tests
     public class LifeCycleCatalogTests
     {
         private Mock<IClock> clockMock;
-        private Mock<IMetaDataStore> metaDataStoreMock;
+        private Mock<IExperimentRepository> experimentRepositoryMock;
+        private Mock<IRunRepository> runRepositoryMock;
         private LifeCycleCatalog sut;
 
         [TestInitialize]
         public void Initialize()
         {
             this.clockMock = new Mock<IClock>();
-            this.metaDataStoreMock = new Mock<IMetaDataStore>();
-            this.sut = new LifeCycleCatalog(metaDataStoreMock.Object, clockMock.Object);
+            this.experimentRepositoryMock = new Mock<IExperimentRepository>();
+            this.runRepositoryMock = new Mock<IRunRepository>();
+            this.sut = new LifeCycleCatalog(experimentRepositoryMock.Object, runRepositoryMock.Object, clockMock.Object);
         }
 
         [TestMethod]
@@ -40,7 +42,7 @@ namespace MLOps.NET.Tests
 
             clockMock.SetupGet(x => x.UtcNow).Returns(endTime);
             
-            metaDataStoreMock.Setup(x => x.GetRun(runId))
+            runRepositoryMock.Setup(x => x.GetRun(runId))
                 .Returns(run);
 
             //Act
@@ -48,7 +50,7 @@ namespace MLOps.NET.Tests
 
             //Assert
             var expectedTrainingTime = endTime.Subtract(runDate);
-            metaDataStoreMock.Verify(x => x.SetTrainingTimeAsync(runId, expectedTrainingTime), Times.Once());
+            runRepositoryMock.Verify(x => x.SetTrainingTimeAsync(runId, expectedTrainingTime), Times.Once());
         }
 
         [TestMethod]
@@ -65,7 +67,7 @@ namespace MLOps.NET.Tests
             await sut.SetTrainingTimeAsync(runId, trainingTime);
 
             //Assert
-            metaDataStoreMock.Verify(x => x.SetTrainingTimeAsync(runId, trainingTime), Times.Once());
+            runRepositoryMock.Verify(x => x.SetTrainingTimeAsync(runId, trainingTime), Times.Once());
         }
 
         [TestMethod]
@@ -78,7 +80,7 @@ namespace MLOps.NET.Tests
             var runId = await sut.CreateRunAsync(Guid.NewGuid(), gitCommitHash);
 
             //Assert
-            this.metaDataStoreMock.Verify(x => x.CreateRunAsync(It.IsAny<Guid>(), gitCommitHash), Times.Once());
+            this.runRepositoryMock.Verify(x => x.CreateRunAsync(It.IsAny<Guid>(), gitCommitHash), Times.Once());
         }
 
         [TestMethod]
@@ -89,7 +91,7 @@ namespace MLOps.NET.Tests
             var runId = await sut.CreateRunAsync(Guid.NewGuid());
 
             //Assert
-            this.metaDataStoreMock.Verify(x => x.CreateRunAsync(It.IsAny<Guid>(), string.Empty), Times.Once());
+            this.runRepositoryMock.Verify(x => x.CreateRunAsync(It.IsAny<Guid>(), string.Empty), Times.Once());
         }
     }
 }

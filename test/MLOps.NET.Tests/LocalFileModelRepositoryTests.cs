@@ -2,7 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Storage;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions.TestingHelpers;
 using System.Text;
@@ -16,7 +15,7 @@ namespace MLOps.NET.Tests
     {
         [TestMethod]
         public async Task UploadModel_ShouldCreateFolderIfNotExists()
-        {   
+        {
             // Arrange
             var mockFileSystem = new MockFileSystem();
             var folderPath = mockFileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mlops");
