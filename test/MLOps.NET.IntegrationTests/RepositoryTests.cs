@@ -15,6 +15,7 @@ namespace MLOps.NET.IntegrationTests
             var hyperParameters = context.HyperParameters;
             var confusionMatrices = context.ConfusionMatrices;
             var data = context.Data;
+            var runArtifacts = context.RunArtifacts;
 
             context.Experiments.RemoveRange(experiments);
             context.Runs.RemoveRange(runs);
@@ -22,6 +23,7 @@ namespace MLOps.NET.IntegrationTests
             context.HyperParameters.RemoveRange(hyperParameters);
             context.ConfusionMatrices.RemoveRange(confusionMatrices);
             context.Data.RemoveRange(data);
+            context.RunArtifacts.RemoveRange(runArtifacts);
 
             await context.SaveChangesAsync();
         }

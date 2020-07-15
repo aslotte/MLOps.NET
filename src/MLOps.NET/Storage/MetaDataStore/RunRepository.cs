@@ -1,4 +1,5 @@
-﻿using MLOps.NET.Entities.Impl;
+﻿using Microsoft.EntityFrameworkCore;
+using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Database;
 using MLOps.NET.Storage.Interfaces;
 using System;
@@ -42,7 +43,9 @@ namespace MLOps.NET.Storage
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
-                var run = db.Runs.FirstOrDefault(x => x.RunId == runId);
+                var run = db.Runs
+                    .Include(x => x.RunArtifacts)
+                    .FirstOrDefault(x => x.RunId == runId);
 
                 PopulateRun(db, run);
                 return run;
@@ -86,6 +89,33 @@ namespace MLOps.NET.Storage
                 await db.SaveChangesAsync();
             }
         }
+
+        ///<inheritdoc cref="IRunRepository"/>
+        public async Task CreateRunArtifact(Guid runId, string name)
+        {
+            using (var db = this.contextFactory.CreateDbContext())
+            {
+                var runArtifact = new RunArtifact
+                {
+                    RunId = runId,
+                    Name = name
+                };
+
+                db.RunArtifacts.Add(runArtifact);
+
+                await db.SaveChangesAsync();
+            }
+        }
+
+        ///<inheritdoc cref="IRunRepository"/>
+        public List<RunArtifact> GetRunArtifacts(Guid runId)
+        {
+            using (var db = this.contextFactory.CreateDbContext())
+            {
+                return db.RunArtifacts.Where(x => x.RunId == runId).ToList();
+            }
+        }
+
         private void PopulateRun(IMLOpsDbContext db, Run run)
         {
             if (run == null) return;
