@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Database;
 using MLOps.NET.Storage.Interfaces;
@@ -113,6 +114,31 @@ namespace MLOps.NET.Storage
             using (var db = this.contextFactory.CreateDbContext())
             {
                 return db.RunArtifacts.Where(x => x.RunId == runId).ToList();
+            }
+        }
+
+        public async Task CreateRegisteredModel(Guid runArtifactId, string registeredBy)
+        {
+            using (var db = this.contextFactory.CreateDbContext())
+            {
+                var artifact = db.RunArtifacts.FirstOrDefault(x => x.RunArtifactId == runArtifactId);
+
+                var registeredModels = db.RegisteredModels
+                    .Where(x => x.RunArtifact.RunId == artifact.RunId);
+
+                var version = registeredModels.Any() ? registeredModels.Max(x => x.Version) + 1 : 1;
+
+                var registeredModel = new RegisteredModel
+                {
+                    RunArtifactId = runArtifactId,
+                    RegisteredBy = registeredBy,
+                    RegisteredDate = DateTime.UtcNow,
+                    Version = version
+                };
+
+                db.RegisteredModels.Add(registeredModel);
+
+                await db.SaveChangesAsync();
             }
         }
 

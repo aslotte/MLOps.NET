@@ -61,5 +61,13 @@ namespace MLOps.NET.Storage
         /// <param name="runId"></param>
         /// <returns></returns>
         List<RunArtifact> GetRunArtifacts(Guid runId);
+
+        /// <summary>
+        /// Create a registered model
+        /// </summary>
+        /// <param name="runArtifactId"></param>
+        /// <param name="registeredBy"></param>
+        /// <returns></returns>
+        Task CreateRegisteredModel(Guid runArtifactId, string registeredBy);
     }
 }
