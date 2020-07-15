@@ -31,5 +31,10 @@ namespace MLOps.NET.Entities.Impl
         /// DataSchema
         /// </summary>
         public DataSchema DataSchema { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string DataHash { get; set; }
     }
 }

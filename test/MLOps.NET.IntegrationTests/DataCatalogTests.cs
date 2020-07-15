@@ -36,10 +36,25 @@ namespace MLOps.NET.IntegrationTests
                 .BeTrue();
         }
 
+        [TestMethod]
+        public async Task LogDataAsync_GivenLogHash()
+        {
+            var runId = await sut.LifeCycle.CreateRunAsync("test");
+
+            var data = LoadData();
+
+            //Act
+            await sut.Data.LogDataAsync(runId, data);
+
+            //Assert
+            var savedData = sut.Data.GetData(runId);
+
+            savedData.DataHash.Should().NotBeNullOrEmpty();
+        }
+
         private IDataView LoadData()
         {
             var mlContext = new MLContext(seed: 1);
-
             return mlContext.Data.LoadFromTextFile<ProductReview>("Data/product_reviews.csv", hasHeader: true, separatorChar: ',');
         }
     }
