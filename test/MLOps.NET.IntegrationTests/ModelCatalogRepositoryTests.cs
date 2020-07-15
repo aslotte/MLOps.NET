@@ -1,39 +1,43 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MLOps.NET.Extensions;
-using MLOps.NET.Storage.Database;
+using MLOps.NET.Catalogs;
+using MLOps.NET.Storage;
 using Moq;
 using System;
 using System.IO;
+using System.IO.Abstractions;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.IntegrationTests
 {
     [TestCategory("Integration")]
     [TestClass]
-    public class MLOpsBuilderExtentionTests
+    public class ModelCatalogRepositoryTests
     {
         [TestMethod]
         public async Task UploadModelAsync_ValidModelPath_UploadSuccessAsync()
         {
             //Arrange
             var destinationFolder = @"C:\MLOps";
-            IMLOpsContext mlm = new MLOpsBuilder()
-                .UseMetaDataRepositories(new Mock<IDbContextFactory>().Object)
-                .UseLocalFileModelRepository(destinationFolder)
-                .Build();
+            var modelRepository = new LocalFileModelRepository(new FileSystem(), destinationFolder);
+            var runRepositoryMock = new Mock<IRunRepository>();
 
-            var guid = Guid.NewGuid();
+            var modelCatalog = new ModelCatalog(modelRepository, runRepositoryMock.Object);
+
+            var runId = Guid.NewGuid();
             var modelPath = @"C:\data\model.zip";
             var modelStoragePath = @"C:\MLOps";
             using var writer = new StreamWriter(modelPath);
             writer.Close();
 
+            runRepositoryMock.Setup(x => x.CreateRunArtifact(runId, It.IsAny<string>()))
+                .Returns(Task.CompletedTask);
+
             //Act
-            await mlm.Model.UploadAsync(guid, modelPath);
+            await modelCatalog.UploadAsync(runId, modelPath);
 
             //Assert
-            var fileExists = File.Exists(Path.Combine(modelStoragePath, $"{guid}.zip"));
+            var fileExists = File.Exists(Path.Combine(modelStoragePath, $"{runId}.zip"));
             fileExists.Should().BeTrue();
         }
     }
