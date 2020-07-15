@@ -50,6 +50,11 @@ namespace MLOps.NET.Entities.Impl
         public ConfusionMatrixEntity ConfusionMatrix { get; set; }
 
         /// <summary>
+        /// Run artifacts
+        /// </summary>
+        public List<RunArtifact> RunArtifacts { get; set; } = new List<RunArtifact>();
+
+        /// <summary>
         /// TrainingTime
         /// </summary>
         public TimeSpan TrainingTime { get; set; }

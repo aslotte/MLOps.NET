@@ -1,5 +1,7 @@
-﻿using MLOps.NET.Storage;
+﻿using MLOps.NET.Entities.Impl;
+using MLOps.NET.Storage;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -11,19 +13,24 @@ namespace MLOps.NET.Catalogs
     public sealed class ModelCatalog
     {
         private readonly IModelRepository modelRepository;
+        private readonly IRunRepository runRepository;
 
         /// <summary>
         /// ctor
         /// </summary>
         /// <param name="modelRepository"></param>
-        public ModelCatalog(IModelRepository modelRepository)
+        /// <param name="runRepository"></param>
+        public ModelCatalog(IModelRepository modelRepository, IRunRepository runRepository)
         {
             this.modelRepository = modelRepository;
+            this.runRepository = runRepository;
         }
 
         ///<inheritdoc/>
         public async Task UploadAsync(Guid runId, string filePath)
         {
+            var artifactName = $"{runId}.zip";
+            await runRepository.CreateRunArtifact(runId, artifactName);
             await modelRepository.UploadModelAsync(runId, filePath);
         }
 
@@ -36,6 +43,16 @@ namespace MLOps.NET.Catalogs
         public Task DownloadAsync(Guid runId, Stream stream)
         {
             return modelRepository.DownloadModelAsync(runId, stream);
+        }
+
+        /// <summary>
+        /// Get run artifacts for a run
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <returns></returns>
+        public List<RunArtifact> GetRunArtifacts(Guid runId)
+        {
+            return runRepository.GetRunArtifacts(runId);
         }
     }
 }

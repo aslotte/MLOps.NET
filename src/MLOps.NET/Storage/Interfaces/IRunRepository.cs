@@ -46,5 +46,20 @@ namespace MLOps.NET.Storage
         /// <param name="timeSpan"></param>
         /// <returns></returns>
         Task SetTrainingTimeAsync(Guid runId, TimeSpan timeSpan);
+
+        /// <summary>
+        /// Creates a run artifact for a run
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        Task CreateRunArtifact(Guid runId, string name);
+
+        /// <summary>
+        /// Gets run artifacts
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <returns></returns>
+        List<RunArtifact> GetRunArtifacts(Guid runId);
     }
 }

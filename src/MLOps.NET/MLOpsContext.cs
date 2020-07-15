@@ -27,7 +27,7 @@ namespace MLOps.NET
             this.LifeCycle = new LifeCycleCatalog(experimentRepository, runRepository, new Clock());
             this.Data = new DataCatalog(dataRepository);
             this.Evaluation = new EvaluationCatalog(metricRepository, confusionMatrixRepository);
-            this.Model = new ModelCatalog(modelRepository);
+            this.Model = new ModelCatalog(modelRepository, runRepository);
             this.Training = new TrainingCatalog(hyperParameterRepository);
         }
 

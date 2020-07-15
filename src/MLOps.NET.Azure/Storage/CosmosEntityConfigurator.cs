@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MLOps.NET.Entities.Impl;
+using System.Security.Cryptography.X509Certificates;
 
 namespace MLOps.NET.Azure.Storage
 {
@@ -20,6 +21,7 @@ namespace MLOps.NET.Azure.Storage
             modelBuilder.Entity<Metric>().ToContainer(nameof(Metric));
             modelBuilder.Entity<ConfusionMatrixEntity>().ToContainer("ConfusionMatrix");
             modelBuilder.Entity<Data>().ToContainer(nameof(Data));
+            modelBuilder.Entity<RunArtifact>().ToContainer(nameof(RunArtifact));
 
             modelBuilder.Entity<Data>().OwnsOne(x => x.DataSchema, dataSchema =>
             {
