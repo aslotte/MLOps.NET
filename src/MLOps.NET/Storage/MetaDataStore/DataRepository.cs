@@ -69,13 +69,13 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc cref="IDataRepository"/>
-        public List<Data> GetData(Guid runId)
+        public Data GetData(Guid runId)
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
                 var data = db.Data
                     .Include(x => x.DataSchema.DataColumns)
-                    .Where(x => x.RunId == runId).ToList();
+                    .FirstOrDefault(x => x.RunId == runId);
                 if (data == null) return null;
 
                 return data;

@@ -39,7 +39,7 @@ namespace MLOps.NET.Catalogs
         /// </summary>
         /// <param name="runId"></param>
         /// <returns></returns>
-        public List<Data> GetData(Guid runId)
+        public Data GetData(Guid runId)
         {
             return this.dataRepository.GetData(runId);
         }

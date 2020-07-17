@@ -21,7 +21,7 @@ namespace MLOps.NET.IntegrationTests
             await sut.Data.LogDataAsync(runId, data);
 
             //Assert
-            var savedData = sut.Data.GetData(runId).FirstOrDefault();
+            var savedData = sut.Data.GetData(runId);
 
             savedData.DataSchema.ColumnCount.Should().Be(2);
 
@@ -47,7 +47,7 @@ namespace MLOps.NET.IntegrationTests
             await sut.Data.LogDataAsync(runId, data);
 
             //Assert
-            var savedData = sut.Data.GetData(runId).FirstOrDefault();
+            var savedData = sut.Data.GetData(runId);
 
             savedData.DataHash.Should().NotBeNullOrEmpty();
         }
@@ -55,20 +55,21 @@ namespace MLOps.NET.IntegrationTests
         [TestMethod]
         public async Task LogDataAsync_ShouldGenerateDifferentHashWhenDataChanges()
         {
-            var runId = await sut.LifeCycle.CreateRunAsync("test");
-
+            var previousRunId = await sut.LifeCycle.CreateRunAsync("previous run");
+            var currentRunId = await sut.LifeCycle.CreateRunAsync("current run");
             var data = LoadData();
 
             var updatedData = LoadUpdatedData();
 
             //Act
-            await sut.Data.LogDataAsync(runId, data);
-            await sut.Data.LogDataAsync(runId, updatedData);
-            var allData = sut.Data.GetData(runId);
+            await sut.Data.LogDataAsync(previousRunId, data);
+            await sut.Data.LogDataAsync(currentRunId, updatedData);
+            var previousRunData = sut.Data.GetData(previousRunId);
+            var currentRunData = sut.Data.GetData(currentRunId);
             //Assert
 
 
-            allData.First().DataHash.Should().NotBe(allData.Last().DataHash);
+            currentRunData.DataHash.Should().NotBe(previousRunData.DataHash);
         }
 
         private IDataView LoadData()

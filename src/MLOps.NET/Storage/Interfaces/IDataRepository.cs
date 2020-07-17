@@ -24,6 +24,6 @@ namespace MLOps.NET.Storage
         /// </summary>
         /// <param name="runId"></param>
         /// <returns></returns>
-        List<Data> GetData(Guid runId);
+        Data GetData(Guid runId);
     }
 }
