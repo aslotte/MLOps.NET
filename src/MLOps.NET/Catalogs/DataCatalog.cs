@@ -2,6 +2,7 @@
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Catalogs
@@ -38,7 +39,7 @@ namespace MLOps.NET.Catalogs
         /// </summary>
         /// <param name="runId"></param>
         /// <returns></returns>
-        public Data GetData(Guid runId)
+        public List<Data> GetData(Guid runId)
         {
             return this.dataRepository.GetData(runId);
         }

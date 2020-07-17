@@ -21,7 +21,7 @@ namespace MLOps.NET.IntegrationTests
             await sut.Data.LogDataAsync(runId, data);
 
             //Assert
-            var savedData = sut.Data.GetData(runId);
+            var savedData = sut.Data.GetData(runId).FirstOrDefault();
 
             savedData.DataSchema.ColumnCount.Should().Be(2);
 
@@ -47,15 +47,40 @@ namespace MLOps.NET.IntegrationTests
             await sut.Data.LogDataAsync(runId, data);
 
             //Assert
-            var savedData = sut.Data.GetData(runId);
+            var savedData = sut.Data.GetData(runId).FirstOrDefault();
 
             savedData.DataHash.Should().NotBeNullOrEmpty();
+        }
+
+        [TestMethod]
+        public async Task LogDataAsync_ShouldGenerateDifferentHashWhenDataChanges()
+        {
+            var runId = await sut.LifeCycle.CreateRunAsync("test");
+
+            var data = LoadData();
+
+            var updatedData = LoadUpdatedData();
+
+            //Act
+            await sut.Data.LogDataAsync(runId, data);
+            await sut.Data.LogDataAsync(runId, updatedData);
+            var allData = sut.Data.GetData(runId);
+            //Assert
+
+
+            allData.First().DataHash.Should().NotBe(allData.Last().DataHash);
         }
 
         private IDataView LoadData()
         {
             var mlContext = new MLContext(seed: 1);
             return mlContext.Data.LoadFromTextFile<ProductReview>("Data/product_reviews.csv", hasHeader: true, separatorChar: ',');
+        }
+
+        private IDataView LoadUpdatedData()
+        {
+            var mlContext = new MLContext(seed: 1);
+            return mlContext.Data.LoadFromTextFile<ProductReview>("Data/product_reviews_updated.csv", hasHeader: true, separatorChar: ',');
         }
     }
 }

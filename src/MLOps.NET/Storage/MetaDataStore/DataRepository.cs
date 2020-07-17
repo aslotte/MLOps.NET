@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Text;
+using System.Collections.Generic;
 
 namespace MLOps.NET.Storage
 {
@@ -68,13 +69,13 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc cref="IDataRepository"/>
-        public Data GetData(Guid runId)
+        public List<Data> GetData(Guid runId)
         {
             using (var db = this.contextFactory.CreateDbContext())
             {
                 var data = db.Data
                     .Include(x => x.DataSchema.DataColumns)
-                    .FirstOrDefault(x => x.RunId == runId);
+                    .Where(x => x.RunId == runId).ToList();
                 if (data == null) return null;
 
                 return data;
