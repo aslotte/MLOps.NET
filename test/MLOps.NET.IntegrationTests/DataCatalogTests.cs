@@ -36,11 +36,52 @@ namespace MLOps.NET.IntegrationTests
                 .BeTrue();
         }
 
+        [TestMethod]
+        public async Task LogDataAsync_GivenLogHash()
+        {
+            var runId = await sut.LifeCycle.CreateRunAsync("test");
+
+            var data = LoadData();
+
+            //Act
+            await sut.Data.LogDataAsync(runId, data);
+
+            //Assert
+            var savedData = sut.Data.GetData(runId);
+
+            savedData.DataHash.Should().NotBeNullOrEmpty();
+        }
+
+        [TestMethod]
+        public async Task LogDataAsync_ShouldGenerateDifferentHashWhenDataChanges()
+        {
+            var previousRunId = await sut.LifeCycle.CreateRunAsync("previous run");
+            var currentRunId = await sut.LifeCycle.CreateRunAsync("current run");
+            var data = LoadData();
+
+            var updatedData = LoadUpdatedData();
+
+            //Act
+            await sut.Data.LogDataAsync(previousRunId, data);
+            await sut.Data.LogDataAsync(currentRunId, updatedData);
+            var previousRunData = sut.Data.GetData(previousRunId);
+            var currentRunData = sut.Data.GetData(currentRunId);
+            //Assert
+
+
+            currentRunData.DataHash.Should().NotBe(previousRunData.DataHash);
+        }
+
         private IDataView LoadData()
         {
             var mlContext = new MLContext(seed: 1);
-
             return mlContext.Data.LoadFromTextFile<ProductReview>("Data/product_reviews.csv", hasHeader: true, separatorChar: ',');
+        }
+
+        private IDataView LoadUpdatedData()
+        {
+            var mlContext = new MLContext(seed: 1);
+            return mlContext.Data.LoadFromTextFile<ProductReview>("Data/product_reviews_updated.csv", hasHeader: true, separatorChar: ',');
         }
     }
 }
