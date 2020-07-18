@@ -54,18 +54,15 @@ namespace MLOps.NET.Storage
 
         private string GetStringHashFromDataView(IDataView dataView)
         {
-            string hash = "";
             using (SHA256 sha256Hash = SHA256.Create())
             {
                 using (var stream = new MemoryStream())
                 {
                     new MLContext().Data.SaveAsBinary(dataView, stream);
                     var bytes = sha256Hash.ComputeHash(stream);
-                    hash = Convert.ToBase64String(bytes);
+                    return Convert.ToBase64String(bytes);
                 }
             }
-
-            return hash;
         }
 
         ///<inheritdoc cref="IDataRepository"/>

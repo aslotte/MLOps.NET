@@ -2,7 +2,6 @@
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Catalogs
