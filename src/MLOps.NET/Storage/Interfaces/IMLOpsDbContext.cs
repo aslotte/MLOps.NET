@@ -44,6 +44,12 @@ namespace MLOps.NET.Storage.Interfaces
         /// Run artifact associated with a run
         /// </summary>
         DbSet<RunArtifact> RunArtifacts { get; set; }
+
+        /// <summary>
+        /// Model Labels
+        /// </summary>
+        DbSet<ModelLabel> ModelLabels { get; set; }
+
         /// <summary>
         /// Save changes
         /// </summary>

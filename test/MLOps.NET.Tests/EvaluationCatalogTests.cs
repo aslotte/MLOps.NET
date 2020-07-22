@@ -13,6 +13,7 @@ namespace MLOps.NET.Tests
     {
         private Mock<IMetricRepository> metricRepositoryMock;
         private Mock<IConfusionMatrixRepository> confusionMatrixRepositoryMock;
+        private Mock<IModelLabelRepository> modelLabelRepositoryMock;
         private EvaluationCatalog sut;
 
         [TestInitialize]
@@ -20,7 +21,8 @@ namespace MLOps.NET.Tests
         {
             this.metricRepositoryMock = new Mock<IMetricRepository>();
             this.confusionMatrixRepositoryMock = new Mock<IConfusionMatrixRepository>();
-            this.sut = new EvaluationCatalog(metricRepositoryMock.Object, confusionMatrixRepositoryMock.Object);
+            this.modelLabelRepositoryMock = new Mock<IModelLabelRepository>();
+            this.sut = new EvaluationCatalog(metricRepositoryMock.Object, confusionMatrixRepositoryMock.Object, modelLabelRepositoryMock.Object);
         }
 
         [TestMethod]
@@ -49,6 +51,21 @@ namespace MLOps.NET.Tests
 
             //Assert
             metricRepositoryMock.Verify(x => x.LogMetricAsync(runId, It.IsAny<string>(), 0.56d), Times.Once());
+        }
+
+        [TestMethod]
+        public async Task LogModelLabelAsync_GivenValidStrings_ShouldLogModelLabel()
+        {
+            //Arrange
+            var runArtifactId = Guid.NewGuid();
+            var modelLabel = "Department";
+            var modelLabelValue = "Engineering";
+
+            //Act
+            await sut.LogModelLabelAsync(runArtifactId, modelLabel, modelLabelValue);
+
+            //Assert
+            modelLabelRepositoryMock.Verify(x => x.LogModelLabelAsync(runArtifactId, modelLabel, modelLabelValue), Times.Once());
         }
     }
 }
