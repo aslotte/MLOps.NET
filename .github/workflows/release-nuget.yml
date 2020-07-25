@@ -37,8 +37,10 @@ jobs:
           prerelease: true
 
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/checkout@v2
         name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.300
       - name: Install dependencies
