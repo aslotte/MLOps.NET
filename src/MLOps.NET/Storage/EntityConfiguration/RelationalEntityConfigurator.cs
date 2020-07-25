@@ -23,19 +23,7 @@ namespace MLOps.NET.Storage.EntityConfiguration
             modelBuilder.Entity<DataColumn>().ToTable(nameof(DataColumn));
             modelBuilder.Entity<DataSchema>().ToTable(nameof(DataSchema));
             modelBuilder.Entity<RunArtifact>().ToTable(nameof(RunArtifact));
-
-            modelBuilder.Entity<RegisteredModel>()
-                .ToTable(nameof(RegisteredModel));
-
-            modelBuilder.Entity<RegisteredModel>()
-                .HasOne(x => x.Run)
-                .WithOne()
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<RegisteredModel>()
-                .HasOne(x => x.Experiment)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<RegisteredModel>().ToTable(nameof(RegisteredModel));
         }
     }
 }
