@@ -55,9 +55,14 @@ namespace MLOps.NET.Catalogs
             return runRepository.GetRunArtifacts(runId);
         }
 
+        /// <summary>
+        /// Registers a model
+        /// </summary>
+        /// <param name="runArtifactId"></param>
+        /// <param name="registeredBy"></param>
         public void RegisterModel(Guid runArtifactId, string registeredBy)
         {
-
+            runRepository.CreateRegisteredModel(runArtifactId, registeredBy);
         }
     }
 }

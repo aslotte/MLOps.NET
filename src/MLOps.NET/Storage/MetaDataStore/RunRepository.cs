@@ -117,29 +117,81 @@ namespace MLOps.NET.Storage
             }
         }
 
+        /// <summary>
+        /// Creates a registered model for a run artifact
+        /// </summary>
+        /// <param name="runArtifactId"></param>
+        /// <param name="registeredBy"></param>
+        /// <returns></returns>
         public async Task CreateRegisteredModel(Guid runArtifactId, string registeredBy)
         {
-            using (var db = this.contextFactory.CreateDbContext())
+            using var db = this.contextFactory.CreateDbContext();
+
+            var artifact = db.RunArtifacts.FirstOrDefault(x => x.RunArtifactId == runArtifactId);
+
+            var registeredModels = db.RegisteredModels
+                .Where(x => x.RunArtifact.Run.ExperimentId == artifact.Run.ExperimentId);
+
+            var version = registeredModels.Any() ? registeredModels.Max(x => x.Version) + 1 : 1;
+
+            var registeredModel = new RegisteredModel
             {
-                var artifact = db.RunArtifacts.FirstOrDefault(x => x.RunArtifactId == runArtifactId);
+                RunArtifactId = runArtifactId,
+                RegisteredBy = registeredBy,
+                RegisteredDate = DateTime.UtcNow,
+                Version = version
+            };
 
-                var registeredModels = db.RegisteredModels
-                    .Where(x => x.RunArtifact.RunId == artifact.RunId);
+            db.RegisteredModels.Add(registeredModel);
 
-                var version = registeredModels.Any() ? registeredModels.Max(x => x.Version) + 1 : 1;
+            await db.SaveChangesAsync();
 
-                var registeredModel = new RegisteredModel
-                {
-                    RunArtifactId = runArtifactId,
-                    RegisteredBy = registeredBy,
-                    RegisteredDate = DateTime.UtcNow,
-                    Version = version
-                };
+        }
 
-                db.RegisteredModels.Add(registeredModel);
+        /// <summary>
+        /// Gets all registered models for an experiment
+        /// </summary>
+        /// <param name="experimentId"></param>
+        /// <returns></returns>
+        public IEnumerable<RegisteredModel> GetRegisteredModels(Guid experimentId)
+        {
+            using var db = this.contextFactory.CreateDbContext();
 
-                await db.SaveChangesAsync();
-            }
+            var registerdModels = db.RegisteredModels
+                   .Where(x => x.RunArtifact.Run.ExperimentId == experimentId)
+                   .Select(registedModel => registedModel);
+
+            registerdModels.ForEachAsync(x => PopulateRegisteredModel(db, x));
+
+            return registerdModels;
+        }
+
+        /// <summary>
+        /// Get the most recently registered model for an experiment
+        /// </summary>
+        /// <param name="experimentId"></param>
+        /// <returns></returns>
+        public RegisteredModel GetLatestRegisteredModel(Guid experimentId)
+        {
+            using var db = this.contextFactory.CreateDbContext();
+
+            var registerdModel = db.RegisteredModels
+                .Where(x => x.RunArtifact.Run.ExperimentId == experimentId)
+                .OrderByDescending(x => x.Version)
+                .FirstOrDefault();
+
+            PopulateRegisteredModel(db, registerdModel);
+
+            return registerdModel;
+        }
+
+        private void PopulateRegisteredModel(IMLOpsDbContext db, RegisteredModel registeredModel)
+        {
+            var runArtifact = db.RunArtifacts.First(x => x.RunArtifactId == registeredModel.RunArtifactId);
+            runArtifact.Run = db.Runs.First(x => x.RunId == runArtifact.RunId);
+            runArtifact.Run.Experiment = db.Experiments.First(x => x.ExperimentId == runArtifact.Run.ExperimentId);
+
+            registeredModel.RunArtifact = runArtifact;
         }
 
         private void PopulateRun(IMLOpsDbContext db, Run run)
