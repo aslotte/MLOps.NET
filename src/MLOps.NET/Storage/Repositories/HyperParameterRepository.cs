@@ -19,12 +19,11 @@ namespace MLOps.NET.Storage
         ///<inheritdoc cref="IHyperParameterRepository"/>
         public async Task LogHyperParameterAsync(Guid runId, string name, string value)
         {
-            using (var db = this.contextFactory.CreateDbContext())
-            {
-                var hyperParameter = new HyperParameter(runId, name, value);
-                await db.HyperParameters.AddAsync(hyperParameter);
-                await db.SaveChangesAsync();
-            }
+            using var db = this.contextFactory.CreateDbContext();
+
+            var hyperParameter = new HyperParameter(runId, name, value);
+            await db.HyperParameters.AddAsync(hyperParameter);
+            await db.SaveChangesAsync();
         }
     }
 }
