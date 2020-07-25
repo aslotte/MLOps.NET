@@ -21,38 +21,34 @@ namespace MLOps.NET.Storage
         ///<inheritdoc cref="IExperimentRepository"/>
         public async Task<Guid> CreateExperimentAsync(string experimentName)
         {
-            using (var db = this.contextFactory.CreateDbContext())
-            {
-                var existingExperiment = db.Experiments.FirstOrDefault(x => x.ExperimentName == experimentName);
-                if (existingExperiment == null)
-                {
-                    var experiment = new Experiment(experimentName);
-                    await db.Experiments.AddAsync(experiment);
-                    await db.SaveChangesAsync();
+            using var db = this.contextFactory.CreateDbContext();
 
-                    return experiment.ExperimentId;
-                }
-                return existingExperiment.ExperimentId;
+            var existingExperiment = db.Experiments.FirstOrDefault(x => x.ExperimentName == experimentName);
+            if (existingExperiment == null)
+            {
+                var experiment = new Experiment(experimentName);
+                await db.Experiments.AddAsync(experiment);
+                await db.SaveChangesAsync();
+
+                return experiment.ExperimentId;
             }
+            return existingExperiment.ExperimentId;
         }
 
         ///<inheritdoc cref="IExperimentRepository"/>
         public Experiment GetExperiment(string experimentName)
         {
-            using (var db = this.contextFactory.CreateDbContext())
-            {
-                return db.Experiments
-                .Single(x => x.ExperimentName == experimentName);
-            }
+            using var db = this.contextFactory.CreateDbContext();
+
+            return db.Experiments
+            .Single(x => x.ExperimentName == experimentName);
         }
 
         ///<inheritdoc cref="IExperimentRepository"/>
         public IEnumerable<Experiment> GetExperiments()
         {
-            using (var db = this.contextFactory.CreateDbContext())
-            {
-                return db.Experiments;
-            }
+            using var db = this.contextFactory.CreateDbContext();
+            return db.Experiments;
         }
     }
 }

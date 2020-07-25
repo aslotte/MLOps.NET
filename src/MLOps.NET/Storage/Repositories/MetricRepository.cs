@@ -21,21 +21,19 @@ namespace MLOps.NET.Storage
         ///<inheritdoc cref="IMetricRepository"/>
         public async Task LogMetricAsync(Guid runId, string metricName, double metricValue)
         {
-            using (var db = this.contextFactory.CreateDbContext())
-            {
-                var metric = new Metric(runId, metricName, metricValue);
-                await db.Metrics.AddAsync(metric);
-                await db.SaveChangesAsync();
-            }
+            using var db = this.contextFactory.CreateDbContext();
+
+            var metric = new Metric(runId, metricName, metricValue);
+            await db.Metrics.AddAsync(metric);
+            await db.SaveChangesAsync();
         }
 
         ///<inheritdoc cref="IMetricRepository"/>
         public List<Metric> GetMetrics(Guid runId)
         {
-            using (var db = this.contextFactory.CreateDbContext())
-            {
-                return db.Metrics.Where(x => x.RunId == runId).ToList();
-            }
+            using var db = this.contextFactory.CreateDbContext();
+
+            return db.Metrics.Where(x => x.RunId == runId).ToList();
         }
     }
 }

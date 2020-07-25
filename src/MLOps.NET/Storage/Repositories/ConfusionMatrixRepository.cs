@@ -22,29 +22,25 @@ namespace MLOps.NET.Storage
         ///<inheritdoc cref="IConfusionMatrixRepository"/>
         public async Task LogConfusionMatrixAsync(Guid runId, ConfusionMatrix confusionMatrix)
         {
-            using (var db = this.contextFactory.CreateDbContext())
+            using var db = this.contextFactory.CreateDbContext();
+            var conMatrix = new ConfusionMatrixEntity(runId)
             {
-                var conMatrix = new ConfusionMatrixEntity(runId)
-                {
-                    SerializedMatrix = JsonConvert.SerializeObject(confusionMatrix)
-                };
+                SerializedMatrix = JsonConvert.SerializeObject(confusionMatrix)
+            };
 
-                await db.ConfusionMatrices.AddAsync(conMatrix);
-                await db.SaveChangesAsync();
-            }
+            await db.ConfusionMatrices.AddAsync(conMatrix);
+            await db.SaveChangesAsync();
         }
 
         ///<inheritdoc cref="IConfusionMatrixRepository"/>
         public ConfusionMatrix GetConfusionMatrix(Guid runId)
         {
-            using (var db = this.contextFactory.CreateDbContext())
-            {
-                var confusionMatrixEntity = db.ConfusionMatrices.SingleOrDefault(x => x.RunId == runId);
+            using var db = this.contextFactory.CreateDbContext();
+            var confusionMatrixEntity = db.ConfusionMatrices.SingleOrDefault(x => x.RunId == runId);
 
-                if (confusionMatrixEntity == null) return null;
+            if (confusionMatrixEntity == null) return null;
 
-                return JsonConvert.DeserializeObject<ConfusionMatrix>(confusionMatrixEntity.SerializedMatrix);
-            }
+            return JsonConvert.DeserializeObject<ConfusionMatrix>(confusionMatrixEntity.SerializedMatrix);
         }
     }
 }
