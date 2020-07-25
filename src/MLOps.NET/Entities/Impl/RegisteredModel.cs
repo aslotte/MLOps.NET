@@ -31,6 +31,26 @@ namespace MLOps.NET.Entities.Impl
         public RunArtifact RunArtifact { get; set; }
 
         /// <summary>
+        /// ExperimentId
+        /// </summary>
+        public Guid ExperimentId { get; set; }
+
+        /// <summary>
+        /// Experiment
+        /// </summary>
+        public Experiment Experiment { get; set; }
+
+        /// <summary>
+        /// RunId
+        /// </summary>
+        public Guid RunId { get; set; }
+
+        /// <summary>
+        /// Run
+        /// </summary>
+        public Run Run { get; set; }
+
+        /// <summary>
         /// Date the model was registered
         /// </summary>
         public DateTime RegisteredDate { get; set; }

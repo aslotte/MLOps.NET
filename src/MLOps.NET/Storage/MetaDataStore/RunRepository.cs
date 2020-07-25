@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Database;
 using MLOps.NET.Storage.Interfaces;
+using MLOps.NET.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,184 +14,160 @@ namespace MLOps.NET.Storage
     public sealed class RunRepository : IRunRepository
     {
         private readonly IDbContextFactory contextFactory;
+        private readonly IClock clock;
 
         ///<inheritdoc cref="IRunRepository"/>
-        public RunRepository(IDbContextFactory contextFactory)
+        public RunRepository(IDbContextFactory contextFactory, IClock clock)
         {
             this.contextFactory = contextFactory;
+            this.clock = clock;
         }
 
         ///<inheritdoc cref="IRunRepository"/>
         public async Task<Guid> CreateRunAsync(Guid experimentId, string gitCommitHash = "")
         {
-            using (var db = this.contextFactory.CreateDbContext())
+            using var db = this.contextFactory.CreateDbContext();
+            var run = new Run(experimentId)
             {
-                var run = new Run(experimentId)
-                {
-                    GitCommitHash = gitCommitHash
-                };
+                GitCommitHash = gitCommitHash
+            };
 
-                await db.Runs.AddAsync(run);
-                await db.SaveChangesAsync();
+            await db.Runs.AddAsync(run);
+            await db.SaveChangesAsync();
 
-                return run.RunId;
-            }
+            return run.RunId;
         }
 
         ///<inheritdoc cref="IRunRepository"/>
 
         public Run GetRun(Guid runId)
         {
-            using (var db = this.contextFactory.CreateDbContext())
-            {
-                var run = db.Runs
-                    .Include(x => x.RunArtifacts)
-                    .FirstOrDefault(x => x.RunId == runId);
+            using var db = this.contextFactory.CreateDbContext();
+            var run = db.Runs
+                .Include(x => x.RunArtifacts)
+                .FirstOrDefault(x => x.RunId == runId);
 
-                PopulateRun(db, run);
-                return run;
-            }
+            PopulateRun(db, run);
+            return run;
         }
 
         ///<inheritdoc cref="IRunRepository"/>
         public Run GetRun(string commitHash)
         {
-            using (var db = this.contextFactory.CreateDbContext())
-            {
-                var run = db.Runs.FirstOrDefault(x => x.GitCommitHash == commitHash);
+            using var db = this.contextFactory.CreateDbContext();
+            var run = db.Runs.FirstOrDefault(x => x.GitCommitHash == commitHash);
 
-                PopulateRun(db, run);
-                return run;
-            }
+            PopulateRun(db, run);
+            return run;
         }
 
         ///<inheritdoc cref="IRunRepository"/>
         public List<Run> GetRuns(Guid experimentId)
         {
-            using (var db = this.contextFactory.CreateDbContext())
-            {
-                var runs = db.Runs.Where(x => x.ExperimentId == experimentId).ToList();
-                runs.ForEach(run => PopulateRun(db, run));
+            using var db = this.contextFactory.CreateDbContext();
+            var runs = db.Runs.Where(x => x.ExperimentId == experimentId).ToList();
+            runs.ForEach(run => PopulateRun(db, run));
 
-                return runs;
-            }
+            return runs;
         }
 
         ///<inheritdoc cref="IRunRepository"/>
         public async Task SetTrainingTimeAsync(Guid runId, TimeSpan timeSpan)
         {
-            using (var db = this.contextFactory.CreateDbContext())
-            {
-                var existingRun = db.Runs.FirstOrDefault(x => x.RunId == runId);
-                if (existingRun == null) throw new InvalidOperationException($"The run with id {runId} does not exist");
+            using var db = this.contextFactory.CreateDbContext();
+            var existingRun = db.Runs.FirstOrDefault(x => x.RunId == runId);
+            if (existingRun == null) throw new InvalidOperationException($"The run with id {runId} does not exist");
 
-                existingRun.TrainingTime = timeSpan;
+            existingRun.TrainingTime = timeSpan;
 
-                await db.SaveChangesAsync();
-            }
+            await db.SaveChangesAsync();
         }
 
         ///<inheritdoc cref="IRunRepository"/>
         public async Task CreateRunArtifact(Guid runId, string name)
         {
-            using (var db = this.contextFactory.CreateDbContext())
+            using var db = this.contextFactory.CreateDbContext();
+            var runArtifact = new RunArtifact
             {
-                var runArtifact = new RunArtifact
-                {
-                    RunId = runId,
-                    Name = name
-                };
+                RunId = runId,
+                Name = name
+            };
 
-                db.RunArtifacts.Add(runArtifact);
+            db.RunArtifacts.Add(runArtifact);
 
-                await db.SaveChangesAsync();
-            }
+            await db.SaveChangesAsync();
         }
 
         ///<inheritdoc cref="IRunRepository"/>
         public List<RunArtifact> GetRunArtifacts(Guid runId)
         {
-            using (var db = this.contextFactory.CreateDbContext())
-            {
-                return db.RunArtifacts.Where(x => x.RunId == runId).ToList();
-            }
+            using var db = this.contextFactory.CreateDbContext();
+            return db.RunArtifacts.Where(x => x.RunId == runId).ToList();
         }
 
-        /// <summary>
-        /// Creates a registered model for a run artifact
-        /// </summary>
-        /// <param name="runArtifactId"></param>
-        /// <param name="registeredBy"></param>
-        /// <returns></returns>
-        public async Task CreateRegisteredModel(Guid runArtifactId, string registeredBy)
+        ///<inheritdoc cref="IRunRepository"/>
+        public async Task CreateRegisteredModelAsync(Guid experimentId, Guid runArtifactId, string registeredBy)
         {
             using var db = this.contextFactory.CreateDbContext();
 
-            var artifact = db.RunArtifacts.FirstOrDefault(x => x.RunArtifactId == runArtifactId);
+            var runArtifact = db.RunArtifacts.FirstOrDefault(x => x.RunArtifactId == runArtifactId);
+            if (runArtifact == null)
+            {
+                throw new InvalidOperationException($"The RunArtifact with id {runArtifactId} does not exist. Unable to register a model");
+            }
 
-            var registeredModels = db.RegisteredModels
-                .Where(x => x.RunArtifact.Run.ExperimentId == artifact.Run.ExperimentId);
+            var run = db.Runs.FirstOrDefault(x => x.RunId == runArtifact.RunId);
+            var registeredModels = db.RegisteredModels.Where(x => x.ExperimentId == experimentId);
 
-            var version = registeredModels.Any() ? registeredModels.Max(x => x.Version) + 1 : 1;
+            var version = registeredModels.Count() > 0 ? registeredModels.Max(x => x.Version) + 1 : 1;
 
             var registeredModel = new RegisteredModel
             {
                 RunArtifactId = runArtifactId,
                 RegisteredBy = registeredBy,
-                RegisteredDate = DateTime.UtcNow,
-                Version = version
+                RegisteredDate = this.clock.UtcNow,
+                Version = version,
+                ExperimentId = experimentId,
+                RunId = run.RunId
             };
 
             db.RegisteredModels.Add(registeredModel);
 
             await db.SaveChangesAsync();
-
         }
 
-        /// <summary>
-        /// Gets all registered models for an experiment
-        /// </summary>
-        /// <param name="experimentId"></param>
-        /// <returns></returns>
-        public IEnumerable<RegisteredModel> GetRegisteredModels(Guid experimentId)
+        ///<inheritdoc cref="IRunRepository"/>
+        public List<RegisteredModel> GetRegisteredModels(Guid experimentId)
         {
             using var db = this.contextFactory.CreateDbContext();
 
-            var registerdModels = db.RegisteredModels
-                   .Where(x => x.RunArtifact.Run.ExperimentId == experimentId)
-                   .Select(registedModel => registedModel);
+            var registeredModels = db.RegisteredModels.Where(x => x.ExperimentId == experimentId);
 
-            registerdModels.ForEachAsync(x => PopulateRegisteredModel(db, x));
+            registeredModels.ToList().ForEach(x => PopulateRegisteredModel(db, x));
 
-            return registerdModels;
+            return registeredModels.ToList();
         }
 
-        /// <summary>
-        /// Get the most recently registered model for an experiment
-        /// </summary>
-        /// <param name="experimentId"></param>
-        /// <returns></returns>
+        ///<inheritdoc cref="IRunRepository"/>
         public RegisteredModel GetLatestRegisteredModel(Guid experimentId)
         {
             using var db = this.contextFactory.CreateDbContext();
 
-            var registerdModel = db.RegisteredModels
-                .Where(x => x.RunArtifact.Run.ExperimentId == experimentId)
+            var registeredModel = db.RegisteredModels
+                .Where(x => x.ExperimentId == experimentId)
                 .OrderByDescending(x => x.Version)
                 .FirstOrDefault();
 
-            PopulateRegisteredModel(db, registerdModel);
+            PopulateRegisteredModel(db, registeredModel);
 
-            return registerdModel;
+            return registeredModel;
         }
 
         private void PopulateRegisteredModel(IMLOpsDbContext db, RegisteredModel registeredModel)
         {
-            var runArtifact = db.RunArtifacts.First(x => x.RunArtifactId == registeredModel.RunArtifactId);
-            runArtifact.Run = db.Runs.First(x => x.RunId == runArtifact.RunId);
-            runArtifact.Run.Experiment = db.Experiments.First(x => x.ExperimentId == runArtifact.Run.ExperimentId);
-
-            registeredModel.RunArtifact = runArtifact;
+            registeredModel.RunArtifact = db.RunArtifacts.First(x => x.RunArtifactId == registeredModel.RunArtifactId);
+            registeredModel.Run = db.Runs.First(x => x.RunId == registeredModel.RunId);
+            registeredModel.Experiment = db.Experiments.First(x => x.ExperimentId == registeredModel.ExperimentId);
         }
 
         private void PopulateRun(IMLOpsDbContext db, Run run)
