@@ -6,7 +6,8 @@
     <PackageProjectUrl>https://github.com/aslotte/MLOps.NET</PackageProjectUrl>
     <PackageTags>mlops, mlnet, machinelearning, devops</PackageTags>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>    
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>  
+    <LangVersion>8.0</LangVersion>  
   </PropertyGroup>
 
   <ItemGroup>

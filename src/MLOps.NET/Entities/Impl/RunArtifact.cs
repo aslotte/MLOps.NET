@@ -26,6 +26,11 @@ namespace MLOps.NET.Entities.Impl
         public Guid RunId { get; set; }
 
         /// <summary>
+        /// Run
+        /// </summary>
+        public Run Run { get; set; }
+
+        /// <summary>
         /// Name, e.g. {runId}.zip
         /// </summary>
         public string Name { get; set; }
