@@ -1,36 +1,18 @@
 on:
-  create:
-    # Sequence of patterns matched against refs/tags
-    tags:
-      - '*'
+  release:
+    types: [published]
 
-name:  Create a Release and Publish to nuget.org
+name: Publish to nuget.org
           
 jobs:
   build:
     name: Push packages
     runs-on: ubuntu-latest
-    env:
-      VERSION: 0.2.1-beta
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          release_name: Release ${{ env.VERSION }}
-          body: |
-            Changes in this Release
-          draft: false
-          prerelease: true 
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - uses: actions/checkout@v2
-        name: Setup .NET Core
+      - name: Setup .NET Core
         with:
           dotnet-version: 3.1.300        
       - name: Install dependencies
@@ -42,34 +24,29 @@ jobs:
         with:
           PROJECT_FILE_PATH: src/MLOps.NET/MLOps.NET.csproj
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}     
-          VERSION_STATIC: ${{ env.VERSION }}
           TAG_COMMIT: false    
       - name: Publish MLOps.NET.AWS             
         uses: brandedoutcast/publish-nuget@v2.5.2
         with:
           PROJECT_FILE_PATH: src/MLOps.NET.AWS/MLOps.NET.AWS.csproj
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}     
-          VERSION_STATIC: ${{ env.VERSION }}
           TAG_COMMIT: false       
       - name: Publish MLOps.NET.Azure          
         uses: brandedoutcast/publish-nuget@v2.5.2
         with:
           PROJECT_FILE_PATH: src/MLOps.NET.Azure/MLOps.NET.Azure.csproj
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}     
-          VERSION_STATIC: ${{ env.VERSION }}
           TAG_COMMIT: false  
       - name: Publish MLOps.NET.SQLite          
         uses: brandedoutcast/publish-nuget@v2.5.2
         with:
           PROJECT_FILE_PATH: src/MLOps.NET.SQLite/MLOps.NET.SQLite.csproj
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}     
-          VERSION_STATIC: ${{ env.VERSION }}
           TAG_COMMIT: false        
       - name: Publish MLOps.NET.SQLServer          
         uses: brandedoutcast/publish-nuget@v2.5.2
         with:
           PROJECT_FILE_PATH: src/MLOps.NET.SQLServer/MLOps.NET.SQLServer.csproj
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}     
-          VERSION_STATIC: ${{ env.VERSION }}
           TAG_COMMIT: false           
                                                                          
