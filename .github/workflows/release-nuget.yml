@@ -1,9 +1,8 @@
 on:
   push:
-    # Sequence of patterns matched against refs/tags
-    tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
-
+    branches:
+      - refs/tags/v*
+        - 
 name: Create Release and publish to nuget
 
 env:
@@ -16,69 +15,4 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            Changes in this Release
-            - Added support for tracking data
-              - Data hash
-              - Data schema
-              - Data columns
-            - Added support to register models to be deployed
-            - Added support to use AWS as a model repository
-            - Multiple major refactors
-          draft: false
-          prerelease: true
-
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - uses: actions/checkout@v2
-        name: Setup .NET Core
-        with:
-          dotnet-version: 3.1.300
-      - name: Install dependencies
-        run: dotnet restore MLOps.NET.sln
-      - name: Build
-        run: dotnet build MLOps.NET.sln --configuration Release --no-restore
-      - name: Publish MLOps.NET
-        uses: brandedoutcast/publish-nuget@v2.5.2
-            with:
-                PROJECT_FILE_PATH: src/MLOps.NET/MLOps.NET.csproj
-                NUGET_KEY: ${{secrets.NUGET_API_KEY}}     
-                VERSION_STATIC: env.VERSION
-                TAG_COMMIT: false    
-      - name: Publish MLOps.NET.AWS             
-        uses: brandedoutcast/publish-nuget@v2.5.2
-            with:
-                PROJECT_FILE_PATH: src/MLOps.NET.AWS/MLOps.NET.AWS.csproj
-                NUGET_KEY: ${{secrets.NUGET_API_KEY}}     
-                VERSION_STATIC: env.VERSION
-                TAG_COMMIT: false       
-      - name: Publish MLOps.NET.Azure          
-        uses: brandedoutcast/publish-nuget@v2.5.2
-            with:
-                PROJECT_FILE_PATH: src/MLOps.NET.Azure/MLOps.NET.Azure.csproj
-                NUGET_KEY: ${{secrets.NUGET_API_KEY}}     
-                VERSION_STATIC: env.VERSION
-                TAG_COMMIT: false  
-      - name: Publish MLOps.NET.SQLite          
-        uses: brandedoutcast/publish-nuget@v2.5.2
-            with:
-                PROJECT_FILE_PATH: src/MLOps.NET.SQLite/MLOps.NET.SQLite.csproj
-                NUGET_KEY: ${{secrets.NUGET_API_KEY}}     
-                VERSION_STATIC: env.VERSION
-                TAG_COMMIT: false        
-      - name: Publish MLOps.NET.SQLServer          
-        uses: brandedoutcast/publish-nuget@v2.5.2
-            with:
-                PROJECT_FILE_PATH: src/MLOps.NET.SQLServer/MLOps.NET.SQLServer.csproj
-                NUGET_KEY: ${{secrets.NUGET_API_KEY}}     
-                VERSION_STATIC: env.VERSION
-                TAG_COMMIT: false                                                                            
+                                                                         
