@@ -24,30 +24,35 @@ jobs:
         uses: brandedoutcast/publish-nuget@v2.5.2
         with:
           PROJECT_FILE_PATH: src/MLOps.NET/MLOps.NET.csproj
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}     
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}} 
+          VERSION_STATIC: 1.0.0    
           TAG_COMMIT: false    
       - name: Publish MLOps.NET.AWS             
         uses: brandedoutcast/publish-nuget@v2.5.2
         with:
           PROJECT_FILE_PATH: src/MLOps.NET.AWS/MLOps.NET.AWS.csproj
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}     
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}  
+          VERSION_STATIC: 1.0.0   
           TAG_COMMIT: false       
       - name: Publish MLOps.NET.Azure          
         uses: brandedoutcast/publish-nuget@v2.5.2
         with:
           PROJECT_FILE_PATH: src/MLOps.NET.Azure/MLOps.NET.Azure.csproj
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}     
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}  
+          VERSION_STATIC: 1.0.0   
           TAG_COMMIT: false  
       - name: Publish MLOps.NET.SQLite          
         uses: brandedoutcast/publish-nuget@v2.5.2
         with:
           PROJECT_FILE_PATH: src/MLOps.NET.SQLite/MLOps.NET.SQLite.csproj
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}     
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}} 
+          VERSION_STATIC: 1.0.0    
           TAG_COMMIT: false        
       - name: Publish MLOps.NET.SQLServer          
         uses: brandedoutcast/publish-nuget@v2.5.2
         with:
           PROJECT_FILE_PATH: src/MLOps.NET.SQLServer/MLOps.NET.SQLServer.csproj
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}     
+          VERSION_STATIC: 1.0.0
           TAG_COMMIT: false           
                                                                          
