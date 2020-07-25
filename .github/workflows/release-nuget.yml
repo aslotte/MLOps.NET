@@ -8,7 +8,7 @@ jobs:
   build:
     name: Push packages
     env:
-      VERSION: format(${{ github.ref }}, 'v', '') 
+      VERSION: ${{ format(${{ github.ref }}, 'refs/tags/v', '') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
