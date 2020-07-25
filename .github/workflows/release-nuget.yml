@@ -1,6 +1,6 @@
 on:
   release:
-    types: [unpublished]
+    types: [published]
 
 name: Publish to nuget.org
           
