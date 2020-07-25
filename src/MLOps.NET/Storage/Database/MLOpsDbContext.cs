@@ -64,6 +64,6 @@ namespace MLOps.NET.Storage.Database
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
 
-        DbSet<RegisteredModel> RegisteredModels { get; set; }
+        public DbSet<RegisteredModel> RegisteredModels { get; set; }
     }
 }
