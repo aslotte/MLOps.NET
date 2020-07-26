@@ -51,6 +51,11 @@ namespace MLOps.NET.Storage.Interfaces
         DbSet<RegisteredModel> RegisteredModels { get; set; }
 
         /// <summary>
+        /// ModelLabels
+        /// </summary>
+        DbSet<ModelLabel> ModelLabels { get; set; }
+
+        /// <summary>
         /// Save changes
         /// </summary>
         /// <returns></returns>

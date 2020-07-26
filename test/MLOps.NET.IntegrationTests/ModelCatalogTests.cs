@@ -97,5 +97,38 @@ namespace MLOps.NET.IntegrationTests
             //Act
             await sut.Model.RegisterModel(Guid.NewGuid(), Guid.Empty, "The MLOps.NET Team");
         }
+
+        [TestMethod]
+        public async Task ModelLabel_ShouldCreateModelLabel()
+        {
+            //Arrange
+            var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
+            var runId = await sut.LifeCycle.CreateRunAsync(experimentId);
+            await sut.Model.UploadAsync(runId, "");
+
+            var runArtifact = sut.Model.GetRunArtifacts(runId).First();
+            await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team");
+
+            var registeredModelId = sut.Model.GetRegisteredModels(runId).First().RegisteredModelId;
+
+            //Act
+            await sut.Model.CreateModelLabel(registeredModelId, "Engineering", "Structural");
+
+            //Assert
+            var modelLabels = sut.Model.GetModelLabels(registeredModelId).First();
+
+            modelLabels.LabelName.Should().Be("Engineering");
+            modelLabels.LabelValue.Should().Be("Structural");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException), "The registered model with id 00000000-0000-0000-0000-000000000000 does not exist.Unable to associate a label")]
+        public async Task ModelLabel_GivenRegisteredModelIdDoesNotExist_ThrowsException()
+        {
+            //Act
+            await sut.Model.CreateModelLabel(Guid.Empty, "Engineering", "Structural");
+        }
     }
+
 }
+

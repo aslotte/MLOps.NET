@@ -17,6 +17,7 @@ namespace MLOps.NET.IntegrationTests
             var data = context.Data;
             var runArtifacts = context.RunArtifacts;
             var registeredModels = context.RegisteredModels;
+            var modelLabels = context.ModelLabels;
 
             context.Experiments.RemoveRange(experiments);
             context.Runs.RemoveRange(runs);
@@ -26,6 +27,7 @@ namespace MLOps.NET.IntegrationTests
             context.Data.RemoveRange(data);
             context.RunArtifacts.RemoveRange(runArtifacts);
             context.RegisteredModels.RemoveRange(registeredModels);
+            context.ModelLabels.RemoveRange(modelLabels);
 
             await context.SaveChangesAsync();
         }

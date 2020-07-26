@@ -85,5 +85,26 @@ namespace MLOps.NET.Catalogs
         {
             return runRepository.GetLatestRegisteredModel(experimentId);
         }
+
+        /// <summary>
+        /// Creates a model label
+        /// </summary>
+        /// <param name="registeredModelId"></param>
+        /// <param name="labelName"></param>
+        /// <param name="labelValue"></param>
+        public async Task CreateModelLabel(Guid registeredModelId, string labelName, string labelValue)
+        {
+            await runRepository.CreateModelLabel(registeredModelId, labelName, labelValue);
+        }
+
+        /// <summary>
+        /// Gets all model labels for a given registered model 
+        /// </summary>
+        /// <param name="registeredModelId"></param>
+        /// <returns></returns>
+        public IEnumerable<ModelLabel> GetModelLabels(Guid registeredModelId)
+        {
+            return runRepository.GetModelLabels(registeredModelId);
+        }
     }
 }

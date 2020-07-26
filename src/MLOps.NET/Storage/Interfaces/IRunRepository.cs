@@ -84,5 +84,21 @@ namespace MLOps.NET.Storage
         /// <param name="experimentId"></param>
         /// <returns></returns>
         RegisteredModel GetLatestRegisteredModel(Guid experimentId);
+
+        /// <summary>
+        /// Creates a model label for a registered model
+        /// </summary>
+        /// <param name="registeredModelId"></param>
+        /// <param name="labelName"></param>
+        /// <param name="labelValue"></param>
+        /// <returns></returns>
+        Task CreateModelLabel(Guid registeredModelId, string labelName, string labelValue);
+
+        /// <summary>
+        /// Gets model labels for a registered model
+        /// </summary>
+        /// <param name="registeredModelId"></param>
+        /// <returns></returns>
+        List<ModelLabel> GetModelLabels(Guid registeredModelId);
     }
 }
