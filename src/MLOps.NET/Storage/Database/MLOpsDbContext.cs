@@ -24,6 +24,16 @@ namespace MLOps.NET.Storage.Database
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             this.OnModelCreatingAction(modelBuilder);
+
+            modelBuilder.Entity<RegisteredModel>()
+                .HasOne(x => x.Run)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<RegisteredModel>()
+                .HasOne(x => x.Experiment)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
@@ -61,5 +71,8 @@ namespace MLOps.NET.Storage.Database
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
         public DbSet<RunArtifact> RunArtifacts { get; set; }
+
+        ///<inheritdoc cref="IMLOpsDbContext"/>
+        public DbSet<RegisteredModel> RegisteredModels { get; set; }
     }
 }

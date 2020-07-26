@@ -22,6 +22,7 @@ namespace MLOps.NET.Azure.Storage
             modelBuilder.Entity<ConfusionMatrixEntity>().ToContainer("ConfusionMatrix");
             modelBuilder.Entity<Data>().ToContainer(nameof(Data));
             modelBuilder.Entity<RunArtifact>().ToContainer(nameof(RunArtifact));
+            modelBuilder.Entity<RegisteredModel>().ToContainer(nameof(RegisteredModel));
 
             modelBuilder.Entity<Data>().OwnsOne(x => x.DataSchema, dataSchema =>
             {

@@ -54,5 +54,36 @@ namespace MLOps.NET.Catalogs
         {
             return runRepository.GetRunArtifacts(runId);
         }
+
+        /// <summary>
+        /// Registers a model
+        /// </summary>
+        /// <param name="experimentId"></param>
+        /// <param name="runArtifactId"></param>
+        /// <param name="registeredBy"></param>
+        public async Task RegisterModel(Guid experimentId, Guid runArtifactId, string registeredBy)
+        {
+            await runRepository.CreateRegisteredModelAsync(experimentId, runArtifactId, registeredBy);
+        }
+
+        /// <summary>
+        /// Gets all registered models for a given experiement 
+        /// </summary>
+        /// <param name="experimentId"></param>
+        /// <returns></returns>
+        public IEnumerable<RegisteredModel> GetRegisteredModels(Guid experimentId)
+        {
+            return runRepository.GetRegisteredModels(experimentId);
+        }
+
+        /// <summary>
+        /// Gets the latest registered model for a given experiment
+        /// </summary>
+        /// <param name="experimentId"></param>
+        /// <returns></returns>
+        public RegisteredModel GetLatestRegisteredModel(Guid experimentId)
+        {
+            return runRepository.GetLatestRegisteredModel(experimentId);
+        }
     }
 }
