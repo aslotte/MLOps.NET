@@ -64,10 +64,5 @@ namespace MLOps.NET.Entities.Impl
         /// Version
         /// </summary>
         public int Version { get; set; }
-
-        /// <summary>
-        /// Model Label Id
-        /// </summary>
-        public Guid ModelLabelId { get; set; }
     }
 }

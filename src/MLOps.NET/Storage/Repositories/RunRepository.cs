@@ -178,39 +178,5 @@ namespace MLOps.NET.Storage
             run.Metrics = db.Metrics.Where(x => x.RunId == run.RunId).ToList();
             run.ConfusionMatrix = db.ConfusionMatrices.FirstOrDefault(x => x.RunId == run.RunId);
         }
-
-        ///<inheritdoc cref="IRunRepository"/>
-        public async Task CreateModelLabel(Guid registeredModelId, string labelName, string labelValue)
-        {
-            using var db = this.contextFactory.CreateDbContext();
-
-            var registeredModel = db.RegisteredModels.FirstOrDefault(x => x.RegisteredModelId == registeredModelId);
-            if (registeredModel == null)
-            {
-                throw new InvalidOperationException($"The registered model with id {registeredModelId} does not exist. Unable to associate a label");
-            }
-
-            var modelLabel = new ModelLabel
-            {
-                RegisteredModelId = registeredModelId,
-                LabelName = labelName,
-                LabelValue = labelValue
-            };
-
-            db.ModelLabels.Add(modelLabel);
-
-            await db.SaveChangesAsync();
-
-        }
-
-        ///<inheritdoc cref="IRunRepository"/>
-        public List<ModelLabel> GetModelLabels(Guid registeredModelId)
-        {
-            using var db = this.contextFactory.CreateDbContext();
-
-            var modelLabels = db.ModelLabels.Where(x => x.RegisteredModelId == registeredModelId);
-
-            return modelLabels.ToList();
-        }
     }
 }
