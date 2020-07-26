@@ -61,8 +61,5 @@ namespace MLOps.NET.Storage.Database
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
         public DbSet<RunArtifact> RunArtifacts { get; set; }
-
-        ///<inheritdoc cref="IMLOpsDbContext"/>
-        public DbSet<ModelLabel> ModelLabels { get; set; }
     }
 }

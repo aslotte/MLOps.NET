@@ -14,9 +14,7 @@ namespace MLOps.NET
             IDataRepository dataRepository,
             IMetricRepository metricRepository,
             IConfusionMatrixRepository confusionMatrixRepository,
-            IHyperParameterRepository hyperParameterRepository,
-            IModelLabelRepository modelLabelRepository)
-
+            IHyperParameterRepository hyperParameterRepository)
         {
             if (modelRepository == null) throw new ArgumentNullException(nameof(modelRepository));
             if (experimentRepository == null) throw new ArgumentNullException(nameof(experimentRepository));
@@ -25,11 +23,10 @@ namespace MLOps.NET
             if (metricRepository == null) throw new ArgumentNullException(nameof(metricRepository));
             if (confusionMatrixRepository == null) throw new ArgumentNullException(nameof(confusionMatrixRepository));
             if (hyperParameterRepository == null) throw new ArgumentNullException(nameof(hyperParameterRepository));
-            if (modelLabelRepository == null) throw new ArgumentNullException(nameof(modelLabelRepository));
 
             this.LifeCycle = new LifeCycleCatalog(experimentRepository, runRepository, new Clock());
             this.Data = new DataCatalog(dataRepository);
-            this.Evaluation = new EvaluationCatalog(metricRepository, confusionMatrixRepository, modelLabelRepository);
+            this.Evaluation = new EvaluationCatalog(metricRepository, confusionMatrixRepository);
             this.Model = new ModelCatalog(modelRepository, runRepository);
             this.Training = new TrainingCatalog(hyperParameterRepository);
         }

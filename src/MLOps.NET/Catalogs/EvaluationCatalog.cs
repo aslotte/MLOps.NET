@@ -15,19 +15,16 @@ namespace MLOps.NET.Catalogs
     {
         private readonly IMetricRepository metricRepository;
         private readonly IConfusionMatrixRepository confusionMatrixRepository;
-        private readonly IModelLabelRepository modelLabelRepository;
 
         /// <summary>
         /// ctor
         /// </summary>
         /// <param name="metricRepository"></param>
         /// <param name="confusionMatrixRepository"></param>
-        /// <param name="modelLabelRepository"></param>
-        public EvaluationCatalog(IMetricRepository metricRepository, IConfusionMatrixRepository confusionMatrixRepository, IModelLabelRepository modelLabelRepository)
+        public EvaluationCatalog(IMetricRepository metricRepository, IConfusionMatrixRepository confusionMatrixRepository)
         {
             this.metricRepository = metricRepository;
             this.confusionMatrixRepository = confusionMatrixRepository;
-            this.modelLabelRepository = modelLabelRepository;
         }
 
         /// <summary>
@@ -40,18 +37,6 @@ namespace MLOps.NET.Catalogs
         public async Task LogMetricAsync(Guid runId, string metricName, double metricValue)
         {
             await metricRepository.LogMetricAsync(runId, metricName, metricValue);
-        }
-
-        /// <summary>
-        /// Logs a given label for a run
-        /// </summary>
-        /// <param name="runArtifactId"></param>
-        /// <param name="labelName"></param>
-        /// <param name="labelValue"></param>
-        /// <returns></returns>
-        public async Task LogModelLabelAsync(Guid runArtifactId, string labelName, string labelValue)
-        {
-            await modelLabelRepository.LogModelLabelAsync(runArtifactId, labelName, labelValue);
         }
 
         /// <summary>
@@ -113,16 +98,6 @@ namespace MLOps.NET.Catalogs
         public List<Metric> GetMetrics(Guid runId)
         {
             return metricRepository.GetMetrics(runId);
-        }
-
-        /// <summary>
-        /// Get the Label for a run
-        /// </summary>
-        /// <param name="runArtifactId"></param>
-        /// <returns></returns>
-        public List<ModelLabel> GetModelLabels(Guid runArtifactId)
-        {
-            return modelLabelRepository.GetModelLabels(runArtifactId);
         }
     }
 }

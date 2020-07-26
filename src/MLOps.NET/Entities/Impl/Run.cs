@@ -63,10 +63,5 @@ namespace MLOps.NET.Entities.Impl
         /// GitCommitHash
         /// </summary>
         public string GitCommitHash { get; set; }
-
-        /// <summary>
-        /// Model Labels
-        /// </summary>
-        public List<ModelLabel> ModelLabels { get; set; }
     }
 }

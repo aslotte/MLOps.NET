@@ -15,8 +15,8 @@ namespace MLOps.NET
         private IMetricRepository metricRepository;
         private IConfusionMatrixRepository confusionMatrixRepository;
         private IHyperParameterRepository hyperParameterRepository;
+
         private IModelRepository modelRepository;
-        private IModelLabelRepository modelLabelRepository;
 
         /// <summary>
         /// Build the <see cref="IMLOpsContext"/> using the provided configuration
@@ -24,9 +24,7 @@ namespace MLOps.NET
         /// <returns>Configured <see cref="IMLOpsContext"/></returns>
         public IMLOpsContext Build()
         {
-            return new MLOpsContext(modelRepository, experimentRepository, runRepository, 
-                dataRepository, metricRepository, confusionMatrixRepository, 
-                hyperParameterRepository, modelLabelRepository);
+            return new MLOpsContext(modelRepository, experimentRepository, runRepository, dataRepository, metricRepository, confusionMatrixRepository, hyperParameterRepository);
         }
 
         /// <summary>
@@ -41,7 +39,6 @@ namespace MLOps.NET
             this.metricRepository = new MetricRepository(contextFactory);
             this.confusionMatrixRepository = new ConfusionMatrixRepository(contextFactory);
             this.hyperParameterRepository = new HyperParameterRepository(contextFactory);
-            this.modelLabelRepository = new ModelLabelRepository(contextFactory);
 
             return this;
         }
