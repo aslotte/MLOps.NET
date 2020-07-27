@@ -3,6 +3,7 @@ using Microsoft.ML;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Tests.Common.Data;
 using System;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -70,6 +71,26 @@ namespace MLOps.NET.IntegrationTests
 
 
             currentRunData.DataHash.Should().NotBe(previousRunData.DataHash);
+        }
+
+        [TestMethod]
+        public async Task LogDataAsync_GivenValidDataView_ShouldLogDataDistribution()
+        {
+            var runId = await sut.LifeCycle.CreateRunAsync("test");
+
+            var data = LoadData();
+
+            //Act
+            await sut.Data.LogDataAsync(runId, data);
+            await sut.Data.LogDataDistribution(runId, data, "Sentiment");
+
+            //Assert
+            var savedData = sut.Data.GetData(runId);
+
+            savedData.DataSchema.DataColumns
+                .Single(x => x.Type == nameof(String) && x.Name == "Sentiment")
+                .Distribution.Count
+                .Should().BeGreaterThan(0);
         }
 
         private IDataView LoadData()

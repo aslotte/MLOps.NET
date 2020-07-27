@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using MLOps.NET.Entities.Impl;
 using System;
 using System.Threading.Tasks;
@@ -55,5 +56,12 @@ namespace MLOps.NET.Storage.Interfaces
         /// </summary>
         /// <returns></returns>
         void EnsureCreated();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        EntityEntry Entry(object entity);
     }
 }

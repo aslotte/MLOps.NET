@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MLOps.NET.Entities.Impl
 {
@@ -44,5 +45,10 @@ namespace MLOps.NET.Entities.Impl
         /// Type
         /// </summary>
         public string Type { get; set; }
+
+        /// <summary>
+        /// Type
+        /// </summary>
+        public List<DataDistribution> Distribution { get; set; } = new List<DataDistribution>();
     }
 }

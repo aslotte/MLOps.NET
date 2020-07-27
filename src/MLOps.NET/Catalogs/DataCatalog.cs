@@ -34,6 +34,18 @@ namespace MLOps.NET.Catalogs
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <param name="dataView"></param>
+        /// <param name="columnName"></param>
+        /// <returns></returns>
+        public async Task LogDataDistribution(Guid runId, IDataView dataView, string columnName)
+        {
+            await this.dataRepository.LogDataDistribution(runId, dataView, columnName);
+        }
+
+        /// <summary>
         /// Gets logged data related to a run
         /// </summary>
         /// <param name="runId"></param>

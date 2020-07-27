@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Interfaces;
 using System;
@@ -15,6 +16,20 @@ namespace MLOps.NET.Storage.Database
         public MLOpsDbContext(DbContextOptions options, Action<ModelBuilder> configureEntityMap) : base(options)
         {
             this.OnModelCreatingAction = configureEntityMap;
+
+            
+        }
+
+  
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public override EntityEntry Entry(object entity)
+        {
+            return base.Entry(entity);
         }
 
         /// <summary>

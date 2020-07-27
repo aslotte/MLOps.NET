@@ -23,6 +23,7 @@ namespace MLOps.NET.Storage.EntityConfiguration
             modelBuilder.Entity<DataColumn>().ToTable(nameof(DataColumn));
             modelBuilder.Entity<DataSchema>().ToTable(nameof(DataSchema));
             modelBuilder.Entity<RunArtifact>().ToTable(nameof(RunArtifact));
+            modelBuilder.Entity<DataDistribution>().ToTable(nameof(DataDistribution));
         }
     }
 }
