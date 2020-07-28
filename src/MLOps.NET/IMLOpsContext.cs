@@ -4,6 +4,9 @@ namespace MLOps.NET
 {
     /// <summary>
     /// Access point to manage the lifecycle of a machine learning model
+    /// 
+    /// Please note that we use CosmosDb as one provider which currently have EF Core limitations
+    /// https://docs.microsoft.com/en-us/ef/core/providers/cosmos/limitations
     /// </summary>
     public interface IMLOpsContext
     {

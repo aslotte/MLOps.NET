@@ -61,5 +61,28 @@ namespace MLOps.NET.Storage
         /// <param name="runId"></param>
         /// <returns></returns>
         List<RunArtifact> GetRunArtifacts(Guid runId);
+
+        /// <summary>
+        /// Create a registered model
+        /// </summary>
+        /// <param name="experimentId"></param>
+        /// <param name="runArtifactId"></param>
+        /// <param name="registeredBy"></param>
+        /// <returns></returns>
+        Task CreateRegisteredModelAsync(Guid experimentId, Guid runArtifactId, string registeredBy);
+
+        /// <summary>
+        /// Gets all registered models for a given experiement 
+        /// </summary>
+        /// <param name="experimentId"></param>
+        /// <returns></returns>
+        List<RegisteredModel> GetRegisteredModels(Guid experimentId);
+
+        /// <summary>
+        /// Gets the latest registered model for a given experiment
+        /// </summary>
+        /// <param name="experimentId"></param>
+        /// <returns></returns>
+        RegisteredModel GetLatestRegisteredModel(Guid experimentId);
     }
 }

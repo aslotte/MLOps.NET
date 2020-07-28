@@ -16,6 +16,7 @@ namespace MLOps.NET.IntegrationTests
             var confusionMatrices = context.ConfusionMatrices;
             var data = context.Data;
             var runArtifacts = context.RunArtifacts;
+            var registeredModels = context.RegisteredModels;
 
             context.Experiments.RemoveRange(experiments);
             context.Runs.RemoveRange(runs);
@@ -24,6 +25,7 @@ namespace MLOps.NET.IntegrationTests
             context.ConfusionMatrices.RemoveRange(confusionMatrices);
             context.Data.RemoveRange(data);
             context.RunArtifacts.RemoveRange(runArtifacts);
+            context.RegisteredModels.RemoveRange(registeredModels);
 
             await context.SaveChangesAsync();
         }
