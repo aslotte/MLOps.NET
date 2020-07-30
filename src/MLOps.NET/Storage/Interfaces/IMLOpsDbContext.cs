@@ -68,6 +68,6 @@ namespace MLOps.NET.Storage.Interfaces
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        EntityEntry Entry(object entity);
+        EntityEntry Entry(object entity);        
     }
 }
