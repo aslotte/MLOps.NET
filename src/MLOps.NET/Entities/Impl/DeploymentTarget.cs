@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MLOps.NET.Entities.Impl
 {
@@ -31,5 +32,10 @@ namespace MLOps.NET.Entities.Impl
         /// CreatedDate
         /// </summary>
         public DateTime CreatedDate { get; set; }
+
+        /// <summary>
+        /// Deployments
+        /// </summary>
+        public List<Deployment> Deployments { get; set; }
     }
 }

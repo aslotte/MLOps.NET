@@ -2,6 +2,7 @@
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Interfaces;
 using System;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Storage.Database
@@ -37,6 +38,27 @@ namespace MLOps.NET.Storage.Database
 
             modelBuilder.Entity<DeploymentTarget>()
                 .Property(x => x.Name).IsRequired();
+
+            modelBuilder.Entity<DeploymentTarget>()
+                .HasMany(x => x.Deployments)
+                .WithOne(x => x.DeploymentTarget)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Deployment>()
+                .HasOne(x => x.RegisteredModel)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Deployment>()
+                .HasOne(x => x.DeploymentTarget)
+                .WithMany()
+                .HasForeignKey(x => x.DeploymentTargetId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Deployment>()
+                .HasOne(x => x.Experiment)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
@@ -80,5 +102,8 @@ namespace MLOps.NET.Storage.Database
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
         public DbSet<DeploymentTarget> DeploymentTargets { get; set; }
+
+        ///<inheritdoc cref="IMLOpsDbContext"/>
+        public DbSet<Deployment> Deployments { get; set; }
     }
 }
