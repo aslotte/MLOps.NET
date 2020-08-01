@@ -1,5 +1,11 @@
 ## MLOps.NET
-MLOps.NET is an open-source data science tool to track and manage the lifecycle of an ML.NET machine learning model.
+[![Join the chat at https://gitter.im/aslotte/mlops.net](https://badges.gitter.im/aslotte/mlops.net.svg)](https://gitter.im/aslotte/mlops.net?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+![.NET Core](https://github.com/aslotte/MLOps.NET/workflows/.NET%20Core/badge.svg)
+
+![mlops.neticon](https://img.shields.io/nuget/v/MLOps.NET.svg)
+
+MLOps.NET is an data science tool to track and manage the lifecycle of an [ML.NET](https://github.com/dotnet/machinelearning) machine learning model.
 
 - Experiment tracking (SQLite, SQLServer, CosmosDb)
   - Experiments
@@ -19,13 +25,6 @@ MLOps.NET is an open-source data science tool to track and manage the lifecycle 
   - Manual deployment (in roadmap)
   
   A client application to vizualize and manage the ML lifecycle is currently in the [roadmap](https://github.com/aslotte/MLOps.NET/blob/master/images/roadmap.png) to be worked on.
-
-[![Join the chat at https://gitter.im/aslotte/mlops.net](https://badges.gitter.im/aslotte/mlops.net.svg)](https://gitter.im/aslotte/mlops.net?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-![.NET Core](https://github.com/aslotte/MLOps.NET/workflows/.NET%20Core/badge.svg)
-
-## MLOps.NET NuGet Status
-![mlops.neticon](https://img.shields.io/nuget/v/MLOps.NET.svg)
 
 ### Tell me more
 If you're used to creating machine learning models in libraries such as Tensorflow, Keras, Scikitlearn or H2O you may have come across libraries such as MLflow or Neptune to manage and track the life-cycle of your machine learning models. 
