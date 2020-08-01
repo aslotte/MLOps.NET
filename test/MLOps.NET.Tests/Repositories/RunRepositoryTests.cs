@@ -15,11 +15,11 @@ namespace MLOps.NET.Tests
 {
     [TestCategory("UnitTests")]
     [TestClass]
-    public class ModelCatalogTests
+    public class RunRepositoryTests
     {
         private Mock<IClock> clockMock;
         private DbContextFactory contextFactory;
-        private RunRepository sut;
+        private IRunRepository sut;
 
         [TestInitialize]
         public void Initialize()

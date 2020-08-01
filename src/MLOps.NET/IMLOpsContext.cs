@@ -34,5 +34,10 @@ namespace MLOps.NET
         /// Operations related to the training of a model
         /// </summary>
         TrainingCatalog Training { get; }
+
+        /// <summary>
+        /// Operations related to the deployment of a model
+        /// </summary>
+        DeploymentCatalog Deployment { get; }
     }
 }

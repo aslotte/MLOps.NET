@@ -51,6 +51,11 @@ namespace MLOps.NET.Storage.Interfaces
         DbSet<RegisteredModel> RegisteredModels { get; set; }
 
         /// <summary>
+        /// DeploymentTargets
+        /// </summary>
+        DbSet<DeploymentTarget> DeploymentTargets { get; set; }
+
+        /// <summary>
         /// Save changes
         /// </summary>
         /// <returns></returns>

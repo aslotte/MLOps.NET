@@ -1,5 +1,6 @@
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Database;
+using MLOps.NET.Storage.Repositories;
 using MLOps.NET.Utilities;
 using System;
 
@@ -16,7 +17,7 @@ namespace MLOps.NET
         private IMetricRepository metricRepository;
         private IConfusionMatrixRepository confusionMatrixRepository;
         private IHyperParameterRepository hyperParameterRepository;
-
+        private DeploymentRepository deploymentRepository;
         private IModelRepository modelRepository;
 
         /// <summary>
@@ -25,7 +26,7 @@ namespace MLOps.NET
         /// <returns>Configured <see cref="IMLOpsContext"/></returns>
         public IMLOpsContext Build()
         {
-            return new MLOpsContext(modelRepository, experimentRepository, runRepository, dataRepository, metricRepository, confusionMatrixRepository, hyperParameterRepository);
+            return new MLOpsContext(modelRepository, experimentRepository, runRepository, dataRepository, metricRepository, confusionMatrixRepository, hyperParameterRepository, deploymentRepository);
         }
 
         /// <summary>
@@ -40,6 +41,7 @@ namespace MLOps.NET
             this.metricRepository = new MetricRepository(contextFactory);
             this.confusionMatrixRepository = new ConfusionMatrixRepository(contextFactory);
             this.hyperParameterRepository = new HyperParameterRepository(contextFactory);
+            this.deploymentRepository = new DeploymentRepository(contextFactory, new Clock());
 
             return this;
         }
