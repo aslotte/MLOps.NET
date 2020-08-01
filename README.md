@@ -1,5 +1,24 @@
 ## MLOps.NET
-MLOps.NET is an SDK tool to track and manage lifecycle of an ML.NET machine learning model.
+MLOps.NET is an open-source data science tool to track and manage the lifecycle of an ML.NET machine learning model.
+
+- Experiment tracking (SQLite, SQLServer, CosmosDb)
+  - Experiments
+  - Runs
+  - Training time
+  - Evaluation metrics
+  - Hyper parameters
+- Data tracking
+  - Data schema
+  - Data quantity
+  - Data hash
+  - Data distribution (in progress)
+- Model repostiory (Azure, AWS, local fileshare)
+- Model deployment
+  - URI based deployment (in progress)
+  - Containerized deployment (in roadmap)
+  - Manual deployment (in roadmap)
+  
+  A client application to vizualize and manage the ML lifecycle is currently in the [roadmap](https://github.com/aslotte/MLOps.NET/blob/master/images/roadmap.png) to be worked on.
 
 [![Join the chat at https://gitter.im/aslotte/mlops.net](https://badges.gitter.im/aslotte/mlops.net.svg)](https://gitter.im/aslotte/mlops.net?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -12,31 +31,6 @@ MLOps.NET is an SDK tool to track and manage lifecycle of an ML.NET machine lear
 If you're used to creating machine learning models in libraries such as Tensorflow, Keras, Scikitlearn or H2O you may have come across libraries such as MLflow or Neptune to manage and track the life-cycle of your machine learning models. 
 
 Models created in ML.NET can however currently not be used in MLflow, and as such the idea of MLOps.NET was spawn.
-
-## Roadmap 
-![roadmap](https://github.com/aslotte/MLOps.NET/blob/master/images/roadmap.png)
-
-### Currently supported storage providers
-
-#### Model Repository
-- Azure Blob Storage
-- Local fileshare
-
-#### Model Data Storage
-- Azure Table Storage
-- SQL Server
-- SQLite
-
-### Roadmap
-- Add Blazor WebAssembly client to vizualize model training
-- ~~Add support for SQL Server~~
-- ~~Add support for file shares~~
-- Add support additional support for tracking a models performance
-- Add model deployment support
-- Add data tracking support
-
-### Getting started
-To be created
 
 ## Contribute
 We welcome contributors! Before getting started, take a moment to read our [contributing guidelines](https://github.com/aslotte/MLOps.NET/blob/master/Contributing.md)
