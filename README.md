@@ -28,12 +28,35 @@ MLOps.NET is an data science tool to track and manage the lifecycle of an [ML.NE
   
 A client application to vizualize and manage the ML lifecycle is currently in the [roadmap](https://github.com/aslotte/MLOps.NET/blob/master/images/roadmap.png) to be worked on.
 
-### Tell me more
-If you're used to creating machine learning models in libraries such as Tensorflow, Keras, Scikitlearn or H2O you may have come across libraries such as MLflow or Neptune to manage and track the life-cycle of your machine learning models. 
-
-Models created in ML.NET can however currently not be used in MLflow, and as such the idea of MLOps.NET was spawn.
-
 ### Getting started
+
+`MLOps.NET` revolves around an `MLOpsContext`. The `MLOpsContext` contains catalogs for e.g.`Lifecycle`, `Data`, `Training`, `Evaluation` and `Deployment` to access operations helpful to manage your models lifecycle.
+
+To create an `MLOpsContext`, use the `MLOpsBuilder` with your desired configuration. You can mix and match the location of your model repository and metadata store as you please.
+
+#### Azure with CosmosDb
+```
+            IMLOpsContext mlOpsContext = new MLOpsBuilder()
+                .UseCosmosDb("accountEndPoint", "accountKey")
+                .UseAzureBlobModelRepository("connectionString")
+                .Build();
+```
+
+#### SQL Server with Local model repository
+```
+            IMLOpsContext mlOpsContext = new MLOpsBuilder()
+                .UseSQLServer("connectionString")
+                .UseLocalFileModelRepository()
+                .Build();
+```
+
+### AWS with SQLite
+```
+            IMLOpsContext mlOpsContext = new MLOpsBuilder()
+                .UseSQLite()
+                .UseAWSS3Repository("awsAccessKey", "awsSecretAccessKey", "regionName", "bucketName);
+                .Build();
+```
 
 #### Experiment tracking
 TBD
