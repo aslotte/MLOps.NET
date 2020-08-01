@@ -54,12 +54,49 @@ To create an `MLOpsContext`, use the `MLOpsBuilder` with your desired configurat
 ```
             IMLOpsContext mlOpsContext = new MLOpsBuilder()
                 .UseSQLite()
-                .UseAWSS3Repository("awsAccessKey", "awsSecretAccessKey", "regionName", "bucketName);
+                .UseAWSS3Repository("awsAccessKey", "awsSecretAccessKey", "regionName", "bucketName")
                 .Build();
 ```
 
 #### Experiment tracking
-TBD
+To manage the lifecycle of a model, we'll need to track things such as the models evaluation metrics, hyper-parameters used during training and so forth. We organize this under the concept of experiments and runs. An experiment is the logical grouping of a model we are trying to develop, e.g. a fraud classifier or recommendation engine. For a given experiment, we can create a number of runs. Each run represent one attempt to train a given model, which is associated with the run conditions and evaluation metrics achieved. 
+
+To create an `Experiment` and a `Run`, access the `Lifecycle` catalog on the `MLOpsContext`
+```
+            var experimentId = await mlOpsContext.LifeCycle.CreateExperimentAsync("FraudClassifier");
+
+            var runId = await mlOpsContext.LifeCycle.CreateRunAsync(experimentId, "{optional Git SHA}");
+```
+
+For simplicity, you can also create an experiment (if it does not yet exist) and a run in one line
+```
+            var runId = await mlOpsContext.LifeCycle.CreateRunAsync("FraudClassifier", "{optional Git SHA}");
+```
+
+With an `Experiment` and a `Run` created, we can track the model training process.
+
+##### Hyperparameters
+You can access the operations necessary to track hyperparameters on the `Training` catalog. You can either track individual hyperparameters, such as number of epocs as follows:
+```
+            await mlOpsContext.Training.LogHyperParameterAsync(runId, "NumberOfEpochs", epocs);
+```
+
+Alternativly you can pass in the entire appended trainer and MLOps.NET will automatically log all of the trainer's hyperparameters for you
+```
+           await mlOpsContext.Training.LogHyperParameterAsync<SdcaLogisticRegressionBinaryTrainer>(runId, trainer);
+```
+
+##### Evaluation metrics
+You can access the operations necessary to track evaluation metrics on the `Evaluation` catalog. Similarly to tracking hyperparameters, you can either log individual evaluation metrics as follows:
+```
+          await mlOpsContext.Evaluation.LogMetricAsync(runId, "F1Score", 0.99d);
+```
+
+Alternativly you can pass the entire `ML.NET` evaluation metric result and `MLOps.NET` will log all related evaulation metrics for you automatically.
+```
+          await mlOpsContext.Evaluation.LogMetricsAsync<CalibratedBinaryClassificationMetrics>(runId, metric);
+```
+
 
 #### Data tracking
 TBD
