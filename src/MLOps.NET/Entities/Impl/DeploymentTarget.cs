@@ -13,14 +13,14 @@ namespace MLOps.NET.Entities.Impl
         /// <param name="name"></param>
         public DeploymentTarget(string name)
         {
-            Id = Guid.NewGuid();
+            DeploymentTargetId = Guid.NewGuid();
             Name = name;
         }
 
         /// <summary>
         /// Id
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid DeploymentTargetId { get; set; }
 
         /// <summary>
         /// Name
