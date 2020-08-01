@@ -99,13 +99,31 @@ Alternativly you can pass the entire `ML.NET` evaluation metric result and `MLOp
 
 
 #### Data tracking
-TBD
+There are a number of useful methods on the `Data` catalog to track the data used for training. This will give you a nice audit trail to understand what data was used to train a specific model, as well has how the data looked and if it has changed in between models.
+
+To log the data schema and the data hash (to be used to compare data for two different models), you can use the `LogDataAsync` method
+```
+          await mlOpsContext.Data.LogDataAsync(runId, dataView);
+```
+
+Support to log the data distribution is being added.
 
 #### Model repository
-TBD
+The end product of any model development effort is the actual model it self. `MLOps.NET` offers the ability to store your model either in a storage account in Azure, an S3 bucket in AWS or locally on a fileshare of your choosing. 
+
+To upload a model from a run
+```
+            await mlOpsContext.Model.UploadAsync(runId, "pathToModel");
+```
+
+To register a model for deployment
+```
+            var runArtifactId = mlOpsContext.Model.GetRunArtifacts(runId).First();
+            await mlOpsContext.Model.RegisterModel(experimentId, runArtifactId, registeredBy: "John Doe");
+```
 
 #### Model deployment
-TBD 
+This is currently being worked on. 
 
 ## Contribute
 We welcome contributors! Before getting started, take a moment to read our [contributing guidelines](https://github.com/aslotte/MLOps.NET/blob/master/Contributing.md)
