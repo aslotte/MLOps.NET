@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MLOps.NET.Entities.Impl;
-using System.Security.Cryptography.X509Certificates;
 
 namespace MLOps.NET.Azure.Storage
 {
@@ -23,6 +22,7 @@ namespace MLOps.NET.Azure.Storage
             modelBuilder.Entity<Data>().ToContainer(nameof(Data));
             modelBuilder.Entity<RunArtifact>().ToContainer(nameof(RunArtifact));
             modelBuilder.Entity<RegisteredModel>().ToContainer(nameof(RegisteredModel));
+            modelBuilder.Entity<DeploymentTarget>().ToContainer(nameof(DeploymentTarget));
 
             modelBuilder.Entity<Data>().OwnsOne(x => x.DataSchema, dataSchema =>
             {
