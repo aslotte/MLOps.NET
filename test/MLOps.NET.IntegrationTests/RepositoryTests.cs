@@ -9,23 +9,15 @@ namespace MLOps.NET.IntegrationTests
 
         protected async Task TearDown(IMLOpsDbContext context)
         {
-            var experiments = context.Experiments;
-            var runs = context.Runs;
-            var metrics = context.Metrics;
-            var hyperParameters = context.HyperParameters;
-            var confusionMatrices = context.ConfusionMatrices;
-            var data = context.Data;
-            var runArtifacts = context.RunArtifacts;
-            var registeredModels = context.RegisteredModels;
-
-            context.Experiments.RemoveRange(experiments);
-            context.Runs.RemoveRange(runs);
-            context.Metrics.RemoveRange(metrics);
-            context.HyperParameters.RemoveRange(hyperParameters);
-            context.ConfusionMatrices.RemoveRange(confusionMatrices);
-            context.Data.RemoveRange(data);
-            context.RunArtifacts.RemoveRange(runArtifacts);
-            context.RegisteredModels.RemoveRange(registeredModels);
+            context.Experiments.RemoveRange(context.Experiments);
+            context.Runs.RemoveRange(context.Runs);
+            context.Metrics.RemoveRange(context.Metrics);
+            context.HyperParameters.RemoveRange(context.HyperParameters);
+            context.ConfusionMatrices.RemoveRange(context.ConfusionMatrices);
+            context.Data.RemoveRange(context.Data);
+            context.RunArtifacts.RemoveRange(context.RunArtifacts);
+            context.RegisteredModels.RemoveRange(context.RegisteredModels);
+            context.DeploymentTargets.RemoveRange(context.DeploymentTargets);
 
             await context.SaveChangesAsync();
         }

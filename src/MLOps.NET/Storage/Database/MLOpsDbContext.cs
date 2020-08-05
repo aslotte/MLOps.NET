@@ -47,6 +47,9 @@ namespace MLOps.NET.Storage.Database
                 .HasOne(x => x.Experiment)
                 .WithMany()
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<DeploymentTarget>()
+                .Property(x => x.Name).IsRequired();
         }
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
@@ -90,5 +93,8 @@ namespace MLOps.NET.Storage.Database
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
         public DbSet<DataDistribution> DataDistributions { get; set; }
+
+        ///<inheritdoc cref="IMLOpsDbContext"/>
+        public DbSet<DeploymentTarget> DeploymentTargets { get; set; }
     }
 }
