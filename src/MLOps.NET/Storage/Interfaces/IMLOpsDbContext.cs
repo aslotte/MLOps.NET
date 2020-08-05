@@ -52,6 +52,11 @@ namespace MLOps.NET.Storage.Interfaces
         DbSet<RegisteredModel> RegisteredModels { get; set; }
 
         /// <summary>
+        /// 
+        /// </summary>
+        DbSet<DataDistribution> DataDistributions { get; set; }
+
+        /// <summary>
         /// Save changes
         /// </summary>
         /// <returns></returns>
@@ -61,13 +66,6 @@ namespace MLOps.NET.Storage.Interfaces
         /// Creates the database if it does not exist
         /// </summary>
         /// <returns></returns>
-        void EnsureCreated();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
-        EntityEntry Entry(object entity);        
+        void EnsureCreated();     
     }
 }

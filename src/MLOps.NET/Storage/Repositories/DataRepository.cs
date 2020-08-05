@@ -56,18 +56,27 @@ namespace MLOps.NET.Storage
         public async Task LogDataDistribution(Guid runId, IDataView dataView, string columnName)
         {
             using var db = this.contextFactory.CreateDbContext();
-            var data = db.Data.AsTracking().Include(d => d.DataSchema.DataColumns).First(d => d.RunId == runId);
-            db.Entry(data).State = EntityState.Detached;
-            var dataColumn = data.DataSchema.DataColumns.FirstOrDefault(c => c.Name == columnName);
+
+            var data = db.Data
+                .Include(d => d.DataSchema.DataColumns)
+                .First(d => d.RunId == runId);
+
+            var dataColumn = data.DataSchema
+                .DataColumns
+                .FirstOrDefault(c => c.Name == columnName);
+
             var column = dataView.Schema.First(c => c.Name == columnName);
+
             List<DataDistribution> list = GetDataDistributionForColumn(dataView, columnName, column, dataColumn);
-            dataColumn.Distribution.AddRange(list);
-            db.Entry(data).State = EntityState.Modified;
+
+            db.DataDistributions.AddRange(list);
+
             await db.SaveChangesAsync();
         }
 
         private List<DataDistribution> GetDataDistributionForColumn(IDataView dataView, string columnName, DataViewSchema.Column column, Entities.Impl.DataColumn dataColumn)
         {
+
             // using the GetColumn generic method on the IDataView, which gives all the column values in one shot , Type is only known at runtime.
             var method = typeof(ColumnCursorExtensions).GetMethods().Single(m => m.Name == "GetColumn" &&
                                                                             m.GetParameters()[1].ParameterType == typeof(string));
@@ -113,9 +122,12 @@ namespace MLOps.NET.Storage
             using var db = this.contextFactory.CreateDbContext();
 
             var data = db.Data
-                .Include(x => x.DataSchema.DataColumns).ThenInclude(x => x.Distribution)
+                .Include(x => x.DataSchema.DataColumns)
                 .FirstOrDefault(x => x.RunId == runId);
-            if (data == null) return null;
+
+            data.DataSchema.DataColumns.ForEach(x => {
+                x.Distribution = db.DataDistributions.Where(y => y.DataColumnId == x.DataColumnId).ToList();
+            });
 
             return data;
         }

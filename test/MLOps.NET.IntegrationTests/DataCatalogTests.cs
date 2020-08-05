@@ -88,7 +88,7 @@ namespace MLOps.NET.IntegrationTests
             var savedData = sut.Data.GetData(runId);
 
             savedData.DataSchema.DataColumns
-                .Single(x => x.Type == nameof(String) && x.Name == "Sentiment")
+                .Single(x => x.Type == nameof(Boolean) && x.Name == "Sentiment")
                 .Distribution.Count
                 .Should().BeGreaterThan(0);
         }
