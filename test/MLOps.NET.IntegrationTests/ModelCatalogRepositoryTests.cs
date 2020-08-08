@@ -26,7 +26,7 @@ namespace MLOps.NET.IntegrationTests
 
             var runId = Guid.NewGuid();
             var modelPath = @"C:\data\model.zip";
-            var modelStoragePath = @"C:\MLOps";
+            var modelStoragePath = @"C:\MLOps\model-repository";
             using var writer = new StreamWriter(modelPath);
             writer.Close();
 
