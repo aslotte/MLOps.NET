@@ -1,5 +1,7 @@
 ﻿using MLOps.NET.Entities.Impl;
 using System;
+using System.IO;
+using System.IO.Abstractions;
 
 namespace MLOps.NET.Storage.Deployments
 {
@@ -14,7 +16,7 @@ namespace MLOps.NET.Storage.Deployments
         {
             var experimentName = registeredModel.Experiment.ExperimentName;
 
-            return string.Join("/", experimentName, deploymentTarget.Name, GetModelName(registeredModel.RunId));
+            return Path.Combine(experimentName, deploymentTarget.Name, GetModelName(registeredModel.RunId));
         }
     }
 }
