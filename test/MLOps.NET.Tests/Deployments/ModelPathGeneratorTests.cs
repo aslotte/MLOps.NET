@@ -3,9 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Deployments;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace MLOps.NET.Tests.Deployments
 {

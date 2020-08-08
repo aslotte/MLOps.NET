@@ -14,7 +14,7 @@ namespace MLOps.NET.Storage.Deployments
         {
             var experimentName = registeredModel.Experiment.ExperimentName;
 
-            return string.Join(@"\", experimentName, deploymentTarget.Name, GetModelName(registeredModel.RunId));
+            return string.Join("/", experimentName, deploymentTarget.Name, GetModelName(registeredModel.RunId));
         }
     }
 }
