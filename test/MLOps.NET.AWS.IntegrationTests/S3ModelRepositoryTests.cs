@@ -1,10 +1,12 @@
-﻿using Amazon;
-using Amazon.S3;
+﻿using Amazon.S3;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage;
 using System;
 using System.IO;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.AWS.IntegrationTests
@@ -18,8 +20,8 @@ namespace MLOps.NET.AWS.IntegrationTests
         [TestInitialize]
         public void TestInitialize()
         {
-            var s3Client = new AmazonS3Client("test","test", new AmazonS3Config
-            { 
+            var s3Client = new AmazonS3Client("test", "test", new AmazonS3Config
+            {
                 ServiceURL = "http://localhost:9090",
                 ForcePathStyle = true,
             });
@@ -42,6 +44,32 @@ namespace MLOps.NET.AWS.IntegrationTests
 
             memoryStream.Should().NotBeNull();
             memoryStream.Length.Should().BeGreaterThan(0);
+        }
+
+        [TestMethod]
+        public async Task DeployModelAsync_ShouldDeployModel()
+        {
+            //Arrange
+            var runId = Guid.NewGuid();
+            await sut.UploadModelAsync(runId, @"Data/model.txt");
+
+            var registeredModel = new RegisteredModel
+            {
+                RunId = runId,
+                Experiment = new Experiment("ExperimentName")
+            };
+
+            var deploymentTarget = new DeploymentTarget("Test");
+
+            //Act
+            var uri = await sut.DeployModelAsync(deploymentTarget, registeredModel);
+
+            //Assert
+            var client = new HttpClient();
+            var response = await client.GetAsync(uri);
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            response.Content.Headers.ContentLength.Should().BeGreaterThan(0);
         }
     }
 }
