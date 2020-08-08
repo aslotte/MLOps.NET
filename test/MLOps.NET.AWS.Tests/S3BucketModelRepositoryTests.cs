@@ -30,7 +30,7 @@ namespace MLOps.NET.AWS.Tests
                                    }
                                }
                            });
-            var sut = new S3BucketModelRepository(mockAmzonClient.Object,"model-repository");
+            var sut = new S3BucketModelRepository(mockAmzonClient.Object);
 
             // Act
             await sut.UploadModelAsync(new Guid(), "model.zip");
@@ -50,7 +50,7 @@ namespace MLOps.NET.AWS.Tests
                                Buckets = new List<S3Bucket>()
                            });
 
-            var sut = new S3BucketModelRepository(mockAmzonClient.Object, "model-repository");
+            var sut = new S3BucketModelRepository(mockAmzonClient.Object);
 
             // Act
             await sut.UploadModelAsync(new Guid(), "model.zip");

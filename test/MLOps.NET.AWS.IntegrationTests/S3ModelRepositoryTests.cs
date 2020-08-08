@@ -24,7 +24,7 @@ namespace MLOps.NET.AWS.IntegrationTests
                 ForcePathStyle = true,
             });
 
-            sut = new S3BucketModelRepository(s3Client,"model-repository");
+            sut = new S3BucketModelRepository(s3Client);
         }
 
         [TestMethod]
