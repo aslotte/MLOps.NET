@@ -74,7 +74,8 @@ namespace MLOps.NET.Storage
             {
                 BucketName = deploymentRepositoryBucket,
                 Key = GetDeploymentPath(deploymentTarget, registeredModel),
-                Expires = DateTime.Now.AddMinutes(5)
+                Expires = DateTime.Now.AddMinutes(5),
+                Protocol = Protocol.HTTP
             };
 
             return this.s3Client.GetPreSignedURL(request);
