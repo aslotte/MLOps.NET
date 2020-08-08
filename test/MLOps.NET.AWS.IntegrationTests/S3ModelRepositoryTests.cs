@@ -63,6 +63,7 @@ namespace MLOps.NET.AWS.IntegrationTests
 
             //Act
             var uri = await sut.DeployModelAsync(deploymentTarget, registeredModel);
+            Console.WriteLine(uri);
 
             //Assert
             var client = new HttpClient();

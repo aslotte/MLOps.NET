@@ -26,7 +26,7 @@ namespace MLOps.NET.Storage
             var fileUploadRequest = new PutObjectRequest
             {
                 BucketName = modelRepositoryBucket,
-                Key = runId.ToString(),
+                Key = GetModelName(runId),
                 FilePath = filePath,
                 ContentType = "application/zip"
             };
@@ -39,7 +39,7 @@ namespace MLOps.NET.Storage
             var downloadFileRequest = new GetObjectRequest
             {
                 BucketName = modelRepositoryBucket,
-                Key = runId.ToString()
+                Key = GetModelName(runId)
             };
             var response = await s3Client.GetObjectAsync(downloadFileRequest);
             if (response == null)
