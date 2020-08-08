@@ -79,6 +79,7 @@ namespace MLOps.NET.Storage.Repositories
             {
                 deployment.RegisteredModel = db.RegisteredModels.First(x => x.RegisteredModelId == deployment.RegisteredModelId);
                 deployment.Experiment = db.Experiments.First(x => x.ExperimentId == deployment.ExperimentId);
+                deployment.DeploymentTarget = db.DeploymentTargets.First(x => x.DeploymentTargetId == deployment.DeploymentTargetId);
             });
             return deployments;
         }

@@ -71,13 +71,18 @@ namespace MLOps.NET.Storage
             return GetDeploymentUri(deploymentTarget, registeredModel);
         }
 
+        public string GetDeploymentUri(Deployment deployment)
+        {
+            return GetDeploymentUri(deployment.DeploymentTarget, deployment.RegisteredModel);
+        }
+
         private string GetDeploymentUri(DeploymentTarget deploymentTarget, RegisteredModel registeredModel)
         {
             var request = new GetPreSignedUrlRequest
             {
                 BucketName = deploymentRepositoryBucket,
                 Key = this.modelPathGenerator.GetDeploymentPath(deploymentTarget, registeredModel),
-                Expires = DateTime.Now.AddMinutes(5),
+                Expires = DateTime.Now.AddYears(5),
                 Protocol = Protocol.HTTP
             };
 

@@ -60,6 +60,16 @@ namespace MLOps.NET.Catalogs
         }
 
         /// <summary>
+        /// Returns the URI to a deployed model
+        /// </summary>
+        /// <param name="deployment"></param>
+        /// <returns></returns>
+        public string GetDeploymentUri(Deployment deployment)
+        {
+            return this.modelRepository.GetDeploymentUri(deployment);
+        }
+
+        /// <summary>
         /// Gets deployments by experiment id
         /// </summary>
         /// <param name="experimentId"></param>

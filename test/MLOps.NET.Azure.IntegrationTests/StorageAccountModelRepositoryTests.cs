@@ -78,5 +78,38 @@ namespace MLOps.NET.Azure.IntegrationTests
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             response.Content.Headers.ContentLength.Should().BeGreaterThan(0);
         }
+
+        [TestMethod]
+        public async Task GetDeploymentUri_GivenADeployedModel_ShouldReturnAValidUri()
+        {
+            //Arrange
+            var runId = Guid.NewGuid();
+            await sut.UploadModelAsync(runId, @"Data/model.txt");
+
+            var registeredModel = new RegisteredModel
+            {
+                RunId = runId,
+                Experiment = new Experiment("ExperimentName")
+            };
+
+            var deploymentTarget = new DeploymentTarget("Test");
+            await sut.DeployModelAsync(deploymentTarget, registeredModel);
+
+            var deployment = new Deployment
+            {
+                RegisteredModel = registeredModel,
+                DeploymentTarget = deploymentTarget
+            };
+
+            //Act
+            var uri = sut.GetDeploymentUri(deployment);
+
+            //Assert
+            var client = new HttpClient();
+            var response = await client.GetAsync(uri);
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            response.Content.Headers.ContentLength.Should().BeGreaterThan(0);
+        }
     }
 }

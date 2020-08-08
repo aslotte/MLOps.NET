@@ -69,6 +69,11 @@ namespace MLOps.NET.Storage
             return deploymentPath;
         }
 
+        public string GetDeploymentUri(Deployment deployment)
+        {
+            return GetDeploymentPath(deployment.RegisteredModel, deployment.DeploymentTarget);
+        }
+
         private string CreateDeploymentFolder(RegisteredModel registeredModel, DeploymentTarget deploymentTarget)
         {
             var deploymentPath = GetDeploymentPath(registeredModel, deploymentTarget);

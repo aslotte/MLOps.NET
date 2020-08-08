@@ -33,5 +33,12 @@ namespace MLOps.NET.Storage
         /// <param name="registeredModel"></param>
         /// <returns>The path to the deployed model</returns>
         Task<string> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel);
+
+        /// <summary>
+        /// Gets the URI of a deployed model
+        /// </summary>
+        /// <param name="deployment"></param>
+        /// <returns></returns>
+        string GetDeploymentUri(Deployment deployment);
     }
 }

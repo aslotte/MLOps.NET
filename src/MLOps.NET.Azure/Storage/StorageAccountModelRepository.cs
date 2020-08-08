@@ -22,7 +22,7 @@ namespace MLOps.NET.Storage
 
         public async Task UploadModelAsync(Guid runId, string filePath)
         {
-            BlobClient blobClient = this.modelRepositoryClient.GetBlobClient(this.modelPathGenerator.GetModelName(runId));
+            var blobClient = this.modelRepositoryClient.GetBlobClient(this.modelPathGenerator.GetModelName(runId));
 
             using var fileStream = File.OpenRead(filePath);
             await blobClient.UploadAsync(fileStream, true);
@@ -50,6 +50,14 @@ namespace MLOps.NET.Storage
 
             var deployedModelBlob = this.deploymentClient.GetBlobClient(deploymentBlob);
             await deployedModelBlob.StartCopyFromUriAsync(sourceModelBlob.Uri);
+
+            return deployedModelBlob.Uri.ToString();
+        }
+
+        public string GetDeploymentUri(Deployment deployment)
+        {
+            var deploymentBlob = this.modelPathGenerator.GetDeploymentPath(deployment.DeploymentTarget, deployment.RegisteredModel);
+            var deployedModelBlob = this.deploymentClient.GetBlobClient(deploymentBlob);
 
             return deployedModelBlob.Uri.ToString();
         }

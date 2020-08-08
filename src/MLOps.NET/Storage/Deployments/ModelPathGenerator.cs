@@ -1,7 +1,6 @@
 ﻿using MLOps.NET.Entities.Impl;
 using System;
 using System.IO;
-using System.IO.Abstractions;
 
 namespace MLOps.NET.Storage.Deployments
 {
