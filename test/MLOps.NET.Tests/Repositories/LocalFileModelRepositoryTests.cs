@@ -98,7 +98,7 @@ namespace MLOps.NET.Tests
 
             var deploymentTarget = new DeploymentTarget("Test");
 
-            var expectedPath = Path.Combine(folderPath, "deployment", "ExperimentName", "Test", $"{registeredModel.RunId}.zip");
+            var expectedPath = Path.Combine(folderPath, "deployment", "ExperimentName", "Test", $"{"ExperimentName"}.zip");
             var sourcePath = Path.Combine(folderPath, "model-repository", $"{registeredModel.RunId}.zip");
             mockFileSystem.AddFile(sourcePath, new MockFileData("test"));
 
