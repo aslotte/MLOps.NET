@@ -1,6 +1,7 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
 using MLOps.NET.Entities.Impl;
+using MLOps.NET.Storage.Deployments;
 using System;
 using System.IO;
 using System.Linq;
@@ -11,12 +12,14 @@ namespace MLOps.NET.Storage
     internal sealed class S3BucketModelRepository : IModelRepository
     {
         private readonly IAmazonS3 s3Client;
+        private readonly IModelPathGenerator modelPathGenerator;
         private readonly string modelRepositoryBucket = "model-repository";
         private readonly string deploymentRepositoryBucket = "deployment";
 
-        public S3BucketModelRepository(IAmazonS3 amazonS3Client)
+        public S3BucketModelRepository(IAmazonS3 amazonS3Client, IModelPathGenerator modelPathGenerator)
         {
-            this.s3Client = amazonS3Client;           
+            this.s3Client = amazonS3Client;
+            this.modelPathGenerator = modelPathGenerator;
         }
 
         public async Task UploadModelAsync(Guid runId, string filePath)
@@ -26,7 +29,7 @@ namespace MLOps.NET.Storage
             var fileUploadRequest = new PutObjectRequest
             {
                 BucketName = modelRepositoryBucket,
-                Key = GetModelName(runId),
+                Key = this.modelPathGenerator.GetModelName(runId),
                 FilePath = filePath,
                 ContentType = "application/zip"
             };
@@ -39,7 +42,7 @@ namespace MLOps.NET.Storage
             var downloadFileRequest = new GetObjectRequest
             {
                 BucketName = modelRepositoryBucket,
-                Key = GetModelName(runId)
+                Key = this.modelPathGenerator.GetModelName(runId)
             };
             var response = await s3Client.GetObjectAsync(downloadFileRequest);
             if (response == null)
@@ -58,9 +61,9 @@ namespace MLOps.NET.Storage
             var copyObjectRequest = new CopyObjectRequest
             {
                 SourceBucket = modelRepositoryBucket,
-                SourceKey = GetModelName(registeredModel.RunId),
+                SourceKey = this.modelPathGenerator.GetModelName(registeredModel.RunId),
                 DestinationBucket = deploymentRepositoryBucket,
-                DestinationKey = GetDeploymentPath(deploymentTarget, registeredModel)
+                DestinationKey = this.modelPathGenerator.GetDeploymentPath(deploymentTarget, registeredModel)
             };
 
             await this.s3Client.CopyObjectAsync(copyObjectRequest);
@@ -73,7 +76,7 @@ namespace MLOps.NET.Storage
             var request = new GetPreSignedUrlRequest
             {
                 BucketName = deploymentRepositoryBucket,
-                Key = GetDeploymentPath(deploymentTarget, registeredModel),
+                Key = this.modelPathGenerator.GetDeploymentPath(deploymentTarget, registeredModel),
                 Expires = DateTime.Now.AddMinutes(5),
                 Protocol = Protocol.HTTP
             };
@@ -101,15 +104,6 @@ namespace MLOps.NET.Storage
             var buckets = await amazonS3Client.ListBucketsAsync();
 
             return buckets.Buckets.Any(b => b.BucketName == bucketName);
-        }
-
-        private string GetModelName(Guid runId) => $"{runId}.zip";
-
-        private string GetDeploymentPath(DeploymentTarget deploymentTarget, RegisteredModel registeredModel) 
-        {
-            var experimentName = registeredModel.Experiment.ExperimentName;
-
-            return string.Join("/", experimentName, deploymentTarget.Name, GetModelName(registeredModel.RunId));
         }
     }
 }

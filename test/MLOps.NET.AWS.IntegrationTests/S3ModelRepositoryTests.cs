@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage;
+using MLOps.NET.Storage.Deployments;
 using System;
 using System.IO;
 using System.Net;
@@ -26,7 +27,7 @@ namespace MLOps.NET.AWS.IntegrationTests
                 ForcePathStyle = true,
             });
 
-            sut = new S3BucketModelRepository(s3Client);
+            sut = new S3BucketModelRepository(s3Client, new ModelPathGenerator());
         }
 
         [TestMethod]

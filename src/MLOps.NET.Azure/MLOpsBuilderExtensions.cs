@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MLOps.NET.Azure.Storage;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Database;
+using MLOps.NET.Storage.Deployments;
 
 namespace MLOps.NET.Azure
 {
@@ -48,7 +49,7 @@ namespace MLOps.NET.Azure
             modelRepositoryClient.CreateIfNotExists(PublicAccessType.None);
             deploymentClient.CreateIfNotExists(PublicAccessType.Blob);
 
-            builder.UseModelRepository(new StorageAccountModelRepository(modelRepositoryClient, deploymentClient));
+            builder.UseModelRepository(new StorageAccountModelRepository(modelRepositoryClient, deploymentClient, new ModelPathGenerator()));
 
             return builder;
         }

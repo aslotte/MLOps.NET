@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Azure.IntegrationTests.Constants;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage;
+using MLOps.NET.Storage.Deployments;
 using MLOps.NET.Tests.Common.Configuration;
 using System;
 using System.IO;
@@ -32,7 +33,7 @@ namespace MLOps.NET.Azure.IntegrationTests
             modelRepositoryClient.CreateIfNotExists(PublicAccessType.None);
             deploymentClient.CreateIfNotExists(PublicAccessType.Blob);
 
-            sut = new StorageAccountModelRepository(modelRepositoryClient, deploymentClient);   
+            sut = new StorageAccountModelRepository(modelRepositoryClient, deploymentClient, new ModelPathGenerator());  
         }
 
         [TestMethod]

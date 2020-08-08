@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage;
+using MLOps.NET.Storage.Deployments;
 using System;
 using System.IO;
 using System.IO.Abstractions;
@@ -17,7 +18,7 @@ namespace MLOps.NET.IntegrationTests.ModelRepository
         {
             //Arrange
             var destinationFolder = @"C:\mlops";
-            var sut = new LocalFileModelRepository(new FileSystem(), destinationFolder);
+            var sut = new LocalFileModelRepository(new FileSystem(), new ModelPathGenerator(), destinationFolder);
 
             var registeredModel = new RegisteredModel
             {

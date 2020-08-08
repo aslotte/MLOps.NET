@@ -1,4 +1,5 @@
 ﻿using MLOps.NET.Storage;
+using MLOps.NET.Storage.Deployments;
 using System.IO.Abstractions;
 
 namespace MLOps.NET.Extensions
@@ -16,7 +17,7 @@ namespace MLOps.NET.Extensions
         /// <returns>Provided MLOpsBuilder for chaining</returns>
         public static MLOpsBuilder UseLocalFileModelRepository(this MLOpsBuilder builder, string destinationFolder = null)
         {
-            builder.UseModelRepository(new LocalFileModelRepository(new FileSystem(), destinationFolder));
+            builder.UseModelRepository(new LocalFileModelRepository(new FileSystem(), new ModelPathGenerator(), destinationFolder));
 
             return builder;
         }

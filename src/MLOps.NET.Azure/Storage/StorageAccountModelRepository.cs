@@ -1,6 +1,6 @@
 ﻿using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Specialized;
 using MLOps.NET.Entities.Impl;
+using MLOps.NET.Storage.Deployments;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -11,17 +11,18 @@ namespace MLOps.NET.Storage
     {
         private readonly BlobContainerClient modelRepositoryClient;
         private readonly BlobContainerClient deploymentClient;
-        private const string fileExtension = ".zip";
+        private readonly IModelPathGenerator modelPathGenerator;
 
-        public StorageAccountModelRepository(BlobContainerClient modelRepositoryClient, BlobContainerClient deploymentClient)
+        public StorageAccountModelRepository(BlobContainerClient modelRepositoryClient, BlobContainerClient deploymentClient, IModelPathGenerator modelPathGenerator)
         {
             this.modelRepositoryClient = modelRepositoryClient;
             this.deploymentClient = deploymentClient;
+            this.modelPathGenerator = modelPathGenerator;
         }
 
         public async Task UploadModelAsync(Guid runId, string filePath)
         {
-            BlobClient blobClient = this.modelRepositoryClient.GetBlobClient(GetModelName(runId));
+            BlobClient blobClient = this.modelRepositoryClient.GetBlobClient(this.modelPathGenerator.GetModelName(runId));
 
             using var fileStream = File.OpenRead(filePath);
             await blobClient.UploadAsync(fileStream, true);
@@ -29,7 +30,7 @@ namespace MLOps.NET.Storage
 
         public async Task DownloadModelAsync(Guid runId, Stream destination)
         {
-            BlobClient blobClient = this.modelRepositoryClient.GetBlobClient(GetModelName(runId));
+            BlobClient blobClient = this.modelRepositoryClient.GetBlobClient(this.modelPathGenerator.GetModelName(runId));
             if (!await blobClient.ExistsAsync())
             {
                 throw new FileNotFoundException($"No model exists for Run ID {runId}");
@@ -39,10 +40,8 @@ namespace MLOps.NET.Storage
 
         public async Task<string> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel)
         {
-            var experimentName = registeredModel.Experiment.ExperimentName;
-            var deploymentBlob = string.Join("/", experimentName, deploymentTarget.Name, $"{registeredModel.RunId}{fileExtension}");
-
-            var sourceModelBlob = this.modelRepositoryClient.GetBlobClient(GetModelName(registeredModel.RunId));
+            var deploymentBlob = this.modelPathGenerator.GetDeploymentPath(deploymentTarget, registeredModel);
+            var sourceModelBlob = this.modelRepositoryClient.GetBlobClient(this.modelPathGenerator.GetModelName(registeredModel.RunId));
 
             if (!sourceModelBlob.Exists())
             {
@@ -54,7 +53,5 @@ namespace MLOps.NET.Storage
 
             return deployedModelBlob.Uri.ToString();
         }
-
-        private string GetModelName(Guid runId) => $"{runId}{fileExtension}";
     }
 }

@@ -1,8 +1,8 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage;
+using MLOps.NET.Storage.Deployments;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -15,11 +15,20 @@ namespace MLOps.NET.AWS.Tests
     [TestCategory("UnitTests")]
     public class S3BucketModelRepositoryTests
     {
+        private Mock<IAmazonS3> mockAmzonClient;
+        private S3BucketModelRepository sut;
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            this.mockAmzonClient = new Mock<IAmazonS3>();
+            this.sut = new S3BucketModelRepository(mockAmzonClient.Object, new ModelPathGenerator());
+        }
+
         [TestMethod]
         public async Task UploadModelAsync_ShouldSaveFileInS3Bucket()
         {
             // Arrange
-            var mockAmzonClient = new Mock<IAmazonS3>();
             mockAmzonClient.Setup(a => a.ListBucketsAsync(It.IsAny<CancellationToken>()))
                            .ReturnsAsync(new ListBucketsResponse
                            {
@@ -31,7 +40,6 @@ namespace MLOps.NET.AWS.Tests
                                    }
                                }
                            });
-            var sut = new S3BucketModelRepository(mockAmzonClient.Object);
 
             // Act
             await sut.UploadModelAsync(new Guid(), "model.zip");
@@ -44,14 +52,11 @@ namespace MLOps.NET.AWS.Tests
         public async Task UploadModelAsync_ShouldCreateS3BucketIfNotExists()
         {
             // Arrange
-            var mockAmzonClient = new Mock<IAmazonS3>();
             mockAmzonClient.Setup(a => a.ListBucketsAsync(It.IsAny<CancellationToken>()))
                            .ReturnsAsync(new ListBucketsResponse
                            {
                                Buckets = new List<S3Bucket>()
                            });
-
-            var sut = new S3BucketModelRepository(mockAmzonClient.Object);
 
             // Act
             await sut.UploadModelAsync(new Guid(), "model.zip");

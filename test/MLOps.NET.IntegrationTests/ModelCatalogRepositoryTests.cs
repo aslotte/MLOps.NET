@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Catalogs;
 using MLOps.NET.Storage;
+using MLOps.NET.Storage.Deployments;
 using Moq;
 using System;
 using System.IO;
@@ -20,7 +21,7 @@ namespace MLOps.NET.IntegrationTests
         [TestInitialize]
         public void TestInitialize()
         {
-            var modelRepository = new LocalFileModelRepository(new FileSystem());
+            var modelRepository = new LocalFileModelRepository(new FileSystem(), new ModelPathGenerator());
             var runRepositoryMock = new Mock<IRunRepository>();
 
             runRepositoryMock

@@ -3,6 +3,7 @@ using Azure.Storage.Blobs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage;
+using MLOps.NET.Storage.Deployments;
 using Moq;
 using System;
 using System.Threading.Tasks;
@@ -22,7 +23,7 @@ namespace MLOps.NET.Azure.Tests
             this.modelRepositoryClientMock = new Mock<BlobContainerClient>();
             this.deploymentClientMock = new Mock<BlobContainerClient>();
 
-            sut = new StorageAccountModelRepository(modelRepositoryClientMock.Object, deploymentClientMock.Object);
+            sut = new StorageAccountModelRepository(modelRepositoryClientMock.Object, deploymentClientMock.Object, new ModelPathGenerator());
         }
 
         [TestMethod]
