@@ -11,11 +11,14 @@ namespace MLOps.NET.Storage.Deployments
         public string GetModelName(Guid runId) => $"{runId}.zip";
 
         ///<inheritdoc cref="IModelPathGenerator"/>
+        public string GetDeployedModelName(string experimentName) => $"{experimentName}.zip";
+
+        ///<inheritdoc cref="IModelPathGenerator"/>
         public string GetDeploymentPath(DeploymentTarget deploymentTarget, RegisteredModel registeredModel)
         {
             var experimentName = registeredModel.Experiment.ExperimentName;
 
-            return Path.Combine(experimentName, deploymentTarget.Name, GetModelName(registeredModel.RunId));
+            return Path.Combine(experimentName, deploymentTarget.Name, GetDeployedModelName(experimentName));
         }
     }
 }

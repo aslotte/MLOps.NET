@@ -6,6 +6,7 @@ using MLOps.NET.Storage.Deployments;
 using System;
 using System.IO;
 using System.IO.Abstractions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.IntegrationTests.ModelRepository
@@ -41,6 +42,43 @@ namespace MLOps.NET.IntegrationTests.ModelRepository
 
             //Assert
             File.Exists(deployedPath).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public async Task DeployModel_GivenAnAlreadyDeployedModel_ShouldOverwriteTheExistingModel()
+        {
+            //Arrange
+            var registeredModel = new RegisteredModel
+            {
+                RunId = Guid.NewGuid(),
+                Experiment = new Experiment("ExperimentName")
+            };
+
+            var registeredModel1 = new RegisteredModel
+            {
+                RunId = Guid.NewGuid(),
+                Experiment = new Experiment("ExperimentName")
+            };
+
+            var deploymentTarget = new DeploymentTarget("Test");
+
+            await sut.UploadModelAsync(registeredModel.RunId, @"Data/model.txt");
+            await sut.UploadModelAsync(registeredModel1.RunId, @"Data/model.txt");
+
+            var deployedPath = await sut.DeployModelAsync(deploymentTarget, registeredModel);
+
+            var fileInfo = new FileInfo(deployedPath);
+            var lastUpdateTime = fileInfo.LastAccessTime;
+
+            //Act
+            deployedPath = await sut.DeployModelAsync(deploymentTarget, registeredModel1);
+
+            //Assert
+            fileInfo.Refresh();
+            var lastUpdateTimeNewModel = fileInfo.LastAccessTime;
+            
+            File.Exists(deployedPath).Should().BeTrue();
+            lastUpdateTime.Ticks.Should().BeLessThan(lastUpdateTimeNewModel.Ticks);
         }
 
         [TestMethod]

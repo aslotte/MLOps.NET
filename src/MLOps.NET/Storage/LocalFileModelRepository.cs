@@ -65,7 +65,7 @@ namespace MLOps.NET.Storage
 
             var deploymentPath = GetDeploymentPath(registeredModel, deploymentTarget);
 
-            await Task.Run(() => this.fileSystem.File.Copy(sourceFilePath, deploymentPath));
+            await Task.Run(() => this.fileSystem.File.Copy(sourceFilePath, deploymentPath, overwrite: true));
             return deploymentPath;
         }
 

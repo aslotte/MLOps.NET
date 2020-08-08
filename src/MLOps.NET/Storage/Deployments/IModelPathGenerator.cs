@@ -15,6 +15,13 @@ namespace MLOps.NET.Storage.Deployments
         string GetModelName(Guid runId);
 
         /// <summary>
+        /// Gets the deployed model's name
+        /// </summary>
+        /// <param name="experimentName"></param>
+        /// <returns></returns>
+        string GetDeployedModelName(string experimentName);
+
+        /// <summary>
         /// Gets deployment path based on deployment target and the registered model
         /// </summary>
         /// <param name="deploymentTarget"></param>

@@ -29,7 +29,7 @@ namespace MLOps.NET.Tests.Deployments
 
             var deploymentTarget = new DeploymentTarget("Test");
 
-            var expectedPath = Path.Combine("ExperimentName", "Test", $"{registeredModel.RunId}.zip");
+            var expectedPath = Path.Combine("ExperimentName", "Test", $"ExperimentName.zip");
 
             // Act
             var deploymentPath = sut.GetDeploymentPath(deploymentTarget, registeredModel);
