@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage;
+using MLOps.NET.Storage.Deployments;
 using System;
 using System.IO;
 using System.IO.Abstractions.TestingHelpers;
@@ -21,7 +22,7 @@ namespace MLOps.NET.Tests
         public void TestInitialize()
         {
             this.mockFileSystem = new MockFileSystem();
-            sut = new LocalFileModelRepository(mockFileSystem);
+            sut = new LocalFileModelRepository(mockFileSystem, new ModelPathGenerator());
         }
 
         [TestMethod]
