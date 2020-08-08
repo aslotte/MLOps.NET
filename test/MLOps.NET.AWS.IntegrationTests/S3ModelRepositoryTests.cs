@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.AWS.IntegrationTests
@@ -104,6 +105,48 @@ namespace MLOps.NET.AWS.IntegrationTests
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             response.Content.Headers.ContentLength.Should().BeGreaterThan(0);
+        }
+
+        [TestMethod]
+        public async Task DeployModelAsync_GivenADeployedModelAlreadyExist_ShouldOverwriteExistingModel()
+        {
+            //Arrange
+            var client = new HttpClient();
+
+            var runId = Guid.NewGuid();
+            var runId1 = Guid.NewGuid();
+
+            await sut.UploadModelAsync(runId, @"Data/model.txt");
+            await sut.UploadModelAsync(runId1, @"Data/model.txt");
+
+            var registeredModel = new RegisteredModel
+            {
+                RunId = runId,
+                Experiment = new Experiment("ExperimentName")
+            };
+
+            var registeredModel1 = new RegisteredModel
+            {
+                RunId = runId1,
+                Experiment = new Experiment("ExperimentName")
+            };
+
+            var deploymentTarget = new DeploymentTarget("Test");
+
+            var firstModelUri = await sut.DeployModelAsync(deploymentTarget, registeredModel1);
+            var firstModelResponse = await client.GetAsync(firstModelUri);
+
+            var firstModelUpdateTime = firstModelResponse.Content.Headers.LastModified;
+
+            //Act
+            Thread.Sleep(60000);
+            var uri = await sut.DeployModelAsync(deploymentTarget, registeredModel);
+
+            //Assert
+            var response = await client.GetAsync(uri);
+
+            var secondModelUpdateTime = response.Content.Headers.LastModified;
+            firstModelUpdateTime.Value.Ticks.Should().BeLessThan(secondModelUpdateTime.Value.Ticks);
         }
     }
 }
