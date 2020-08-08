@@ -56,7 +56,7 @@ namespace MLOps.NET.AWS.Tests
             await sut.UploadModelAsync(new Guid(), "model.zip");
 
             // Assert
-            mockAmzonClient.Verify(a => a.PutBucketAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+            mockAmzonClient.Verify(a => a.PutBucketAsync(It.Is<PutBucketRequest>(x => x.BucketName == "model-repository" && x.CannedACL == S3CannedACL.Private), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }
