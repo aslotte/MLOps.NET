@@ -14,18 +14,20 @@ namespace MLOps.NET.IntegrationTests
     [TestClass]
     public class ModelCatalogRepositoryTests
     {
+        private string modelRepositoryPath;
         private ModelCatalog sut;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            var destinationFolder = @"C:\MLOps";
-            var modelRepository = new LocalFileModelRepository(new FileSystem(), destinationFolder);
+            var modelRepository = new LocalFileModelRepository(new FileSystem());
             var runRepositoryMock = new Mock<IRunRepository>();
 
             runRepositoryMock
                 .Setup(x => x.CreateRunArtifact(It.IsAny<Guid>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
+
+            this.modelRepositoryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mlops", "model-repository");
 
             this.sut = new ModelCatalog(modelRepository, runRepositoryMock.Object);
         }
@@ -35,8 +37,6 @@ namespace MLOps.NET.IntegrationTests
         {
             //Arrange
             var runId = Guid.NewGuid();
-
-            var modelRepositoryPath = @"C:\MLOps\model-repository";
             var expectedModelPath = Path.Combine(modelRepositoryPath, $"{runId}.zip");
 
             //Act
