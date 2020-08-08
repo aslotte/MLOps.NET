@@ -67,7 +67,7 @@ namespace MLOps.NET.Storage
             }
         }
 
-        public string DeployModel(DeploymentTarget deploymentTarget, RegisteredModel registeredModel)
+        public Task<string> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel)
         {
             throw new NotImplementedException();
         }

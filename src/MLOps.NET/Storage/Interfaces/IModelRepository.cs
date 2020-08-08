@@ -32,6 +32,6 @@ namespace MLOps.NET.Storage
         /// <param name="deploymentTarget"></param> 
         /// <param name="registeredModel"></param>
         /// <returns>The path to the deployed model</returns>
-        string DeployModel(DeploymentTarget deploymentTarget, RegisteredModel registeredModel);
+        Task<string> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel);
     }
 }

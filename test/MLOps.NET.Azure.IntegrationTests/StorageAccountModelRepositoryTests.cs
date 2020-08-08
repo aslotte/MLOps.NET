@@ -1,10 +1,15 @@
-﻿using FluentAssertions;
+﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Azure.IntegrationTests.Constants;
+using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage;
 using MLOps.NET.Tests.Common.Configuration;
 using System;
 using System.IO;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Azure.IntegrationTests
@@ -19,8 +24,15 @@ namespace MLOps.NET.Azure.IntegrationTests
         public void TestInitialize()
         {
             var configuration = ConfigurationFactory.GetConfiguration();
+            var connectionString = configuration[ConfigurationKeys.StorageAccount];
 
-            sut = new StorageAccountModelRepository(configuration[ConfigurationKeys.StorageAccount]);
+            var modelRepositoryClient = new BlobContainerClient(connectionString, "model-repository");
+            var deploymentClient = new BlobContainerClient(connectionString, "deployment");
+
+            modelRepositoryClient.CreateIfNotExists(PublicAccessType.None);
+            deploymentClient.CreateIfNotExists(PublicAccessType.Blob);
+
+            sut = new StorageAccountModelRepository(modelRepositoryClient, deploymentClient);   
         }
 
         [TestMethod]
@@ -38,6 +50,32 @@ namespace MLOps.NET.Azure.IntegrationTests
 
             memoryStream.Should().NotBeNull();
             memoryStream.Length.Should().BeGreaterThan(0);
+        }
+
+        [TestMethod]
+        public async Task DeployModelAsync_ShouldDeployModelToTarget()
+        {
+            //Arrange
+            var runId = Guid.NewGuid();
+            await sut.UploadModelAsync(runId, @"Data/model.txt");
+
+            var registeredModel = new RegisteredModel
+            {
+                RunId = runId,
+                Experiment = new Experiment("ExperimentName")
+            };
+
+            var deploymentTarget = new DeploymentTarget("Test");
+
+            //Act
+            var uri = await sut.DeployModelAsync(deploymentTarget, registeredModel);
+
+            //Assert
+            var client = new HttpClient();
+            var response = await client.GetAsync(uri);
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            response.Content.Headers.ContentLength.Should().BeGreaterThan(0);
         }
     }
 }

@@ -56,7 +56,7 @@ namespace MLOps.NET.Catalogs
         {
             await this.deploymentRepository.CreateDeploymentAsync(deploymentTarget, registeredModel, deployedBy);
 
-            return this.modelRepository.DeployModel(deploymentTarget, registeredModel);
+            return await this.modelRepository.DeployModelAsync(deploymentTarget, registeredModel);
         }
 
         /// <summary>

@@ -46,7 +46,7 @@ namespace MLOps.NET.Storage
             await fileStream.CopyToAsync(destination);
         }
 
-        public string DeployModel(DeploymentTarget deploymentTarget, RegisteredModel registeredModel)
+        public async Task<string> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel)
         {
             var deploymentFolder = CreateDeploymentFolder(registeredModel, deploymentTarget);
 
@@ -58,7 +58,7 @@ namespace MLOps.NET.Storage
 
             var deployedFilePath = this.fileSystem.Path.Combine(deploymentFolder, $"{registeredModel.RunId}.zip");
 
-            this.fileSystem.File.Copy(sourceFilePath, deployedFilePath);
+            await Task.Run(() => this.fileSystem.File.Copy(sourceFilePath, deployedFilePath));
 
             return deployedFilePath;
         }

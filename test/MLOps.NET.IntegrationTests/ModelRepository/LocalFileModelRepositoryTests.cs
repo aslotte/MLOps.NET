@@ -17,7 +17,7 @@ namespace MLOps.NET.IntegrationTests.ModelRepository
         {
             //Arrange
             var destinationFolder = @"C:\mlops";
-            var localFileModelRepository = new LocalFileModelRepository(new FileSystem(), destinationFolder);
+            var sut = new LocalFileModelRepository(new FileSystem(), destinationFolder);
 
             var registeredModel = new RegisteredModel
             {
@@ -27,10 +27,10 @@ namespace MLOps.NET.IntegrationTests.ModelRepository
 
             var deploymentTarget = new DeploymentTarget("Test");
 
-            await localFileModelRepository.UploadModelAsync(registeredModel.RunId, @"Data/model.txt");
+            await sut.UploadModelAsync(registeredModel.RunId, @"Data/model.txt");
 
             //Act
-            var deployedPath = localFileModelRepository.DeployModel(deploymentTarget, registeredModel);
+            var deployedPath = await sut.DeployModelAsync(deploymentTarget, registeredModel);
 
             //Assert
             File.Exists(deployedPath).Should().BeTrue();
