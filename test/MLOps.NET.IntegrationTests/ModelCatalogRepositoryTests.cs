@@ -14,31 +14,36 @@ namespace MLOps.NET.IntegrationTests
     [TestClass]
     public class ModelCatalogRepositoryTests
     {
-        [TestMethod]
-        public async Task UploadModelAsync_ValidModelPath_UploadSuccessAsync()
+        private ModelCatalog sut;
+
+        [TestInitialize]
+        public void TestInitialize()
         {
-            //Arrange
             var destinationFolder = @"C:\MLOps";
             var modelRepository = new LocalFileModelRepository(new FileSystem(), destinationFolder);
             var runRepositoryMock = new Mock<IRunRepository>();
 
-            var modelCatalog = new ModelCatalog(modelRepository, runRepositoryMock.Object);
-
-            var runId = Guid.NewGuid();
-            var modelPath = @"C:\data\model.zip";
-            var modelStoragePath = @"C:\MLOps\model-repository";
-            using var writer = new StreamWriter(modelPath);
-            writer.Close();
-
-            runRepositoryMock.Setup(x => x.CreateRunArtifact(runId, It.IsAny<string>()))
+            runRepositoryMock
+                .Setup(x => x.CreateRunArtifact(It.IsAny<Guid>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
 
+            this.sut = new ModelCatalog(modelRepository, runRepositoryMock.Object);
+        }
+
+        [TestMethod]
+        public async Task UploadModelAsync_ValidModelPath_UploadSuccessAsync()
+        {
+            //Arrange
+            var runId = Guid.NewGuid();
+
+            var modelRepositoryPath = @"C:\MLOps\model-repository";
+            var expectedModelPath = Path.Combine(modelRepositoryPath, $"{runId}.zip");
+
             //Act
-            await modelCatalog.UploadAsync(runId, modelPath);
+            await sut.UploadAsync(runId, @"Data/model.txt");
 
             //Assert
-            var fileExists = File.Exists(Path.Combine(modelStoragePath, $"{runId}.zip"));
-            fileExists.Should().BeTrue();
+            File.Exists(expectedModelPath).Should().BeTrue();
         }
     }
 }
