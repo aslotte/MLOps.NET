@@ -53,7 +53,7 @@ namespace MLOps.NET.Storage
 
         public async Task<string> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel)
         {
-            await CreateBucketAsync(this.s3Client, deploymentRepositoryBucket);
+            await CreateBucketAsync(this.s3Client, deploymentRepositoryBucket, isPublic: true);
 
             var copyObjectRequest = new CopyObjectRequest
             {
@@ -80,12 +80,18 @@ namespace MLOps.NET.Storage
             return this.s3Client.GetPreSignedURL(request);
         }
 
-        private async Task CreateBucketAsync(IAmazonS3 amazonS3Client, string bucketName)
+        private async Task CreateBucketAsync(IAmazonS3 amazonS3Client, string bucketName, bool isPublic = false)
         {
             var bucketExists = await DoesS3BucketExists(amazonS3Client, bucketName);
             if (!bucketExists)
             {
-                await amazonS3Client.PutBucketAsync(bucketName);
+                var request = new PutBucketRequest
+                {
+                    BucketName = bucketName,
+                    CannedACL = isPublic ? S3CannedACL.PublicRead : S3CannedACL.Private
+                };
+
+                await amazonS3Client.PutBucketAsync(request);
             }
         }
 
