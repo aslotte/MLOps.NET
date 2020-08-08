@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 using Amazon.S3.Model.Internal.MarshallTransformations;
+using MLOps.NET.Entities.Impl;
 
 namespace MLOps.NET.Storage
 {
@@ -64,6 +65,11 @@ namespace MLOps.NET.Storage
             {
                 await stream.CopyToAsync(destination);
             }
+        }
+
+        public string DeployModel(DeploymentTarget deploymentTarget, RegisteredModel registeredModel)
+        {
+            throw new NotImplementedException();
         }
     }
 }

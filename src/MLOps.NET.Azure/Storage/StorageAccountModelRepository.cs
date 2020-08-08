@@ -1,7 +1,7 @@
 ﻿using Azure.Storage.Blobs;
+using MLOps.NET.Entities.Impl;
 using System;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Storage
@@ -42,6 +42,11 @@ namespace MLOps.NET.Storage
                 throw new FileNotFoundException($"No model exists for Run ID {runId}");
             }
             await blobClient.DownloadToAsync(destination);
+        }
+
+        public string DeployModel(DeploymentTarget deploymentTarget, RegisteredModel registeredModel)
+        {
+            throw new NotImplementedException();
         }
     }
 }

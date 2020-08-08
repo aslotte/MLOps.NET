@@ -1,4 +1,5 @@
 ﻿using MLOps.NET.Entities.Impl;
+using MLOps.NET.Storage;
 using MLOps.NET.Storage.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -12,14 +13,17 @@ namespace MLOps.NET.Catalogs
     public sealed class DeploymentCatalog
     {
         private readonly IDeploymentRepository deploymentRepository;
+        private readonly IModelRepository modelRepository;
 
         /// <summary>
         /// Ctor
         /// </summary>
         /// <param name="deploymentRepository"></param>
-        public DeploymentCatalog(IDeploymentRepository deploymentRepository)
+        /// <param name="modelRepository"></param>
+        public DeploymentCatalog(IDeploymentRepository deploymentRepository, IModelRepository modelRepository)
         {
             this.deploymentRepository = deploymentRepository;
+            this.modelRepository = modelRepository;
         }
 
         /// <summary>
@@ -46,12 +50,13 @@ namespace MLOps.NET.Catalogs
         /// <param name="deploymentTarget"></param>
         /// <param name="registeredModel"></param>
         /// <param name="deployedBy"></param>
+        /// <returns>Deployed model path</returns>
         /// <returns></returns>
-        public async Task DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy)
+        public async Task<string> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy)
         {
             await this.deploymentRepository.CreateDeploymentAsync(deploymentTarget, registeredModel, deployedBy);
 
-            //deploy model by copying from model repo to deployment container
+            return this.modelRepository.DeployModel(deploymentTarget, registeredModel);
         }
 
         /// <summary>
