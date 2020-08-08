@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Storage
@@ -53,7 +52,7 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc cref="IDataRepository"/>
-        public async Task LogDataDistribution(Guid runId, IDataView dataView, string columnName)
+        public async Task LogDataDistribution<T>(Guid runId, IDataView dataView, string columnName) where T:struct
         {
             using var db = this.contextFactory.CreateDbContext();
 
@@ -67,23 +66,16 @@ namespace MLOps.NET.Storage
 
             var column = dataView.Schema.First(c => c.Name == columnName);
 
-            List<DataDistribution> list = GetDataDistributionForColumn(dataView, columnName, column, dataColumn);
+            List<DataDistribution> list = GetDataDistributionForColumn<T>(dataView, column, dataColumn);
 
             db.DataDistributions.AddRange(list);
 
             await db.SaveChangesAsync();
         }
 
-        private List<DataDistribution> GetDataDistributionForColumn(IDataView dataView, string columnName, DataViewSchema.Column column, Entities.Impl.DataColumn dataColumn)
+        private List<DataDistribution> GetDataDistributionForColumn<T>(IDataView dataView, DataViewSchema.Column column, Entities.Impl.DataColumn dataColumn) where T : struct
         {
-
-            // using the GetColumn generic method on the IDataView, which gives all the column values in one shot , Type is only known at runtime.
-            var method = typeof(ColumnCursorExtensions).GetMethods().Single(m => m.Name == "GetColumn" &&
-                                                                            m.GetParameters()[1].ParameterType == typeof(string));
-
-            var values = (dynamic)method
-                        .MakeGenericMethod(column.Type.RawType)
-                        .Invoke(dataView, new object[] { dataView, columnName });
+            var values = dataView.GetColumn<T>(column);
 
             var dataDistributions = new List<DataDistribution>();
             foreach (var item in values)
@@ -95,9 +87,11 @@ namespace MLOps.NET.Storage
                 }
                 else
                 {
-                    var distribution = new DataDistribution();
-                    distribution.DataColumnId = dataColumn.DataColumnId;
-                    distribution.Value = item.ToString();
+                    var distribution = new DataDistribution
+                    {
+                        DataColumnId = dataColumn.DataColumnId,
+                        Value = item.ToString()
+                    };
                     dataDistributions.Add(distribution);
                 }
 

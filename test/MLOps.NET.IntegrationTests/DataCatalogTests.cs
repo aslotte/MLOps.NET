@@ -82,7 +82,7 @@ namespace MLOps.NET.IntegrationTests
 
             //Act
             await sut.Data.LogDataAsync(runId, data);
-            await sut.Data.LogDataDistribution(runId, data, "Sentiment");
+            await sut.Data.LogDataDistribution<Boolean>(runId, data, "Sentiment");
 
             //Assert
             var savedData = sut.Data.GetData(runId);
