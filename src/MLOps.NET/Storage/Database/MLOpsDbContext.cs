@@ -2,7 +2,7 @@
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Interfaces;
 using System;
-using System.Security.Cryptography.X509Certificates;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Storage.Database
@@ -26,39 +26,7 @@ namespace MLOps.NET.Storage.Database
         {
             this.OnModelCreatingAction(modelBuilder);
 
-            modelBuilder.Entity<RegisteredModel>()
-                .HasOne(x => x.Run)
-                .WithOne()
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<RegisteredModel>()
-                .HasOne(x => x.Experiment)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<DeploymentTarget>()
-                .Property(x => x.Name).IsRequired();
-
-            modelBuilder.Entity<DeploymentTarget>()
-                .HasMany(x => x.Deployments)
-                .WithOne(x => x.DeploymentTarget)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Deployment>()
-                .HasOne(x => x.RegisteredModel)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Deployment>()
-                .HasOne(x => x.DeploymentTarget)
-                .WithMany()
-                .HasForeignKey(x => x.DeploymentTargetId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Deployment>()
-                .HasOne(x => x.Experiment)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
 
         ///<inheritdoc cref="IMLOpsDbContext"/>

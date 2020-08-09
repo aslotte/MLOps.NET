@@ -15,10 +15,10 @@ namespace MLOps.NET.Entities.Impl
         /// <param name="value"></param>
         public Metric(Guid runId, string metricName, double value)
         {
+            MetricId = Guid.NewGuid();
             MetricName = metricName;
             Value = value;
             RunId = runId;
-            MetricId = Guid.NewGuid();
         }
 
         /// <summary>
@@ -35,6 +35,11 @@ namespace MLOps.NET.Entities.Impl
         /// Value
         /// </summary>
         public double Value { get; set; }
+
+        /// <summary>
+        /// Run
+        /// </summary>
+        public Run Run { get; set; }
 
         /// <summary>
         /// RunId

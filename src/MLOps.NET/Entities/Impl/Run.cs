@@ -62,7 +62,7 @@ namespace MLOps.NET.Entities.Impl
         /// <summary>
         /// TrainingTime
         /// </summary>
-        public TimeSpan TrainingTime { get; set; }
+        public TimeSpan? TrainingTime { get; set; }
 
         /// <summary>
         /// GitCommitHash

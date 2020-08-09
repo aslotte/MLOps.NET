@@ -42,7 +42,7 @@ namespace MLOps.NET.IntegrationTests
             var registeredModel = sut.Model.GetLatestRegisteredModel(experimentId);
 
             registeredModel.Version.Should().Be(1);
-            registeredModel.RegisteredDate.Date.Should().Be(DateTime.Now.Date);
+            registeredModel.RegisteredDate.Date.Should().Be(DateTime.UtcNow.Date);
             registeredModel.RegisteredBy.Should().Be("The MLOps.NET Team");
             registeredModel.RunArtifactId.Should().Be(runArtifact.RunArtifactId);
         }
