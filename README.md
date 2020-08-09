@@ -50,7 +50,7 @@ To create an `MLOpsContext`, use the `MLOpsBuilder` with your desired configurat
 ```
   IMLOpsContext mlOpsContext = new MLOpsBuilder()
     .UseSQLite()
-    .UseAWSS3Repository("awsAccessKey", "awsSecretAccessKey", "regionName", "bucketName")
+    .UseAWSS3Repository("awsAccessKey", "awsSecretAccessKey", "regionName")
     .Build();
 ```
 
