@@ -34,10 +34,7 @@ namespace MLOps.NET.Storage.Database
             await base.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Ensured that the database is created
-        /// </summary>
-        /// <returns></returns>
+        ///<inheritdoc cref="IMLOpsDbContext"/>
         public virtual void EnsureCreated()
         {
             Database.Migrate();
