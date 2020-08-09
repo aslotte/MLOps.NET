@@ -143,8 +143,12 @@ The URI or the path to the model (which can be used by a consuming application) 
   var deployment = await mlOpsContext.Deployment.GetDeployments()
     .FirstOrDefault(x => x.DeploymentTarget.Name == "Test");
 
-    var deploymentUri = await mlOpsContext.Deployment.GetDeploymentUri(deployment);
+  var deploymentUri = await mlOpsContext.Deployment.GetDeploymentUri(deployment);
 ```
+
+Deploying a model for an experiment to a given deployment target, e.g. Test, will automatically overwrite the existing model, thus the consuming application will not need to update it's URI/path to the model it's consuming. `ML.NET` will automatically poll for changes to the file making it seamless and allowing the consuming application and the ML.NET model to have different release cycles.
+
+We're actively working on supporting other deployment scenarios such as via Docker containers. 
 
 ## Contribute
 We welcome contributors! Before getting started, take a moment to read our [contributing guidelines](https://github.com/aslotte/MLOps.NET/blob/master/Contributing.md)
