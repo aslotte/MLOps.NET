@@ -1,9 +1,5 @@
 ## MLOps.NET
-[![Join the chat at https://gitter.im/aslotte/mlops.net](https://badges.gitter.im/aslotte/mlops.net.svg)](https://gitter.im/aslotte/mlops.net?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-![.NET Core](https://github.com/aslotte/MLOps.NET/workflows/.NET%20Core/badge.svg)
-
-![mlops.neticon](https://img.shields.io/nuget/v/MLOps.NET.svg)
+[![Join the chat at https://gitter.im/aslotte/mlops.net](https://badges.gitter.im/aslotte/mlops.net.svg)](https://gitter.im/aslotte/mlops.net?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) ![.NET Core](https://github.com/aslotte/MLOps.NET/workflows/.NET%20Core/badge.svg) ![mlops.neticon](https://img.shields.io/nuget/v/MLOps.NET.svg)
 
 MLOps.NET is a data science tool to track and manage the lifecycle of a [ML.NET](https://github.com/dotnet/machinelearning) machine learning model.
 
@@ -22,7 +18,7 @@ MLOps.NET is a data science tool to track and manage the lifecycle of a [ML.NET]
   - Run artifacts
   - Versioned registered models
 - Model deployment
-  - URI based deployment (in progress)
+  - URI based deployment
   - Containerized deployment (in roadmap)
   - Manual deployment (in roadmap)
   
