@@ -3,6 +3,7 @@ using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.EntityMaps;
 using MLOps.NET.Storage.Interfaces;
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Storage.Database
@@ -26,9 +27,7 @@ namespace MLOps.NET.Storage.Database
         {
             this.OnModelCreatingAction(modelBuilder);
 
-            modelBuilder.ApplyConfiguration(new RegisteredModelMap());
-            modelBuilder.ApplyConfiguration(new DeploymentTargetMap());
-            modelBuilder.ApplyConfiguration(new DeploymentMap());
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
