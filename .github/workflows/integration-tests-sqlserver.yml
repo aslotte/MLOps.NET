@@ -3,8 +3,14 @@ name: Integration Tests (MLOps.NET.SQLServer)
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+    - 'README.md'
+    - 'images/**'        
   pull_request:
     branches: [ master ]
+    paths-ignore:
+    - 'README.md'
+    - 'images/**'        
 
 jobs:
   integration-tests-sql-server:
