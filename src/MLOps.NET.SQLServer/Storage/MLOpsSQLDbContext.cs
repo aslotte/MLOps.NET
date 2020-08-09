@@ -17,21 +17,13 @@ namespace MLOps.NET.SQLServer
         /// </summary>
         public MLOpsSQLDbContext() : base(new DbContextOptionsBuilder()
                 .UseSqlServer(MigrationConnectionString)
-                .Options)
+                .Options, RelationalEntityConfigurator.OnModelCreating)
         {
         }
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
-        public MLOpsSQLDbContext(DbContextOptions options) : base(options)
+        public MLOpsSQLDbContext(DbContextOptions options) : base(options, RelationalEntityConfigurator.OnModelCreating)
         {
-        }
-
-        ///<inheritdoc cref="IMLOpsDbContext"/>
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            RelationalEntityConfigurator.OnModelCreating(modelBuilder);
-
-            base.OnModelCreating(modelBuilder);
         }
     }
 }

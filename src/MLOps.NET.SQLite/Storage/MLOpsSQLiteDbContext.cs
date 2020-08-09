@@ -15,21 +15,13 @@ namespace MLOps.NET.SQLite
         /// </summary>
         public MLOpsSQLiteDbContext() : base(new DbContextOptionsBuilder()
                 .UseSqlite("Data Source=local.db")
-                .Options)
+                .Options, RelationalEntityConfigurator.OnModelCreating)
         {
         }
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
-        public MLOpsSQLiteDbContext(DbContextOptions options) : base(options)
+        public MLOpsSQLiteDbContext(DbContextOptions options) : base(options, RelationalEntityConfigurator.OnModelCreating)
         {
-        }
-
-        ///<inheritdoc cref="IMLOpsDbContext"/>
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            RelationalEntityConfigurator.OnModelCreating(modelBuilder);
-
-            base.OnModelCreating(modelBuilder);
         }
     }
 }

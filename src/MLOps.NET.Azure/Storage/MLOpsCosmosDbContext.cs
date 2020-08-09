@@ -11,16 +11,8 @@ namespace MLOps.NET.Azure
     public sealed class MLOpsCosmosDbContext : MLOpsDbContext
     {
         ///<inheritdoc cref="IMLOpsDbContext"/>
-        public MLOpsCosmosDbContext(DbContextOptions options) : base(options)
+        public MLOpsCosmosDbContext(DbContextOptions options) : base(options, CosmosEntityConfigurator.OnModelCreating)
         {
-        }
-
-        ///<inheritdoc cref="IMLOpsDbContext"/>
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            CosmosEntityConfigurator.OnModelCreating(modelBuilder);
-
-            base.OnModelCreating(modelBuilder);
         }
 
         ///<inheritdoc cref="IMLOpsDbContext"/>

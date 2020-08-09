@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Interfaces;
+using System;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -9,15 +10,22 @@ namespace MLOps.NET.Storage.Database
     ///<inheritdoc cref="IMLOpsDbContext"/>
     public class MLOpsDbContext : DbContext, IMLOpsDbContext
     {
+        private readonly Action<ModelBuilder> onModelCreating;
+
         ///<inheritdoc cref="IMLOpsDbContext"/>
-        public MLOpsDbContext(DbContextOptions options) : base(options)
+        public MLOpsDbContext(DbContextOptions options, Action<ModelBuilder> onModelCreating) : base(options)
         {
+            this.onModelCreating = onModelCreating;
         }
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
-        protected new virtual void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            this.onModelCreating(modelBuilder);
+
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(typeof(MLOpsDbContext)));
+
+            base.OnModelCreating(modelBuilder);
         }
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
