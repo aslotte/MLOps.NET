@@ -123,7 +123,28 @@ To register a model for deployment
 ```
 
 #### Model deployment
-This development is currently ongoing.
+Once a model has been registered, it's possible to deploy it to a given deployment target. A deployment target can be thought of as a specific environment in which you can serve your model, e.g. Test, Stage and Production. `MLOps.NET` currently supports serving a model via an URI or path, so that e.g. an ASP.NET Core application can consume the model. Similarily to the model repository, a deployment repository will be automatically created for you either in Azure Blob Storage, AWS S3 or on a local file share.
+
+Methods to deploy a model can be found on the `Deployment` catalog. 
+To deploy a model, start by creating a deployment target:
+
+```
+var deploymentTarget = await mlOpsContext.Deployment.CreateDeploymentTargetAsync(deploymentTargetName: "Test");
+```
+
+Given a deployment target and a registered model, you can then deploy the model to a given environment:
+
+```
+  var deploymentUri = await mlOpsContext.Deployment.DeployModelAsync(deploymentTarget, registeredModel, deployedBy: "John Doe");
+```
+The URI or the path to the model (which can be used by a consuming application) will be returned. It's also possible to get the URI/path to deployed model by doing the following:
+
+```
+  var deployment = await mlOpsContext.Deployment.GetDeployments()
+    .FirstOrDefault(x => x.DeploymentTarget.Name == "Test");
+
+    var deploymentUri = await mlOpsContext.Deployment.GetDeploymentUri(deployment);
+```
 
 ## Contribute
 We welcome contributors! Before getting started, take a moment to read our [contributing guidelines](https://github.com/aslotte/MLOps.NET/blob/master/Contributing.md)
