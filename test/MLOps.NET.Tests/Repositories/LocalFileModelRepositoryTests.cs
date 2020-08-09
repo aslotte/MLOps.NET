@@ -111,7 +111,7 @@ namespace MLOps.NET.Tests
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException), "The model to be deployed does not exist")]
-        public async Task DeployModel_NoSourceFileExist_ShouldThrowException()
+        public async Task DeployModel_NoSourceFileExists_ShouldThrowException()
         {
             var registeredModel = new RegisteredModel
             {
