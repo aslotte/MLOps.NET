@@ -15,10 +15,10 @@ namespace MLOps.NET.Entities.Impl
         /// <param name="value"></param>
         public HyperParameter(Guid runId, string parameterName, string value)
         {
+            HyperParameterId = Guid.NewGuid();
             ParameterName = parameterName;
             Value = value;
             RunId = runId;
-            HyperParameterId = Guid.NewGuid();
         }
 
         /// <summary>
@@ -35,6 +35,11 @@ namespace MLOps.NET.Entities.Impl
         /// Value
         /// </summary>
         public string Value { get; set; }
+
+        /// <summary>
+        /// Run
+        /// </summary>
+        public Run Run { get; set; }
 
         /// <summary>
         /// RunId

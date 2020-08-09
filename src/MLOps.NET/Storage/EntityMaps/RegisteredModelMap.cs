@@ -8,6 +8,9 @@ namespace MLOps.NET.Storage.EntityMaps
     {
         public void Configure(EntityTypeBuilder<RegisteredModel> builder)
         {
+            builder.Property(X => X.RegisteredDate).IsRequired();
+            builder.Property(X => X.RegisteredBy).IsRequired();
+
             builder
                 .HasOne(x => x.Run)
                 .WithOne()

@@ -18,7 +18,7 @@ namespace MLOps.NET.IntegrationTests
             //Assert
             var deploymentTargets = sut.Deployment.GetDeploymentTargets();
             deploymentTargets.First().Name.Should().Be("Production");
-            deploymentTargets.First().CreatedDate.Date.Should().Be(DateTime.Now.Date);
+            deploymentTargets.First().CreatedDate.Date.Should().Be(DateTime.UtcNow.Date);
         }
 
         [TestMethod]
@@ -45,7 +45,7 @@ namespace MLOps.NET.IntegrationTests
             deployment.RegisteredModel.Should().NotBeNull();
             deployment.RegisteredModelId.Should().Be(registeredModel.RegisteredModelId);
             deployment.DeployedBy.Should().Be("By me");
-            deployment.DeploymentDate.Date.Should().Be(DateTime.Now.Date);
+            deployment.DeploymentDate.Date.Should().Be(DateTime.UtcNow.Date);
             deployment.Experiment.Should().NotBeNull();
         }
 

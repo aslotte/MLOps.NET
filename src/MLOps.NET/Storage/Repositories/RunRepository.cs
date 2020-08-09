@@ -43,9 +43,7 @@ namespace MLOps.NET.Storage
         public Run GetRun(Guid runId)
         {
             using var db = this.contextFactory.CreateDbContext();
-            var run = db.Runs
-                .Include(x => x.RunArtifacts)
-                .FirstOrDefault(x => x.RunId == runId);
+            var run = db.Runs.FirstOrDefault(x => x.RunId == runId);
 
             PopulateRun(db, run);
             return run;
@@ -177,6 +175,7 @@ namespace MLOps.NET.Storage
             run.HyperParameters = db.HyperParameters.Where(x => x.RunId == run.RunId).ToList();
             run.Metrics = db.Metrics.Where(x => x.RunId == run.RunId).ToList();
             run.ConfusionMatrix = db.ConfusionMatrices.FirstOrDefault(x => x.RunId == run.RunId);
+            run.RunArtifacts = db.RunArtifacts.Where(x => x.RunId == run.RunId).ToList();
         }
     }
 }
