@@ -10,6 +10,15 @@ namespace MLOps.NET.SQLite
     /// </summary>
     public sealed class MLOpsSQLiteDbContext : MLOpsDbContext
     {
+        /// <summary>
+        /// Ctor for migrations
+        /// </summary>
+        public MLOpsSQLiteDbContext() : base(new DbContextOptionsBuilder()
+                .UseSqlite("Data Source=local.db")
+                .Options)
+        {
+        }
+
         ///<inheritdoc cref="IMLOpsDbContext"/>
         public MLOpsSQLiteDbContext(DbContextOptions options) : base(options)
         {

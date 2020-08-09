@@ -10,6 +10,17 @@ namespace MLOps.NET.SQLServer
     /// </summary>
     public sealed class MLOpsSQLDbContext : MLOpsDbContext
     {
+        private static readonly string MigrationConnectionString = @"Server=localhost,1433;Database=MLOpsNET_IntegrationTests;User Id=sa;Password=MLOps4TheWin!;";
+
+        /// <summary>
+        /// Ctor for migrations
+        /// </summary>
+        public MLOpsSQLDbContext() : base(new DbContextOptionsBuilder()
+                .UseSqlServer(MigrationConnectionString)
+                .Options)
+        {
+        }
+
         ///<inheritdoc cref="IMLOpsDbContext"/>
         public MLOpsSQLDbContext(DbContextOptions options) : base(options)
         {

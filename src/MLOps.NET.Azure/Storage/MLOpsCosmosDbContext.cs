@@ -22,5 +22,11 @@ namespace MLOps.NET.Azure
 
             base.OnModelCreating(modelBuilder);
         }
+
+        ///<inheritdoc cref="IMLOpsDbContext"/>
+        public override void EnsureCreated()
+        {
+            Database.EnsureCreated();
+        }
     }
 }

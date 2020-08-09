@@ -15,7 +15,7 @@ namespace MLOps.NET.Storage.Database
         }
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected new virtual void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
@@ -30,9 +30,9 @@ namespace MLOps.NET.Storage.Database
         /// Ensured that the database is created
         /// </summary>
         /// <returns></returns>
-        public void EnsureCreated()
+        public virtual void EnsureCreated()
         {
-            Database.EnsureCreated();
+            Database.Migrate();
         }
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
