@@ -81,7 +81,7 @@ namespace MLOps.NET.Azure.IntegrationTests
         }
 
         [TestMethod]
-        public async Task DeployModelAsync_GivenADeployedModelAlreadyExist_ShouldOverwriteExistingModel()
+        public async Task DeployModelAsync_GivenADeployedModelAlreadyExists_ShouldOverwriteExistingModel()
         {
             //Arrange
             var client = new HttpClient();
