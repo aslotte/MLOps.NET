@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MLOps.NET.Storage.Database;
-using MLOps.NET.Storage.EntityConfiguration;
 
 namespace MLOps.NET.SQLite
 {
@@ -20,7 +19,7 @@ namespace MLOps.NET.SQLite
                 .UseSqlite("Data Source=local.db")
                 .Options;
 
-            var contextFactory = new DbContextFactory(options, RelationalEntityConfigurator.OnModelCreating);
+            var contextFactory = new DbContextFactory(() => new MLOpsSQLiteDbContext(options));
 
             contextFactory.CreateDbContext().EnsureCreated();
 

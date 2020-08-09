@@ -29,7 +29,7 @@ namespace MLOps.NET.SQLServer.IntegrationTests
                 .UseSqlServer(configuration[ConfigurationKeys.ConnectionString])
                 .Options;
 
-            return new DbContextFactory(options, RelationalEntityConfigurator.OnModelCreating).CreateDbContext();
+            return new DbContextFactory(() => new MLOpsSQLDbContext(options)).CreateDbContext();
         }
     }
 }

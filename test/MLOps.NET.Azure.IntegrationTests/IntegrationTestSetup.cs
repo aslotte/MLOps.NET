@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MLOps.NET.Azure.IntegrationTests.Constants;
-using MLOps.NET.Azure.Storage;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Database;
 using MLOps.NET.Storage.Interfaces;
@@ -31,7 +30,7 @@ namespace MLOps.NET.Azure.IntegrationTests
                 configuration[ConfigurationKeys.CosmosAccountKey], "MLOpsNET")
                 .Options;
 
-            var contextFactory = new DbContextFactory(options, CosmosEntityConfigurator.OnModelCreating);
+            var contextFactory = new DbContextFactory(() => new MLOpsCosmosDbContext(options));
             var context = contextFactory.CreateDbContext();
 
             return contextFactory.CreateDbContext();

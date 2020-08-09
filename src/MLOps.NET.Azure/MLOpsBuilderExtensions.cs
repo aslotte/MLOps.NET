@@ -1,7 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.EntityFrameworkCore;
-using MLOps.NET.Azure.Storage;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Database;
 using MLOps.NET.Storage.Deployments;
@@ -26,7 +25,7 @@ namespace MLOps.NET.Azure
                 .UseCosmos(accountEndpoint, accountKey, databaseName: "MLOpsNET")
                 .Options;
 
-            var contextFactory = new DbContextFactory(options, CosmosEntityConfigurator.OnModelCreating);
+            var contextFactory = new DbContextFactory(() => new MLOpsCosmosDbContext(options));
 
             contextFactory.CreateDbContext().EnsureCreated();
 

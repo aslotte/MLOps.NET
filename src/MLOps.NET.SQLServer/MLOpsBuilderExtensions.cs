@@ -21,7 +21,7 @@ namespace MLOps.NET.SQLServer
                 .UseSqlServer(connectionString)
                 .Options;
 
-            var contextFactory = new DbContextFactory(options, RelationalEntityConfigurator.OnModelCreating);
+            var contextFactory = new DbContextFactory(() => new MLOpsSQLDbContext(options));
 
             contextFactory.CreateDbContext().EnsureCreated();
 

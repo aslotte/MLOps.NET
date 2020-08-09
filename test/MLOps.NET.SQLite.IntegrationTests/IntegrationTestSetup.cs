@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Database;
-using MLOps.NET.Storage.EntityConfiguration;
 using MLOps.NET.Storage.Interfaces;
 using Moq;
 
@@ -23,7 +22,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
                 .UseSqlite("Data Source=local.db")
                 .Options;
 
-            return new DbContextFactory(options, RelationalEntityConfigurator.OnModelCreating).CreateDbContext();
+            return new DbContextFactory(() => new MLOpsSQLiteDbContext(options)).CreateDbContext();
         }
     }
 }

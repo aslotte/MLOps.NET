@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Interfaces;
-using System;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -10,22 +9,14 @@ namespace MLOps.NET.Storage.Database
     ///<inheritdoc cref="IMLOpsDbContext"/>
     public class MLOpsDbContext : DbContext, IMLOpsDbContext
     {
-        private readonly Action<ModelBuilder> OnModelCreatingAction;
-
         ///<inheritdoc cref="IMLOpsDbContext"/>
-        public MLOpsDbContext(DbContextOptions options, Action<ModelBuilder> configureEntityMap) : base(options)
+        public MLOpsDbContext(DbContextOptions options) : base(options)
         {
-            this.OnModelCreatingAction = configureEntityMap;
         }
 
-        /// <summary>
-        /// Configures the entity maps
-        /// </summary>
-        /// <param name="modelBuilder"></param>
+        ///<inheritdoc cref="IMLOpsDbContext"/>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            this.OnModelCreatingAction(modelBuilder);
-
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
 
