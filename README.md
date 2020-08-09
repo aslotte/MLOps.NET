@@ -36,26 +36,26 @@ To create an `MLOpsContext`, use the `MLOpsBuilder` with your desired configurat
 
 #### Azure with CosmosDb
 ```
-            IMLOpsContext mlOpsContext = new MLOpsBuilder()
-                .UseCosmosDb("accountEndPoint", "accountKey")
-                .UseAzureBlobModelRepository("connectionString")
-                .Build();
+  IMLOpsContext mlOpsContext = new MLOpsBuilder()
+    .UseCosmosDb("accountEndPoint", "accountKey")
+    .UseAzureBlobModelRepository("connectionString")
+    .Build();
 ```
 
 #### SQL Server with Local model repository
 ```
-            IMLOpsContext mlOpsContext = new MLOpsBuilder()
-                .UseSQLServer("connectionString")
-                .UseLocalFileModelRepository()
-                .Build();
+  IMLOpsContext mlOpsContext = new MLOpsBuilder()
+    .UseSQLServer("connectionString")
+    .UseLocalFileModelRepository()
+    .Build();
 ```
 
 #### AWS with SQLite
 ```
-            IMLOpsContext mlOpsContext = new MLOpsBuilder()
-                .UseSQLite()
-                .UseAWSS3Repository("awsAccessKey", "awsSecretAccessKey", "regionName", "bucketName")
-                .Build();
+  IMLOpsContext mlOpsContext = new MLOpsBuilder()
+    .UseSQLite()
+    .UseAWSS3Repository("awsAccessKey", "awsSecretAccessKey", "regionName", "bucketName")
+    .Build();
 ```
 
 #### Experiment tracking
@@ -63,14 +63,14 @@ To manage the lifecycle of a model, we'll need to track things such as the model
 
 To create an `Experiment` and a `Run`, access the `Lifecycle` catalog on the `MLOpsContext`
 ```
-            var experimentId = await mlOpsContext.LifeCycle.CreateExperimentAsync("FraudClassifier");
+  var experimentId = await mlOpsContext.LifeCycle.CreateExperimentAsync("FraudClassifier");
 
-            var runId = await mlOpsContext.LifeCycle.CreateRunAsync(experimentId, "{optional Git SHA}");
+  var runId = await mlOpsContext.LifeCycle.CreateRunAsync(experimentId, "{optional Git SHA}");
 ```
 
 For simplicity, you can also create an experiment (if it does not yet exist) and a run in one line
 ```
-            var runId = await mlOpsContext.LifeCycle.CreateRunAsync("FraudClassifier", "{optional Git SHA}");
+  var runId = await mlOpsContext.LifeCycle.CreateRunAsync("FraudClassifier", "{optional Git SHA}");
 ```
 
 With an `Experiment` and a `Run` created, we can track the model training process.
@@ -78,23 +78,23 @@ With an `Experiment` and a `Run` created, we can track the model training proces
 ##### Hyperparameters
 You can access the operations necessary to track hyperparameters on the `Training` catalog. You can either track individual hyperparameters, such as number of epocs as follows:
 ```
-            await mlOpsContext.Training.LogHyperParameterAsync(runId, "NumberOfEpochs", epocs);
+  await mlOpsContext.Training.LogHyperParameterAsync(runId, "NumberOfEpochs", epocs);
 ```
 
 Alternatively, you can pass in the entire appended trainer and MLOps.NET will automatically log all of the trainer's hyperparameters for you
 ```
-           await mlOpsContext.Training.LogHyperParameterAsync<SdcaLogisticRegressionBinaryTrainer>(runId, trainer);
+  await mlOpsContext.Training.LogHyperParameterAsync<SdcaLogisticRegressionBinaryTrainer>(runId, trainer);
 ```
 
 ##### Evaluation metrics
 You can access the operations necessary to track evaluation metrics on the `Evaluation` catalog. Similarly to tracking hyperparameters, you can either log individual evaluation metrics as follows:
 ```
-          await mlOpsContext.Evaluation.LogMetricAsync(runId, "F1Score", 0.99d);
+  await mlOpsContext.Evaluation.LogMetricAsync(runId, "F1Score", 0.99d);
 ```
 
 Alternatively, you can pass the entire `ML.NET` evaluation metric result and `MLOps.NET` will log all related evaluation metrics for you automatically.
 ```
-          await mlOpsContext.Evaluation.LogMetricsAsync<CalibratedBinaryClassificationMetrics>(runId, metric);
+  await mlOpsContext.Evaluation.LogMetricsAsync<CalibratedBinaryClassificationMetrics>(runId, metric);
 ```
 
 
@@ -103,7 +103,7 @@ There are a number of useful methods on the `Data` catalog to track the data use
 
 To log the data schema and the data hash (to be used to compare data for two different models), you can use the `LogDataAsync` method
 ```
-          await mlOpsContext.Data.LogDataAsync(runId, dataView);
+  await mlOpsContext.Data.LogDataAsync(runId, dataView);
 ```
 
 Support to log the data distribution is being added.
@@ -113,13 +113,13 @@ The end product of any model development effort is the actual model itself. `MLO
 
 To upload a model from a run
 ```
-            await mlOpsContext.Model.UploadAsync(runId, "pathToModel");
+  await mlOpsContext.Model.UploadAsync(runId, "pathToModel");
 ```
 
 To register a model for deployment
 ```
-            var runArtifactId = mlOpsContext.Model.GetRunArtifacts(runId).First();
-            await mlOpsContext.Model.RegisterModel(experimentId, runArtifactId, registeredBy: "John Doe");
+  var runArtifactId = mlOpsContext.Model.GetRunArtifacts(runId).First();
+  await mlOpsContext.Model.RegisterModel(experimentId, runArtifactId, registeredBy: "John Doe");
 ```
 
 #### Model deployment
