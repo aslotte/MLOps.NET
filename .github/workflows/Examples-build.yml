@@ -3,8 +3,14 @@ name: Examples-build (MLOps.NET.Examples)
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+    - 'README.md'
+    - 'images/**'        
   pull_request:
     branches: [ master ]
+    paths-ignore:
+    - 'README.md'
+    - 'images/**'        
 
 jobs:
   Examples-build:
