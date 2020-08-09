@@ -68,6 +68,7 @@ namespace MLOps.NET.Storage.Interfaces
 
         /// <summary>
         /// Creates the database if it does not exist
+        /// Applies any pending migrations for a relational database
         /// </summary>
         /// <returns></returns>
         void EnsureCreated();

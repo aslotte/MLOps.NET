@@ -10,23 +10,22 @@ namespace MLOps.NET.Storage.Database
     ///<inheritdoc cref="IMLOpsDbContext"/>
     public class MLOpsDbContext : DbContext, IMLOpsDbContext
     {
-        private readonly Action<ModelBuilder> OnModelCreatingAction;
+        private readonly Action<ModelBuilder> onModelCreating;
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
-        public MLOpsDbContext(DbContextOptions options, Action<ModelBuilder> configureEntityMap) : base(options)
+        public MLOpsDbContext(DbContextOptions options, Action<ModelBuilder> onModelCreating) : base(options)
         {
-            this.OnModelCreatingAction = configureEntityMap;
+            this.onModelCreating = onModelCreating;
         }
 
-        /// <summary>
-        /// Configures the entity maps
-        /// </summary>
-        /// <param name="modelBuilder"></param>
+        ///<inheritdoc cref="IMLOpsDbContext"/>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            this.OnModelCreatingAction(modelBuilder);
+            this.onModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(typeof(MLOpsDbContext)));
+
+            base.OnModelCreating(modelBuilder);
         }
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
@@ -35,13 +34,10 @@ namespace MLOps.NET.Storage.Database
             await base.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Ensured that the database is created
-        /// </summary>
-        /// <returns></returns>
-        public void EnsureCreated()
+        ///<inheritdoc cref="IMLOpsDbContext"/>
+        public virtual void EnsureCreated()
         {
-            Database.EnsureCreated();
+            Database.Migrate();
         }
 
         ///<inheritdoc cref="IMLOpsDbContext"/>

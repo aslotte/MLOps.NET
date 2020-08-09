@@ -19,17 +19,15 @@ namespace MLOps.NET.Storage.Database
     ///<inheritdoc cref="IDbContextFactory"/>
     public sealed class DbContextFactory : IDbContextFactory
     {
-        private readonly DbContextOptions options;
-        private readonly Action<ModelBuilder> OnModelCreatingAction;
+        private readonly Func<IMLOpsDbContext> createDbContext;
 
         ///<inheritdoc cref="IDbContextFactory"/>
-        public DbContextFactory(DbContextOptions options, Action<ModelBuilder> OnModelCreatingAction)
+        public DbContextFactory(Func<IMLOpsDbContext> createDbContext)
         {
-            this.options = options;
-            this.OnModelCreatingAction = OnModelCreatingAction;
+            this.createDbContext = createDbContext;
         }
 
         ///<inheritdoc cref="IDbContextFactory"/>
-        public IMLOpsDbContext CreateDbContext() => new MLOpsDbContext(this.options, this.OnModelCreatingAction);
+        public IMLOpsDbContext CreateDbContext() => createDbContext();
     }
 }

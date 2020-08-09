@@ -28,7 +28,7 @@ namespace MLOps.NET.Tests
                 .UseInMemoryDatabase(databaseName: "MLOpsNET")
                 .Options;
 
-            this.contextFactory = new DbContextFactory(options, RelationalEntityConfigurator.OnModelCreating);
+            this.contextFactory = new DbContextFactory(() => new MLOpsDbContext(options, RelationalEntityConfigurator.OnModelCreating));
 
             this.clockMock = new Mock<IClock>();
 
