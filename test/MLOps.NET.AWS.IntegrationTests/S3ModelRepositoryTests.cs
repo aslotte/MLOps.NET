@@ -113,40 +113,37 @@ namespace MLOps.NET.AWS.IntegrationTests
             //Arrange
             var client = new HttpClient();
 
+            var deploymentTarget = new DeploymentTarget("Test");
+
+            var firstModelUri = await DeployModelAsync(deploymentTarget);
+
+            var model1 = await client.GetAsync(firstModelUri);
+            var firstModelUpdateTime = model1.Content.Headers.LastModified;
+
+            Thread.Sleep(60000);
+
+            //Act
+            var uri = await DeployModelAsync(deploymentTarget);
+
+            //Assert
+            var model2 = await client.GetAsync(uri);
+            var secondModelUpdateTime = model2.Content.Headers.LastModified;
+
+            firstModelUpdateTime.Value.Ticks.Should().BeLessThan(secondModelUpdateTime.Value.Ticks);
+        }
+
+        private async Task<string> DeployModelAsync(DeploymentTarget deploymentTarget)
+        {
             var runId = Guid.NewGuid();
-            var runId1 = Guid.NewGuid();
 
             await sut.UploadModelAsync(runId, @"Data/model.txt");
-            await sut.UploadModelAsync(runId1, @"Data/model.txt");
 
             var registeredModel = new RegisteredModel
             {
                 RunId = runId,
                 Experiment = new Experiment("ExperimentName")
             };
-
-            var registeredModel1 = new RegisteredModel
-            {
-                RunId = runId1,
-                Experiment = new Experiment("ExperimentName")
-            };
-
-            var deploymentTarget = new DeploymentTarget("Test");
-
-            var firstModelUri = await sut.DeployModelAsync(deploymentTarget, registeredModel1);
-            var firstModelResponse = await client.GetAsync(firstModelUri);
-
-            var firstModelUpdateTime = firstModelResponse.Content.Headers.LastModified;
-
-            //Act
-            Thread.Sleep(60000);
-            var uri = await sut.DeployModelAsync(deploymentTarget, registeredModel);
-
-            //Assert
-            var response = await client.GetAsync(uri);
-
-            var secondModelUpdateTime = response.Content.Headers.LastModified;
-            firstModelUpdateTime.Value.Ticks.Should().BeLessThan(secondModelUpdateTime.Value.Ticks);
+            return await sut.DeployModelAsync(deploymentTarget, registeredModel);
         }
     }
 }
