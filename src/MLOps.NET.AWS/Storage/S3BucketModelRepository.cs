@@ -16,9 +16,9 @@ namespace MLOps.NET.Storage
         private readonly string modelRepositoryBucket = "model-repository";
         private readonly string deploymentRepositoryBucket = "deployment";
 
-        public S3BucketModelRepository(IAmazonS3 amazonS3Client, IModelPathGenerator modelPathGenerator)
+        public S3BucketModelRepository(IAmazonS3 s3Client, IModelPathGenerator modelPathGenerator)
         {
-            this.s3Client = amazonS3Client;
+            this.s3Client = s3Client;
             this.modelPathGenerator = modelPathGenerator;
         }
 
@@ -89,9 +89,9 @@ namespace MLOps.NET.Storage
             return this.s3Client.GetPreSignedURL(request);
         }
 
-        private async Task CreateBucketAsync(IAmazonS3 amazonS3Client, string bucketName, bool isPublic = false)
+        private async Task CreateBucketAsync(IAmazonS3 s3Client, string bucketName, bool isPublic = false)
         {
-            var bucketExists = await DoesS3BucketExists(amazonS3Client, bucketName);
+            var bucketExists = await DoesS3BucketExists(s3Client, bucketName);
             if (!bucketExists)
             {
                 var request = new PutBucketRequest
@@ -100,13 +100,13 @@ namespace MLOps.NET.Storage
                     CannedACL = isPublic ? S3CannedACL.PublicRead : S3CannedACL.Private
                 };
 
-                await amazonS3Client.PutBucketAsync(request);
+                await s3Client.PutBucketAsync(request);
             }
         }
 
-        private async Task<bool> DoesS3BucketExists(IAmazonS3 amazonS3Client, string bucketName)
+        private async Task<bool> DoesS3BucketExists(IAmazonS3 s3Client, string bucketName)
         {
-            var buckets = await amazonS3Client.ListBucketsAsync();
+            var buckets = await s3Client.ListBucketsAsync();
 
             return buckets.Buckets.Any(b => b.BucketName == bucketName);
         }
