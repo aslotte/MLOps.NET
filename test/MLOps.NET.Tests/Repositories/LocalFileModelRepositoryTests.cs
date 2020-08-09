@@ -1,6 +1,8 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage;
+using MLOps.NET.Storage.Deployments;
 using System;
 using System.IO;
 using System.IO.Abstractions.TestingHelpers;
@@ -13,14 +15,22 @@ namespace MLOps.NET.Tests
     [TestClass]
     public class LocalFileModelRepositoryTests
     {
+        private MockFileSystem mockFileSystem;
+        private LocalFileModelRepository sut;
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            this.mockFileSystem = new MockFileSystem();
+            sut = new LocalFileModelRepository(mockFileSystem, new ModelPathGenerator());
+        }
+
         [TestMethod]
         public async Task UploadModel_ShouldCreateFolderIfNotExists()
         {
             // Arrange
-            var mockFileSystem = new MockFileSystem();
-            var folderPath = mockFileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mlops");
+            var folderPath = mockFileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mlops", "model-repository");
             mockFileSystem.AddFile("model.zip", new MockFileData("test"));
-            var sut = new LocalFileModelRepository(mockFileSystem);
 
             // Act
             await sut.UploadModelAsync(new Guid(), "model.zip");
@@ -33,11 +43,10 @@ namespace MLOps.NET.Tests
         public async Task UploadModel_ShouldSaveFile()
         {
             // Arrange
-            var mockFileSystem = new MockFileSystem();
             var folderPath = mockFileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mlops");
+
             mockFileSystem.AddFile("model.zip", new MockFileData("test"));
-            var sut = new LocalFileModelRepository(mockFileSystem);
-            var expectedFilePath = mockFileSystem.Path.Combine(folderPath, $"{new Guid()}.zip");
+            var expectedFilePath = mockFileSystem.Path.Combine(folderPath, "model-repository", $"{new Guid()}.zip");
 
             // Act
             await sut.UploadModelAsync(new Guid(), "model.zip");
@@ -51,10 +60,8 @@ namespace MLOps.NET.Tests
         {
             // Arrange
             var runId = Guid.NewGuid();
-            var mockFileSystem = new MockFileSystem();
-            var filePath = mockFileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mlops", $"{runId}.zip");
+            var filePath = mockFileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mlops", "model-repository", $"{runId}.zip");
             mockFileSystem.AddFile(filePath, new MockFileData("test"));
-            var sut = new LocalFileModelRepository(mockFileSystem);
             using var memStream = new MemoryStream();
 
             // Act
@@ -68,9 +75,7 @@ namespace MLOps.NET.Tests
         [TestMethod]
         public async Task DownloadModel_ThrowsIfFileDoesNotExist()
         {
-            var mockFileSystem = new MockFileSystem();
-            var folderPath = mockFileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mlops");
-            var sut = new LocalFileModelRepository(mockFileSystem);
+            var folderPath = mockFileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mlops", "model-repository");
             using var memStream = new MemoryStream();
 
             // Act
@@ -78,6 +83,46 @@ namespace MLOps.NET.Tests
 
             // Assert
             await downloadAction.Should().ThrowExactlyAsync<FileNotFoundException>("Because provided file does not exist on disk");
+        }
+
+        [TestMethod]
+        public async Task DeployModel_ShouldReturnCorrectDeploymentPath()
+        {
+            var folderPath = mockFileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mlops");
+
+            var registeredModel = new RegisteredModel
+            {
+                RunId = Guid.NewGuid(),
+                Experiment = new Experiment("ExperimentName")
+            };
+
+            var deploymentTarget = new DeploymentTarget("Test");
+
+            var expectedPath = Path.Combine(folderPath, "deployment", "ExperimentName", "Test", $"{"ExperimentName"}.zip");
+            var sourcePath = Path.Combine(folderPath, "model-repository", $"{registeredModel.RunId}.zip");
+            mockFileSystem.AddFile(sourcePath, new MockFileData("test"));
+
+            // Act
+            var deployedPath = await sut.DeployModelAsync(deploymentTarget, registeredModel);
+
+            // Assert
+            deployedPath.Should().Be(expectedPath);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException), "The model to be deployed does not exist")]
+        public async Task DeployModel_NoSourceFileExists_ShouldThrowException()
+        {
+            var registeredModel = new RegisteredModel
+            {
+                RunId = Guid.NewGuid(),
+                Experiment = new Experiment("ExperimentName")
+            };
+
+            var deploymentTarget = new DeploymentTarget("Test");
+
+            // Act
+            await sut.DeployModelAsync(deploymentTarget, registeredModel);
         }
     }
 }

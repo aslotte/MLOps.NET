@@ -1,6 +1,7 @@
 ﻿using Amazon;
 using Amazon.S3;
 using MLOps.NET.Storage;
+using MLOps.NET.Storage.Deployments;
 
 namespace MLOps.NET.AWS
 {
@@ -16,13 +17,13 @@ namespace MLOps.NET.AWS
         /// <param name="awsAccessKeyId"></param>
         /// <param name="awsSecretAccessKey"></param>
         /// <param name="regionName"></param>
-        /// <param name="bucketName"></param>
         /// <returns></returns>
-        public static MLOpsBuilder UseAWSS3Repository(this MLOpsBuilder builder, string awsAccessKeyId, string awsSecretAccessKey, string regionName, string bucketName)
+        public static MLOpsBuilder UseAWSS3Repository(this MLOpsBuilder builder, string awsAccessKeyId, string awsSecretAccessKey, string regionName)
         {
             var region = RegionEndpoint.GetBySystemName(regionName);
             var  amazonS3Client = new AmazonS3Client(awsAccessKeyId, awsSecretAccessKey, region);
-            builder.UseModelRepository(new S3BucketModelRepository(amazonS3Client, bucketName));
+
+            builder.UseModelRepository(new S3BucketModelRepository(amazonS3Client, new ModelPathGenerator()));
 
             return builder;
         }

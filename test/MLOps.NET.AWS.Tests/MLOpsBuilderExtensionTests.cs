@@ -17,7 +17,7 @@ namespace MLOps.NET.AWS.Tests
         {
             //Act
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
-                .UseAWSS3Repository("access-key-id","secret-access-key","region-name","bucket-name")
+                .UseAWSS3Repository("access-key-id","secret-access-key","region-name")
                 .UseMetaDataRepositories(new Mock<IDbContextFactory>().Object)
                 .Build();
 

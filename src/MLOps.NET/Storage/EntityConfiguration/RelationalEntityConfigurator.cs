@@ -25,6 +25,7 @@ namespace MLOps.NET.Storage.EntityConfiguration
             modelBuilder.Entity<RunArtifact>().ToTable(nameof(RunArtifact));
             modelBuilder.Entity<RegisteredModel>().ToTable(nameof(RegisteredModel));
             modelBuilder.Entity<DeploymentTarget>().ToTable(nameof(DeploymentTarget));
+            modelBuilder.Entity<Deployment>().ToTable(nameof(Deployment));
         }
     }
 }

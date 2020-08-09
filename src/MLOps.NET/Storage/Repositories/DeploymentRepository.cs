@@ -49,5 +49,39 @@ namespace MLOps.NET.Storage.Repositories
 
             return db.DeploymentTargets.ToList();
         }
+
+        ///<inheritdoc cref="IDeploymentRepository"/>
+        public async Task CreateDeploymentAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy)
+        {
+            using var db = this.contextFactory.CreateDbContext();
+
+            var deployment = new Deployment()
+            {
+                DeploymentDate = this.clock.UtcNow,
+                DeployedBy = deployedBy,
+                DeploymentTargetId = deploymentTarget.DeploymentTargetId,
+                RegisteredModelId = registeredModel.RegisteredModelId,
+                ExperimentId = registeredModel.ExperimentId
+            };
+
+            db.Deployments.Add(deployment);
+            await db.SaveChangesAsync();
+        }
+
+        ///<inheritdoc cref="IDeploymentRepository"/>
+        public List<Deployment> GetDeployments(Guid experimentId)
+        {
+            using var db = this.contextFactory.CreateDbContext();
+
+            var deployments =  db.Deployments.Where(x => x.ExperimentId == experimentId).ToList();
+
+            deployments.ForEach(deployment =>
+            {
+                deployment.RegisteredModel = db.RegisteredModels.First(x => x.RegisteredModelId == deployment.RegisteredModelId);
+                deployment.Experiment = db.Experiments.First(x => x.ExperimentId == deployment.ExperimentId);
+                deployment.DeploymentTarget = db.DeploymentTargets.First(x => x.DeploymentTargetId == deployment.DeploymentTargetId);
+            });
+            return deployments;
+        }
     }
 }

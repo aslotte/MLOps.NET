@@ -1,7 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using Microsoft.EntityFrameworkCore;
 using MLOps.NET.Azure.Storage;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Database;
+using MLOps.NET.Storage.Deployments;
 
 namespace MLOps.NET.Azure
 {
@@ -40,7 +43,13 @@ namespace MLOps.NET.Azure
         /// <returns>Provided MLOpsBuilder for chaining</returns>
         public static MLOpsBuilder UseAzureBlobModelRepository(this MLOpsBuilder builder, string connectionString)
         {
-            builder.UseModelRepository(new StorageAccountModelRepository(connectionString));
+            var modelRepositoryClient = new BlobContainerClient(connectionString, "model-repository");
+            var deploymentClient = new BlobContainerClient(connectionString, "deployment");
+
+            modelRepositoryClient.CreateIfNotExists(PublicAccessType.None);
+            deploymentClient.CreateIfNotExists(PublicAccessType.Blob);
+
+            builder.UseModelRepository(new StorageAccountModelRepository(modelRepositoryClient, deploymentClient, new ModelPathGenerator()));
 
             return builder;
         }

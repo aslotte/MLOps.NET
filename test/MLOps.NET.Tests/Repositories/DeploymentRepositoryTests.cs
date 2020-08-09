@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Database;
 using MLOps.NET.Storage.EntityConfiguration;
 using MLOps.NET.Storage.Interfaces;
@@ -50,6 +51,23 @@ namespace MLOps.NET.Tests
             var deploymentTarget = db.DeploymentTargets.First();
 
             deploymentTarget.CreatedDate.Should().Be(now);
+        }
+
+        [TestMethod]
+        public async Task CreateDeployment_ShouldSetDeployedDate()
+        {
+            //Arrange
+            var now = DateTime.Now;
+            this.clockMock.Setup(x => x.UtcNow).Returns(now);
+
+            //Act
+            await this.sut.CreateDeploymentAsync(new DeploymentTarget("Prod"), new RegisteredModel(), "By me");
+
+            //Assert
+            using var db = this.contextFactory.CreateDbContext();
+            var deployment = db.Deployments.First();
+
+            deployment.DeploymentDate.Should().Be(now);
         }
     }
 }

@@ -18,6 +18,7 @@ namespace MLOps.NET.IntegrationTests
             context.RunArtifacts.RemoveRange(context.RunArtifacts);
             context.RegisteredModels.RemoveRange(context.RegisteredModels);
             context.DeploymentTargets.RemoveRange(context.DeploymentTargets);
+            context.Deployments.RemoveRange(context.Deployments);
 
             await context.SaveChangesAsync();
         }

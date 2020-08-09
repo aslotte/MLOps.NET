@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MLOps.NET.Entities.Impl;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -24,5 +25,20 @@ namespace MLOps.NET.Storage
         /// <param name="destination">Destination stream to write downloaded model to</param>
         /// <returns>Stream with model contents</returns>
         Task DownloadModelAsync(Guid runId, Stream destination);
+
+        /// <summary>
+        /// Deploys a model from the model repository to the deployment target
+        /// </summary>
+        /// <param name="deploymentTarget"></param> 
+        /// <param name="registeredModel"></param>
+        /// <returns>The path to the deployed model</returns>
+        Task<string> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel);
+
+        /// <summary>
+        /// Gets the URI of a deployed model
+        /// </summary>
+        /// <param name="deployment"></param>
+        /// <returns></returns>
+        string GetDeploymentUri(Deployment deployment);
     }
 }
