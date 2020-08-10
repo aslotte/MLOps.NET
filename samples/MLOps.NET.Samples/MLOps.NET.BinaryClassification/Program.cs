@@ -1,10 +1,11 @@
 ﻿using Microsoft.ML;
-using Microsoft.ML.Trainers;
 using Microsoft.ML.Transforms;
 using MLOps.NET.BinaryClassification.Entities;
+using MLOps.NET.Extensions;
 using MLOps.NET.SQLite;
 using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace MLOps.NET.BinaryClassification
 {
@@ -17,10 +18,12 @@ namespace MLOps.NET.BinaryClassification
             // MLOps: Create experiment and run
             var mlOpsContext = new MLOpsBuilder()
                 .UseSQLite()
+                .UseLocalFileModelRepository()
                 .Build();
 
             Console.WriteLine("Creating an MLOps Run");
-            var runId = await mlOpsContext.LifeCycle.CreateRunAsync("Titanic Survival Predictor");
+            var experimentId = await mlOpsContext.LifeCycle.CreateExperimentAsync("Titanic Survival Predictor");
+            var runId = await mlOpsContext.LifeCycle.CreateRunAsync(experimentId);
             Console.WriteLine($"Run created with Id {runId}");
 
             var mlContext = new MLContext(seed: 1);
@@ -28,6 +31,9 @@ namespace MLOps.NET.BinaryClassification
             Console.WriteLine("Loading the data");
             var data = mlContext.Data.LoadFromTextFile<ModelInput>("Data/titanic.csv", hasHeader: true, separatorChar: ',');
             var testTrainTest = mlContext.Data.TrainTestSplit(data);
+
+            //MLOps: Log data - e.g. schema, columns, types and a hash to track changes
+            await mlOpsContext.Data.LogDataAsync(runId, data);
 
             var features = new[] { nameof(ModelInput.Pclass), nameof(ModelInput.Sex), nameof(ModelInput.Age), nameof(ModelInput.SibSp), nameof(ModelInput.Parch), nameof(ModelInput.Fare), nameof(ModelInput.Embarked) };
 
@@ -48,7 +54,8 @@ namespace MLOps.NET.BinaryClassification
 
             var trainedModel = trainingPipeline.Fit(testTrainTest.TrainSet);
 
-            await mlOpsContext.Training.LogHyperParametersAsync<SdcaLogisticRegressionBinaryTrainer>(runId, trainer);
+            //MLOps: Log hyperparameters for the selected trainer
+            await mlOpsContext.Training.LogHyperParametersAsync(runId, trainer);
             stopwatch.Stop();
 
             //MLOps: Training time
@@ -70,6 +77,23 @@ namespace MLOps.NET.BinaryClassification
             //MLOps: Upload artifact/model
             Console.WriteLine("Uploading artifact");
             await mlOpsContext.Model.UploadAsync(runId, "BinaryClassificationModel.zip");
+
+            //MLOps: Optional - Register model
+            Console.WriteLine("Registering model");
+            var runArtifact = mlOpsContext.Model.GetRunArtifacts(runId).First();
+            await mlOpsContext.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "John Doe");
+            var registeredModel = mlOpsContext.Model.GetLatestRegisteredModel(experimentId);
+
+            //MLOps: Optional - Create deployment target
+            Console.WriteLine("Creating a deployment target");
+            await mlOpsContext.Deployment.CreateDeploymentTargetAsync("Test");
+            var deploymentTarget = mlOpsContext.Deployment.GetDeploymentTargets().First(x => x.Name == "Test");
+
+            //MLOps: Optional - Deploy model
+            Console.WriteLine("Deploying the model");
+            var deploymentUri = await mlOpsContext.Deployment.DeployModelAsync(deploymentTarget, registeredModel, deployedBy: "John Doe");
+
+            Console.WriteLine($"Model deployed to: {deploymentUri}");
         }
     }
 }

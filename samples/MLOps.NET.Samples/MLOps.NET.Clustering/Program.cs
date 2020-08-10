@@ -1,8 +1,10 @@
 ﻿using Microsoft.ML;
 using Microsoft.ML.Trainers;
 using MLOps.NET.Clustering.Entities;
+using MLOps.NET.Extensions;
 using MLOps.NET.SQLite;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Clustering
@@ -14,10 +16,12 @@ namespace MLOps.NET.Clustering
             // MLOps: Create experiment and run
             var mlOpsContext = new MLOpsBuilder()
                 .UseSQLite()
+                .UseLocalFileModelRepository()
                 .Build();
 
             Console.WriteLine("Creating an MLOps Run");
-            var runId = await mlOpsContext.LifeCycle.CreateRunAsync("Iris Predictor");
+            var experimentId = await mlOpsContext.LifeCycle.CreateExperimentAsync("Iris Predictor");
+            var runId = await mlOpsContext.LifeCycle.CreateRunAsync(experimentId);
             Console.WriteLine($"Run created with Id {runId}");
 
             var mlContext = new MLContext(seed: 1);
@@ -58,6 +62,27 @@ namespace MLOps.NET.Clustering
             //MLOps: Upload artifact/model
             Console.WriteLine("Uploading artifact");
             await mlOpsContext.Model.UploadAsync(runId, "IrisModel.zip");
+
+            //MLOps: Upload artifact/model
+            Console.WriteLine("Uploading artifact");
+            await mlOpsContext.Model.UploadAsync(runId, "IrisModel.zip");
+
+            //MLOps: Optional - Register model
+            Console.WriteLine("Registering model");
+            var runArtifact = mlOpsContext.Model.GetRunArtifacts(runId).First();
+            await mlOpsContext.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "John Doe");
+            var registeredModel = mlOpsContext.Model.GetLatestRegisteredModel(experimentId);
+
+            //MLOps: Optional - Create deployment target
+            Console.WriteLine("Creating a deployment target");
+            await mlOpsContext.Deployment.CreateDeploymentTargetAsync("Test");
+            var deploymentTarget = mlOpsContext.Deployment.GetDeploymentTargets().First(x => x.Name == "Test");
+
+            //MLOps: Optional - Deploy model
+            Console.WriteLine("Deploying the model");
+            var deploymentUri = await mlOpsContext.Deployment.DeployModelAsync(deploymentTarget, registeredModel, deployedBy: "John Doe");
+
+            Console.WriteLine($"Model deployed to: {deploymentUri}");
         }
     }
 }

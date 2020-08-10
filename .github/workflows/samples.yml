@@ -1,4 +1,4 @@
-name: Examples-build (MLOps.NET.Examples)
+name: Samples (MLOps.NET.Samples)
 
 on:
   push:
@@ -13,7 +13,7 @@ on:
     - 'images/**'        
 
 jobs:
-  Examples-build:
+  Build-samples:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,4 +30,4 @@ jobs:
     - name: Install dependencies
       run: dotnet restore MLOps.NET.sln
     - name: Build
-      run: dotnet build ./examples/MLOps.NET.Examples/MLOps.NET.Examples.sln --configuration Release
+      run: dotnet build ./samples/MLOps.NET.Samples/MLOps.NET.Samples.sln --configuration Release
