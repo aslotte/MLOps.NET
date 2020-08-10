@@ -100,7 +100,11 @@ namespace MLOps.NET.Storage
         public List<RunArtifact> GetRunArtifacts(Guid runId)
         {
             using var db = this.contextFactory.CreateDbContext();
-            return db.RunArtifacts.Where(x => x.RunId == runId).ToList();
+            var runArtifacts = db.RunArtifacts.Where(x => x.RunId == runId).ToList();
+
+            runArtifacts.ForEach(artifact => PopulateRun(db, artifact.Run));
+
+            return runArtifacts;
         }
 
         ///<inheritdoc cref="IRunRepository"/>
@@ -166,6 +170,8 @@ namespace MLOps.NET.Storage
             registeredModel.RunArtifact = db.RunArtifacts.First(x => x.RunArtifactId == registeredModel.RunArtifactId);
             registeredModel.Run = db.Runs.First(x => x.RunId == registeredModel.RunId);
             registeredModel.Experiment = db.Experiments.First(x => x.ExperimentId == registeredModel.ExperimentId);
+
+            PopulateRun(db, registeredModel.Run);
         }
 
         private void PopulateRun(IMLOpsDbContext db, Run run)

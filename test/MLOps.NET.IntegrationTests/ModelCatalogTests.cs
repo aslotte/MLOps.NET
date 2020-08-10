@@ -26,7 +26,22 @@ namespace MLOps.NET.IntegrationTests
         }
 
         [TestMethod]
-        public async Task RegisterModel_ShouldRegisterModel()
+        public async Task GetRunArtifacts_ShouldReturnPopulatedRunArtifacts()
+        {
+            //Arrange
+            var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
+            var runId = await sut.LifeCycle.CreateRunAsync(experimentId);
+            await sut.Model.UploadAsync(runId, "");
+
+            //Act
+            var runArtifact = sut.Model.GetRunArtifacts(runId).First();
+
+            //Assert
+            runArtifact.Run.Should().NotBeNull();
+        }
+
+        [TestMethod]
+        public async Task RegisterModel_ShouldReturnPopulatedRegisterModel()
         {
             //Arrange
             var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
@@ -36,15 +51,53 @@ namespace MLOps.NET.IntegrationTests
             var runArtifact = sut.Model.GetRunArtifacts(runId).First();
 
             //Act
-            await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team");
+            var registeredModel = await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team");
 
             //Assert
-            var registeredModel = sut.Model.GetLatestRegisteredModel(experimentId);
-
             registeredModel.Version.Should().Be(1);
             registeredModel.RegisteredDate.Date.Should().Be(DateTime.UtcNow.Date);
             registeredModel.RegisteredBy.Should().Be("The MLOps.NET Team");
             registeredModel.RunArtifactId.Should().Be(runArtifact.RunArtifactId);
+            registeredModel.Run.Should().NotBeNull();
+            registeredModel.Experiment.Should().NotBeNull();
+        }
+
+        [TestMethod]
+        public async Task RegisterModel_GivenARunWithMetrics_ShouldReturnPopulatedRegisterModel()
+        {
+            //Arrange
+            var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
+            var runId = await sut.LifeCycle.CreateRunAsync(experimentId);
+
+            await sut.Evaluation.LogMetricAsync(runId, "Metric", 0.44d);
+            await sut.Model.UploadAsync(runId, "");
+
+            var runArtifact = sut.Model.GetRunArtifacts(runId).First();
+
+            //Act
+            var registeredModel = await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team");
+
+            //Assert
+            registeredModel.Run.Metrics.First().MetricName.Should().Be("Metric");
+        }
+
+        [TestMethod]
+        public async Task RegisterModel_GivenARunWithHyperParameters_ShouldReturnPopulatedRegisterModel()
+        {
+            //Arrange
+            var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
+            var runId = await sut.LifeCycle.CreateRunAsync(experimentId);
+
+            await sut.Training.LogHyperParameterAsync(runId, "Parameter", "Value");
+            await sut.Model.UploadAsync(runId, "");
+
+            var runArtifact = sut.Model.GetRunArtifacts(runId).First();
+
+            //Act
+            var registeredModel = await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team");
+
+            //Assert
+            registeredModel.Run.HyperParameters.First().ParameterName.Should().Be("Parameter");
         }
 
         [TestMethod]
