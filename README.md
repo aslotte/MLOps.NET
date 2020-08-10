@@ -147,7 +147,7 @@ Deploying a model for an experiment to a given deployment target, e.g. Test, wil
 We're actively working on supporting other deployment scenarios such as via Docker containers. 
 
 ## Contribute
-We welcome contributors! Before getting started, take a moment to read our [contributing guidelines](https://github.com/aslotte/MLOps.NET/blob/master/Contributing.md)
+We welcome contributors! Before getting started, take a moment to read our [contributing guidelines](https://github.com/aslotte/MLOps.NET/blob/master/Contributing.md) as well as the [docs for new developers](https://github.com/aslotte/MLOps.NET/wiki/Contributing-to-the-repository) on how to set up your local environment.
 
 ## Code of Conduct
 Please take a moment to read our [code of conduct](https://github.com/aslotte/MLOps.NET/blob/master/CODE_OF_CONDUCT.md) 
