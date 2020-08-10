@@ -14,10 +14,10 @@ MLOps.NET is a data science tool to track and manage the lifecycle of a [ML.NET]
   - Data quantity
   - Data hash
   - Data distribution (in progress)
-- Model repostiory (Azure, AWS, local fileshare)
+- Model repostiory (Azure Blob Storage, AWS S3, local)
   - Run artifacts
   - Versioned registered models
-- Model deployment
+- Model deployment (Azure Blob Storage, AWS S3, local)
   - URI based deployment
   - Containerized deployment (in roadmap)
   - Manual deployment (in roadmap)
