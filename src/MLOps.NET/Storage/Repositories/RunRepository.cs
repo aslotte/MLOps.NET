@@ -6,6 +6,7 @@ using MLOps.NET.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Storage
@@ -102,8 +103,11 @@ namespace MLOps.NET.Storage
             using var db = this.contextFactory.CreateDbContext();
             var runArtifacts = db.RunArtifacts.Where(x => x.RunId == runId).ToList();
 
-            runArtifacts.ForEach(artifact => PopulateRun(db, artifact.Run));
-
+            foreach (var runArtifact in runArtifacts)
+            {
+                runArtifact.Run = db.Runs.First(x => x.RunId == runArtifact.RunId);
+                PopulateRun(db, runArtifact.Run);
+            }
             return runArtifacts;
         }
 
