@@ -1,5 +1,6 @@
 ﻿using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Database;
+using MLOps.NET.Storage.EntityBuilders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +12,13 @@ namespace MLOps.NET.Storage
     public sealed class ExperimentRepository : IExperimentRepository
     {
         private readonly IDbContextFactory contextFactory;
+        private readonly IEntityBuilder<Experiment> experimentBuilder;
 
         ///<inheritdoc cref="IExperimentRepository"/>
-        public ExperimentRepository(IDbContextFactory contextFactory)
+        public ExperimentRepository(IDbContextFactory contextFactory, IEntityBuilder<Experiment> experimentBuilder)
         {
             this.contextFactory = contextFactory;
+            this.experimentBuilder = experimentBuilder;
         }
 
         ///<inheritdoc cref="IExperimentRepository"/>
@@ -40,15 +43,21 @@ namespace MLOps.NET.Storage
         {
             using var db = this.contextFactory.CreateDbContext();
 
-            return db.Experiments
+            var experiment = db.Experiments
             .Single(x => x.ExperimentName == experimentName);
+
+            return this.experimentBuilder.BuildEntity(db, experiment);
         }
 
         ///<inheritdoc cref="IExperimentRepository"/>
         public IEnumerable<Experiment> GetExperiments()
         {
             using var db = this.contextFactory.CreateDbContext();
-            return db.Experiments;
+
+            return db.Experiments
+                .ToList()
+                .Select(x => this.experimentBuilder.BuildEntity(db, x))
+                .ToList();
         }
     }
 }

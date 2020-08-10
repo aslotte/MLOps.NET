@@ -37,7 +37,7 @@ namespace MLOps.NET
         /// <returns>The current builder for chaining</returns>
         public MLOpsBuilder UseMetaDataRepositories(IDbContextFactory contextFactory)
         {
-            this.experimentRepository = new ExperimentRepository(contextFactory);
+            this.experimentRepository = new ExperimentRepository(contextFactory, new ExperimentBuilder());
             this.runRepository = new RunRepository(contextFactory, new Clock(), new RunBuilder(), new RegisteredModelBuilder(), new RunArtifactBuilder());
             this.dataRepository = new DataRepository(contextFactory);
             this.metricRepository = new MetricRepository(contextFactory);
