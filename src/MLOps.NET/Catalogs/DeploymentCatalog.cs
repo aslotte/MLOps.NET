@@ -30,9 +30,10 @@ namespace MLOps.NET.Catalogs
         /// Creates a deployment target
         /// </summary>
         /// <param name="deploymentTargetName"></param>
-        public async Task CreateDeploymentTargetAsync(string deploymentTargetName)
+        /// <returns>The created deployment target</returns>
+        public async Task<DeploymentTarget> CreateDeploymentTargetAsync(string deploymentTargetName)
         {
-            await this.deploymentRepository.CreateDeploymentTargetAsync(deploymentTargetName);
+            return await this.deploymentRepository.CreateDeploymentTargetAsync(deploymentTargetName);
         }
 
         /// <summary>

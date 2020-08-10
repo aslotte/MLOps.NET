@@ -14,7 +14,8 @@ namespace MLOps.NET.Storage.Interfaces
         /// Creates a deployment target
         /// </summary>
         /// <param name="deploymentTargetName"></param>
-        Task CreateDeploymentTargetAsync(string deploymentTargetName);
+        /// <returns>The created deployment target</returns>
+        Task<DeploymentTarget> CreateDeploymentTargetAsync(string deploymentTargetName);
 
         /// <summary>
         /// Gets all deployment targets

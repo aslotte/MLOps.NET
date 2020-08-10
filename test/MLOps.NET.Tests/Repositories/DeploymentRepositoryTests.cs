@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Database;
+using MLOps.NET.Storage.EntityBuilders;
 using MLOps.NET.Storage.EntityConfiguration;
 using MLOps.NET.Storage.Interfaces;
 using MLOps.NET.Storage.Repositories;
@@ -33,7 +34,7 @@ namespace MLOps.NET.Tests
 
             this.clockMock = new Mock<IClock>();
 
-            this.sut = new DeploymentRepository(contextFactory, clockMock.Object);
+            this.sut = new DeploymentRepository(contextFactory, clockMock.Object, new DeploymentTargetBuilder());
         }
 
         [TestMethod]
@@ -51,6 +52,22 @@ namespace MLOps.NET.Tests
             var deploymentTarget = db.DeploymentTargets.First();
 
             deploymentTarget.CreatedDate.Should().Be(now);
+        }
+
+        [TestMethod]
+        public async Task CreateDeploymentTarget_GivenOneAlreadyExists_ShouldReturnExisting()
+        {
+            //Arrange
+            var now = DateTime.Now;
+            this.clockMock.Setup(x => x.UtcNow).Returns(now);
+            
+            var deploymentTarget = await this.sut.CreateDeploymentTargetAsync("Production");
+
+            //Act
+            var deploymentTargetNew = await this.sut.CreateDeploymentTargetAsync("Production");
+
+            //Assert
+            deploymentTarget.DeploymentTargetId.Should().Be(deploymentTargetNew.DeploymentTargetId);
         }
 
         [TestMethod]

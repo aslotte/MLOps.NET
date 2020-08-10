@@ -1,5 +1,7 @@
+using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Database;
+using MLOps.NET.Storage.EntityBuilders;
 using MLOps.NET.Storage.Repositories;
 using MLOps.NET.Utilities;
 using System;
@@ -36,12 +38,12 @@ namespace MLOps.NET
         public MLOpsBuilder UseMetaDataRepositories(IDbContextFactory contextFactory)
         {
             this.experimentRepository = new ExperimentRepository(contextFactory);
-            this.runRepository = new RunRepository(contextFactory, new Clock());
+            this.runRepository = new RunRepository(contextFactory, new Clock(), new RunBuilder(), new RegisteredModelBuilder(), new RunArtifactBuilder());
             this.dataRepository = new DataRepository(contextFactory);
             this.metricRepository = new MetricRepository(contextFactory);
             this.confusionMatrixRepository = new ConfusionMatrixRepository(contextFactory);
             this.hyperParameterRepository = new HyperParameterRepository(contextFactory);
-            this.deploymentRepository = new DeploymentRepository(contextFactory, new Clock());
+            this.deploymentRepository = new DeploymentRepository(contextFactory, new Clock(), new DeploymentTargetBuilder());
 
             return this;
         }

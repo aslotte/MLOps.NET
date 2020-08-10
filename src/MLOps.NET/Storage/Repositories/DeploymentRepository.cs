@@ -1,5 +1,6 @@
 ﻿using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Database;
+using MLOps.NET.Storage.EntityBuilders;
 using MLOps.NET.Storage.Interfaces;
 using MLOps.NET.Utilities;
 using System;
@@ -14,16 +15,18 @@ namespace MLOps.NET.Storage.Repositories
     {
         private readonly IDbContextFactory contextFactory;
         private readonly IClock clock;
+        private readonly IEntityBuilder<DeploymentTarget> deploymentTargetBuilder;
 
         ///<inheritdoc cref="IDeploymentRepository"/>
-        public DeploymentRepository(IDbContextFactory contextFactory, IClock clock)
+        public DeploymentRepository(IDbContextFactory contextFactory, IClock clock, IEntityBuilder<DeploymentTarget> deploymentTargetBuilder)
         {
             this.contextFactory = contextFactory;
             this.clock = clock;
+            this.deploymentTargetBuilder = deploymentTargetBuilder;
         }
 
         ///<inheritdoc cref="IDeploymentRepository"/>
-        public async Task CreateDeploymentTargetAsync(string deploymentTargetName)
+        public async Task<DeploymentTarget> CreateDeploymentTargetAsync(string deploymentTargetName)
         {
             if (string.IsNullOrEmpty(deploymentTargetName))
             {
@@ -31,6 +34,12 @@ namespace MLOps.NET.Storage.Repositories
             }
 
             using var db = this.contextFactory.CreateDbContext();
+
+            var existingDeploymentTarget = db.DeploymentTargets.FirstOrDefault(x => x.Name == deploymentTargetName);
+            if (existingDeploymentTarget != null)
+            {
+                return this.deploymentTargetBuilder.BuildEntity(db, existingDeploymentTarget);
+            }
 
             var deploymentTarget = new DeploymentTarget(deploymentTargetName)
             {
@@ -40,6 +49,8 @@ namespace MLOps.NET.Storage.Repositories
             db.DeploymentTargets.Add(deploymentTarget);
 
             await db.SaveChangesAsync();
+
+            return deploymentTarget;
         }
 
         ///<inheritdoc cref="IDeploymentRepository"/>
@@ -47,7 +58,10 @@ namespace MLOps.NET.Storage.Repositories
         {
             using var db = this.contextFactory.CreateDbContext();
 
-            return db.DeploymentTargets.ToList();
+            var deploymentTargets = db.DeploymentTargets.ToList();
+            deploymentTargets.ForEach(x => this.deploymentTargetBuilder.BuildEntity(db, x));
+
+            return deploymentTargets;
         }
 
         ///<inheritdoc cref="IDeploymentRepository"/>
