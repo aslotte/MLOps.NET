@@ -16,7 +16,6 @@ namespace MLOps.NET.Storage.EntityBuilders
         public Experiment BuildEntity(IMLOpsDbContext db, Experiment entity)
         {
             entity.Runs = db.Runs.Where(x => x.ExperimentId == entity.ExperimentId).ToList();
-
             entity.Runs.ForEach(run => this.runBuilder.BuildEntity(db, run));
 
             return entity;

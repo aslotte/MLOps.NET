@@ -6,11 +6,11 @@ namespace MLOps.NET.Storage.EntityBuilders
 {
     internal sealed class DeploymentTargetBuilder : IEntityBuilder<DeploymentTarget>
     {
-        private readonly IEntityBuilder<RegisteredModel> registeredModelBuilder;
+        private readonly IEntityBuilder<Deployment> deploymentBuilder;
 
         public DeploymentTargetBuilder()
         {
-            this.registeredModelBuilder = new RegisteredModelBuilder();
+            this.deploymentBuilder = new DeploymentBuilder();
         }
 
         public DeploymentTarget BuildEntity(IMLOpsDbContext db, DeploymentTarget entity)
@@ -21,7 +21,7 @@ namespace MLOps.NET.Storage.EntityBuilders
 
                 entity.Deployments.ForEach(x =>
                 {
-                    this.registeredModelBuilder.BuildEntity(db, x.RegisteredModel);
+                    this.deploymentBuilder.BuildEntity(db, x);
                 });
             }
             return entity;

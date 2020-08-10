@@ -1,12 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.IntegrationTests;
 using System.Threading.Tasks;
 
-namespace MLOps.NET.SQLServer.IntegrationTests
+namespace MLOps.NET.SQLite.IntegrationTests
 {
+    [TestCategory("Integration")]
     [TestClass]
-    [TestCategory("IntegrationTestSqlServer")]
-    public class SQLServerLifeCycleCatalogTestsTests : LifeCycleCatalogTests
+    public class SQLiteEndToEndTests : EndToEndTests
     {
         [TestInitialize]
         public void Initialize()

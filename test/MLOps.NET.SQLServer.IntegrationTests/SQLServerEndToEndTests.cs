@@ -6,7 +6,7 @@ namespace MLOps.NET.SQLServer.IntegrationTests
 {
     [TestClass]
     [TestCategory("IntegrationTestSqlServer")]
-    public class SQLServerEvaluationCatalogTests : EvaluationCatalogTests
+    public class SQLServerEndToEndTests : EndToEndTests
     {
         [TestInitialize]
         public void Initialize()
