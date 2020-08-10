@@ -8,22 +8,34 @@ namespace MLOps.NET.Storage.EntityBuilders
     {
         private readonly IEntityBuilder<Run> runBuilder;
         private readonly IEntityBuilder<Experiment> experimentBuilder;
+        private readonly IEntityBuilder<RunArtifact> runArtifactBuilder;
 
         public RegisteredModelBuilder()
         {
             this.runBuilder = new RunBuilder();
             this.experimentBuilder = new ExperimentBuilder();
+            this.runArtifactBuilder = new RunArtifactBuilder();
         }
 
         public RegisteredModel BuildEntity(IMLOpsDbContext db, RegisteredModel entity)
         {
-            entity.RunArtifact = db.RunArtifacts.First(x => x.RunArtifactId == entity.RunArtifactId);
-            entity.Run = db.Runs.First(x => x.RunId == entity.RunId);
-            entity.Experiment = db.Experiments.First(x => x.ExperimentId == entity.ExperimentId);
+            if (entity.RunArtifact == null)
+            {
+                entity.RunArtifact = db.RunArtifacts.First(x => x.RunArtifactId == entity.RunArtifactId);
+                this.runArtifactBuilder.BuildEntity(db, entity.RunArtifact);
+            }
 
-            experimentBuilder.BuildEntity(db, entity.Experiment);
-            runBuilder.BuildEntity(db, entity.Run);
+            if (entity.Run == null)
+            {
+                entity.Run = db.Runs.First(x => x.RunId == entity.RunId);
+                runBuilder.BuildEntity(db, entity.Run);
+            }
 
+            if (entity.Experiment == null)
+            {
+                entity.Experiment = db.Experiments.First(x => x.ExperimentId == entity.ExperimentId);
+                experimentBuilder.BuildEntity(db, entity.Experiment);
+            }
             return entity;
         }
     }

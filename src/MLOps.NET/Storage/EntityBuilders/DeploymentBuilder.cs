@@ -18,14 +18,20 @@ namespace MLOps.NET.Storage.EntityBuilders
 
         public Deployment BuildEntity(IMLOpsDbContext db, Deployment entity)
         {
-            entity.RegisteredModel = db.RegisteredModels.First(x => x.RegisteredModelId == entity.RegisteredModelId);
-            this.registeredModelBuilder.BuildEntity(db, entity.RegisteredModel);
+            if (entity.RegisteredModel == null)
+            {
+                entity.RegisteredModel = db.RegisteredModels.First(x => x.RegisteredModelId == entity.RegisteredModelId);
+                this.registeredModelBuilder.BuildEntity(db, entity.RegisteredModel);
+            }
 
             entity.Experiment = db.Experiments.First(x => x.ExperimentId == entity.ExperimentId);
 
-            entity.DeploymentTarget = db.DeploymentTargets.First(x => x.DeploymentTargetId == entity.DeploymentTargetId);
-            this.deploymentTargetBuiler.BuildEntity(db, entity.DeploymentTarget);
+            if (entity.DeploymentTarget == null)
+            {
+                entity.DeploymentTarget = db.DeploymentTargets.First(x => x.DeploymentTargetId == entity.DeploymentTargetId);
 
+                this.deploymentTargetBuiler.BuildEntity(db, entity.DeploymentTarget);
+            }
             return entity;
         }
     }

@@ -14,9 +14,11 @@ namespace MLOps.NET.Storage.EntityBuilders
         }
         public RunArtifact BuildEntity(IMLOpsDbContext db, RunArtifact entity)
         {
-            entity.Run = db.Runs.First(x => x.RunId == entity.RunId);
-            this.runBuilder.BuildEntity(db, entity.Run);
-
+            if (entity.Run == null)
+            {
+                entity.Run = db.Runs.First(x => x.RunId == entity.RunId);
+                this.runBuilder.BuildEntity(db, entity.Run);
+            }
             return entity;
         }
     }

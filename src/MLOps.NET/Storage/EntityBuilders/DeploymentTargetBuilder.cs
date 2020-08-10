@@ -17,12 +17,15 @@ namespace MLOps.NET.Storage.EntityBuilders
         {
             if (entity.Deployments == null)
             {
-                entity.Deployments = db.Deployments.Where(x => x.DeploymentTargetId == entity.DeploymentTargetId).ToList();
-
-                entity.Deployments.ForEach(x =>
+                if (entity.Deployments == null)
                 {
-                    this.deploymentBuilder.BuildEntity(db, x);
-                });
+                    entity.Deployments = db.Deployments.Where(x => x.DeploymentTargetId == entity.DeploymentTargetId).ToList();
+
+                    entity.Deployments.ForEach(x =>
+                    {
+                        this.deploymentBuilder.BuildEntity(db, x);
+                    });
+                }
             }
             return entity;
         }
