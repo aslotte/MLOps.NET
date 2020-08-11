@@ -76,6 +76,28 @@ namespace MLOps.NET.SQLite.Migrations
                     b.ToTable("DataColumn");
                 });
 
+            modelBuilder.Entity("MLOps.NET.Entities.Impl.DataDistribution", b =>
+                {
+                    b.Property<Guid>("DataDistributionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("DataColumnId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("DataDistributionId");
+
+                    b.HasIndex("DataColumnId");
+
+                    b.ToTable("DataDistribution");
+                });
+
             modelBuilder.Entity("MLOps.NET.Entities.Impl.DataSchema", b =>
                 {
                     b.Property<Guid>("DataSchemaId")
@@ -308,6 +330,15 @@ namespace MLOps.NET.SQLite.Migrations
                     b.HasOne("MLOps.NET.Entities.Impl.DataSchema", null)
                         .WithMany("DataColumns")
                         .HasForeignKey("DataSchemaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MLOps.NET.Entities.Impl.DataDistribution", b =>
+                {
+                    b.HasOne("MLOps.NET.Entities.Impl.DataColumn", null)
+                        .WithMany("Distribution")
+                        .HasForeignKey("DataColumnId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
