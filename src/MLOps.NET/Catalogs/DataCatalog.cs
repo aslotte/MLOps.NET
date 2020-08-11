@@ -42,5 +42,19 @@ namespace MLOps.NET.Catalogs
         {
             return this.dataRepository.GetData(runId);
         }
+
+        /// <summary>
+        /// Logs the data distribution for a given column
+        /// </summary>
+        /// <typeparam name="T">represents the type of the column to log the distribution for</typeparam>
+        /// <param name="runId"></param>
+        /// <param name="dataView"></param>
+        /// <param name="columnName"></param>
+        /// <returns></returns>
+        public async Task LogDataDistribution<T>(Guid runId, IDataView dataView, string columnName) where T : struct
+        {
+            await this.dataRepository.LogDataDistribution<T>(runId, dataView, columnName);
+        }
+
     }
 }

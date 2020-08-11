@@ -24,5 +24,15 @@ namespace MLOps.NET.Storage
         /// <param name="runId"></param>
         /// <returns></returns>
         Data GetData(Guid runId);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <param name="dataView"></param>
+        /// <param name="columnName"></param>
+        /// <returns></returns>
+        Task LogDataDistribution<T>(Guid runId, IDataView dataView, string columnName) where T : struct;
     }
 }
+

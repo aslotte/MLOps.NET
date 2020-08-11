@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.ML;
+using Microsoft.ML.Data;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Database;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -69,7 +71,55 @@ namespace MLOps.NET.Storage
                 .FirstOrDefault(x => x.RunId == runId);
             if (data == null) return null;
 
+            data.DataSchema.DataColumns.ForEach(x => {
+                x.Distribution = db.DataDistributions.Where(y => y.DataColumnId == x.DataColumnId).ToList();
+            });
+
             return data;
         }
+
+        ///<inheritdoc cref="IDataRepository"/>
+        public async Task LogDataDistribution<T>(Guid runId, IDataView dataView, string columnName) where T : struct
+        {
+            using var db = this.contextFactory.CreateDbContext();
+
+            var data = db.Data
+                .Include(d => d.DataSchema.DataColumns)
+                .First(d => d.RunId == runId);
+
+            var dataColumn = data.DataSchema
+                .DataColumns
+                .FirstOrDefault(c => c.Name == columnName);
+
+            var column = dataView.Schema.First(c => c.Name == columnName);
+
+            List<DataDistribution> list = GetDataDistributionForColumn<T>(dataView, column, dataColumn);
+
+            db.DataDistributions.AddRange(list);
+
+            await db.SaveChangesAsync();
+        }
+
+        private List<DataDistribution> GetDataDistributionForColumn<T>(IDataView dataView, DataViewSchema.Column column, Entities.Impl.DataColumn dataColumn) where T : struct
+        {
+            var allValues = dataView.GetColumn<T>(column);
+            var distinctValues = allValues.Distinct();
+
+            var dataDistributions = new List<DataDistribution>();
+            foreach (var item in distinctValues)
+            {
+                var distribution = new DataDistribution
+                {
+                    DataColumnId = dataColumn.DataColumnId,
+                    Value = item.ToString(),
+                    Count = allValues.Count(v => v.ToString() == item.ToString())
+                };
+
+                dataDistributions.Add(distribution);       
+            }
+
+            return dataDistributions;
+        }
+
     }
 }
