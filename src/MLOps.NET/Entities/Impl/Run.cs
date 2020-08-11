@@ -35,11 +35,6 @@ namespace MLOps.NET.Entities.Impl
         public Guid ExperimentId { get; set; }
 
         /// <summary>
-        /// Experiment
-        /// </summary>
-        public Experiment Experiment { get; set; }
-
-        /// <summary>
         /// Metrics
         /// </summary>
         public List<Metric> Metrics { get; set; }

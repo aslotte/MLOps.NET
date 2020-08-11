@@ -49,6 +49,16 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc cref="IExperimentRepository"/>
+        public Experiment GetExperiment(Guid experimentId)
+        {
+            using var db = this.contextFactory.CreateDbContext();
+
+            var experiment = db.Experiments.Single(x => x.ExperimentId == experimentId);
+
+            return this.experimentResolver.BuildEntity(db, experiment);
+        }
+
+        ///<inheritdoc cref="IExperimentRepository"/>
         public IEnumerable<Experiment> GetExperiments()
         {
             using var db = this.contextFactory.CreateDbContext();

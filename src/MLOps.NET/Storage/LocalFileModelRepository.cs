@@ -14,7 +14,9 @@ namespace MLOps.NET.Storage
         private readonly IFileSystem fileSystem;
         private readonly IModelPathGenerator modelPathGenerator;
 
-        public LocalFileModelRepository(IFileSystem fileSystem, IModelPathGenerator modelPathGenerator, string destinationFolder = null)
+        public LocalFileModelRepository(IFileSystem fileSystem, 
+            IModelPathGenerator modelPathGenerator, 
+            string destinationFolder = null)
         {
             if (string.IsNullOrWhiteSpace(destinationFolder))
             {
@@ -52,9 +54,12 @@ namespace MLOps.NET.Storage
             await fileStream.CopyToAsync(destination);
         }
 
-        public async Task<string> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel)
+        public async Task<string> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, Experiment experiment)
         {
-            var deploymentFolder = CreateDeploymentFolder(registeredModel, deploymentTarget);
+            var deploymentPath = this.modelPathGenerator.GetDeploymentPath(deploymentTarget, experiment.ExperimentName);
+
+            CreateDeploymentFolder(deploymentPath);
+
             var modelName = this.modelPathGenerator.GetModelName(registeredModel.RunId);
 
             var sourceFilePath = this.fileSystem.Path.Combine(modelRepository, modelName);
@@ -63,33 +68,27 @@ namespace MLOps.NET.Storage
                 throw new InvalidOperationException("The model to be deployed does not exist");
             }
 
-            var deploymentPath = GetDeploymentPath(registeredModel, deploymentTarget);
+            var deploymentUri = GetDeploymentUri(experiment, deploymentTarget);
 
             await Task.Run(() => this.fileSystem.File.Copy(sourceFilePath, deploymentPath, overwrite: true));
-            return deploymentPath;
+            return deploymentUri;
         }
 
-        public string GetDeploymentUri(Deployment deployment)
+        public string GetDeploymentUri(Experiment experiment, DeploymentTarget deploymentTarget)
         {
-            return GetDeploymentPath(deployment.RegisteredModel, deployment.DeploymentTarget);
+            var deploymentPath = this.modelPathGenerator.GetDeploymentPath(deploymentTarget, experiment.ExperimentName);
+
+            return this.fileSystem.Path.Combine(destinationFolder, "deployment", deploymentPath);
         }
 
-        private string CreateDeploymentFolder(RegisteredModel registeredModel, DeploymentTarget deploymentTarget)
+        private void CreateDeploymentFolder(string deploymentPath)
         {
-            var deploymentPath = GetDeploymentPath(registeredModel, deploymentTarget);
-
             var directory = Directory.GetParent(deploymentPath).FullName;
 
             if (!this.fileSystem.Directory.Exists(directory))
             {
                 this.fileSystem.Directory.CreateDirectory(directory);
             }
-            return deploymentPath;
-        }
-
-        private string GetDeploymentPath(RegisteredModel registeredModel, DeploymentTarget deploymentTarget)
-        {
-            return this.fileSystem.Path.Combine(destinationFolder, "deployment", this.modelPathGenerator.GetDeploymentPath(deploymentTarget, registeredModel));
         }
     }
 }

@@ -53,18 +53,20 @@ namespace MLOps.NET.AWS.IntegrationTests
         {
             //Arrange
             var runId = Guid.NewGuid();
+            var experiment = new Experiment("ExperimentName");
+
             await sut.UploadModelAsync(runId, @"Data/model.txt");
 
             var registeredModel = new RegisteredModel
             {
                 RunId = runId,
-                Experiment = new Experiment("ExperimentName")
+                ExperimentId = experiment.ExperimentId
             };
 
             var deploymentTarget = new DeploymentTarget("Test");
 
             //Act
-            var uri = await sut.DeployModelAsync(deploymentTarget, registeredModel);
+            var uri = await sut.DeployModelAsync(deploymentTarget, registeredModel, experiment);
  
             //Assert
             var client = new HttpClient();
@@ -79,25 +81,21 @@ namespace MLOps.NET.AWS.IntegrationTests
         {
             //Arrange
             var runId = Guid.NewGuid();
+            var experiment = new Experiment("ExperimentName");
+
             await sut.UploadModelAsync(runId, @"Data/model.txt");
 
             var registeredModel = new RegisteredModel
             {
                 RunId = runId,
-                Experiment = new Experiment("ExperimentName")
+                ExperimentId = experiment.ExperimentId
             };
 
             var deploymentTarget = new DeploymentTarget("Test");
-            await sut.DeployModelAsync(deploymentTarget, registeredModel);
-
-            var deployment = new Deployment
-            {
-                RegisteredModel = registeredModel,
-                DeploymentTarget = deploymentTarget
-            };
+            await sut.DeployModelAsync(deploymentTarget, registeredModel, experiment);
 
             //Act
-            var uri = sut.GetDeploymentUri(deployment);
+            var uri = sut.GetDeploymentUri(experiment, deploymentTarget);
 
             //Assert
             var client = new HttpClient();
@@ -135,15 +133,17 @@ namespace MLOps.NET.AWS.IntegrationTests
         private async Task<string> DeployModelAsync(DeploymentTarget deploymentTarget)
         {
             var runId = Guid.NewGuid();
+            var experiment = new Experiment("ExperimentName");
 
             await sut.UploadModelAsync(runId, @"Data/model.txt");
 
             var registeredModel = new RegisteredModel
             {
                 RunId = runId,
-                Experiment = new Experiment("ExperimentName")
+                ExperimentId = experiment.ExperimentId
             };
-            return await sut.DeployModelAsync(deploymentTarget, registeredModel);
+
+            return await sut.DeployModelAsync(deploymentTarget, registeredModel, experiment);
         }
     }
 }

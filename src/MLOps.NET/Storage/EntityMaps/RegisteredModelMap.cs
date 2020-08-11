@@ -10,16 +10,29 @@ namespace MLOps.NET.Storage.EntityMaps
         {
             builder.Property(X => X.RegisteredDate).IsRequired();
             builder.Property(X => X.RegisteredBy).IsRequired();
+            builder.Property(X => X.Version).IsRequired();
 
             builder
-                .HasOne(x => x.Run)
+                .HasOne<Run>()
                 .WithOne()
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder
-                 .HasOne(x => x.Experiment)
+                .HasOne<RunArtifact>()
+                .WithOne()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder
+                 .HasOne<Experiment>()
                  .WithMany()
+                 .HasForeignKey(x => x.ExperimentId)
                  .OnDelete(DeleteBehavior.Restrict);
+
+            builder
+                 .HasMany<Deployment>()
+                 .WithOne()
+                 .HasForeignKey(x => x.DeploymentId)
+                 .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

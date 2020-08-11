@@ -6,7 +6,6 @@ using MLOps.NET.Storage.Deployments;
 using System;
 using System.IO;
 using System.IO.Abstractions;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.IntegrationTests.ModelRepository
@@ -27,10 +26,12 @@ namespace MLOps.NET.IntegrationTests.ModelRepository
         public async Task DeployModel_GivenAnExistingModel_ShouldDeployModelToDeploymentTargetFolder()
         {
             //Arrange
+            var experiment = new Experiment("ExperimentName");
+
             var registeredModel = new RegisteredModel
             {
                 RunId = Guid.NewGuid(),
-                Experiment = new Experiment("ExperimentName")
+                ExperimentId = experiment.ExperimentId,
             };
 
             var deploymentTarget = new DeploymentTarget("Test");
@@ -38,7 +39,7 @@ namespace MLOps.NET.IntegrationTests.ModelRepository
             await sut.UploadModelAsync(registeredModel.RunId, @"Data/model.txt");
 
             //Act
-            var deployedPath = await sut.DeployModelAsync(deploymentTarget, registeredModel);
+            var deployedPath = await sut.DeployModelAsync(deploymentTarget, registeredModel, experiment);
 
             //Assert
             File.Exists(deployedPath).Should().BeTrue();
@@ -48,16 +49,18 @@ namespace MLOps.NET.IntegrationTests.ModelRepository
         public async Task DeployModel_GivenAnAlreadyDeployedModel_ShouldOverwriteTheExistingModel()
         {
             //Arrange
+            var experiment = new Experiment("ExperimentName");
+
             var registeredModel = new RegisteredModel
             {
                 RunId = Guid.NewGuid(),
-                Experiment = new Experiment("ExperimentName")
+                ExperimentId = experiment.ExperimentId,
             };
 
             var registeredModel1 = new RegisteredModel
             {
                 RunId = Guid.NewGuid(),
-                Experiment = new Experiment("ExperimentName")
+                ExperimentId = experiment.ExperimentId,
             };
 
             var deploymentTarget = new DeploymentTarget("Test");
@@ -65,13 +68,13 @@ namespace MLOps.NET.IntegrationTests.ModelRepository
             await sut.UploadModelAsync(registeredModel.RunId, @"Data/model.txt");
             await sut.UploadModelAsync(registeredModel1.RunId, @"Data/model.txt");
 
-            var deployedPath = await sut.DeployModelAsync(deploymentTarget, registeredModel);
+            var deployedPath = await sut.DeployModelAsync(deploymentTarget, registeredModel, experiment);
 
             var fileInfo = new FileInfo(deployedPath);
             var lastUpdateTime = fileInfo.LastAccessTime;
 
             //Act
-            deployedPath = await sut.DeployModelAsync(deploymentTarget, registeredModel1);
+            deployedPath = await sut.DeployModelAsync(deploymentTarget, registeredModel1, experiment);
 
             //Assert
             fileInfo.Refresh();
@@ -88,23 +91,18 @@ namespace MLOps.NET.IntegrationTests.ModelRepository
             var runId = Guid.NewGuid();
             await sut.UploadModelAsync(runId, @"Data/model.txt");
 
+            var experiment = new Experiment("ExperimentName");
+
             var registeredModel = new RegisteredModel
             {
-                RunId = runId,
-                Experiment = new Experiment("ExperimentName")
+                RunId = runId
             };
 
             var deploymentTarget = new DeploymentTarget("Test");
-            await sut.DeployModelAsync(deploymentTarget, registeredModel);
-
-            var deployment = new Deployment
-            {
-                RegisteredModel = registeredModel,
-                DeploymentTarget = deploymentTarget
-            };
+            await sut.DeployModelAsync(deploymentTarget, registeredModel, experiment);
 
             //Act
-            var deployedPath = sut.GetDeploymentUri(deployment);
+            var deployedPath = sut.GetDeploymentUri(experiment, deploymentTarget);
 
             //Assert
             File.Exists(deployedPath).Should().BeTrue();

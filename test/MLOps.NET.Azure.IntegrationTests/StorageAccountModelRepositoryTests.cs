@@ -55,22 +55,53 @@ namespace MLOps.NET.Azure.IntegrationTests
         }
 
         [TestMethod]
-        public async Task DeployModelAsync_ShouldDeployModelToTarget()
+        public async Task DeployModelAsync_ShouldDeployModel()
         {
             //Arrange
             var runId = Guid.NewGuid();
+            var experiment = new Experiment("ExperimentName");
+
             await sut.UploadModelAsync(runId, @"Data/model.txt");
 
             var registeredModel = new RegisteredModel
             {
                 RunId = runId,
-                Experiment = new Experiment("ExperimentName")
+                ExperimentId = experiment.ExperimentId
             };
 
             var deploymentTarget = new DeploymentTarget("Test");
 
             //Act
-            var uri = await sut.DeployModelAsync(deploymentTarget, registeredModel);
+            var uri = await sut.DeployModelAsync(deploymentTarget, registeredModel, experiment);
+
+            //Assert
+            var client = new HttpClient();
+            var response = await client.GetAsync(uri);
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            response.Content.Headers.ContentLength.Should().BeGreaterThan(0);
+        }
+
+        [TestMethod]
+        public async Task GetDeploymentUri_GivenADeployedModel_ShouldReturnAValidUri()
+        {
+            //Arrange
+            var runId = Guid.NewGuid();
+            var experiment = new Experiment("ExperimentName");
+
+            await sut.UploadModelAsync(runId, @"Data/model.txt");
+
+            var registeredModel = new RegisteredModel
+            {
+                RunId = runId,
+                ExperimentId = experiment.ExperimentId
+            };
+
+            var deploymentTarget = new DeploymentTarget("Test");
+            await sut.DeployModelAsync(deploymentTarget, registeredModel, experiment);
+
+            //Act
+            var uri = sut.GetDeploymentUri(experiment, deploymentTarget);
 
             //Assert
             var client = new HttpClient();
@@ -105,51 +136,20 @@ namespace MLOps.NET.Azure.IntegrationTests
             firstModelUpdateTime.Value.Ticks.Should().BeLessThan(secondModelUpdateTime.Value.Ticks);
         }
 
-        [TestMethod]
-        public async Task GetDeploymentUri_GivenADeployedModel_ShouldReturnAValidUri()
-        {
-            //Arrange
-            var runId = Guid.NewGuid();
-            await sut.UploadModelAsync(runId, @"Data/model.txt");
-
-            var registeredModel = new RegisteredModel
-            {
-                RunId = runId,
-                Experiment = new Experiment("ExperimentName")
-            };
-
-            var deploymentTarget = new DeploymentTarget("Test");
-            await sut.DeployModelAsync(deploymentTarget, registeredModel);
-
-            var deployment = new Deployment
-            {
-                RegisteredModel = registeredModel,
-                DeploymentTarget = deploymentTarget
-            };
-
-            //Act
-            var uri = sut.GetDeploymentUri(deployment);
-
-            //Assert
-            var client = new HttpClient();
-            var response = await client.GetAsync(uri);
-
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.Content.Headers.ContentLength.Should().BeGreaterThan(0);
-        }
-
         private async Task<string> DeployModelAsync(DeploymentTarget deploymentTarget)
         {
             var runId = Guid.NewGuid();
+            var experiment = new Experiment("ExperimentName");
 
             await sut.UploadModelAsync(runId, @"Data/model.txt");
 
             var registeredModel = new RegisteredModel
             {
                 RunId = runId,
-                Experiment = new Experiment("ExperimentName")
+                ExperimentId = experiment.ExperimentId
             };
-            return await sut.DeployModelAsync(deploymentTarget, registeredModel);
+
+            return await sut.DeployModelAsync(deploymentTarget, registeredModel, experiment);
         }
     }
 }
