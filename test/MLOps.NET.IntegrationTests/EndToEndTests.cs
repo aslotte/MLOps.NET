@@ -19,6 +19,7 @@ namespace MLOps.NET.IntegrationTests
             var runId = await sut.LifeCycle.CreateRunAsync(experimentId);
 
             var data = mlContext.Data.LoadFromEnumerable(GetSampleDataForTraining());
+            await sut.Data.LogDataAsync(runId, data);
 
             var trainer = mlContext.BinaryClassification.Trainers
                 .LbfgsLogisticRegression(labelColumnName: "Label", featureColumnName: "Features");
@@ -43,8 +44,13 @@ namespace MLOps.NET.IntegrationTests
 
             deploymentTarget = sut.Deployment.GetDeploymentTargets().First();
             var experiment = sut.LifeCycle.GetExperiment("test");
+            var loggedData = sut.Data.GetData(runId);
 
             //Assert
+            loggedData.Should().NotBeNull();
+            loggedData.DataSchema.Should().NotBeNull();
+            loggedData.DataSchema.DataColumns.Should().NotBeNull();
+
             deploymentTarget.Deployments.Should().NotBeNull();
             experiment.Runs.Should().NotBeNull();
             experiment.Runs.First().RunArtifacts.Should().NotBeNull();
