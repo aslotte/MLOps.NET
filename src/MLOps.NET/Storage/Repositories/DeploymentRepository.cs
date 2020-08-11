@@ -1,6 +1,6 @@
 ﻿using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Database;
-using MLOps.NET.Storage.EntityBuilders;
+using MLOps.NET.Storage.EntityResolvers;
 using MLOps.NET.Storage.Interfaces;
 using MLOps.NET.Utilities;
 using System;
@@ -15,14 +15,14 @@ namespace MLOps.NET.Storage.Repositories
     {
         private readonly IDbContextFactory contextFactory;
         private readonly IClock clock;
-        private readonly IEntityBuilder<DeploymentTarget> deploymentTargetBuilder;
+        private readonly IEntityResolver<DeploymentTarget> deploymentTargetResolver;
 
         ///<inheritdoc cref="IDeploymentRepository"/>
-        public DeploymentRepository(IDbContextFactory contextFactory, IClock clock, IEntityBuilder<DeploymentTarget> deploymentTargetBuilder)
+        public DeploymentRepository(IDbContextFactory contextFactory, IClock clock, IEntityResolver<DeploymentTarget> deploymentTargetResolver)
         {
             this.contextFactory = contextFactory;
             this.clock = clock;
-            this.deploymentTargetBuilder = deploymentTargetBuilder;
+            this.deploymentTargetResolver = deploymentTargetResolver;
         }
 
         ///<inheritdoc cref="IDeploymentRepository"/>
@@ -38,7 +38,7 @@ namespace MLOps.NET.Storage.Repositories
             var existingDeploymentTarget = db.DeploymentTargets.FirstOrDefault(x => x.Name == deploymentTargetName);
             if (existingDeploymentTarget != null)
             {
-                return this.deploymentTargetBuilder.BuildEntity(db, existingDeploymentTarget);
+                return this.deploymentTargetResolver.BuildEntity(db, existingDeploymentTarget);
             }
 
             var deploymentTarget = new DeploymentTarget(deploymentTargetName)
@@ -59,9 +59,8 @@ namespace MLOps.NET.Storage.Repositories
             using var db = this.contextFactory.CreateDbContext();
 
             var deploymentTargets = db.DeploymentTargets.ToList();
-            deploymentTargets.ForEach(x => this.deploymentTargetBuilder.BuildEntity(db, x));
 
-            return deploymentTargets;
+            return this.deploymentTargetResolver.BuildEntities(db, deploymentTargets);
         }
 
         ///<inheritdoc cref="IDeploymentRepository"/>
@@ -87,15 +86,9 @@ namespace MLOps.NET.Storage.Repositories
         {
             using var db = this.contextFactory.CreateDbContext();
 
-            var deployments =  db.Deployments.Where(x => x.ExperimentId == experimentId).ToList();
-
-            deployments.ForEach(deployment =>
-            {
-                deployment.RegisteredModel = db.RegisteredModels.First(x => x.RegisteredModelId == deployment.RegisteredModelId);
-                deployment.Experiment = db.Experiments.First(x => x.ExperimentId == deployment.ExperimentId);
-                deployment.DeploymentTarget = db.DeploymentTargets.First(x => x.DeploymentTargetId == deployment.DeploymentTargetId);
-            });
-            return deployments;
+            return db.Deployments
+                .Where(x => x.ExperimentId == experimentId)
+                .ToList();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Database;
-using MLOps.NET.Storage.EntityBuilders;
+using MLOps.NET.Storage.EntityResolvers;
 using MLOps.NET.Utilities;
 using System;
 using System.Collections.Generic;
@@ -14,21 +14,15 @@ namespace MLOps.NET.Storage
     {
         private readonly IDbContextFactory contextFactory;
         private readonly IClock clock;
-        private readonly IEntityBuilder<Run> runBuilder;
-        private readonly IEntityBuilder<RegisteredModel> registeredModelBuilder;
-        private readonly IEntityBuilder<RunArtifact> runArtifactBuilder;
+        private readonly IEntityResolver<Run> runResolver;
 
         ///<inheritdoc cref="IRunRepository"/>
         public RunRepository(IDbContextFactory contextFactory, IClock clock,
-            IEntityBuilder<Run> runBuilder,
-            IEntityBuilder<RegisteredModel> registeredModelBuilder,
-            IEntityBuilder<RunArtifact> runArtifactBuilder)
+            IEntityResolver<Run> runResolver)
         {
             this.contextFactory = contextFactory;
             this.clock = clock;
-            this.runBuilder = runBuilder;
-            this.registeredModelBuilder = registeredModelBuilder;
-            this.runArtifactBuilder = runArtifactBuilder;
+            this.runResolver = runResolver;
         }
 
         ///<inheritdoc cref="IRunRepository"/>
@@ -53,7 +47,7 @@ namespace MLOps.NET.Storage
             using var db = this.contextFactory.CreateDbContext();
             var run = db.Runs.FirstOrDefault(x => x.RunId == runId);
 
-            return this.runBuilder.BuildEntity(db, run);
+            return this.runResolver.BuildEntity(db, run);
         }
 
         ///<inheritdoc cref="IRunRepository"/>
@@ -62,7 +56,7 @@ namespace MLOps.NET.Storage
             using var db = this.contextFactory.CreateDbContext();
             var run = db.Runs.FirstOrDefault(x => x.GitCommitHash == commitHash);
 
-            return this.runBuilder.BuildEntity(db, run);
+            return this.runResolver.BuildEntity(db, run);
         }
 
         ///<inheritdoc cref="IRunRepository"/>
@@ -70,11 +64,11 @@ namespace MLOps.NET.Storage
         {
             using var db = this.contextFactory.CreateDbContext();
 
-            return db.Runs
+            var runs = db.Runs
                 .Where(x => x.ExperimentId == experimentId)
-                .ToList()
-                .Select(run => this.runBuilder.BuildEntity(db, run))
                 .ToList();
+
+            return this.runResolver.BuildEntities(db, runs);
         }
 
         ///<inheritdoc cref="IRunRepository"/>
@@ -111,8 +105,6 @@ namespace MLOps.NET.Storage
 
             return db.RunArtifacts
                 .Where(x => x.RunId == runId)
-                .ToList()
-                .Select(x => this.runArtifactBuilder.BuildEntity(db, x))
                 .ToList();
         }
 
@@ -154,8 +146,6 @@ namespace MLOps.NET.Storage
 
             return db.RegisteredModels
                 .Where(x => x.ExperimentId == experimentId)
-                .ToList()
-                .Select(x => this.registeredModelBuilder.BuildEntity(db, x))
                 .ToList();
         }
 
@@ -164,12 +154,10 @@ namespace MLOps.NET.Storage
         {
             using var db = this.contextFactory.CreateDbContext();
 
-            var registeredModel = db.RegisteredModels
+            return db.RegisteredModels
                 .Where(x => x.ExperimentId == experimentId)
                 .OrderByDescending(x => x.Version)
                 .FirstOrDefault();
-
-            return this.registeredModelBuilder.BuildEntity(db, registeredModel);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Database;
-using MLOps.NET.Storage.EntityBuilders;
+using MLOps.NET.Storage.EntityResolvers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +12,13 @@ namespace MLOps.NET.Storage
     public sealed class ExperimentRepository : IExperimentRepository
     {
         private readonly IDbContextFactory contextFactory;
-        private readonly IEntityBuilder<Experiment> experimentBuilder;
+        private readonly IEntityResolver<Experiment> experimentResolver;
 
         ///<inheritdoc cref="IExperimentRepository"/>
-        public ExperimentRepository(IDbContextFactory contextFactory, IEntityBuilder<Experiment> experimentBuilder)
+        public ExperimentRepository(IDbContextFactory contextFactory, IEntityResolver<Experiment> experimentResolver)
         {
             this.contextFactory = contextFactory;
-            this.experimentBuilder = experimentBuilder;
+            this.experimentResolver = experimentResolver;
         }
 
         ///<inheritdoc cref="IExperimentRepository"/>
@@ -43,10 +43,9 @@ namespace MLOps.NET.Storage
         {
             using var db = this.contextFactory.CreateDbContext();
 
-            var experiment = db.Experiments
-            .Single(x => x.ExperimentName == experimentName);
+            var experiment = db.Experiments.Single(x => x.ExperimentName == experimentName);
 
-            return this.experimentBuilder.BuildEntity(db, experiment);
+            return this.experimentResolver.BuildEntity(db, experiment);
         }
 
         ///<inheritdoc cref="IExperimentRepository"/>
@@ -54,10 +53,9 @@ namespace MLOps.NET.Storage
         {
             using var db = this.contextFactory.CreateDbContext();
 
-            return db.Experiments
-                .ToList()
-                .Select(x => this.experimentBuilder.BuildEntity(db, x))
-                .ToList();
+            var experiments = db.Experiments.ToList();
+
+            return this.experimentResolver.BuildEntities(db, experiments);
         }
     }
 }

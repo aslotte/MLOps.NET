@@ -31,6 +31,7 @@ namespace MLOps.NET.IntegrationTests
             var metrics = mlContext.BinaryClassification.Evaluate(predicitions, labelColumnName: "Label");
 
             await sut.Evaluation.LogMetricsAsync(runId, metrics);
+            await sut.Evaluation.LogConfusionMatrixAsync(runId, metrics.ConfusionMatrix);
 
             await sut.Model.UploadAsync(runId, "");
 
@@ -40,24 +41,16 @@ namespace MLOps.NET.IntegrationTests
             var deploymentTarget = await sut.Deployment.CreateDeploymentTargetAsync("Test");
             await sut.Deployment.DeployModelAsync(deploymentTarget, registeredModel, "The MLOps Team");
 
-            var deployment = sut.Deployment.GetDeployments(experimentId).First();
             deploymentTarget = sut.Deployment.GetDeploymentTargets().First();
+            var experiment = sut.LifeCycle.GetExperiment("test");
 
             //Assert
-            registeredModel.Experiment.Should().NotBeNull();
-            registeredModel.Run.Should().NotBeNull();
-            registeredModel.Run.RunArtifacts.First().Should().NotBeNull();
-            registeredModel.Run.Metrics.Should().NotBeNull();
-            registeredModel.Run.HyperParameters.Should().NotBeNull();
-
-            deployment.DeploymentTarget.Should().NotBeNull();
             deploymentTarget.Deployments.Should().NotBeNull();
-
-            runArtifact.Should().NotBeNull();
-            runArtifact.Run.Should().NotBeNull();
-            runArtifact.Run.RunArtifacts.First().Should().NotBeNull();
-            runArtifact.Run.Metrics.Should().NotBeNull();
-            runArtifact.Run.HyperParameters.Should().NotBeNull();
+            experiment.Runs.Should().NotBeNull();
+            experiment.Runs.First().RunArtifacts.Should().NotBeNull();
+            experiment.Runs.First().Metrics.Should().NotBeNull();
+            experiment.Runs.First().HyperParameters.Should().NotBeNull();
+            experiment.Runs.First().ConfusionMatrix.Should().NotBeNull();
         }
 
         private static List<DataPoint> GetSampleDataForTraining()

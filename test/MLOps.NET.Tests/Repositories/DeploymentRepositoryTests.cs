@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Database;
-using MLOps.NET.Storage.EntityBuilders;
 using MLOps.NET.Storage.EntityConfiguration;
+using MLOps.NET.Storage.EntityResolvers;
 using MLOps.NET.Storage.Interfaces;
 using MLOps.NET.Storage.Repositories;
 using MLOps.NET.Utilities;
@@ -34,7 +34,7 @@ namespace MLOps.NET.Tests
 
             this.clockMock = new Mock<IClock>();
 
-            this.sut = new DeploymentRepository(contextFactory, clockMock.Object, new DeploymentTargetBuilder());
+            this.sut = new DeploymentRepository(contextFactory, clockMock.Object, new DeploymentTargetResolver());
         }
 
         [TestMethod]
@@ -60,7 +60,7 @@ namespace MLOps.NET.Tests
             //Arrange
             var now = DateTime.Now;
             this.clockMock.Setup(x => x.UtcNow).Returns(now);
-            
+
             var deploymentTarget = await this.sut.CreateDeploymentTargetAsync("Production");
 
             //Act
