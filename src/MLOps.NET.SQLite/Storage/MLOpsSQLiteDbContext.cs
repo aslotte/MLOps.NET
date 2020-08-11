@@ -14,7 +14,7 @@ namespace MLOps.NET.SQLite
         /// Ctor for migrations
         /// </summary>
         public MLOpsSQLiteDbContext() : base(new DbContextOptionsBuilder()
-                .UseSqlite(@"Data Source=C:\Users\vidya\test.db")
+                .UseSqlite("Data Source=local.db")
                 .Options, RelationalEntityConfigurator.OnModelCreating)
         {
         }
