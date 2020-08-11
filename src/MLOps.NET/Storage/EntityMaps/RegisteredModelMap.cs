@@ -12,14 +12,9 @@ namespace MLOps.NET.Storage.EntityMaps
             builder.Property(X => X.RegisteredBy).IsRequired();
 
             builder
-                .HasOne(x => x.Run)
+                .HasMany(x => x.Deployments)
                 .WithOne()
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder
-                 .HasOne(x => x.Experiment)
-                 .WithMany()
-                 .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);        
         }
     }
 }

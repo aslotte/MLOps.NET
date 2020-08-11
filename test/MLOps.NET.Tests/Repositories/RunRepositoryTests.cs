@@ -32,7 +32,7 @@ namespace MLOps.NET.Tests
 
             this.clockMock = new Mock<IClock>();
 
-            this.sut = new RunRepository(contextFactory, clockMock.Object);
+            this.sut = new RunRepository(contextFactory, clockMock.Object, new RunResolver(), new RegisteredModelResolver());
         }
 
         [TestMethod]
