@@ -5,6 +5,10 @@ namespace MLOps.NET.SQLite.Migrations
 {
     public partial class DataDistribution : Migration
     {
+        /// <summary>
+        /// Data Distribution
+        /// </summary>
+        /// <param name="migrationBuilder"></param>
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -33,6 +37,10 @@ namespace MLOps.NET.SQLite.Migrations
                 column: "DataColumnId");
         }
 
+        /// <summary>
+        /// Data Distribution
+        /// </summary>
+        /// <param name="migrationBuilder"></param>
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

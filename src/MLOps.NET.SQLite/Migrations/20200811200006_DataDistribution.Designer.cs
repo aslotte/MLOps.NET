@@ -8,10 +8,17 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MLOps.NET.SQLite.Migrations
 {
+    /// <summary>
+    /// Data Distribution
+    /// </summary>
     [DbContext(typeof(MLOpsSQLiteDbContext))]
     [Migration("20200811200006_DataDistribution")]
     partial class DataDistribution
     {
+        /// <summary>
+        /// Data Distribution
+        /// </summary>
+        /// <param name="modelBuilder"></param>
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
