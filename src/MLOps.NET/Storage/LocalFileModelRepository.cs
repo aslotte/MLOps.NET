@@ -56,9 +56,9 @@ namespace MLOps.NET.Storage
 
         public async Task<string> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, Experiment experiment)
         {
-            var deploymentPath = this.modelPathGenerator.GetDeploymentPath(deploymentTarget, experiment.ExperimentName);
+            var deploymentUri = GetDeploymentUri(experiment, deploymentTarget);
 
-            CreateDeploymentFolder(deploymentPath);
+            CreateDeploymentFolder(deploymentUri);
 
             var modelName = this.modelPathGenerator.GetModelName(registeredModel.RunId);
 
@@ -68,9 +68,7 @@ namespace MLOps.NET.Storage
                 throw new InvalidOperationException("The model to be deployed does not exist");
             }
 
-            var deploymentUri = GetDeploymentUri(experiment, deploymentTarget);
-
-            await Task.Run(() => this.fileSystem.File.Copy(sourceFilePath, deploymentPath, overwrite: true));
+            await Task.Run(() => this.fileSystem.File.Copy(sourceFilePath, deploymentUri, overwrite: true));
             return deploymentUri;
         }
 

@@ -37,6 +37,17 @@ namespace MLOps.NET.Tests
             this.sut = new DeploymentRepository(contextFactory, clockMock.Object, new DeploymentTargetResolver());
         }
 
+        [TestCleanup]
+        public async Task CleanUp()
+        {
+            using var db = this.contextFactory.CreateDbContext();
+
+            db.DeploymentTargets.RemoveRange(db.DeploymentTargets);
+            db.Deployments.RemoveRange(db.Deployments);
+
+            await db.SaveChangesAsync();
+        }
+
         [TestMethod]
         public async Task CreateDeploymentTarget_ShouldSetCreatedDate()
         {
@@ -45,12 +56,9 @@ namespace MLOps.NET.Tests
             this.clockMock.Setup(x => x.UtcNow).Returns(now);
 
             //Act
-            await this.sut.CreateDeploymentTargetAsync("Production");
+            var deploymentTarget = await this.sut.CreateDeploymentTargetAsync("Production");
 
             //Assert
-            using var db = this.contextFactory.CreateDbContext();
-            var deploymentTarget = db.DeploymentTargets.First();
-
             deploymentTarget.CreatedDate.Should().Be(now);
         }
 

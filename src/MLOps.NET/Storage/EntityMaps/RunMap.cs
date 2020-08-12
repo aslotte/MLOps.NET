@@ -26,10 +26,6 @@ namespace MLOps.NET.Storage.EntityMaps
                 .WithOne()
                 .HasForeignKey(x => x.MetricId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasOne<ConfusionMatrixEntity>()
-                .WithOne()
-                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
