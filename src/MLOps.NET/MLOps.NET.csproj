@@ -9,7 +9,7 @@
     <PackageReference Include="Microsoft.ML" Version="1.5.1" />
     <PackageReference Include="System.IO.Abstractions" Version="12.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.6" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.7" />
   </ItemGroup>
   
 </Project>
