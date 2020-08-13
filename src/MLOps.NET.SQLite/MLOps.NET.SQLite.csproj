@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200811200006_DataDistribution.cs" />
+    <Compile Remove="Migrations\20200811200006_DataDistribution.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MLOps.NET\MLOps.NET.csproj" />
   </ItemGroup>
 

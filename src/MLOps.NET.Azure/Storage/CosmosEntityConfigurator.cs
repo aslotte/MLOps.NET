@@ -29,7 +29,6 @@ namespace MLOps.NET.Azure.Storage
             modelBuilder.Entity<Data>().OwnsOne(x => x.DataSchema, dataSchema =>
             {
                 dataSchema.OwnsMany(x => x.DataColumns);
-                dataSchema.OwnsMany(x => x.DataColumns).OwnsMany(x => x.Distribution);
             });
         }
     }

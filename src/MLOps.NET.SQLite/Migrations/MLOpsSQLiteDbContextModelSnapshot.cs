@@ -89,11 +89,10 @@ namespace MLOps.NET.SQLite.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Value")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("DataDistributionId");
-
-                    b.HasIndex("DataColumnId");
 
                     b.ToTable("DataDistribution");
                 });
@@ -330,15 +329,6 @@ namespace MLOps.NET.SQLite.Migrations
                     b.HasOne("MLOps.NET.Entities.Impl.DataSchema", null)
                         .WithMany("DataColumns")
                         .HasForeignKey("DataSchemaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MLOps.NET.Entities.Impl.DataDistribution", b =>
-                {
-                    b.HasOne("MLOps.NET.Entities.Impl.DataColumn", null)
-                        .WithMany("Distribution")
-                        .HasForeignKey("DataColumnId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

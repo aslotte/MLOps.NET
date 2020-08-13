@@ -92,6 +92,7 @@ namespace MLOps.NET.SQLServer.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Value")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("DataDistributionId");

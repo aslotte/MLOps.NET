@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.ML;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MLOps.NET.Entities.Impl;
 using MLOps.NET.Tests.Common.Data;
 using System;
 using System.Linq;
@@ -84,11 +85,9 @@ namespace MLOps.NET.IntegrationTests
             await sut.Data.LogDataDistribution<Boolean>(runId, data, "Sentiment");
 
             //Assert
-            var savedData = sut.Data.GetData(runId);
+            var distributions = sut.Data.GetDataDistribution<Boolean>(runId, data, "Sentiment");
 
-            savedData.DataSchema.DataColumns
-                .Single(x => x.Type == nameof(Boolean) && x.Name == "Sentiment")
-                .Distribution.Count
+            distributions.Count
                 .Should().BeGreaterThan(0);
         }
 
