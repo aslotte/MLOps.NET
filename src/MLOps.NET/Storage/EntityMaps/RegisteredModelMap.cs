@@ -10,6 +10,7 @@ namespace MLOps.NET.Storage.EntityMaps
         {
             builder.Property(X => X.RegisteredDate).IsRequired();
             builder.Property(X => X.RegisteredBy).IsRequired();
+            builder.Property(X => X.Description).IsRequired();
 
             builder
                 .HasOne(x => x.Run)
