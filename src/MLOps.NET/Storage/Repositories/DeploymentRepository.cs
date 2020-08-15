@@ -39,7 +39,7 @@ namespace MLOps.NET.Storage.Repositories
             var existingDeploymentTarget = db.DeploymentTargets.FirstOrDefault(x => x.Name == deploymentTargetName);
             if (existingDeploymentTarget != null)
             {
-                return existingDeploymentTarget;
+                return this.deploymentTargetResolver.BuildEntity(db, existingDeploymentTarget);
             }
 
             var deploymentTarget = new DeploymentTarget(deploymentTargetName)
