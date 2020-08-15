@@ -2,11 +2,11 @@
 using MLOps.NET.IntegrationTests;
 using System.Threading.Tasks;
 
-namespace MLOps.NET.SQLServer.IntegrationTests
+namespace MLOps.NET.Azure.IntegrationTests
 {
     [TestClass]
-    [TestCategory("IntegrationTestSqlServer")]
-    public class SQLServerEvaluationCatalogTests : EvaluationCatalogTests
+    [TestCategory("IntegrationTestCosmosDb")]
+    public class AzureEndToEndTests : EndToEndTests
     {
         [TestInitialize]
         public void Initialize()

@@ -1,7 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MLOps.NET.Entities.Impl;
+﻿using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Database;
-using MLOps.NET.Storage.Interfaces;
+using MLOps.NET.Storage.EntityResolvers;
 using MLOps.NET.Utilities;
 using System;
 using System.Collections.Generic;
@@ -15,12 +14,15 @@ namespace MLOps.NET.Storage
     {
         private readonly IDbContextFactory contextFactory;
         private readonly IClock clock;
+        private readonly IEntityResolver<Run> runResolver;
 
         ///<inheritdoc cref="IRunRepository"/>
-        public RunRepository(IDbContextFactory contextFactory, IClock clock)
+        public RunRepository(IDbContextFactory contextFactory, IClock clock,
+            IEntityResolver<Run> runResolver)
         {
             this.contextFactory = contextFactory;
             this.clock = clock;
+            this.runResolver = runResolver;
         }
 
         ///<inheritdoc cref="IRunRepository"/>
@@ -45,8 +47,7 @@ namespace MLOps.NET.Storage
             using var db = this.contextFactory.CreateDbContext();
             var run = db.Runs.FirstOrDefault(x => x.RunId == runId);
 
-            PopulateRun(db, run);
-            return run;
+            return this.runResolver.BuildEntity(db, run);
         }
 
         ///<inheritdoc cref="IRunRepository"/>
@@ -55,18 +56,19 @@ namespace MLOps.NET.Storage
             using var db = this.contextFactory.CreateDbContext();
             var run = db.Runs.FirstOrDefault(x => x.GitCommitHash == commitHash);
 
-            PopulateRun(db, run);
-            return run;
+            return this.runResolver.BuildEntity(db, run);
         }
 
         ///<inheritdoc cref="IRunRepository"/>
         public List<Run> GetRuns(Guid experimentId)
         {
             using var db = this.contextFactory.CreateDbContext();
-            var runs = db.Runs.Where(x => x.ExperimentId == experimentId).ToList();
-            runs.ForEach(run => PopulateRun(db, run));
 
-            return runs;
+            var runs = db.Runs
+                .Where(x => x.ExperimentId == experimentId)
+                .ToList();
+
+            return this.runResolver.BuildEntities(db, runs);
         }
 
         ///<inheritdoc cref="IRunRepository"/>
@@ -100,7 +102,10 @@ namespace MLOps.NET.Storage
         public List<RunArtifact> GetRunArtifacts(Guid runId)
         {
             using var db = this.contextFactory.CreateDbContext();
-            return db.RunArtifacts.Where(x => x.RunId == runId).ToList();
+
+            return db.RunArtifacts
+                .Where(x => x.RunId == runId)
+                .ToList();
         }
 
         ///<inheritdoc cref="IRunRepository"/>
@@ -140,11 +145,9 @@ namespace MLOps.NET.Storage
         {
             using var db = this.contextFactory.CreateDbContext();
 
-            var registeredModels = db.RegisteredModels.Where(x => x.ExperimentId == experimentId);
-
-            registeredModels.ToList().ForEach(x => PopulateRegisteredModel(db, x));
-
-            return registeredModels.ToList();
+            return db.RegisteredModels
+                .Where(x => x.ExperimentId == experimentId)
+                .ToList();
         }
 
         ///<inheritdoc cref="IRunRepository"/>
@@ -152,31 +155,10 @@ namespace MLOps.NET.Storage
         {
             using var db = this.contextFactory.CreateDbContext();
 
-            var registeredModel = db.RegisteredModels
+            return db.RegisteredModels
                 .Where(x => x.ExperimentId == experimentId)
                 .OrderByDescending(x => x.Version)
                 .FirstOrDefault();
-
-            PopulateRegisteredModel(db, registeredModel);
-
-            return registeredModel;
-        }
-
-        private void PopulateRegisteredModel(IMLOpsDbContext db, RegisteredModel registeredModel)
-        {
-            registeredModel.RunArtifact = db.RunArtifacts.First(x => x.RunArtifactId == registeredModel.RunArtifactId);
-            registeredModel.Run = db.Runs.First(x => x.RunId == registeredModel.RunId);
-            registeredModel.Experiment = db.Experiments.First(x => x.ExperimentId == registeredModel.ExperimentId);
-        }
-
-        private void PopulateRun(IMLOpsDbContext db, Run run)
-        {
-            if (run == null) return;
-
-            run.HyperParameters = db.HyperParameters.Where(x => x.RunId == run.RunId).ToList();
-            run.Metrics = db.Metrics.Where(x => x.RunId == run.RunId).ToList();
-            run.ConfusionMatrix = db.ConfusionMatrices.FirstOrDefault(x => x.RunId == run.RunId);
-            run.RunArtifacts = db.RunArtifacts.Where(x => x.RunId == run.RunId).ToList();
         }
     }
 }

@@ -22,11 +22,11 @@ namespace MLOps.NET.Storage.Deployments
         string GetDeployedModelName(string experimentName);
 
         /// <summary>
-        /// Gets deployment path based on deployment target and the registered model
+        /// Gets deployment path based on deployment target and the experiment name
         /// </summary>
         /// <param name="deploymentTarget"></param>
-        /// <param name="registeredModel"></param>
+        /// <param name="experimentName"></param>
         /// <returns>Path to file</returns>
-        string GetDeploymentPath(DeploymentTarget deploymentTarget, RegisteredModel registeredModel);
+        string GetDeploymentPath(DeploymentTarget deploymentTarget, string experimentName);
     }
 }

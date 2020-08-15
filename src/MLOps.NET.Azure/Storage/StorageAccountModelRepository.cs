@@ -38,28 +38,28 @@ namespace MLOps.NET.Storage
             await blobClient.DownloadToAsync(destination);
         }
 
-        public async Task<string> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel)
+        public async Task<string> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, Experiment experiment)
         {
-            var deploymentBlob = this.modelPathGenerator.GetDeploymentPath(deploymentTarget, registeredModel);
+            var deploymentPath = this.modelPathGenerator.GetDeploymentPath(deploymentTarget, experiment.ExperimentName);
+
             var sourceModelBlob = this.modelRepositoryClient.GetBlobClient(this.modelPathGenerator.GetModelName(registeredModel.RunId));
+            var deployedModelBlob = this.deploymentClient.GetBlobClient(deploymentPath);
 
             if (!sourceModelBlob.Exists())
             {
                 throw new InvalidOperationException("The model to be deployed does not exist");
             }
 
-            var deployedModelBlob = this.deploymentClient.GetBlobClient(deploymentBlob);
             await deployedModelBlob.StartCopyFromUriAsync(sourceModelBlob.Uri);
 
             return deployedModelBlob.Uri.ToString();
         }
 
-        public string GetDeploymentUri(Deployment deployment)
+        public string GetDeploymentUri(Experiment experiment, DeploymentTarget deploymentTarget)
         {
-            var deploymentBlob = this.modelPathGenerator.GetDeploymentPath(deployment.DeploymentTarget, deployment.RegisteredModel);
-            var deployedModelBlob = this.deploymentClient.GetBlobClient(deploymentBlob);
+            var deploymentPath = this.modelPathGenerator.GetDeploymentPath(deploymentTarget, experiment.ExperimentName);
 
-            return deployedModelBlob.Uri.ToString();
+            return this.deploymentClient.GetBlobClient(deploymentPath).Uri.ToString();
         }
     }
 }

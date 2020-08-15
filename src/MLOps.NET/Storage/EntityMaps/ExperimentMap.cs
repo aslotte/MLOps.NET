@@ -11,9 +11,9 @@ namespace MLOps.NET.Storage.EntityMaps
             builder.Property(x => x.ExperimentName).IsRequired();
             builder.Property(x => x.CreatedAt).IsRequired();
 
-            builder
-                .HasMany(x => x.Runs)
-                .WithOne(y => y.Experiment)
+            builder.HasMany(x => x.Runs)
+                .WithOne()
+                .HasForeignKey(x => x.ExperimentId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

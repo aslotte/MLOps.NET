@@ -18,7 +18,7 @@ namespace MLOps.NET.AWS
         /// <param name="awsSecretAccessKey"></param>
         /// <param name="regionName"></param>
         /// <returns></returns>
-        public static MLOpsBuilder UseAWSS3Repository(this MLOpsBuilder builder, string awsAccessKeyId, string awsSecretAccessKey, string regionName)
+        public static MLOpsBuilder UseAWSS3ModelRepository(this MLOpsBuilder builder, string awsAccessKeyId, string awsSecretAccessKey, string regionName)
         {
             var region = RegionEndpoint.GetBySystemName(regionName);
             var  amazonS3Client = new AmazonS3Client(awsAccessKeyId, awsSecretAccessKey, region);

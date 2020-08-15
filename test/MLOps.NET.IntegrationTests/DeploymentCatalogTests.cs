@@ -42,11 +42,8 @@ namespace MLOps.NET.IntegrationTests
             //Assert
             var deployment = sut.Deployment.GetDeployments(registeredModel.ExperimentId).First();
 
-            deployment.RegisteredModel.Should().NotBeNull();
-            deployment.RegisteredModelId.Should().Be(registeredModel.RegisteredModelId);
             deployment.DeployedBy.Should().Be("By me");
             deployment.DeploymentDate.Date.Should().Be(DateTime.UtcNow.Date);
-            deployment.Experiment.Should().NotBeNull();
         }
 
         private async Task<RegisteredModel> CreateRegisteredModel()

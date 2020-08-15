@@ -1,5 +1,6 @@
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Database;
+using MLOps.NET.Storage.EntityResolvers;
 using MLOps.NET.Storage.Repositories;
 using MLOps.NET.Utilities;
 using System;
@@ -35,8 +36,11 @@ namespace MLOps.NET
         /// <returns>The current builder for chaining</returns>
         public MLOpsBuilder UseMetaDataRepositories(IDbContextFactory contextFactory)
         {
-            this.experimentRepository = new ExperimentRepository(contextFactory);
-            this.runRepository = new RunRepository(contextFactory, new Clock());
+            var runResolver = new RunResolver();
+            var experimentResolver = new ExperimentResolver(runResolver);
+
+            this.experimentRepository = new ExperimentRepository(contextFactory, experimentResolver);
+            this.runRepository = new RunRepository(contextFactory, new Clock(), runResolver);
             this.dataRepository = new DataRepository(contextFactory);
             this.metricRepository = new MetricRepository(contextFactory);
             this.confusionMatrixRepository = new ConfusionMatrixRepository(contextFactory);

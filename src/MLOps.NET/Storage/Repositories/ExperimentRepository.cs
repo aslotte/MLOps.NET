@@ -1,5 +1,6 @@
 ﻿using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Database;
+using MLOps.NET.Storage.EntityResolvers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +12,13 @@ namespace MLOps.NET.Storage
     public sealed class ExperimentRepository : IExperimentRepository
     {
         private readonly IDbContextFactory contextFactory;
+        private readonly IEntityResolver<Experiment> experimentResolver;
 
         ///<inheritdoc cref="IExperimentRepository"/>
-        public ExperimentRepository(IDbContextFactory contextFactory)
+        public ExperimentRepository(IDbContextFactory contextFactory, IEntityResolver<Experiment> experimentResolver)
         {
             this.contextFactory = contextFactory;
+            this.experimentResolver = experimentResolver;
         }
 
         ///<inheritdoc cref="IExperimentRepository"/>
@@ -40,15 +43,29 @@ namespace MLOps.NET.Storage
         {
             using var db = this.contextFactory.CreateDbContext();
 
-            return db.Experiments
-            .Single(x => x.ExperimentName == experimentName);
+            var experiment = db.Experiments.Single(x => x.ExperimentName == experimentName);
+
+            return this.experimentResolver.BuildEntity(db, experiment);
+        }
+
+        ///<inheritdoc cref="IExperimentRepository"/>
+        public Experiment GetExperiment(Guid experimentId)
+        {
+            using var db = this.contextFactory.CreateDbContext();
+
+            var experiment = db.Experiments.Single(x => x.ExperimentId == experimentId);
+
+            return this.experimentResolver.BuildEntity(db, experiment);
         }
 
         ///<inheritdoc cref="IExperimentRepository"/>
         public IEnumerable<Experiment> GetExperiments()
         {
             using var db = this.contextFactory.CreateDbContext();
-            return db.Experiments;
+
+            var experiments = db.Experiments.ToList();
+
+            return this.experimentResolver.BuildEntities(db, experiments);
         }
     }
 }

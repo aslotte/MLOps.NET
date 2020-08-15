@@ -13,11 +13,11 @@ namespace MLOps.NET.AWS.Tests
     public class MLOpsBuilderExtensionTests
     {
         [TestMethod]
-        public void UseAzureStorage_ConfiguresModelCatalog()
+        public void UseAWSS3ModelRepository_ConfiguresModelCatalog()
         {
             //Act
             IMLOpsContext unitUnderTest = new MLOpsBuilder()
-                .UseAWSS3Repository("access-key-id","secret-access-key","region-name")
+                .UseAWSS3ModelRepository("access-key-id","secret-access-key","region-name")
                 .UseMetaDataRepositories(new Mock<IDbContextFactory>().Object)
                 .Build();
 

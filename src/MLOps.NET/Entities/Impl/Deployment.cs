@@ -26,29 +26,9 @@ namespace MLOps.NET.Entities.Impl
         public Guid DeploymentTargetId { get; set; }
 
         /// <summary>
-        /// DeploymentTarget
-        /// </summary>
-        public DeploymentTarget DeploymentTarget { get; set; }
-
-        /// <summary>
         /// RegisteredModelId
         /// </summary>
         public Guid RegisteredModelId { get; set; }
-
-        /// <summary>
-        /// RegisterdModel
-        /// </summary>
-        public RegisteredModel RegisteredModel { get; set; }
-
-        /// <summary>
-        /// ExperimentId
-        /// </summary>
-        public Guid ExperimentId { get; set; }
-
-        /// <summary>
-        /// Experiment
-        /// </summary>
-        public Experiment Experiment { get; set; }
 
         /// <summary>
         /// DeploymentDate

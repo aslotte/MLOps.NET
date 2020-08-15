@@ -1,5 +1,6 @@
 ﻿using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Database;
+using MLOps.NET.Storage.EntityResolvers;
 using MLOps.NET.Storage.Interfaces;
 using MLOps.NET.Utilities;
 using System;
@@ -23,7 +24,7 @@ namespace MLOps.NET.Storage.Repositories
         }
 
         ///<inheritdoc cref="IDeploymentRepository"/>
-        public async Task CreateDeploymentTargetAsync(string deploymentTargetName)
+        public async Task<DeploymentTarget> CreateDeploymentTargetAsync(string deploymentTargetName)
         {
             if (string.IsNullOrEmpty(deploymentTargetName))
             {
@@ -31,6 +32,12 @@ namespace MLOps.NET.Storage.Repositories
             }
 
             using var db = this.contextFactory.CreateDbContext();
+
+            var existingDeploymentTarget = db.DeploymentTargets.FirstOrDefault(x => x.Name == deploymentTargetName);
+            if (existingDeploymentTarget != null)
+            {
+                return existingDeploymentTarget;
+            }
 
             var deploymentTarget = new DeploymentTarget(deploymentTargetName)
             {
@@ -40,6 +47,8 @@ namespace MLOps.NET.Storage.Repositories
             db.DeploymentTargets.Add(deploymentTarget);
 
             await db.SaveChangesAsync();
+
+            return deploymentTarget;
         }
 
         ///<inheritdoc cref="IDeploymentRepository"/>
@@ -61,7 +70,6 @@ namespace MLOps.NET.Storage.Repositories
                 DeployedBy = deployedBy,
                 DeploymentTargetId = deploymentTarget.DeploymentTargetId,
                 RegisteredModelId = registeredModel.RegisteredModelId,
-                ExperimentId = registeredModel.ExperimentId
             };
 
             db.Deployments.Add(deployment);
@@ -73,15 +81,14 @@ namespace MLOps.NET.Storage.Repositories
         {
             using var db = this.contextFactory.CreateDbContext();
 
-            var deployments =  db.Deployments.Where(x => x.ExperimentId == experimentId).ToList();
+            var registeredModels = db.RegisteredModels
+                .Where(x => x.ExperimentId == experimentId)
+                .Select(x => x.RegisteredModelId)
+                .ToList();
 
-            deployments.ForEach(deployment =>
-            {
-                deployment.RegisteredModel = db.RegisteredModels.First(x => x.RegisteredModelId == deployment.RegisteredModelId);
-                deployment.Experiment = db.Experiments.First(x => x.ExperimentId == deployment.ExperimentId);
-                deployment.DeploymentTarget = db.DeploymentTargets.First(x => x.DeploymentTargetId == deployment.DeploymentTargetId);
-            });
-            return deployments;
+            return db.Deployments
+                .Where(x => registeredModels.Contains(x.RegisteredModelId))
+                .ToList();
         }
     }
 }

@@ -89,11 +89,11 @@ namespace MLOps.NET.Tests
         public async Task DeployModel_ShouldReturnCorrectDeploymentPath()
         {
             var folderPath = mockFileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mlops");
+            var experiment = new Experiment("ExperimentName");
 
             var registeredModel = new RegisteredModel
             {
                 RunId = Guid.NewGuid(),
-                Experiment = new Experiment("ExperimentName")
             };
 
             var deploymentTarget = new DeploymentTarget("Test");
@@ -103,7 +103,7 @@ namespace MLOps.NET.Tests
             mockFileSystem.AddFile(sourcePath, new MockFileData("test"));
 
             // Act
-            var deployedPath = await sut.DeployModelAsync(deploymentTarget, registeredModel);
+            var deployedPath = await sut.DeployModelAsync(deploymentTarget, registeredModel, experiment);
 
             // Assert
             deployedPath.Should().Be(expectedPath);
@@ -113,16 +113,17 @@ namespace MLOps.NET.Tests
         [ExpectedException(typeof(InvalidOperationException), "The model to be deployed does not exist")]
         public async Task DeployModel_NoSourceFileExists_ShouldThrowException()
         {
+            var experiment = new Experiment("ExperimentName");
+
             var registeredModel = new RegisteredModel
             {
                 RunId = Guid.NewGuid(),
-                Experiment = new Experiment("ExperimentName")
             };
 
             var deploymentTarget = new DeploymentTarget("Test");
 
             // Act
-            await sut.DeployModelAsync(deploymentTarget, registeredModel);
+            await sut.DeployModelAsync(deploymentTarget, registeredModel, experiment);
         }
     }
 }

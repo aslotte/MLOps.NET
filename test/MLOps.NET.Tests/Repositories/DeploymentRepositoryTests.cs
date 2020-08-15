@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Database;
 using MLOps.NET.Storage.EntityConfiguration;
+using MLOps.NET.Storage.EntityResolvers;
 using MLOps.NET.Storage.Interfaces;
 using MLOps.NET.Storage.Repositories;
 using MLOps.NET.Utilities;
@@ -36,6 +37,17 @@ namespace MLOps.NET.Tests
             this.sut = new DeploymentRepository(contextFactory, clockMock.Object);
         }
 
+        [TestCleanup]
+        public async Task CleanUp()
+        {
+            using var db = this.contextFactory.CreateDbContext();
+
+            db.DeploymentTargets.RemoveRange(db.DeploymentTargets);
+            db.Deployments.RemoveRange(db.Deployments);
+
+            await db.SaveChangesAsync();
+        }
+
         [TestMethod]
         public async Task CreateDeploymentTarget_ShouldSetCreatedDate()
         {
@@ -44,13 +56,26 @@ namespace MLOps.NET.Tests
             this.clockMock.Setup(x => x.UtcNow).Returns(now);
 
             //Act
-            await this.sut.CreateDeploymentTargetAsync("Production");
+            var deploymentTarget = await this.sut.CreateDeploymentTargetAsync("Production");
 
             //Assert
-            using var db = this.contextFactory.CreateDbContext();
-            var deploymentTarget = db.DeploymentTargets.First();
-
             deploymentTarget.CreatedDate.Should().Be(now);
+        }
+
+        [TestMethod]
+        public async Task CreateDeploymentTarget_GivenOneAlreadyExists_ShouldReturnExisting()
+        {
+            //Arrange
+            var now = DateTime.Now;
+            this.clockMock.Setup(x => x.UtcNow).Returns(now);
+
+            var deploymentTarget = await this.sut.CreateDeploymentTargetAsync("Production");
+
+            //Act
+            var deploymentTargetNew = await this.sut.CreateDeploymentTargetAsync("Production");
+
+            //Assert
+            deploymentTarget.DeploymentTargetId.Should().Be(deploymentTargetNew.DeploymentTargetId);
         }
 
         [TestMethod]
