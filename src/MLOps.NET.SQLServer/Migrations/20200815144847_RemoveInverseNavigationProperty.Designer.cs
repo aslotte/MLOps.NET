@@ -4,14 +4,21 @@ using MLOps.NET.SQLServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MLOps.NET.SQLServer.Migrations
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [DbContext(typeof(MLOpsSQLDbContext))]
-    partial class MLOpsSQLDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200815144847_RemoveInverseNavigationProperty")]
+    partial class RemoveInverseNavigationProperty
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
         {
 #pragma warning disable 612, 618
             modelBuilder
