@@ -86,13 +86,30 @@ namespace MLOps.NET.Tests
             this.clockMock.Setup(x => x.UtcNow).Returns(now);
 
             //Act
-            await this.sut.CreateDeploymentAsync(new DeploymentTarget("Prod"), new RegisteredModel(), "By me");
+            await this.sut.CreateDeploymentAsync(new DeploymentTarget("Prod"), new RegisteredModel(), "By me", "Uri");
 
             //Assert
             using var db = this.contextFactory.CreateDbContext();
             var deployment = db.Deployments.First();
 
             deployment.DeploymentDate.Should().Be(now);
+        }
+
+        [TestMethod]
+        public async Task CreateDeployment_ShouldSetDeploymentUri()
+        {
+            //Arrange
+            var now = DateTime.Now;
+            this.clockMock.Setup(x => x.UtcNow).Returns(now);
+
+            //Act
+            await this.sut.CreateDeploymentAsync(new DeploymentTarget("Prod"), new RegisteredModel(), "By me", "Uri");
+
+            //Assert
+            using var db = this.contextFactory.CreateDbContext();
+            var deployment = db.Deployments.First();
+
+            deployment.DeploymentUri.Should().Be("Uri");
         }
     }
 }
