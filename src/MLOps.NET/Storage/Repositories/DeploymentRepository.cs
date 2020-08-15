@@ -15,12 +15,15 @@ namespace MLOps.NET.Storage.Repositories
     {
         private readonly IDbContextFactory contextFactory;
         private readonly IClock clock;
+        private readonly IEntityResolver<DeploymentTarget> deploymentTargetResolver;
 
         ///<inheritdoc cref="IDeploymentRepository"/>
-        public DeploymentRepository(IDbContextFactory contextFactory, IClock clock)
+        public DeploymentRepository(IDbContextFactory contextFactory, IClock clock, 
+            IEntityResolver<DeploymentTarget> deploymentTargetResolver)
         {
             this.contextFactory = contextFactory;
             this.clock = clock;
+            this.deploymentTargetResolver = deploymentTargetResolver;
         }
 
         ///<inheritdoc cref="IDeploymentRepository"/>
@@ -36,7 +39,7 @@ namespace MLOps.NET.Storage.Repositories
             var existingDeploymentTarget = db.DeploymentTargets.FirstOrDefault(x => x.Name == deploymentTargetName);
             if (existingDeploymentTarget != null)
             {
-                return existingDeploymentTarget;
+                return this.deploymentTargetResolver.BuildEntity(db, existingDeploymentTarget);
             }
 
             var deploymentTarget = new DeploymentTarget(deploymentTargetName)
@@ -56,7 +59,9 @@ namespace MLOps.NET.Storage.Repositories
         {
             using var db = this.contextFactory.CreateDbContext();
 
-            return db.DeploymentTargets.ToList();
+            var deploymentTargets = db.DeploymentTargets.ToList();
+
+            return this.deploymentTargetResolver.BuildEntities(db, deploymentTargets);
         }
 
         ///<inheritdoc cref="IDeploymentRepository"/>

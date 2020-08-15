@@ -15,14 +15,17 @@ namespace MLOps.NET.Storage
         private readonly IDbContextFactory contextFactory;
         private readonly IClock clock;
         private readonly IEntityResolver<Run> runResolver;
+        private readonly IEntityResolver<RegisteredModel> registeredModelResolver;
 
         ///<inheritdoc cref="IRunRepository"/>
         public RunRepository(IDbContextFactory contextFactory, IClock clock,
-            IEntityResolver<Run> runResolver)
+            IEntityResolver<Run> runResolver,
+            IEntityResolver<RegisteredModel> registeredModelResolver)
         {
             this.contextFactory = contextFactory;
             this.clock = clock;
             this.runResolver = runResolver;
+            this.registeredModelResolver = registeredModelResolver;
         }
 
         ///<inheritdoc cref="IRunRepository"/>
@@ -145,9 +148,11 @@ namespace MLOps.NET.Storage
         {
             using var db = this.contextFactory.CreateDbContext();
 
-            return db.RegisteredModels
+            var registeredModels = db.RegisteredModels
                 .Where(x => x.ExperimentId == experimentId)
                 .ToList();
+
+            return this.registeredModelResolver.BuildEntities(db, registeredModels);
         }
 
         ///<inheritdoc cref="IRunRepository"/>
@@ -155,10 +160,12 @@ namespace MLOps.NET.Storage
         {
             using var db = this.contextFactory.CreateDbContext();
 
-            return db.RegisteredModels
+            var latestRegisteredModel = db.RegisteredModels
                 .Where(x => x.ExperimentId == experimentId)
                 .OrderByDescending(x => x.Version)
                 .FirstOrDefault();
+
+            return this.registeredModelResolver.BuildEntity(db, latestRegisteredModel);
         }
     }
 }

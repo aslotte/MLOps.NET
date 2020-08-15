@@ -47,6 +47,8 @@ namespace MLOps.NET.IntegrationTests
             var loggedData = sut.Data.GetData(runId);
 
             //Assert
+            deploymentTarget.Deployments.Should().NotBeNull();
+
             loggedData.Should().NotBeNull();
             loggedData.DataSchema.Should().NotBeNull();
             loggedData.DataSchema.DataColumns.Should().NotBeNull();

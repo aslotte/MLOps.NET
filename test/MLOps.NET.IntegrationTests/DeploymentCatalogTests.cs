@@ -34,7 +34,7 @@ namespace MLOps.NET.IntegrationTests
         {
             //Arrange
             var registeredModel = await CreateRegisteredModel();
-            var deploymentTarget = await CreateDeploymentTarget();
+            var deploymentTarget = await CreateDeploymentTarget("Prod");
 
             //Act
             await sut.Deployment.DeployModelAsync(deploymentTarget, registeredModel, "By me");
@@ -44,6 +44,25 @@ namespace MLOps.NET.IntegrationTests
 
             deployment.DeployedBy.Should().Be("By me");
             deployment.DeploymentDate.Date.Should().Be(DateTime.UtcNow.Date);
+        }
+
+        [TestMethod]
+        public async Task GetRegisteredModel_GivenARegisteredModelHasMoreThanOneDeployment_ShouldPopulateDeployments()
+        {
+            //Arrange
+            var registeredModel = await CreateRegisteredModel();
+            var testDeploymentTarget = await CreateDeploymentTarget("Test");
+            var prodDeploymentTarget = await CreateDeploymentTarget("Prod");
+
+            await sut.Deployment.DeployModelAsync(testDeploymentTarget, registeredModel, "By me");
+            await sut.Deployment.DeployModelAsync(prodDeploymentTarget, registeredModel, "By me");
+
+            //Act
+            registeredModel = sut.Model.GetLatestRegisteredModel(registeredModel.ExperimentId);
+
+            //Assert
+            registeredModel.Deployments.Should().NotBeNull();
+            registeredModel.Deployments.Should().HaveCount(2);
         }
 
         private async Task<RegisteredModel> CreateRegisteredModel()
@@ -58,9 +77,9 @@ namespace MLOps.NET.IntegrationTests
             return sut.Model.GetLatestRegisteredModel(experimentId);
         }
 
-        private async Task<DeploymentTarget> CreateDeploymentTarget()
+        private async Task<DeploymentTarget> CreateDeploymentTarget(string deploymentTargetName)
         {
-            await sut.Deployment.CreateDeploymentTargetAsync("Production");
+            await sut.Deployment.CreateDeploymentTargetAsync(deploymentTargetName);
 
             return sut.Deployment.GetDeploymentTargets().First();
         }
