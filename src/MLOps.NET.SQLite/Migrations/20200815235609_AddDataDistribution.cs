@@ -14,6 +14,11 @@ namespace MLOps.NET.SQLite.Migrations
         /// <param name="migrationBuilder"></param>
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<Guid>(
+                name: "DataDistributionId",
+                table: "DataColumn",
+                nullable: true);
+
             migrationBuilder.CreateTable(
                 name: "DataDistribution",
                 columns: table => new
@@ -26,7 +31,19 @@ namespace MLOps.NET.SQLite.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DataDistribution", x => x.DataDistributionId);
+                    table.ForeignKey(
+                        name: "FK_DataDistribution_DataColumn_DataColumnId",
+                        column: x => x.DataColumnId,
+                        principalTable: "DataColumn",
+                        principalColumn: "DataColumnId",
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DataDistribution_DataColumnId",
+                table: "DataDistribution",
+                column: "DataColumnId",
+                unique: true);
         }
 
         /// <summary>
@@ -37,6 +54,10 @@ namespace MLOps.NET.SQLite.Migrations
         {
             migrationBuilder.DropTable(
                 name: "DataDistribution");
+
+            migrationBuilder.DropColumn(
+                name: "DataDistributionId",
+                table: "DataColumn");
         }
     }
 }
