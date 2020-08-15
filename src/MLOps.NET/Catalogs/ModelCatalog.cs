@@ -26,12 +26,19 @@ namespace MLOps.NET.Catalogs
             this.runRepository = runRepository;
         }
 
-        ///<inheritdoc/>
-        public async Task UploadAsync(Guid runId, string filePath)
+        /// <summary>
+        /// Uploads a model
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <param name="filePath"></param>
+        /// <returns>A reference to the created RunArtifact</returns>
+        public async Task<RunArtifact> UploadAsync(Guid runId, string filePath)
         {
             var artifactName = $"{runId}.zip";
-            await runRepository.CreateRunArtifact(runId, artifactName);
+            var runArtifact = await runRepository.CreateRunArtifact(runId, artifactName);
             await modelRepository.UploadModelAsync(runId, filePath);
+
+            return runArtifact;
         }
 
         /// <summary>

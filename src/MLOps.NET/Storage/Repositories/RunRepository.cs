@@ -87,7 +87,7 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc cref="IRunRepository"/>
-        public async Task CreateRunArtifact(Guid runId, string name)
+        public async Task<RunArtifact> CreateRunArtifact(Guid runId, string name)
         {
             using var db = this.contextFactory.CreateDbContext();
             var runArtifact = new RunArtifact
@@ -99,6 +99,8 @@ namespace MLOps.NET.Storage
             db.RunArtifacts.Add(runArtifact);
 
             await db.SaveChangesAsync();
+
+            return runArtifact;
         }
 
         ///<inheritdoc cref="IRunRepository"/>
