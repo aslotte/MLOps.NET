@@ -19,6 +19,7 @@ namespace MLOps.NET.IntegrationTests
             var deploymentTargets = sut.Deployment.GetDeploymentTargets();
             deploymentTargets.First().Name.Should().Be("Production");
             deploymentTargets.First().CreatedDate.Date.Should().Be(DateTime.UtcNow.Date);
+            deploymentTargets.First().IsProduction.Should().BeFalse();
         }
 
         [TestMethod]

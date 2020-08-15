@@ -60,6 +60,24 @@ namespace MLOps.NET.Tests
 
             //Assert
             deploymentTarget.CreatedDate.Should().Be(now);
+            deploymentTarget.IsProduction.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public async Task CreateDeploymentTarget_ShouldSetIsProductionFlag()
+        {
+            //Arrange
+            var now = DateTime.Now;
+            this.clockMock.Setup(x => x.UtcNow).Returns(now);
+
+            //Act
+            await this.sut.CreateDeploymentTargetAsync("Production", true);
+
+            //Assert
+            using var db = this.contextFactory.CreateDbContext();
+            var deploymentTarget = db.DeploymentTargets.First();
+
+            deploymentTarget.IsProduction.Should().BeTrue();
         }
 
         [TestMethod]
