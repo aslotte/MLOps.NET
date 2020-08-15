@@ -46,6 +46,23 @@ namespace MLOps.NET.IntegrationTests
         }
 
         [TestMethod]
+        public async Task RegisterModel_GivenNoDescription_ShouldRegisterModelWithoutDesription()
+        {
+            //Arrange
+            var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
+            var run = await sut.LifeCycle.CreateRunAsync(experimentId);
+            await sut.Model.UploadAsync(run.RunId, "");
+
+            var runArtifact = sut.Model.GetRunArtifacts(run.RunId).First();
+
+            //Act
+            var registeredModel = await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team");
+
+            //Assert
+            registeredModel.Description.Should().Be(string.Empty);
+        }
+
+        [TestMethod]
         public async Task RegisterModel_GivenAModelIsAlreadyRegistered_ShouldRegisterModelWithHigherVersion()
         {
             //Arrange
