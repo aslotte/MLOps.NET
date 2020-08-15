@@ -31,11 +31,6 @@ namespace MLOps.NET.Entities.Impl
         public Guid RegisteredModelId { get; set; }
 
         /// <summary>
-        /// ExperimentId
-        /// </summary>
-        public Guid ExperimentId { get; set; }
-
-        /// <summary>
         /// DeploymentDate
         /// </summary>
         public DateTime DeploymentDate { get; set; }
