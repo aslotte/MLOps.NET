@@ -66,6 +66,7 @@ namespace MLOps.NET.SQLite.Migrations
                     RunId = table.Column<Guid>(nullable: false),
                     RegisteredDate = table.Column<DateTime>(nullable: false),
                     RegisteredBy = table.Column<string>(nullable: false),
+                    Description = table.Column<string>(nullable: false),
                     Version = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -76,13 +77,13 @@ namespace MLOps.NET.SQLite.Migrations
                         column: x => x.RunId,
                         principalTable: "Run",
                         principalColumn: "RunId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_RegisteredModel_Experiment_ExperimentId",
                         column: x => x.ExperimentId,
                         principalTable: "Experiment",
                         principalColumn: "ExperimentId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_RegisteredModel_RunArtifact_RunArtifactId",
                         column: x => x.RunArtifactId,
@@ -303,6 +304,7 @@ namespace MLOps.NET.SQLite.Migrations
                 table: "RunArtifact",
                 column: "RunId");
         }
+
         /// <summary>
         /// 
         /// </summary>
