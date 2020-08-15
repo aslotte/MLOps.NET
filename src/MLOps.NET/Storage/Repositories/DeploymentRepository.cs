@@ -15,14 +15,12 @@ namespace MLOps.NET.Storage.Repositories
     {
         private readonly IDbContextFactory contextFactory;
         private readonly IClock clock;
-        private readonly IEntityResolver<DeploymentTarget> deploymentTargetResolver;
 
         ///<inheritdoc cref="IDeploymentRepository"/>
-        public DeploymentRepository(IDbContextFactory contextFactory, IClock clock, IEntityResolver<DeploymentTarget> deploymentTargetResolver)
+        public DeploymentRepository(IDbContextFactory contextFactory, IClock clock)
         {
             this.contextFactory = contextFactory;
             this.clock = clock;
-            this.deploymentTargetResolver = deploymentTargetResolver;
         }
 
         ///<inheritdoc cref="IDeploymentRepository"/>
@@ -38,7 +36,7 @@ namespace MLOps.NET.Storage.Repositories
             var existingDeploymentTarget = db.DeploymentTargets.FirstOrDefault(x => x.Name == deploymentTargetName);
             if (existingDeploymentTarget != null)
             {
-                return this.deploymentTargetResolver.BuildEntity(db, existingDeploymentTarget);
+                return existingDeploymentTarget;
             }
 
             var deploymentTarget = new DeploymentTarget(deploymentTargetName)
@@ -58,9 +56,7 @@ namespace MLOps.NET.Storage.Repositories
         {
             using var db = this.contextFactory.CreateDbContext();
 
-            var deploymentTargets = db.DeploymentTargets.ToList();
-
-            return this.deploymentTargetResolver.BuildEntities(db, deploymentTargets);
+            return db.DeploymentTargets.ToList();
         }
 
         ///<inheritdoc cref="IDeploymentRepository"/>
@@ -74,7 +70,6 @@ namespace MLOps.NET.Storage.Repositories
                 DeployedBy = deployedBy,
                 DeploymentTargetId = deploymentTarget.DeploymentTargetId,
                 RegisteredModelId = registeredModel.RegisteredModelId,
-                ExperimentId = registeredModel.ExperimentId
             };
 
             db.Deployments.Add(deployment);
@@ -86,8 +81,13 @@ namespace MLOps.NET.Storage.Repositories
         {
             using var db = this.contextFactory.CreateDbContext();
 
-            return db.Deployments
+            var registeredModels = db.RegisteredModels
                 .Where(x => x.ExperimentId == experimentId)
+                .Select(x => x.RegisteredModelId)
+                .ToList();
+
+            return db.Deployments
+                .Where(x => registeredModels.Contains(x.RegisteredModelId))
                 .ToList();
         }
     }

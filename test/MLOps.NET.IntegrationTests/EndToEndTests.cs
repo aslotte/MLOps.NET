@@ -51,7 +51,6 @@ namespace MLOps.NET.IntegrationTests
             loggedData.DataSchema.Should().NotBeNull();
             loggedData.DataSchema.DataColumns.Should().NotBeNull();
 
-            deploymentTarget.Deployments.Should().NotBeNull();
             experiment.Runs.Should().NotBeNull();
             experiment.Runs.First().RunArtifacts.Should().NotBeNull();
             experiment.Runs.First().Metrics.Should().NotBeNull();

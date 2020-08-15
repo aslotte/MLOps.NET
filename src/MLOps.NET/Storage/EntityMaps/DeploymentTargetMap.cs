@@ -9,12 +9,12 @@ namespace MLOps.NET.Storage.EntityMaps
         public void Configure(EntityTypeBuilder<DeploymentTarget> builder)
         {
             builder.Property(x => x.Name).IsRequired();
+            builder.Property(x => x.CreatedDate).IsRequired();
 
-            builder
-                 .HasMany<Deployment>()
-                 .WithOne()
-                 .HasForeignKey(x => x.DeploymentId)
-                 .OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(x => x.Deployments)
+                .WithOne()
+                .HasForeignKey(x => x.DeploymentTargetId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

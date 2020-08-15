@@ -45,7 +45,7 @@ namespace MLOps.NET
             this.metricRepository = new MetricRepository(contextFactory);
             this.confusionMatrixRepository = new ConfusionMatrixRepository(contextFactory);
             this.hyperParameterRepository = new HyperParameterRepository(contextFactory);
-            this.deploymentRepository = new DeploymentRepository(contextFactory, new Clock(), new DeploymentTargetResolver());
+            this.deploymentRepository = new DeploymentRepository(contextFactory, new Clock());
 
             return this;
         }

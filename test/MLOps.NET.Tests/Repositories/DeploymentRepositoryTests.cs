@@ -34,7 +34,7 @@ namespace MLOps.NET.Tests
 
             this.clockMock = new Mock<IClock>();
 
-            this.sut = new DeploymentRepository(contextFactory, clockMock.Object, new DeploymentTargetResolver());
+            this.sut = new DeploymentRepository(contextFactory, clockMock.Object);
         }
 
         [TestCleanup]
