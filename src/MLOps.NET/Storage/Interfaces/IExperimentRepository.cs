@@ -29,5 +29,12 @@ namespace MLOps.NET.Storage
         /// <param name="experimentName"></param>
         /// <returns></returns>
         Experiment GetExperiment(string experimentName);
+
+        /// <summary>
+        /// Gets an experiment by id
+        /// </summary>
+        /// <param name="experimentId"></param>
+        /// <returns></returns>
+        Experiment GetExperiment(Guid experimentId);
     }
 }

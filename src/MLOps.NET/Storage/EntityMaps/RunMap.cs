@@ -13,15 +13,22 @@ namespace MLOps.NET.Storage.EntityMaps
             builder.Property(x => x.TrainingTime).IsRequired(false);
 
             builder.HasMany(x => x.RunArtifacts)
-                .WithOne(y => y.Run)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasMany(x => x.HyperParameters)
-                .WithOne(y => y.Run)
+                .WithOne()
+                .HasForeignKey(x => x.RunId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(x => x.Metrics)
-                .WithOne(y => y.Run)
+                .WithOne()
+                .HasForeignKey(x => x.RunId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(x => x.HyperParameters)
+                .WithOne()
+                .HasForeignKey(x => x.RunId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(x => x.ConfusionMatrix)
+                .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

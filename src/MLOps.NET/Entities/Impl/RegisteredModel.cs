@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MLOps.NET.Entities.Impl
 {
@@ -26,29 +27,14 @@ namespace MLOps.NET.Entities.Impl
         public Guid RunArtifactId { get; set; }
 
         /// <summary>
-        /// RunArtifact
-        /// </summary>
-        public RunArtifact RunArtifact { get; set; }
-
-        /// <summary>
         /// ExperimentId
         /// </summary>
         public Guid ExperimentId { get; set; }
 
         /// <summary>
-        /// Experiment
-        /// </summary>
-        public Experiment Experiment { get; set; }
-
-        /// <summary>
         /// RunId
         /// </summary>
         public Guid RunId { get; set; }
-
-        /// <summary>
-        /// Run
-        /// </summary>
-        public Run Run { get; set; }
 
         /// <summary>
         /// Date the model was registered
@@ -61,8 +47,18 @@ namespace MLOps.NET.Entities.Impl
         public string RegisteredBy { get; set; }
 
         /// <summary>
+        /// Model Description
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
         /// Version
         /// </summary>
         public int Version { get; set; }
+
+        /// <summary>
+        /// Deployments
+        /// </summary>
+        public List<Deployment> Deployments { get; set; }
     }
 }

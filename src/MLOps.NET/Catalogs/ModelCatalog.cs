@@ -26,12 +26,19 @@ namespace MLOps.NET.Catalogs
             this.runRepository = runRepository;
         }
 
-        ///<inheritdoc/>
-        public async Task UploadAsync(Guid runId, string filePath)
+        /// <summary>
+        /// Uploads a model
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <param name="filePath"></param>
+        /// <returns>A reference to the created RunArtifact</returns>
+        public async Task<RunArtifact> UploadAsync(Guid runId, string filePath)
         {
             var artifactName = $"{runId}.zip";
-            await runRepository.CreateRunArtifact(runId, artifactName);
+            var runArtifact = await runRepository.CreateRunArtifact(runId, artifactName);
             await modelRepository.UploadModelAsync(runId, filePath);
+
+            return runArtifact;
         }
 
         /// <summary>
@@ -61,9 +68,27 @@ namespace MLOps.NET.Catalogs
         /// <param name="experimentId"></param>
         /// <param name="runArtifactId"></param>
         /// <param name="registeredBy"></param>
-        public async Task RegisterModel(Guid experimentId, Guid runArtifactId, string registeredBy)
+        /// <param name="modelDescription"></param>
+        /// <returns>The registered model</returns>
+        public async Task<RegisteredModel> RegisterModel(Guid experimentId, Guid runArtifactId, string registeredBy, string modelDescription)
         {
-            await runRepository.CreateRegisteredModelAsync(experimentId, runArtifactId, registeredBy);
+            await runRepository.CreateRegisteredModelAsync(experimentId, runArtifactId, registeredBy, modelDescription);
+
+            return runRepository.GetLatestRegisteredModel(experimentId);
+        }
+
+        /// <summary>
+        /// Registers a model
+        /// </summary>
+        /// <param name="experimentId"></param>
+        /// <param name="runArtifactId"></param>
+        /// <param name="registeredBy"></param>
+        /// <returns>The registered model</returns>
+        public async Task<RegisteredModel> RegisterModel(Guid experimentId, Guid runArtifactId, string registeredBy)
+        {
+            await runRepository.CreateRegisteredModelAsync(experimentId, runArtifactId, registeredBy, string.Empty);
+
+            return runRepository.GetLatestRegisteredModel(experimentId);
         }
 
         /// <summary>

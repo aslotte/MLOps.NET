@@ -9,6 +9,8 @@ namespace MLOps.NET.Storage.EntityMaps
         public void Configure(EntityTypeBuilder<ConfusionMatrixEntity> builder)
         {
             builder.Property(x => x.SerializedMatrix).IsRequired();
+
+            builder.HasKey(x => x.ConfusionMatrixEntityId);
         }
     }
 }

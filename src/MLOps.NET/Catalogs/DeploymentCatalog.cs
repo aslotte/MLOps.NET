@@ -14,25 +14,31 @@ namespace MLOps.NET.Catalogs
     {
         private readonly IDeploymentRepository deploymentRepository;
         private readonly IModelRepository modelRepository;
+        private readonly IExperimentRepository experimentRepository;
 
         /// <summary>
         /// Ctor
         /// </summary>
         /// <param name="deploymentRepository"></param>
         /// <param name="modelRepository"></param>
-        public DeploymentCatalog(IDeploymentRepository deploymentRepository, IModelRepository modelRepository)
+        /// <param name="experimentRepository"></param>
+        public DeploymentCatalog(IDeploymentRepository deploymentRepository,
+            IModelRepository modelRepository,
+            IExperimentRepository experimentRepository)
         {
             this.deploymentRepository = deploymentRepository;
             this.modelRepository = modelRepository;
+            this.experimentRepository = experimentRepository;
         }
 
         /// <summary>
         /// Creates a deployment target
         /// </summary>
         /// <param name="deploymentTargetName"></param>
-        public async Task CreateDeploymentTargetAsync(string deploymentTargetName)
+        /// <param name="isProduction"></param>
+        public async Task<DeploymentTarget> CreateDeploymentTargetAsync(string deploymentTargetName, bool isProduction = false)
         {
-            await this.deploymentRepository.CreateDeploymentTargetAsync(deploymentTargetName);
+            return await this.deploymentRepository.CreateDeploymentTargetAsync(deploymentTargetName, isProduction);
         }
 
         /// <summary>
@@ -50,23 +56,27 @@ namespace MLOps.NET.Catalogs
         /// <param name="deploymentTarget"></param>
         /// <param name="registeredModel"></param>
         /// <param name="deployedBy"></param>
-        /// <returns>Deployed model path</returns>
+        /// <returns>A deployment</returns>
         /// <returns></returns>
-        public async Task<string> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy)
+        public async Task<Deployment> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy)
         {
-            await this.deploymentRepository.CreateDeploymentAsync(deploymentTarget, registeredModel, deployedBy);
+            var experiment = this.experimentRepository.GetExperiment(registeredModel.ExperimentId);
+            var deploymentUri = await this.modelRepository.DeployModelAsync(deploymentTarget, registeredModel, experiment);
 
-            return await this.modelRepository.DeployModelAsync(deploymentTarget, registeredModel);
+            return await this.deploymentRepository.CreateDeploymentAsync(deploymentTarget, registeredModel, deployedBy, deploymentUri);
         }
 
         /// <summary>
         /// Returns the URI to a deployed model
         /// </summary>
-        /// <param name="deployment"></param>
+        /// <param name="experimentId"></param>
+        /// <param name="deploymentTarget"></param>
         /// <returns></returns>
-        public string GetDeploymentUri(Deployment deployment)
+        public string GetDeploymentUri(Guid experimentId, DeploymentTarget deploymentTarget)
         {
-            return this.modelRepository.GetDeploymentUri(deployment);
+            var experiment = this.experimentRepository.GetExperiment(experimentId);
+
+            return this.modelRepository.GetDeploymentUri(experiment, deploymentTarget);
         }
 
         /// <summary>

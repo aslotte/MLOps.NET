@@ -30,10 +30,12 @@ namespace MLOps.NET.Azure.Tests
         [ExpectedException(typeof(InvalidOperationException), "The model to be deployed does not exist")]
         public async Task DeployModel_NoSourceFileExist_ShouldThrowException()
         {
+            var experiment = new Experiment("ExperimentName");
+
             var registeredModel = new RegisteredModel
             {
                 RunId = Guid.NewGuid(),
-                Experiment = new Experiment("ExperimentName")
+                ExperimentId = experiment.ExperimentId
             };
 
             var deploymentTarget = new DeploymentTarget("Test");
@@ -47,16 +49,18 @@ namespace MLOps.NET.Azure.Tests
                 .Returns(blobClientMock.Object);
 
             // Act
-            await sut.DeployModelAsync(deploymentTarget, registeredModel);
+            await sut.DeployModelAsync(deploymentTarget, registeredModel, experiment);
         }
 
         [TestMethod]
         public async Task DeployModel_GivenModelExists_ShouldCallCopyBlob()
         {
+            var experiment = new Experiment("ExperimentName");
+
             var registeredModel = new RegisteredModel
             {
                 RunId = Guid.NewGuid(),
-                Experiment = new Experiment("ExperimentName")
+                ExperimentId = experiment.ExperimentId
             };
 
             var deploymentTarget = new DeploymentTarget("Test");
@@ -83,7 +87,7 @@ namespace MLOps.NET.Azure.Tests
                 .Returns(deploymentClientMock.Object);
 
             // Act
-            await sut.DeployModelAsync(deploymentTarget, registeredModel);
+            await sut.DeployModelAsync(deploymentTarget, registeredModel, experiment);
 
             //Assert
             deploymentClientMock.Verify(x => x.StartCopyFromUriAsync(sourceUri, null, null, null, null, null, default), Times.Once());

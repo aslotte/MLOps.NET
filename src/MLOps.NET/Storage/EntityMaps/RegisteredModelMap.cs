@@ -8,18 +8,15 @@ namespace MLOps.NET.Storage.EntityMaps
     {
         public void Configure(EntityTypeBuilder<RegisteredModel> builder)
         {
-            builder.Property(X => X.RegisteredDate).IsRequired();
-            builder.Property(X => X.RegisteredBy).IsRequired();
+            builder.Property(x => x.RegisteredDate).IsRequired();
+            builder.Property(x => x.RegisteredBy).IsRequired();
+            builder.Property(x => x.Version).IsRequired();
+            builder.Property(x => x.Description).IsRequired();
 
-            builder
-                .HasOne(x => x.Run)
+            builder.HasMany(x => x.Deployments)
                 .WithOne()
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder
-                 .HasOne(x => x.Experiment)
-                 .WithMany()
-                 .OnDelete(DeleteBehavior.Restrict);
+                .HasForeignKey(x => x.RegisteredModelId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -5,6 +5,7 @@ using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Database;
 using MLOps.NET.Storage.EntityConfiguration;
+using MLOps.NET.Storage.EntityResolvers;
 using MLOps.NET.Utilities;
 using Moq;
 using System;
@@ -32,7 +33,7 @@ namespace MLOps.NET.Tests
 
             this.clockMock = new Mock<IClock>();
 
-            this.sut = new RunRepository(contextFactory, clockMock.Object);
+            this.sut = new RunRepository(contextFactory, clockMock.Object, new RunResolver(), new RegisteredModelResolver());
         }
 
         [TestMethod]
@@ -45,7 +46,7 @@ namespace MLOps.NET.Tests
             this.clockMock.Setup(x => x.UtcNow).Returns(now);
 
             //Act
-            await this.sut.CreateRegisteredModelAsync(ExperimentId, RunId, "By me");
+            await this.sut.CreateRegisteredModelAsync(ExperimentId, RunId, "By me", "Model Registered By Test");
 
             //Assert
             using var db = this.contextFactory.CreateDbContext();

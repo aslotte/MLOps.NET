@@ -3,15 +3,12 @@ name: Samples (MLOps.NET.Samples)
 on:
   push:
     branches: [ master ]
-    paths-ignore:
-    - 'README.md'
-    - 'images/**'        
+    paths:
+      - 'samples/**'  
   pull_request:
     branches: [ master ]
     paths-ignore:
-    - 'README.md'
-    - 'images/**'        
-
+      - 'samples/**'
 jobs:
   Build-samples:
     runs-on: ubuntu-latest

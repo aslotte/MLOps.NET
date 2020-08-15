@@ -15,8 +15,9 @@ namespace MLOps.NET.Storage
         /// </summary>
         /// <param name="experimentId"></param>
         /// <param name="gitCommitHash">Optional, sets the linked git commit hash</param>
+        /// <returns>Created run</returns>
         /// <returns></returns>
-        Task<Guid> CreateRunAsync(Guid experimentId, string gitCommitHash = "");
+        Task<Run> CreateRunAsync(Guid experimentId, string gitCommitHash = "");
 
         /// <summary>
         /// Get all runs by experiment id
@@ -52,8 +53,8 @@ namespace MLOps.NET.Storage
         /// </summary>
         /// <param name="runId"></param>
         /// <param name="name"></param>
-        /// <returns></returns>
-        Task CreateRunArtifact(Guid runId, string name);
+        /// <returns>The created RunArtifact</returns>
+        Task<RunArtifact> CreateRunArtifact(Guid runId, string name);
 
         /// <summary>
         /// Gets run artifacts
@@ -68,8 +69,9 @@ namespace MLOps.NET.Storage
         /// <param name="experimentId"></param>
         /// <param name="runArtifactId"></param>
         /// <param name="registeredBy"></param>
+        /// <param name="modelDescription"></param>
         /// <returns></returns>
-        Task CreateRegisteredModelAsync(Guid experimentId, Guid runArtifactId, string registeredBy);
+        Task CreateRegisteredModelAsync(Guid experimentId, Guid runArtifactId, string registeredBy, string modelDescription);
 
         /// <summary>
         /// Gets all registered models for a given experiement 

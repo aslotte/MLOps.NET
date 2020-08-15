@@ -15,7 +15,7 @@ namespace MLOps.NET.SQLServer.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.6")
+                .HasAnnotation("ProductVersion", "3.1.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -138,8 +138,9 @@ namespace MLOps.NET.SQLServer.Migrations
                     b.Property<Guid>("DeploymentTargetId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ExperimentId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("DeploymentUri")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("RegisteredModelId")
                         .HasColumnType("uniqueidentifier");
@@ -147,8 +148,6 @@ namespace MLOps.NET.SQLServer.Migrations
                     b.HasKey("DeploymentId");
 
                     b.HasIndex("DeploymentTargetId");
-
-                    b.HasIndex("ExperimentId");
 
                     b.HasIndex("RegisteredModelId");
 
@@ -163,6 +162,9 @@ namespace MLOps.NET.SQLServer.Migrations
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsProduction")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -244,6 +246,10 @@ namespace MLOps.NET.SQLServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("ExperimentId")
                         .HasColumnType("uniqueidentifier");
 
@@ -264,13 +270,6 @@ namespace MLOps.NET.SQLServer.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("RegisteredModelId");
-
-                    b.HasIndex("ExperimentId");
-
-                    b.HasIndex("RunArtifactId");
-
-                    b.HasIndex("RunId")
-                        .IsUnique();
 
                     b.ToTable("RegisteredModel");
                 });
@@ -358,28 +357,22 @@ namespace MLOps.NET.SQLServer.Migrations
 
             modelBuilder.Entity("MLOps.NET.Entities.Impl.Deployment", b =>
                 {
-                    b.HasOne("MLOps.NET.Entities.Impl.DeploymentTarget", "DeploymentTarget")
+                    b.HasOne("MLOps.NET.Entities.Impl.DeploymentTarget", null)
                         .WithMany("Deployments")
                         .HasForeignKey("DeploymentTargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MLOps.NET.Entities.Impl.Experiment", "Experiment")
-                        .WithMany()
-                        .HasForeignKey("ExperimentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MLOps.NET.Entities.Impl.RegisteredModel", "RegisteredModel")
-                        .WithMany()
+                    b.HasOne("MLOps.NET.Entities.Impl.RegisteredModel", null)
+                        .WithMany("Deployments")
                         .HasForeignKey("RegisteredModelId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("MLOps.NET.Entities.Impl.HyperParameter", b =>
                 {
-                    b.HasOne("MLOps.NET.Entities.Impl.Run", "Run")
+                    b.HasOne("MLOps.NET.Entities.Impl.Run", null)
                         .WithMany("HyperParameters")
                         .HasForeignKey("RunId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -388,37 +381,16 @@ namespace MLOps.NET.SQLServer.Migrations
 
             modelBuilder.Entity("MLOps.NET.Entities.Impl.Metric", b =>
                 {
-                    b.HasOne("MLOps.NET.Entities.Impl.Run", "Run")
+                    b.HasOne("MLOps.NET.Entities.Impl.Run", null)
                         .WithMany("Metrics")
                         .HasForeignKey("RunId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MLOps.NET.Entities.Impl.RegisteredModel", b =>
-                {
-                    b.HasOne("MLOps.NET.Entities.Impl.Experiment", "Experiment")
-                        .WithMany()
-                        .HasForeignKey("ExperimentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MLOps.NET.Entities.Impl.RunArtifact", "RunArtifact")
-                        .WithMany()
-                        .HasForeignKey("RunArtifactId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MLOps.NET.Entities.Impl.Run", "Run")
-                        .WithOne()
-                        .HasForeignKey("MLOps.NET.Entities.Impl.RegisteredModel", "RunId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("MLOps.NET.Entities.Impl.Run", b =>
                 {
-                    b.HasOne("MLOps.NET.Entities.Impl.Experiment", "Experiment")
+                    b.HasOne("MLOps.NET.Entities.Impl.Experiment", null)
                         .WithMany("Runs")
                         .HasForeignKey("ExperimentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -427,7 +399,7 @@ namespace MLOps.NET.SQLServer.Migrations
 
             modelBuilder.Entity("MLOps.NET.Entities.Impl.RunArtifact", b =>
                 {
-                    b.HasOne("MLOps.NET.Entities.Impl.Run", "Run")
+                    b.HasOne("MLOps.NET.Entities.Impl.Run", null)
                         .WithMany("RunArtifacts")
                         .HasForeignKey("RunId")
                         .OnDelete(DeleteBehavior.Cascade)

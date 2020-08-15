@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MLOps.NET.Storage;
+using MLOps.NET.Extensions;
 using MLOps.NET.Storage.Database;
 using MLOps.NET.Storage.Interfaces;
-using Moq;
 
 namespace MLOps.NET.SQLite.IntegrationTests
 {
@@ -11,7 +10,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
         internal static IMLOpsContext Initialize()
         {
             return new MLOpsBuilder()
-                .UseModelRepository(new Mock<IModelRepository>().Object)
+                .UseLocalFileModelRepository()
                 .UseSQLite()
                 .Build();
         }

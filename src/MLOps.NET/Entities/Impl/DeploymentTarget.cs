@@ -37,5 +37,10 @@ namespace MLOps.NET.Entities.Impl
         /// Deployments
         /// </summary>
         public List<Deployment> Deployments { get; set; }
+
+        /// <summary>
+        /// Flag indicating whether DeploymentTarget is a Production environment or not.
+        /// </summary>
+        public bool IsProduction { get; set; }
     }
 }

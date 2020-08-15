@@ -19,6 +19,7 @@ namespace MLOps.NET.IntegrationTests
             var deploymentTargets = sut.Deployment.GetDeploymentTargets();
             deploymentTargets.First().Name.Should().Be("Production");
             deploymentTargets.First().CreatedDate.Date.Should().Be(DateTime.UtcNow.Date);
+            deploymentTargets.First().IsProduction.Should().BeFalse();
         }
 
         [TestMethod]
@@ -34,7 +35,7 @@ namespace MLOps.NET.IntegrationTests
         {
             //Arrange
             var registeredModel = await CreateRegisteredModel();
-            var deploymentTarget = await CreateDeploymentTarget();
+            var deploymentTarget = await CreateDeploymentTarget("Prod");
 
             //Act
             await sut.Deployment.DeployModelAsync(deploymentTarget, registeredModel, "By me");
@@ -42,28 +43,44 @@ namespace MLOps.NET.IntegrationTests
             //Assert
             var deployment = sut.Deployment.GetDeployments(registeredModel.ExperimentId).First();
 
-            deployment.RegisteredModel.Should().NotBeNull();
-            deployment.RegisteredModelId.Should().Be(registeredModel.RegisteredModelId);
             deployment.DeployedBy.Should().Be("By me");
             deployment.DeploymentDate.Date.Should().Be(DateTime.UtcNow.Date);
-            deployment.Experiment.Should().NotBeNull();
+        }
+
+        [TestMethod]
+        public async Task GetRegisteredModel_GivenARegisteredModelHasMoreThanOneDeployment_ShouldPopulateDeployments()
+        {
+            //Arrange
+            var registeredModel = await CreateRegisteredModel();
+            var testDeploymentTarget = await CreateDeploymentTarget("Test");
+            var prodDeploymentTarget = await CreateDeploymentTarget("Prod");
+
+            await sut.Deployment.DeployModelAsync(testDeploymentTarget, registeredModel, "By me");
+            await sut.Deployment.DeployModelAsync(prodDeploymentTarget, registeredModel, "By me");
+
+            //Act
+            registeredModel = sut.Model.GetLatestRegisteredModel(registeredModel.ExperimentId);
+
+            //Assert
+            registeredModel.Deployments.Should().NotBeNull();
+            registeredModel.Deployments.Should().HaveCount(2);
         }
 
         private async Task<RegisteredModel> CreateRegisteredModel()
         {
             var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
-            var runId = await sut.LifeCycle.CreateRunAsync(experimentId);
-            await sut.Model.UploadAsync(runId, "");
+            var run = await sut.LifeCycle.CreateRunAsync(experimentId);
+            await sut.Model.UploadAsync(run.RunId, @"Data/model.txt");
 
-            var runArtifact = sut.Model.GetRunArtifacts(runId).First();
-            await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team");
+            var runArtifact = sut.Model.GetRunArtifacts(run.RunId).First();
+            await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team", "Model Registered By Test");
 
             return sut.Model.GetLatestRegisteredModel(experimentId);
         }
 
-        private async Task<DeploymentTarget> CreateDeploymentTarget()
+        private async Task<DeploymentTarget> CreateDeploymentTarget(string deploymentTargetName)
         {
-            await sut.Deployment.CreateDeploymentTargetAsync("Production");
+            await sut.Deployment.CreateDeploymentTargetAsync(deploymentTargetName);
 
             return sut.Deployment.GetDeploymentTargets().First();
         }

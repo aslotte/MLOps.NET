@@ -1,5 +1,4 @@
-﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MLOps.NET.SQLite.Migrations
@@ -9,6 +8,10 @@ namespace MLOps.NET.SQLite.Migrations
     /// </summary>
     public partial class InitialCreate : Migration
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="migrationBuilder"></param>
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -22,6 +25,12 @@ namespace MLOps.NET.SQLite.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Data", x => x.DataId);
+                    table.ForeignKey(
+                        name: "FK_Data_Run_RunId",
+                        column: x => x.RunId,
+                        principalTable: "Run",
+                        principalColumn: "RunId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -48,6 +57,42 @@ namespace MLOps.NET.SQLite.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Experiment", x => x.ExperimentId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RegisteredModel",
+                columns: table => new
+                {
+                    RegisteredModelId = table.Column<Guid>(nullable: false),
+                    RunArtifactId = table.Column<Guid>(nullable: false),
+                    ExperimentId = table.Column<Guid>(nullable: false),
+                    RunId = table.Column<Guid>(nullable: false),
+                    RegisteredDate = table.Column<DateTime>(nullable: false),
+                    RegisteredBy = table.Column<string>(nullable: false),
+                    Description = table.Column<string>(nullable: false),
+                    Version = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RegisteredModel", x => x.RegisteredModelId);
+                    table.ForeignKey(
+                        name: "FK_RegisteredModel_Run_RunId",
+                        column: x => x.RunId,
+                        principalTable: "Run",
+                        principalColumn: "RunId",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_RegisteredModel_Experiment_ExperimentId",
+                        column: x => x.ExperimentId,
+                        principalTable: "Experiment",
+                        principalColumn: "ExperimentId",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_RegisteredModel_RunArtifact_RunArtifactId",
+                        column: x => x.RunArtifactId,
+                        principalTable: "RunArtifact",
+                        principalColumn: "RunArtifactId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -87,6 +132,33 @@ namespace MLOps.NET.SQLite.Migrations
                         column: x => x.ExperimentId,
                         principalTable: "Experiment",
                         principalColumn: "ExperimentId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Deployment",
+                columns: table => new
+                {
+                    DeploymentId = table.Column<Guid>(nullable: false),
+                    DeploymentTargetId = table.Column<Guid>(nullable: false),
+                    RegisteredModelId = table.Column<Guid>(nullable: false),
+                    DeploymentDate = table.Column<DateTime>(nullable: false),
+                    DeployedBy = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Deployment", x => x.DeploymentId);
+                    table.ForeignKey(
+                        name: "FK_Deployment_DeploymentTarget_DeploymentTargetId",
+                        column: x => x.DeploymentTargetId,
+                        principalTable: "DeploymentTarget",
+                        principalColumn: "DeploymentTargetId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Deployment_RegisteredModel_RegisteredModelId",
+                        column: x => x.RegisteredModelId,
+                        principalTable: "RegisteredModel",
+                        principalColumn: "RegisteredModelId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -188,75 +260,6 @@ namespace MLOps.NET.SQLite.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "RegisteredModel",
-                columns: table => new
-                {
-                    RegisteredModelId = table.Column<Guid>(nullable: false),
-                    RunArtifactId = table.Column<Guid>(nullable: false),
-                    ExperimentId = table.Column<Guid>(nullable: false),
-                    RunId = table.Column<Guid>(nullable: false),
-                    RegisteredDate = table.Column<DateTime>(nullable: false),
-                    RegisteredBy = table.Column<string>(nullable: false),
-                    Version = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RegisteredModel", x => x.RegisteredModelId);
-                    table.ForeignKey(
-                        name: "FK_RegisteredModel_Experiment_ExperimentId",
-                        column: x => x.ExperimentId,
-                        principalTable: "Experiment",
-                        principalColumn: "ExperimentId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_RegisteredModel_RunArtifact_RunArtifactId",
-                        column: x => x.RunArtifactId,
-                        principalTable: "RunArtifact",
-                        principalColumn: "RunArtifactId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RegisteredModel_Run_RunId",
-                        column: x => x.RunId,
-                        principalTable: "Run",
-                        principalColumn: "RunId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Deployment",
-                columns: table => new
-                {
-                    DeploymentId = table.Column<Guid>(nullable: false),
-                    DeploymentTargetId = table.Column<Guid>(nullable: false),
-                    RegisteredModelId = table.Column<Guid>(nullable: false),
-                    ExperimentId = table.Column<Guid>(nullable: false),
-                    DeploymentDate = table.Column<DateTime>(nullable: false),
-                    DeployedBy = table.Column<string>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Deployment", x => x.DeploymentId);
-                    table.ForeignKey(
-                        name: "FK_Deployment_DeploymentTarget_DeploymentTargetId",
-                        column: x => x.DeploymentTargetId,
-                        principalTable: "DeploymentTarget",
-                        principalColumn: "DeploymentTargetId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Deployment_Experiment_ExperimentId",
-                        column: x => x.ExperimentId,
-                        principalTable: "Experiment",
-                        principalColumn: "ExperimentId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Deployment_RegisteredModel_RegisteredModelId",
-                        column: x => x.RegisteredModelId,
-                        principalTable: "RegisteredModel",
-                        principalColumn: "RegisteredModelId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_ConfusionMatrix_RunId",
                 table: "ConfusionMatrix",
@@ -280,11 +283,6 @@ namespace MLOps.NET.SQLite.Migrations
                 column: "DeploymentTargetId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Deployment_ExperimentId",
-                table: "Deployment",
-                column: "ExperimentId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Deployment_RegisteredModelId",
                 table: "Deployment",
                 column: "RegisteredModelId");
@@ -300,22 +298,6 @@ namespace MLOps.NET.SQLite.Migrations
                 column: "RunId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisteredModel_ExperimentId",
-                table: "RegisteredModel",
-                column: "ExperimentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RegisteredModel_RunArtifactId",
-                table: "RegisteredModel",
-                column: "RunArtifactId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RegisteredModel_RunId",
-                table: "RegisteredModel",
-                column: "RunId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Run_ExperimentId",
                 table: "Run",
                 column: "ExperimentId");
@@ -326,6 +308,10 @@ namespace MLOps.NET.SQLite.Migrations
                 column: "RunId");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="migrationBuilder"></param>
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
@@ -344,6 +330,9 @@ namespace MLOps.NET.SQLite.Migrations
                 name: "Metric");
 
             migrationBuilder.DropTable(
+                name: "RunArtifact");
+
+            migrationBuilder.DropTable(
                 name: "DataSchema");
 
             migrationBuilder.DropTable(
@@ -353,17 +342,13 @@ namespace MLOps.NET.SQLite.Migrations
                 name: "RegisteredModel");
 
             migrationBuilder.DropTable(
-                name: "Data");
-
-            migrationBuilder.DropTable(
-                name: "RunArtifact");
-
-            migrationBuilder.DropTable(
                 name: "Run");
+
+            migrationBuilder.DropTable(
+                name: "Data");
 
             migrationBuilder.DropTable(
                 name: "Experiment");
         }
     }
 }
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
