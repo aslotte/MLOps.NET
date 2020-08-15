@@ -4,14 +4,23 @@ using MLOps.NET.SQLServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MLOps.NET.SQLServer.Migrations
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [DbContext(typeof(MLOpsSQLDbContext))]
-    partial class MLOpsSQLDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200815154219_AddFKConstraints")]
+    partial class AddFKConstraints
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="modelBuilder"></param>
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
