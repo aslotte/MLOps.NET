@@ -29,7 +29,9 @@ namespace MLOps.NET.Storage.Interfaces
         /// <param name="deploymentTarget"></param>
         /// <param name="registeredModel"></param>
         /// <param name="deployedBy"></param>
-        Task CreateDeploymentAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy);
+        /// <param name="deploymentUri"></param>
+        /// <returns>Deployment URI</returns>
+        Task<Deployment> CreateDeploymentAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy, string deploymentUri);
 
         /// <summary>
         /// Gets all deployments by experiment id

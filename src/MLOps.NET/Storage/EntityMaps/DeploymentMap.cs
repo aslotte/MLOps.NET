@@ -9,24 +9,8 @@ namespace MLOps.NET.Storage.EntityMaps
         public void Configure(EntityTypeBuilder<Deployment> builder)
         {
             builder.Property(x => x.DeploymentDate).IsRequired();
-
             builder.Property(x => x.DeployedBy).IsRequired();
-
-            builder
-                .HasOne(x => x.RegisteredModel)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder
-                .HasOne(x => x.DeploymentTarget)
-                .WithMany()
-                .HasForeignKey(x => x.DeploymentTargetId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder
-                .HasOne(x => x.Experiment)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Restrict);
+            builder.Property(x => x.DeploymentUri).IsRequired();
         }
     }
 }

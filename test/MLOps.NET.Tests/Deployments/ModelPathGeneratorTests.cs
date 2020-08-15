@@ -21,18 +21,12 @@ namespace MLOps.NET.Tests.Deployments
         [TestMethod]
         public void GetDeploymentPath_ShouldReturnCorrectDeploymentPath()
         {
-            var registeredModel = new RegisteredModel
-            {
-                RunId = Guid.NewGuid(),
-                Experiment = new Experiment("ExperimentName")
-            };
-
             var deploymentTarget = new DeploymentTarget("Test");
 
             var expectedPath = Path.Combine("ExperimentName", "Test", $"ExperimentName.zip");
 
             // Act
-            var deploymentPath = sut.GetDeploymentPath(deploymentTarget, registeredModel);
+            var deploymentPath = sut.GetDeploymentPath(deploymentTarget, "ExperimentName");
 
             // Assert
             deploymentPath.Should().Be(expectedPath);

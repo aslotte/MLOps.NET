@@ -54,8 +54,10 @@ namespace MLOps.NET.Storage
             await stream.CopyToAsync(destination);
         }
 
-        public async Task<string> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel)
+        public async Task<string> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, Experiment experiment)
         {
+            var deploymentPath = this.modelPathGenerator.GetDeploymentPath(deploymentTarget, experiment.ExperimentName);
+
             await CreateBucketAsync(this.s3Client, deploymentRepositoryBucket, isPublic: true);
 
             var copyObjectRequest = new CopyObjectRequest
@@ -63,25 +65,22 @@ namespace MLOps.NET.Storage
                 SourceBucket = modelRepositoryBucket,
                 SourceKey = this.modelPathGenerator.GetModelName(registeredModel.RunId),
                 DestinationBucket = deploymentRepositoryBucket,
-                DestinationKey = this.modelPathGenerator.GetDeploymentPath(deploymentTarget, registeredModel)
+                DestinationKey = deploymentPath
             };
 
             await this.s3Client.CopyObjectAsync(copyObjectRequest);
 
-            return GetDeploymentUri(deploymentTarget, registeredModel);
+            return GetDeploymentUri(experiment, deploymentTarget);
         }
 
-        public string GetDeploymentUri(Deployment deployment)
+        public string GetDeploymentUri(Experiment experiment, DeploymentTarget deploymentTarget)
         {
-            return GetDeploymentUri(deployment.DeploymentTarget, deployment.RegisteredModel);
-        }
+            var deploymentPath = this.modelPathGenerator.GetDeploymentPath(deploymentTarget, experiment.ExperimentName);
 
-        private string GetDeploymentUri(DeploymentTarget deploymentTarget, RegisteredModel registeredModel)
-        {
             var request = new GetPreSignedUrlRequest
             {
                 BucketName = deploymentRepositoryBucket,
-                Key = this.modelPathGenerator.GetDeploymentPath(deploymentTarget, registeredModel),
+                Key = deploymentPath,
                 Expires = DateTime.Now.AddYears(5),
                 Protocol = Protocol.HTTP
             };

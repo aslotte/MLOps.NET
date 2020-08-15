@@ -44,8 +44,8 @@ namespace MLOps.NET.Catalogs
         /// </summary>
         /// <param name="experimentId"></param>
         /// <param name="gitCommitHash">Optional, set the linked git commit hash</param>
-        /// <returns>Run Id</returns>
-        public async Task<Guid> CreateRunAsync(Guid experimentId, string gitCommitHash = "")
+        /// <returns>The created run</returns>
+        public async Task<Run> CreateRunAsync(Guid experimentId, string gitCommitHash = "")
         {
             return await runRepository.CreateRunAsync(experimentId, gitCommitHash);
         }
@@ -55,8 +55,8 @@ namespace MLOps.NET.Catalogs
         /// </summary>
         /// <param name="experimentName"></param>
         /// <param name="gitCommitHash">Optional, set the linked git commit hash</param>
-        /// <returns>Run Id</returns>
-        public async Task<Guid> CreateRunAsync(string experimentName, string gitCommitHash = "")
+        /// <returns>The created run</returns>
+        public async Task<Run> CreateRunAsync(string experimentName, string gitCommitHash = "")
         {
             var experimentId = await CreateExperimentAsync(experimentName);
             return await CreateRunAsync(experimentId, gitCommitHash);

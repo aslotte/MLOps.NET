@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Interfaces;
 using System;
@@ -38,6 +39,12 @@ namespace MLOps.NET.Storage.Database
         public virtual void EnsureCreated()
         {
             Database.Migrate();
+        }
+
+        ///<inheritdoc cref="IMLOpsDbContext"/>
+        public override EntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class
+        {
+            return base.Entry(entity);
         }
 
         ///<inheritdoc cref="IMLOpsDbContext"/>

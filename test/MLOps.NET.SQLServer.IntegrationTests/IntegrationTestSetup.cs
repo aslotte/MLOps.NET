@@ -1,11 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MLOps.NET.Extensions;
 using MLOps.NET.SQLServer.IntegrationTests.Constants;
-using MLOps.NET.Storage;
 using MLOps.NET.Storage.Database;
-using MLOps.NET.Storage.EntityConfiguration;
 using MLOps.NET.Storage.Interfaces;
 using MLOps.NET.Tests.Common.Configuration;
-using Moq;
 
 namespace MLOps.NET.SQLServer.IntegrationTests
 {
@@ -16,7 +14,7 @@ namespace MLOps.NET.SQLServer.IntegrationTests
             var configuration = ConfigurationFactory.GetConfiguration();
 
             return new MLOpsBuilder()
-                .UseModelRepository(new Mock<IModelRepository>().Object)
+                .UseLocalFileModelRepository()
                 .UseSQLServer(configuration[ConfigurationKeys.ConnectionString])
                 .Build();
         }
