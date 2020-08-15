@@ -27,7 +27,7 @@ namespace MLOps.NET.Storage.Repositories
         }
 
         ///<inheritdoc cref="IDeploymentRepository"/>
-        public async Task CreateDeploymentTargetAsync(string deploymentTargetName, bool isProduction = false)
+        public async Task<DeploymentTarget> CreateDeploymentTargetAsync(string deploymentTargetName, bool isProduction = false)
         {
             if (string.IsNullOrEmpty(deploymentTargetName))
             {
