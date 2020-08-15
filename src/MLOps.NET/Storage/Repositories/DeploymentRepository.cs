@@ -44,13 +44,9 @@ namespace MLOps.NET.Storage.Repositories
 
             var deploymentTarget = new DeploymentTarget(deploymentTargetName)
             {
-                CreatedDate = clock.UtcNow
+                CreatedDate = clock.UtcNow,
+                IsProduction = isProduction
             };
-
-            if (isProduction)
-            {
-                deploymentTarget.IsProduction = true;
-            }
 
             db.DeploymentTargets.Add(deploymentTarget);
 
