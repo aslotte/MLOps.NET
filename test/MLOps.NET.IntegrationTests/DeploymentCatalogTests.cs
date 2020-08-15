@@ -19,6 +19,20 @@ namespace MLOps.NET.IntegrationTests
             var deploymentTargets = sut.Deployment.GetDeploymentTargets();
             deploymentTargets.First().Name.Should().Be("Production");
             deploymentTargets.First().CreatedDate.Date.Should().Be(DateTime.UtcNow.Date);
+            deploymentTargets.First().IsProduction.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public async Task CreateDeploymentTarget_GivenNameAndIsProductionIsTrue_CreatesAValidDeploymentTarget()
+        {
+            //Act
+            await sut.Deployment.CreateDeploymentTargetAsync("Production", true);
+
+            //Assert
+            var deploymentTargets = sut.Deployment.GetDeploymentTargets();
+            deploymentTargets.First().Name.Should().Be("Production");
+            deploymentTargets.First().CreatedDate.Date.Should().Be(DateTime.UtcNow.Date);
+            deploymentTargets.First().IsProduction.Should().BeTrue();
         }
 
         [TestMethod]

@@ -23,7 +23,7 @@ namespace MLOps.NET.Storage.Repositories
         }
 
         ///<inheritdoc cref="IDeploymentRepository"/>
-        public async Task CreateDeploymentTargetAsync(string deploymentTargetName)
+        public async Task CreateDeploymentTargetAsync(string deploymentTargetName, bool isProduction = false)
         {
             if (string.IsNullOrEmpty(deploymentTargetName))
             {
@@ -36,6 +36,11 @@ namespace MLOps.NET.Storage.Repositories
             {
                 CreatedDate = clock.UtcNow
             };
+
+            if (isProduction)
+            {
+                deploymentTarget.IsProduction = true;
+            }
 
             db.DeploymentTargets.Add(deploymentTarget);
 

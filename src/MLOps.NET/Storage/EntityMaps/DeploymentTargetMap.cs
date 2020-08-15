@@ -9,6 +9,7 @@ namespace MLOps.NET.Storage.EntityMaps
         public void Configure(EntityTypeBuilder<DeploymentTarget> builder)
         {
             builder.Property(x => x.Name).IsRequired();
+            builder.Property(x => x.IsProduction).IsRequired();
 
             builder
                 .HasMany(x => x.Deployments)
