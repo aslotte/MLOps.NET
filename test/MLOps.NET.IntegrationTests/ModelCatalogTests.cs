@@ -36,7 +36,7 @@ namespace MLOps.NET.IntegrationTests
             var runArtifact = sut.Model.GetRunArtifacts(runId).First();
 
             //Act
-            await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team");
+            await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team", "Model Registered By Test");
 
             //Assert
             var registeredModel = sut.Model.GetLatestRegisteredModel(experimentId);
@@ -56,7 +56,7 @@ namespace MLOps.NET.IntegrationTests
             await sut.Model.UploadAsync(runId, "");
 
             var runArtifact = sut.Model.GetRunArtifacts(runId).First();
-            await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team");
+            await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team", "Model Registered By Test");
 
             //Act
             var registeredModel = sut.Model.GetRegisteredModels(experimentId).First();
@@ -76,14 +76,14 @@ namespace MLOps.NET.IntegrationTests
             var runId = await sut.LifeCycle.CreateRunAsync(experimentId);
             await sut.Model.UploadAsync(runId, "");
             var runArtifact = sut.Model.GetRunArtifacts(runId).First();
-            await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team");
+            await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team", "Model Registered By Test");
 
             var runId2 = await sut.LifeCycle.CreateRunAsync(experimentId);
             await sut.Model.UploadAsync(runId2, "");
             var runArtifact2 = sut.Model.GetRunArtifacts(runId2).First();
 
             //Act
-            await sut.Model.RegisterModel(experimentId, runArtifact2.RunArtifactId, "The MLOps.NET Team");
+            await sut.Model.RegisterModel(experimentId, runArtifact2.RunArtifactId, "The MLOps.NET Team", "Model Registered By Test");
 
             //Assert
             var registeredModel = sut.Model.GetLatestRegisteredModel(experimentId);
@@ -95,7 +95,7 @@ namespace MLOps.NET.IntegrationTests
         public async Task RegisterModel_GivenRunArtifactDoesNotExist_ThrowsException()
         {
             //Act
-            await sut.Model.RegisterModel(Guid.NewGuid(), Guid.Empty, "The MLOps.NET Team");
+            await sut.Model.RegisterModel(Guid.NewGuid(), Guid.Empty, "The MLOps.NET Team", "Model Registered By Test");
         }
     }
 }

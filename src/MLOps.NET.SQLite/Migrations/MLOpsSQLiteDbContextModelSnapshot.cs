@@ -14,7 +14,7 @@ namespace MLOps.NET.SQLite.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.6");
+                .HasAnnotation("ProductVersion", "3.1.7");
 
             modelBuilder.Entity("MLOps.NET.Entities.Impl.ConfusionMatrixEntity", b =>
                 {
@@ -216,6 +216,10 @@ namespace MLOps.NET.SQLite.Migrations
                 {
                     b.Property<Guid>("RegisteredModelId")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("ExperimentId")
