@@ -13,15 +13,15 @@ namespace MLOps.NET.IntegrationTests
         [TestMethod]
         public async Task LogDataAsync_GivenValidDataView_ShouldLogData()
         {
-            var runId = await sut.LifeCycle.CreateRunAsync("test");
+            var run = await sut.LifeCycle.CreateRunAsync("test");
 
             var data = LoadData();
 
             //Act
-            await sut.Data.LogDataAsync(runId, data);
+            await sut.Data.LogDataAsync(run.RunId, data);
 
             //Assert
-            var savedData = sut.Data.GetData(runId);
+            var savedData = sut.Data.GetData(run.RunId);
 
             savedData.DataSchema.ColumnCount.Should().Be(2);
 
@@ -39,15 +39,15 @@ namespace MLOps.NET.IntegrationTests
         [TestMethod]
         public async Task LogDataAsync_GivenLogHash()
         {
-            var runId = await sut.LifeCycle.CreateRunAsync("test");
+            var run = await sut.LifeCycle.CreateRunAsync("test");
 
             var data = LoadData();
 
             //Act
-            await sut.Data.LogDataAsync(runId, data);
+            await sut.Data.LogDataAsync(run.RunId, data);
 
             //Assert
-            var savedData = sut.Data.GetData(runId);
+            var savedData = sut.Data.GetData(run.RunId);
 
             savedData.DataHash.Should().NotBeNullOrEmpty();
         }
@@ -55,17 +55,17 @@ namespace MLOps.NET.IntegrationTests
         [TestMethod]
         public async Task LogDataAsync_ShouldGenerateDifferentHashWhenDataChanges()
         {
-            var previousRunId = await sut.LifeCycle.CreateRunAsync("previous run");
-            var currentRunId = await sut.LifeCycle.CreateRunAsync("current run");
+            var previousRun = await sut.LifeCycle.CreateRunAsync("previous run");
+            var currentRun = await sut.LifeCycle.CreateRunAsync("current run");
             var data = LoadData();
 
             var updatedData = LoadUpdatedData();
 
             //Act
-            await sut.Data.LogDataAsync(previousRunId, data);
-            await sut.Data.LogDataAsync(currentRunId, updatedData);
-            var previousRunData = sut.Data.GetData(previousRunId);
-            var currentRunData = sut.Data.GetData(currentRunId);
+            await sut.Data.LogDataAsync(previousRun.RunId, data);
+            await sut.Data.LogDataAsync(currentRun.RunId, updatedData);
+            var previousRunData = sut.Data.GetData(previousRun.RunId);
+            var currentRunData = sut.Data.GetData(currentRun.RunId);
             //Assert
 
 

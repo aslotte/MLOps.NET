@@ -16,27 +16,27 @@ namespace MLOps.NET.IntegrationTests
             var mlContext = new MLContext(seed: 2);
 
             var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
-            var runId = await sut.LifeCycle.CreateRunAsync(experimentId);
+            var run = await sut.LifeCycle.CreateRunAsync(experimentId);
 
             var data = mlContext.Data.LoadFromEnumerable(GetSampleDataForTraining());
-            await sut.Data.LogDataAsync(runId, data);
+            await sut.Data.LogDataAsync(run.RunId, data);
 
             var trainer = mlContext.BinaryClassification.Trainers
                 .LbfgsLogisticRegression(labelColumnName: "Label", featureColumnName: "Features");
 
-            await sut.Training.LogHyperParametersAsync(runId, trainer);
+            await sut.Training.LogHyperParametersAsync(run.RunId, trainer);
 
             var model = trainer.Fit(data);
 
             var predicitions = model.Transform(data);
             var metrics = mlContext.BinaryClassification.Evaluate(predicitions, labelColumnName: "Label");
 
-            await sut.Evaluation.LogMetricsAsync(runId, metrics);
-            await sut.Evaluation.LogConfusionMatrixAsync(runId, metrics.ConfusionMatrix);
+            await sut.Evaluation.LogMetricsAsync(run.RunId, metrics);
+            await sut.Evaluation.LogConfusionMatrixAsync(run.RunId, metrics.ConfusionMatrix);
 
-            await sut.Model.UploadAsync(runId, "");
+            await sut.Model.UploadAsync(run.RunId, "");
 
-            var runArtifact = sut.Model.GetRunArtifacts(runId).First();
+            var runArtifact = sut.Model.GetRunArtifacts(run.RunId).First();
 
             var registeredModel = await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team", "Model Registered By Test");
             var deploymentTarget = await sut.Deployment.CreateDeploymentTargetAsync("Test");
@@ -44,7 +44,7 @@ namespace MLOps.NET.IntegrationTests
 
             deploymentTarget = sut.Deployment.GetDeploymentTargets().First();
             var experiment = sut.LifeCycle.GetExperiment("test");
-            var loggedData = sut.Data.GetData(runId);
+            var loggedData = sut.Data.GetData(run.RunId);
 
             //Assert
             deploymentTarget.Deployments.Should().NotBeNull();

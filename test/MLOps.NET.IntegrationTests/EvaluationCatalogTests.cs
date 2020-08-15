@@ -13,7 +13,7 @@ namespace MLOps.NET.IntegrationTests
         [TestMethod]
         public async Task LogConfusionMatrixAsync_SavesConfusionMatrixOnRun()
         {
-            var runId = await sut.LifeCycle.CreateRunAsync("Test");
+            var run = await sut.LifeCycle.CreateRunAsync("Test");
             var mlContext = new MLContext(seed: 2);
             List<DataPoint> samples = GetSampleDataForTraining();
 
@@ -26,10 +26,10 @@ namespace MLOps.NET.IntegrationTests
             var metrics = mlContext.BinaryClassification.Evaluate(predicitions, labelColumnName: "Label");
 
             //Act
-            await sut.Evaluation.LogConfusionMatrixAsync(runId, metrics.ConfusionMatrix);
+            await sut.Evaluation.LogConfusionMatrixAsync(run.RunId, metrics.ConfusionMatrix);
 
             //Assert
-            var confusionMatrix = sut.Evaluation.GetConfusionMatrix(runId);
+            var confusionMatrix = sut.Evaluation.GetConfusionMatrix(run.RunId);
             confusionMatrix.Should().NotBeNull();
         }
 
@@ -53,13 +53,13 @@ namespace MLOps.NET.IntegrationTests
         {
             //Arrange
             var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
-            var id = await sut.LifeCycle.CreateRunAsync(experimentId);
+            var run = await sut.LifeCycle.CreateRunAsync(experimentId);
 
             //Act
-            await sut.Evaluation.LogMetricAsync(id, "F1Score", 0.78d);
+            await sut.Evaluation.LogMetricAsync(run.RunId, "F1Score", 0.78d);
 
             //Assert
-            var metric = sut.Evaluation.GetMetrics(id).First();
+            var metric = sut.Evaluation.GetMetrics(run.RunId).First();
             metric.Should().NotBeNull();
             metric.MetricName.Should().Be("F1Score");
             metric.Value.Should().Be(0.78d);
@@ -70,10 +70,10 @@ namespace MLOps.NET.IntegrationTests
         {
             //Arrange
             var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
-            var runId = await sut.LifeCycle.CreateRunAsync(experimentId);
+            var run = await sut.LifeCycle.CreateRunAsync(experimentId);
 
             //Act
-            var confusionMatrix = sut.Evaluation.GetConfusionMatrix(runId);
+            var confusionMatrix = sut.Evaluation.GetConfusionMatrix(run.RunId);
 
             //Assert
             confusionMatrix.Should().BeNull();

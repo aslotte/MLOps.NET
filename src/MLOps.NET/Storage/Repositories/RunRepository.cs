@@ -29,7 +29,7 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc cref="IRunRepository"/>
-        public async Task<Guid> CreateRunAsync(Guid experimentId, string gitCommitHash = "")
+        public async Task<Run> CreateRunAsync(Guid experimentId, string gitCommitHash = "")
         {
             using var db = this.contextFactory.CreateDbContext();
             var run = new Run(experimentId)
@@ -40,7 +40,7 @@ namespace MLOps.NET.Storage
             await db.Runs.AddAsync(run);
             await db.SaveChangesAsync();
 
-            return run.RunId;
+            return run;
         }
 
         ///<inheritdoc cref="IRunRepository"/>

@@ -68,10 +68,10 @@ namespace MLOps.NET.IntegrationTests
         private async Task<RegisteredModel> CreateRegisteredModel()
         {
             var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
-            var runId = await sut.LifeCycle.CreateRunAsync(experimentId);
-            await sut.Model.UploadAsync(runId, "");
+            var run = await sut.LifeCycle.CreateRunAsync(experimentId);
+            await sut.Model.UploadAsync(run.RunId, "");
 
-            var runArtifact = sut.Model.GetRunArtifacts(runId).First();
+            var runArtifact = sut.Model.GetRunArtifacts(run.RunId).First();
             await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team", "Model Registered By Test");
 
             return sut.Model.GetLatestRegisteredModel(experimentId);
