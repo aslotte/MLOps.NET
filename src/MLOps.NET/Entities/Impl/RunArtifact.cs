@@ -16,11 +16,6 @@ namespace MLOps.NET.Entities.Impl
         }
 
         /// <summary>
-        /// RegisteredModel
-        /// </summary>
-        public RegisteredModel RegisteredModel { get; set; }
-
-        /// <summary>
         /// RunArtifactId
         /// </summary>
         public Guid RunArtifactId { get; set; }

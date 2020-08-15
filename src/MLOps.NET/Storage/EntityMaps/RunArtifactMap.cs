@@ -9,12 +9,6 @@ namespace MLOps.NET.Storage.EntityMaps
         public void Configure(EntityTypeBuilder<RunArtifact> builder)
         {
             builder.Property(x => x.Name).IsRequired();
-
-            builder.HasOne(x => x.RegisteredModel)
-                .WithOne()
-                .HasForeignKey<RunArtifact>(x => x.RunArtifactId)
-                .IsRequired(false)
-                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

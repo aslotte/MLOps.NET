@@ -112,17 +112,12 @@ namespace MLOps.NET.SQLite.Migrations
                     b.Property<Guid>("DeploymentTargetId")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("ExperimentId")
-                        .HasColumnType("TEXT");
-
                     b.Property<Guid>("RegisteredModelId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("DeploymentId");
 
                     b.HasIndex("DeploymentTargetId");
-
-                    b.HasIndex("ExperimentId");
 
                     b.HasIndex("RegisteredModelId");
 
@@ -239,13 +234,6 @@ namespace MLOps.NET.SQLite.Migrations
 
                     b.HasKey("RegisteredModelId");
 
-                    b.HasIndex("ExperimentId");
-
-                    b.HasIndex("RunArtifactId");
-
-                    b.HasIndex("RunId")
-                        .IsUnique();
-
                     b.ToTable("RegisteredModel");
                 });
 
@@ -323,28 +311,22 @@ namespace MLOps.NET.SQLite.Migrations
 
             modelBuilder.Entity("MLOps.NET.Entities.Impl.Deployment", b =>
                 {
-                    b.HasOne("MLOps.NET.Entities.Impl.DeploymentTarget", "DeploymentTarget")
+                    b.HasOne("MLOps.NET.Entities.Impl.DeploymentTarget", null)
                         .WithMany("Deployments")
                         .HasForeignKey("DeploymentTargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MLOps.NET.Entities.Impl.Experiment", "Experiment")
-                        .WithMany()
-                        .HasForeignKey("ExperimentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MLOps.NET.Entities.Impl.RegisteredModel", "RegisteredModel")
-                        .WithMany()
+                    b.HasOne("MLOps.NET.Entities.Impl.RegisteredModel", null)
+                        .WithMany("Deployments")
                         .HasForeignKey("RegisteredModelId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("MLOps.NET.Entities.Impl.HyperParameter", b =>
                 {
-                    b.HasOne("MLOps.NET.Entities.Impl.Run", "Run")
+                    b.HasOne("MLOps.NET.Entities.Impl.Run", null)
                         .WithMany("HyperParameters")
                         .HasForeignKey("RunId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -353,37 +335,16 @@ namespace MLOps.NET.SQLite.Migrations
 
             modelBuilder.Entity("MLOps.NET.Entities.Impl.Metric", b =>
                 {
-                    b.HasOne("MLOps.NET.Entities.Impl.Run", "Run")
+                    b.HasOne("MLOps.NET.Entities.Impl.Run", null)
                         .WithMany("Metrics")
                         .HasForeignKey("RunId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MLOps.NET.Entities.Impl.RegisteredModel", b =>
-                {
-                    b.HasOne("MLOps.NET.Entities.Impl.Experiment", "Experiment")
-                        .WithMany()
-                        .HasForeignKey("ExperimentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MLOps.NET.Entities.Impl.RunArtifact", "RunArtifact")
-                        .WithMany()
-                        .HasForeignKey("RunArtifactId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MLOps.NET.Entities.Impl.Run", "Run")
-                        .WithOne()
-                        .HasForeignKey("MLOps.NET.Entities.Impl.RegisteredModel", "RunId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("MLOps.NET.Entities.Impl.Run", b =>
                 {
-                    b.HasOne("MLOps.NET.Entities.Impl.Experiment", "Experiment")
+                    b.HasOne("MLOps.NET.Entities.Impl.Experiment", null)
                         .WithMany("Runs")
                         .HasForeignKey("ExperimentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -392,7 +353,7 @@ namespace MLOps.NET.SQLite.Migrations
 
             modelBuilder.Entity("MLOps.NET.Entities.Impl.RunArtifact", b =>
                 {
-                    b.HasOne("MLOps.NET.Entities.Impl.Run", "Run")
+                    b.HasOne("MLOps.NET.Entities.Impl.Run", null)
                         .WithMany("RunArtifacts")
                         .HasForeignKey("RunId")
                         .OnDelete(DeleteBehavior.Cascade)
