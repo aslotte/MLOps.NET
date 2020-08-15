@@ -68,8 +68,9 @@ namespace MLOps.NET.Storage
         /// <param name="experimentId"></param>
         /// <param name="runArtifactId"></param>
         /// <param name="registeredBy"></param>
+        /// <param name="modelDescription"></param>
         /// <returns></returns>
-        Task CreateRegisteredModelAsync(Guid experimentId, Guid runArtifactId, string registeredBy);
+        Task CreateRegisteredModelAsync(Guid experimentId, Guid runArtifactId, string registeredBy, string modelDescription);
 
         /// <summary>
         /// Gets all registered models for a given experiement 

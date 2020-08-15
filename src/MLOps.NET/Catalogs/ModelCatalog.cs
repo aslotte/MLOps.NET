@@ -61,10 +61,11 @@ namespace MLOps.NET.Catalogs
         /// <param name="experimentId"></param>
         /// <param name="runArtifactId"></param>
         /// <param name="registeredBy"></param>
+        /// <param name="modelDescription"></param>
         /// <returns>The registered model</returns>
-        public async Task<RegisteredModel> RegisterModel(Guid experimentId, Guid runArtifactId, string registeredBy)
+        public async Task<RegisteredModel> RegisterModel(Guid experimentId, Guid runArtifactId, string registeredBy, string modelDescription)
         {
-            await runRepository.CreateRegisteredModelAsync(experimentId, runArtifactId, registeredBy);
+            await runRepository.CreateRegisteredModelAsync(experimentId, runArtifactId, registeredBy, modelDescription);
 
             return runRepository.GetLatestRegisteredModel(experimentId);
         }

@@ -53,7 +53,7 @@ namespace MLOps.NET.IntegrationTests
             await sut.Model.UploadAsync(runId, "");
 
             var runArtifact = sut.Model.GetRunArtifacts(runId).First();
-            await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team");
+            await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team", "Model Registered By Test");
 
             return sut.Model.GetLatestRegisteredModel(experimentId);
         }

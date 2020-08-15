@@ -46,7 +46,7 @@ namespace MLOps.NET.Tests
             this.clockMock.Setup(x => x.UtcNow).Returns(now);
 
             //Act
-            await this.sut.CreateRegisteredModelAsync(ExperimentId, RunId, "By me");
+            await this.sut.CreateRegisteredModelAsync(ExperimentId, RunId, "By me", "Model Registered By Test");
 
             //Assert
             using var db = this.contextFactory.CreateDbContext();

@@ -109,7 +109,7 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc cref="IRunRepository"/>
-        public async Task CreateRegisteredModelAsync(Guid experimentId, Guid runArtifactId, string registeredBy)
+        public async Task CreateRegisteredModelAsync(Guid experimentId, Guid runArtifactId, string registeredBy, string modelDescription)
         {
             using var db = this.contextFactory.CreateDbContext();
 
@@ -129,6 +129,7 @@ namespace MLOps.NET.Storage
                 RunArtifactId = runArtifactId,
                 RegisteredBy = registeredBy,
                 RegisteredDate = this.clock.UtcNow,
+                Description = modelDescription,
                 Version = version,
                 ExperimentId = experimentId,
                 RunId = run.RunId

@@ -47,6 +47,11 @@ namespace MLOps.NET.Entities.Impl
         public string RegisteredBy { get; set; }
 
         /// <summary>
+        /// Model Description
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
         /// Version
         /// </summary>
         public int Version { get; set; }
