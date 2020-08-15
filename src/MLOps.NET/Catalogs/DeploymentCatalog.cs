@@ -1,6 +1,5 @@
 ﻿using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage;
-using MLOps.NET.Storage.Deployments;
 using MLOps.NET.Storage.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -23,8 +22,8 @@ namespace MLOps.NET.Catalogs
         /// <param name="deploymentRepository"></param>
         /// <param name="modelRepository"></param>
         /// <param name="experimentRepository"></param>
-        public DeploymentCatalog(IDeploymentRepository deploymentRepository, 
-            IModelRepository modelRepository, 
+        public DeploymentCatalog(IDeploymentRepository deploymentRepository,
+            IModelRepository modelRepository,
             IExperimentRepository experimentRepository)
         {
             this.deploymentRepository = deploymentRepository;
@@ -57,14 +56,14 @@ namespace MLOps.NET.Catalogs
         /// <param name="deploymentTarget"></param>
         /// <param name="registeredModel"></param>
         /// <param name="deployedBy"></param>
-        /// <returns>Path/URI to the deployed model</returns>
+        /// <returns>A deployment</returns>
         /// <returns></returns>
-        public async Task<string> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy)
+        public async Task<Deployment> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy)
         {
-            await this.deploymentRepository.CreateDeploymentAsync(deploymentTarget, registeredModel, deployedBy);
             var experiment = this.experimentRepository.GetExperiment(registeredModel.ExperimentId);
+            var deploymentUri = await this.modelRepository.DeployModelAsync(deploymentTarget, registeredModel, experiment);
 
-            return await this.modelRepository.DeployModelAsync(deploymentTarget, registeredModel, experiment);
+            return await this.deploymentRepository.CreateDeploymentAsync(deploymentTarget, registeredModel, deployedBy, deploymentUri);
         }
 
         /// <summary>

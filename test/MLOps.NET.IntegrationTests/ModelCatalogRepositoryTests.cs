@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Catalogs;
+using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Deployments;
 using Moq;
@@ -26,7 +27,7 @@ namespace MLOps.NET.IntegrationTests
 
             runRepositoryMock
                 .Setup(x => x.CreateRunArtifact(It.IsAny<Guid>(), It.IsAny<string>()))
-                .Returns(Task.CompletedTask);
+                .Returns(Task.FromResult(new RunArtifact()));
 
             this.modelRepositoryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mlops", "model-repository");
 

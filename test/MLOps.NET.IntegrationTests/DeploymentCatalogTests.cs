@@ -69,7 +69,7 @@ namespace MLOps.NET.IntegrationTests
         {
             var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
             var run = await sut.LifeCycle.CreateRunAsync(experimentId);
-            await sut.Model.UploadAsync(run.RunId, "");
+            await sut.Model.UploadAsync(run.RunId, @"Data/model.txt");
 
             var runArtifact = sut.Model.GetRunArtifacts(run.RunId).First();
             await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team", "Model Registered By Test");

@@ -34,7 +34,7 @@ namespace MLOps.NET.IntegrationTests
             await sut.Evaluation.LogMetricsAsync(run.RunId, metrics);
             await sut.Evaluation.LogConfusionMatrixAsync(run.RunId, metrics.ConfusionMatrix);
 
-            await sut.Model.UploadAsync(run.RunId, "");
+            await sut.Model.UploadAsync(run.RunId, @"Data/model.txt");
 
             var runArtifact = sut.Model.GetRunArtifacts(run.RunId).First();
 

@@ -65,7 +65,7 @@ namespace MLOps.NET.Storage.Repositories
         }
 
         ///<inheritdoc cref="IDeploymentRepository"/>
-        public async Task CreateDeploymentAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy)
+        public async Task<Deployment> CreateDeploymentAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy, string deploymentUri)
         {
             using var db = this.contextFactory.CreateDbContext();
 
@@ -75,10 +75,13 @@ namespace MLOps.NET.Storage.Repositories
                 DeployedBy = deployedBy,
                 DeploymentTargetId = deploymentTarget.DeploymentTargetId,
                 RegisteredModelId = registeredModel.RegisteredModelId,
+                DeploymentUri = deploymentUri
             };
 
             db.Deployments.Add(deployment);
             await db.SaveChangesAsync();
+
+            return deployment;
         }
 
         ///<inheritdoc cref="IDeploymentRepository"/>

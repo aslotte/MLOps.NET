@@ -10,6 +10,7 @@ namespace MLOps.NET.Storage.EntityMaps
         {
             builder.Property(x => x.DeploymentDate).IsRequired();
             builder.Property(x => x.DeployedBy).IsRequired();
+            builder.Property(x => x.DeploymentUri).IsRequired();
         }
     }
 }

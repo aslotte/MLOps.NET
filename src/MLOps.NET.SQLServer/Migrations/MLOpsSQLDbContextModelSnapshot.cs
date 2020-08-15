@@ -115,6 +115,10 @@ namespace MLOps.NET.SQLServer.Migrations
                     b.Property<Guid>("DeploymentTargetId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("DeploymentUri")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("RegisteredModelId")
                         .HasColumnType("uniqueidentifier");
 

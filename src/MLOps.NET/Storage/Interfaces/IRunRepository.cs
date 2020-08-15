@@ -53,8 +53,8 @@ namespace MLOps.NET.Storage
         /// </summary>
         /// <param name="runId"></param>
         /// <param name="name"></param>
-        /// <returns></returns>
-        Task CreateRunArtifact(Guid runId, string name);
+        /// <returns>The created RunArtifact</returns>
+        Task<RunArtifact> CreateRunArtifact(Guid runId, string name);
 
         /// <summary>
         /// Gets run artifacts

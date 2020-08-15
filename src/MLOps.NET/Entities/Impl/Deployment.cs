@@ -39,5 +39,10 @@ namespace MLOps.NET.Entities.Impl
         /// DeployedBy
         /// </summary>
         public string DeployedBy { get; set; }
+
+        /// <summary>
+        /// Deployment URI
+        /// </summary>
+        public string DeploymentUri { get; set; }
     }
 }
