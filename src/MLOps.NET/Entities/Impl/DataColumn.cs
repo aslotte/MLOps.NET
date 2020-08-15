@@ -37,6 +37,16 @@ namespace MLOps.NET.Entities.Impl
         public Guid DataSchemaId { get; set; }
 
         /// <summary>
+        /// DataDistribution
+        /// </summary>
+        public DataDistribution DataDistribution { get; set; }
+
+        /// <summary>
+        /// DataDistributionId
+        /// </summary>
+        public Guid? DataDistributionId { get; set; }
+
+        /// <summary>
         /// Name
         /// </summary>
         public string Name { get; set; }

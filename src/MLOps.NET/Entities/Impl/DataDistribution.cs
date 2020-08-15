@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace MLOps.NET.Entities.Impl
 {
@@ -27,22 +26,22 @@ namespace MLOps.NET.Entities.Impl
         }
 
         /// <summary>
-        /// RunId
+        /// DataDistributionId
         /// </summary>
         public Guid DataDistributionId { get; set; }
 
         /// <summary>
-        /// DataId
+        /// DataColumnId
         /// </summary>
         public Guid DataColumnId { get; set; }
 
         /// <summary>
-        /// DataColumns
+        /// Value
         /// </summary>
         public string Value { get; set; }
 
         /// <summary>
-        /// DataColumns
+        /// Count
         /// </summary>
         public int Count { get; set; }
     }
