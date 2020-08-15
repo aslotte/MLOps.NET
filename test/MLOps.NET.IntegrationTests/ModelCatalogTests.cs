@@ -17,7 +17,7 @@ namespace MLOps.NET.IntegrationTests
             var run = await sut.LifeCycle.CreateRunAsync(experimentId);
 
             //Act
-            await sut.Model.UploadAsync(run.RunId, "");
+            await sut.Model.UploadAsync(run.RunId, "Data/model.txt");
 
             //Assert
             var runArtifacts = sut.Model.GetRunArtifacts(run.RunId);
@@ -31,7 +31,7 @@ namespace MLOps.NET.IntegrationTests
             //Arrange
             var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
             var run = await sut.LifeCycle.CreateRunAsync(experimentId);
-            await sut.Model.UploadAsync(run.RunId, "");
+            await sut.Model.UploadAsync(run.RunId, "Data/model.txt");
 
             var runArtifact = sut.Model.GetRunArtifacts(run.RunId).First();
 
@@ -51,7 +51,7 @@ namespace MLOps.NET.IntegrationTests
             //Arrange
             var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
             var run = await sut.LifeCycle.CreateRunAsync(experimentId);
-            await sut.Model.UploadAsync(run.RunId, "");
+            await sut.Model.UploadAsync(run.RunId, "Data/model.txt");
 
             var runArtifact = sut.Model.GetRunArtifacts(run.RunId).First();
 
@@ -69,12 +69,12 @@ namespace MLOps.NET.IntegrationTests
             var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
 
             var run = await sut.LifeCycle.CreateRunAsync(experimentId);
-            await sut.Model.UploadAsync(run.RunId, "");
+            await sut.Model.UploadAsync(run.RunId, "Data/model.txt");
             var runArtifact = sut.Model.GetRunArtifacts(run.RunId).First();
             await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team", "Model Registered By Test");
 
             var run2 = await sut.LifeCycle.CreateRunAsync(experimentId);
-            await sut.Model.UploadAsync(run2.RunId, "");
+            await sut.Model.UploadAsync(run2.RunId, "Data/model.txt");
             var runArtifact2 = sut.Model.GetRunArtifacts(run2.RunId).First();
 
             //Act

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MLOps.NET.Azure.IntegrationTests.Constants;
+using MLOps.NET.Extensions;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Database;
 using MLOps.NET.Storage.Interfaces;
@@ -15,7 +16,7 @@ namespace MLOps.NET.Azure.IntegrationTests
             var configuration = ConfigurationFactory.GetConfiguration();
 
             return new MLOpsBuilder()
-                .UseModelRepository(new Mock<IModelRepository>().Object)
+                .UseLocalFileModelRepository()
                 .UseCosmosDb(configuration[ConfigurationKeys.CosmosEndPoint],
                 configuration[ConfigurationKeys.CosmosAccountKey])
                 .Build();
