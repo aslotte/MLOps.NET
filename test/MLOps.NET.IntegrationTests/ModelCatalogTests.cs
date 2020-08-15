@@ -14,15 +14,15 @@ namespace MLOps.NET.IntegrationTests
         {
             //Arrange
             var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
-            var runId = await sut.LifeCycle.CreateRunAsync(experimentId);
+            var run = await sut.LifeCycle.CreateRunAsync(experimentId);
 
             //Act
-            await sut.Model.UploadAsync(runId, "");
+            await sut.Model.UploadAsync(run.RunId, "");
 
             //Assert
-            var runArtifacts = sut.Model.GetRunArtifacts(runId);
-            runArtifacts.First().RunId.Should().Be(runId);
-            runArtifacts.First().Name.Should().Be($"{runId}.zip");
+            var runArtifacts = sut.Model.GetRunArtifacts(run.RunId);
+            runArtifacts.First().RunId.Should().Be(run.RunId);
+            runArtifacts.First().Name.Should().Be($"{run.RunId}.zip");
         }
 
         [TestMethod]
@@ -30,10 +30,10 @@ namespace MLOps.NET.IntegrationTests
         {
             //Arrange
             var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
-            var runId = await sut.LifeCycle.CreateRunAsync(experimentId);
-            await sut.Model.UploadAsync(runId, "");
+            var run = await sut.LifeCycle.CreateRunAsync(experimentId);
+            await sut.Model.UploadAsync(run.RunId, "");
 
-            var runArtifact = sut.Model.GetRunArtifacts(runId).First();
+            var runArtifact = sut.Model.GetRunArtifacts(run.RunId).First();
 
             //Act
             var registeredModel = await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team", "Model Registered By Test");
@@ -51,14 +51,14 @@ namespace MLOps.NET.IntegrationTests
             //Arrange
             var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
 
-            var runId = await sut.LifeCycle.CreateRunAsync(experimentId);
-            await sut.Model.UploadAsync(runId, "");
-            var runArtifact = sut.Model.GetRunArtifacts(runId).First();
+            var run = await sut.LifeCycle.CreateRunAsync(experimentId);
+            await sut.Model.UploadAsync(run.RunId, "");
+            var runArtifact = sut.Model.GetRunArtifacts(run.RunId).First();
             await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team", "Model Registered By Test");
 
-            var runId2 = await sut.LifeCycle.CreateRunAsync(experimentId);
-            await sut.Model.UploadAsync(runId2, "");
-            var runArtifact2 = sut.Model.GetRunArtifacts(runId2).First();
+            var run2 = await sut.LifeCycle.CreateRunAsync(experimentId);
+            await sut.Model.UploadAsync(run2.RunId, "");
+            var runArtifact2 = sut.Model.GetRunArtifacts(run2.RunId).First();
 
             //Act
             await sut.Model.RegisterModel(experimentId, runArtifact2.RunArtifactId, "The MLOps.NET Team", "Model Registered By Test");

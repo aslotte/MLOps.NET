@@ -25,13 +25,13 @@ namespace MLOps.NET.IntegrationTests
         {
             //Arrange
             var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
-            var id = await sut.LifeCycle.CreateRunAsync(experimentId);
+            var run = await sut.LifeCycle.CreateRunAsync(experimentId);
 
-            await sut.Evaluation.LogMetricAsync(id, "F1Score", 0.56d);
-            await sut.Training.LogHyperParameterAsync(id, "Trainer", "SupportVectorMachine");
+            await sut.Evaluation.LogMetricAsync(run.RunId, "F1Score", 0.56d);
+            await sut.Training.LogHyperParameterAsync(run.RunId, "Trainer", "SupportVectorMachine");
 
             //Act
-            var run = sut.LifeCycle.GetRun(id);
+            run = sut.LifeCycle.GetRun(run.RunId);
 
             //Assert
             var metric = run.Metrics.First();
@@ -46,15 +46,15 @@ namespace MLOps.NET.IntegrationTests
         [TestMethod]
         public async Task SetTrainingTimeAsync_SetsTrainingTimeOnRun()
         {
-            var runId = await sut.LifeCycle.CreateRunAsync("Test");
+            var run = await sut.LifeCycle.CreateRunAsync("Test");
 
             var expectedTrainingTime = new TimeSpan(0, 5, 0);
 
             //Act
-            await sut.LifeCycle.SetTrainingTimeAsync(runId, expectedTrainingTime);
+            await sut.LifeCycle.SetTrainingTimeAsync(run.RunId, expectedTrainingTime);
 
             //Assert
-            var run = sut.LifeCycle.GetRun(runId);
+            run = sut.LifeCycle.GetRun(run.RunId);
             run.TrainingTime.Should().Be(expectedTrainingTime);
         }
 
@@ -80,10 +80,10 @@ namespace MLOps.NET.IntegrationTests
             var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
 
             //Act
-            var runId = await sut.LifeCycle.CreateRunAsync(experimentId, gitCommitHash);
+            var run = await sut.LifeCycle.CreateRunAsync(experimentId, gitCommitHash);
 
             //Assert
-            var run = sut.LifeCycle.GetRun(runId);
+            run = sut.LifeCycle.GetRun(run.RunId);
             run.GitCommitHash.Should().Be(gitCommitHash);
         }
 
@@ -92,13 +92,13 @@ namespace MLOps.NET.IntegrationTests
         {
             //Arrange
             var commitHash = "123456789";
-            var runId = await sut.LifeCycle.CreateRunAsync("Experiment", commitHash);
+            var run = await sut.LifeCycle.CreateRunAsync("Experiment", commitHash);
 
             //Act
             var savedRun = sut.LifeCycle.GetRun(commitHash);
 
             //Assert
-            savedRun.RunId.Should().Be(runId);
+            savedRun.RunId.Should().Be(run.RunId);
         }
 
         [TestMethod]
@@ -106,10 +106,10 @@ namespace MLOps.NET.IntegrationTests
         {
             //Act
             var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
-            var runId = await sut.LifeCycle.CreateRunAsync(experimentId);
+            var run = await sut.LifeCycle.CreateRunAsync(experimentId);
 
             //Assert
-            var run = sut.LifeCycle.GetRun(runId);
+            run = sut.LifeCycle.GetRun(run.RunId);
             run.GitCommitHash.Should().Be(string.Empty);
         }
 
