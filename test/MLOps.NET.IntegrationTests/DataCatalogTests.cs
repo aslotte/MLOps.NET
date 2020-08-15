@@ -76,16 +76,16 @@ namespace MLOps.NET.IntegrationTests
         [TestMethod]
         public async Task LogDataAsync_GivenValidDataView_ShouldLogDataDistribution()
         {
-            var runId = await sut.LifeCycle.CreateRunAsync("test");
+            var run = await sut.LifeCycle.CreateRunAsync("test");
 
             var data = LoadData();
 
             //Act
-            await sut.Data.LogDataAsync(runId, data);
-            await sut.Data.LogDataDistribution<Boolean>(runId, data, "Sentiment");
+            await sut.Data.LogDataAsync(run.RunId, data);
+            await sut.Data.LogDataDistribution<Boolean>(run.RunId, data, "Sentiment");
 
             //Assert
-            var distributions = sut.Data.GetDataDistribution<Boolean>(runId, data, "Sentiment");
+            var distributions = sut.Data.GetDataDistribution<Boolean>(run.RunId, data, "Sentiment");
 
             distributions.Count
                 .Should().BeGreaterThan(0);
