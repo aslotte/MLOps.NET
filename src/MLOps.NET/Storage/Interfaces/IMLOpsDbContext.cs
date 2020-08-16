@@ -42,6 +42,11 @@ namespace MLOps.NET.Storage.Interfaces
         DbSet<Data> Data { get; set; }
 
         /// <summary>
+        /// DataDistributions
+        /// </summary>
+        DbSet<DataDistribution> DataDistributions { get; set; }
+
+        /// <summary>
         /// Run artifact associated with a run
         /// </summary>
         DbSet<RunArtifact> RunArtifacts { get; set; }

@@ -20,14 +20,14 @@ namespace MLOps.NET.Azure.Storage
             modelBuilder.Entity<Metric>().ToContainer(nameof(Metric));
             modelBuilder.Entity<ConfusionMatrixEntity>().ToContainer("ConfusionMatrix");
             modelBuilder.Entity<Data>().ToContainer(nameof(Data));
+            modelBuilder.Entity<DataDistribution>().ToContainer(nameof(DataDistribution));
             modelBuilder.Entity<RunArtifact>().ToContainer(nameof(RunArtifact));
             modelBuilder.Entity<RegisteredModel>().ToContainer(nameof(RegisteredModel));
             modelBuilder.Entity<DeploymentTarget>().ToContainer(nameof(DeploymentTarget));
             modelBuilder.Entity<Deployment>().ToContainer(nameof(Deployment));
 
             modelBuilder.Entity<Data>().OwnsOne(x => x.DataSchema, dataSchema =>
-            dataSchema.OwnsMany(y => y.DataColumns, dataColumn =>
-            dataColumn.OwnsMany(z => z.DataDistributions)));
+            dataSchema.OwnsMany(y => y.DataColumns));
         }
     }
 }

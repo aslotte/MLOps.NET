@@ -72,7 +72,7 @@ namespace MLOps.NET.Storage
 
             foreach (var dataColumn in data.DataSchema.DataColumns)
             {
-                db.Entry(dataColumn).Reference(x => x.DataDistributions);
+                db.Entry(dataColumn).Collection(x => x.DataDistributions).Load();
             }
             return data;
         }
@@ -84,13 +84,15 @@ namespace MLOps.NET.Storage
 
             var data = db.Data
                 .Include(d => d.DataSchema.DataColumns)
+                .ThenInclude(x => x.DataDistributions)
                 .First(d => d.RunId == runId);
 
-            var dataColumn = data.DataSchema
-                .DataColumns
+            var dataColumn = data.DataSchema.DataColumns
                 .FirstOrDefault(c => c.Name == columnName);
 
-            dataColumn.DataDistributions = GetDataDistributionForColumn<T>(dataView, columnName, dataColumn);
+            var dataDistributions = GetDataDistributionForColumn<T>(dataView, columnName, dataColumn);
+
+            db.DataDistributions.AddRange(dataDistributions);
 
             await db.SaveChangesAsync();
         }
@@ -114,7 +116,6 @@ namespace MLOps.NET.Storage
 
                 dataDistributions.Add(distribution);       
             }
-
             return dataDistributions;
         }
 

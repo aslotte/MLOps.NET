@@ -90,7 +90,7 @@ namespace MLOps.NET.IntegrationTests
             savedData.DataSchema
                 .DataColumns.First(x => x.Name == "Sentiment")
                 .DataDistributions
-                .Count.Should().BeGreaterThan(0);
+                .Count.Should().Be(2);
         }
 
         private IDataView LoadData()
