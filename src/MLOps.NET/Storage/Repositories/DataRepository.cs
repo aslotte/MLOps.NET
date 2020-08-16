@@ -60,6 +60,7 @@ namespace MLOps.NET.Storage
             using var db = this.contextFactory.CreateDbContext();
 
             var data = db.Data.FirstOrDefault(x => x.RunId == runId);
+            if (data == null) return data;
 
             return this.dataResolver.BuildEntity(db, data);
         }
@@ -67,15 +68,25 @@ namespace MLOps.NET.Storage
         ///<inheritdoc cref="IDataRepository"/>
         public async Task LogDataDistribution<T>(Guid runId, IDataView dataView, string columnName) where T : struct
         {
-            var dataColumnId = this.GetData(runId)
-                .DataSchema
+            var data = this.GetData(runId);
+
+            if (data == null)
+            {
+                throw new InvalidOperationException($"A dataset has not yet been logged for this run. Prior to calling {nameof(this.LogDataDistribution)} please call {nameof(this.LogDataAsync)}");
+            }
+
+            var dataColumn = data.DataSchema
                 .DataColumns
-                .FirstOrDefault(c => c.Name == columnName)
-                .DataColumnId;
+                .FirstOrDefault(c => c.Name == columnName);
+
+            if (dataColumn == null)
+            {
+                throw new InvalidOperationException($"Unable to log data distributions for the column with name {columnName} as it is not contained in the current data schema");
+            }
 
             using var db = this.contextFactory.CreateDbContext();
 
-            var dataDistributions = this.dataCalculator.CalculateDataDistributions<T>(dataView, columnName, dataColumnId);
+            var dataDistributions = this.dataCalculator.CalculateDataDistributions<T>(dataView, columnName, dataColumn.DataColumnId);
 
             db.DataDistributions.AddRange(dataDistributions);
 
