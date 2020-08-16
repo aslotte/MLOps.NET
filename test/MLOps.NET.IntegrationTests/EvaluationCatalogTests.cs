@@ -33,21 +33,6 @@ namespace MLOps.NET.IntegrationTests
             confusionMatrix.Should().NotBeNull();
         }
 
-        private static List<DataPoint> GetSampleDataForTraining()
-        {
-            return new List<DataPoint>()
-            {
-                new DataPoint { Features = new float[3] {0, 2, 1} , Label = false },
-                new DataPoint { Features = new float[3] {0, 2, 3} , Label = false },
-                new DataPoint { Features = new float[3] {0, 2, 4} , Label = true  },
-                new DataPoint { Features = new float[3] {0, 2, 1} , Label = false },
-                new DataPoint { Features = new float[3] {0, 2, 2} , Label = false },
-                new DataPoint { Features = new float[3] {0, 2, 3} , Label = false },
-                new DataPoint { Features = new float[3] {0, 2, 4} , Label = true  },
-                new DataPoint { Features = new float[3] {1, 0, 0} , Label = true  }
-            };
-        }
-
         [TestMethod]
         public async Task LogMetricAsync_ShouldLogMetric()
         {
@@ -77,6 +62,21 @@ namespace MLOps.NET.IntegrationTests
 
             //Assert
             confusionMatrix.Should().BeNull();
+        }
+
+        private static List<DataPoint> GetSampleDataForTraining()
+        {
+            return new List<DataPoint>()
+            {
+                new DataPoint { Features = new float[3] {0, 2, 1} , Label = false },
+                new DataPoint { Features = new float[3] {0, 2, 3} , Label = false },
+                new DataPoint { Features = new float[3] {0, 2, 4} , Label = true  },
+                new DataPoint { Features = new float[3] {0, 2, 1} , Label = false },
+                new DataPoint { Features = new float[3] {0, 2, 2} , Label = false },
+                new DataPoint { Features = new float[3] {0, 2, 3} , Label = false },
+                new DataPoint { Features = new float[3] {0, 2, 4} , Label = true  },
+                new DataPoint { Features = new float[3] {1, 0, 0} , Label = true  }
+            };
         }
     }
 
