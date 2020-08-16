@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MLOps.NET.SQLite.Migrations
 {
+    /// <summary>
+    /// Data Distribution
+    /// </summary>
     public partial class InitialCreate : Migration
     {
         /// <summary>

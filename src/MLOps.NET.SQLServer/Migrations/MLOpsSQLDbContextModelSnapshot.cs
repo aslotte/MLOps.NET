@@ -79,6 +79,29 @@ namespace MLOps.NET.SQLServer.Migrations
                     b.ToTable("DataColumn");
                 });
 
+            modelBuilder.Entity("MLOps.NET.Entities.Impl.DataDistribution", b =>
+                {
+                    b.Property<Guid>("DataDistributionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("DataColumnId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("DataDistributionId");
+
+                    b.HasIndex("DataColumnId");
+
+                    b.ToTable("DataDistribution");
+                });
+
             modelBuilder.Entity("MLOps.NET.Entities.Impl.DataSchema", b =>
                 {
                     b.Property<Guid>("DataSchemaId")
@@ -312,6 +335,14 @@ namespace MLOps.NET.SQLServer.Migrations
                         .HasForeignKey("DataSchemaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MLOps.NET.Entities.Impl.DataDistribution", b =>
+                {
+                    b.HasOne("MLOps.NET.Entities.Impl.DataColumn", null)
+                        .WithMany("DataDistributions")
+                        .HasForeignKey("DataColumnId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("MLOps.NET.Entities.Impl.DataSchema", b =>

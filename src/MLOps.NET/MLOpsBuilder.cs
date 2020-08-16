@@ -1,3 +1,4 @@
+using MLOps.NET.Services;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Database;
 using MLOps.NET.Storage.EntityResolvers;
@@ -41,7 +42,7 @@ namespace MLOps.NET
 
             this.experimentRepository = new ExperimentRepository(contextFactory, experimentResolver);
             this.runRepository = new RunRepository(contextFactory, new Clock(), runResolver, new RegisteredModelResolver());
-            this.dataRepository = new DataRepository(contextFactory);
+            this.dataRepository = new DataRepository(contextFactory, new DataResolver(), new DataCalculator());
             this.metricRepository = new MetricRepository(contextFactory);
             this.confusionMatrixRepository = new ConfusionMatrixRepository(contextFactory);
             this.hyperParameterRepository = new HyperParameterRepository(contextFactory);

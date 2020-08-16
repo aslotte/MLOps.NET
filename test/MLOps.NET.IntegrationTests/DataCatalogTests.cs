@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.ML;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MLOps.NET.Entities.Impl;
 using MLOps.NET.Tests.Common.Data;
 using System;
 using System.Linq;
@@ -70,6 +71,26 @@ namespace MLOps.NET.IntegrationTests
 
 
             currentRunData.DataHash.Should().NotBe(previousRunData.DataHash);
+        }
+
+        [TestMethod]
+        public async Task LogDataAsync_GivenValidDataView_ShouldLogDataDistribution()
+        {
+            var run = await sut.LifeCycle.CreateRunAsync("test");
+
+            var data = LoadData();
+
+            //Act
+            await sut.Data.LogDataAsync(run.RunId, data);
+            await sut.Data.LogDataDistribution<Boolean>(run.RunId, data, "Sentiment");
+
+            //Assert
+            var savedData = sut.Data.GetData(run.RunId);
+
+            savedData.DataSchema
+                .DataColumns.First(x => x.Name == "Sentiment")
+                .DataDistributions
+                .Count.Should().Be(2);
         }
 
         private IDataView LoadData()

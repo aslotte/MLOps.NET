@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MLOps.NET.Entities.Impl
 {
@@ -34,6 +35,11 @@ namespace MLOps.NET.Entities.Impl
         /// DataSchemaId
         /// </summary>
         public Guid DataSchemaId { get; set; }
+
+        /// <summary>
+        /// DataDistribution
+        /// </summary>
+        public List<DataDistribution> DataDistributions { get; set; }
 
         /// <summary>
         /// Name
