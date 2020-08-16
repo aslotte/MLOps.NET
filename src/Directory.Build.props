@@ -5,6 +5,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/aslotte/MLOps.NET</PackageProjectUrl>
     <PackageTags>mlops, mlnet, machinelearning, devops</PackageTags>
+    <PackageDescription>MLOps.NET is a data science tool to track and manage the lifecycle of a ML.NET machine learning model.</PackageDescription>
     <PackageIcon>icon.png</PackageIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>  
