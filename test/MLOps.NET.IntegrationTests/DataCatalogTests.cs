@@ -89,7 +89,7 @@ namespace MLOps.NET.IntegrationTests
 
             savedData.DataSchema
                 .DataColumns.First(x => x.Name == "Sentiment")
-                .DataDistribution
+                .DataDistributions
                 .Count.Should().BeGreaterThan(0);
         }
 

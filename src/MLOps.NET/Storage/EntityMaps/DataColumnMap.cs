@@ -9,9 +9,9 @@ namespace MLOps.NET.Storage.EntityMaps
         public void Configure(EntityTypeBuilder<DataColumn> builder)
         {
             builder
-                .HasOne(x => x.DataDistribution)
+                .HasMany(x => x.DataDistributions)
                 .WithOne()
-                .HasForeignKey<DataDistribution>(x => x.DataColumnId)
+                .HasForeignKey(x => x.DataColumnId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Cascade);
         }

@@ -72,7 +72,7 @@ namespace MLOps.NET.Storage
 
             foreach (var dataColumn in data.DataSchema.DataColumns)
             {
-                db.Entry(dataColumn).Reference(x => x.DataDistribution);
+                db.Entry(dataColumn).Reference(x => x.DataDistributions);
             }
             return data;
         }
@@ -90,17 +90,15 @@ namespace MLOps.NET.Storage
                 .DataColumns
                 .FirstOrDefault(c => c.Name == columnName);
 
-            var column = dataView.Schema.First(c => c.Name == columnName);
-
-            List<DataDistribution> list = GetDataDistributionForColumn<T>(dataView, column, dataColumn);
-
-            db.DataDistributions.AddRange(list);
+            dataColumn.DataDistributions = GetDataDistributionForColumn<T>(dataView, columnName, dataColumn);
 
             await db.SaveChangesAsync();
         }
 
-        private List<DataDistribution> GetDataDistributionForColumn<T>(IDataView dataView, DataViewSchema.Column column, Entities.Impl.DataColumn dataColumn) where T : struct
+        private List<DataDistribution> GetDataDistributionForColumn<T>(IDataView dataView, string columnName, DataColumn dataColumn) where T : struct
         {
+            var column = dataView.Schema.First(c => c.Name == columnName);
+
             var allValues = dataView.GetColumn<T>(column);
             var distinctValues = allValues.Distinct();
 

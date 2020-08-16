@@ -39,12 +39,7 @@ namespace MLOps.NET.Entities.Impl
         /// <summary>
         /// DataDistribution
         /// </summary>
-        public DataDistribution DataDistribution { get; set; }
-
-        /// <summary>
-        /// DataDistributionId
-        /// </summary>
-        public Guid? DataDistributionId { get; set; }
+        public List<DataDistribution> DataDistributions { get; set; }
 
         /// <summary>
         /// Name
