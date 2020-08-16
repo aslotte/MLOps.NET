@@ -3,6 +3,7 @@ using Microsoft.ML;
 using Microsoft.ML.Data;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Database;
+using MLOps.NET.Storage.EntityResolvers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,11 +17,13 @@ namespace MLOps.NET.Storage
     public sealed class DataRepository : IDataRepository
     {
         private readonly IDbContextFactory contextFactory;
+        private readonly IEntityResolver<Data> dataResolver;
 
         ///<inheritdoc cref="IDataRepository"/>
-        public DataRepository(IDbContextFactory contextFactory)
+        public DataRepository(IDbContextFactory contextFactory, IEntityResolver<Data> dataResolver)
         {
             this.contextFactory = contextFactory;
+            this.dataResolver = dataResolver;
         }
 
         ///<inheritdoc cref="IDataRepository"/>
@@ -66,31 +69,22 @@ namespace MLOps.NET.Storage
         {
             using var db = this.contextFactory.CreateDbContext();
 
-            var data = db.Data
-                .Include(x => x.DataSchema.DataColumns)
-                .FirstOrDefault(x => x.RunId == runId);
+            var data = db.Data.FirstOrDefault(x => x.RunId == runId);
 
-            foreach (var dataColumn in data.DataSchema.DataColumns)
-            {
-                db.Entry(dataColumn).Collection(x => x.DataDistributions).Load();
-            }
-            return data;
+            return this.dataResolver.BuildEntity(db, data);
         }
 
         ///<inheritdoc cref="IDataRepository"/>
         public async Task LogDataDistribution<T>(Guid runId, IDataView dataView, string columnName) where T : struct
         {
-            using var db = this.contextFactory.CreateDbContext();
-
-            var data = db.Data
-                .Include(d => d.DataSchema.DataColumns)
-                .ThenInclude(x => x.DataDistributions)
-                .First(d => d.RunId == runId);
-
-            var dataColumn = data.DataSchema.DataColumns
+            var dataColumn = this.GetData(runId)
+                .DataSchema
+                .DataColumns
                 .FirstOrDefault(c => c.Name == columnName);
 
-            var dataDistributions = GetDataDistributionForColumn<T>(dataView, columnName, dataColumn);
+            using var db = this.contextFactory.CreateDbContext();
+
+            var dataDistributions = this.GetDataDistributionForColumn<T>(dataView, columnName, dataColumn);
 
             db.DataDistributions.AddRange(dataDistributions);
 
