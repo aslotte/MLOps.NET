@@ -3,9 +3,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MLOps.NET.SQLServer.Migrations
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public partial class AddDataDistribution : Migration
     {
         /// <summary>
@@ -14,11 +11,6 @@ namespace MLOps.NET.SQLServer.Migrations
         /// <param name="migrationBuilder"></param>
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<Guid>(
-                name: "DataDistributionId",
-                table: "DataColumn",
-                nullable: true);
-
             migrationBuilder.CreateTable(
                 name: "DataDistribution",
                 columns: table => new
@@ -42,8 +34,7 @@ namespace MLOps.NET.SQLServer.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_DataDistribution_DataColumnId",
                 table: "DataDistribution",
-                column: "DataColumnId",
-                unique: true);
+                column: "DataColumnId");
         }
 
         /// <summary>
@@ -54,10 +45,6 @@ namespace MLOps.NET.SQLServer.Migrations
         {
             migrationBuilder.DropTable(
                 name: "DataDistribution");
-
-            migrationBuilder.DropColumn(
-                name: "DataDistributionId",
-                table: "DataColumn");
         }
     }
 }

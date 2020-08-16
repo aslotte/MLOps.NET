@@ -9,14 +9,13 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MLOps.NET.SQLServer.Migrations
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [DbContext(typeof(MLOpsSQLDbContext))]
-    [Migration("20200815235436_AddDataDistribution")]
+    [Migration("20200816125837_AddDataDistribution")]
     partial class AddDataDistribution
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="modelBuilder"></param>
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
@@ -69,9 +68,6 @@ namespace MLOps.NET.SQLServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("DataDistributionId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("DataSchemaId")
                         .HasColumnType("uniqueidentifier");
 
@@ -106,8 +102,7 @@ namespace MLOps.NET.SQLServer.Migrations
 
                     b.HasKey("DataDistributionId");
 
-                    b.HasIndex("DataColumnId")
-                        .IsUnique();
+                    b.HasIndex("DataColumnId");
 
                     b.ToTable("DataDistribution");
                 });
@@ -350,8 +345,8 @@ namespace MLOps.NET.SQLServer.Migrations
             modelBuilder.Entity("MLOps.NET.Entities.Impl.DataDistribution", b =>
                 {
                     b.HasOne("MLOps.NET.Entities.Impl.DataColumn", null)
-                        .WithOne("DataDistribution")
-                        .HasForeignKey("MLOps.NET.Entities.Impl.DataDistribution", "DataColumnId")
+                        .WithMany("DataDistributions")
+                        .HasForeignKey("DataColumnId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

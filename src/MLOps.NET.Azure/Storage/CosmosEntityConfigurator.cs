@@ -24,12 +24,10 @@ namespace MLOps.NET.Azure.Storage
             modelBuilder.Entity<RegisteredModel>().ToContainer(nameof(RegisteredModel));
             modelBuilder.Entity<DeploymentTarget>().ToContainer(nameof(DeploymentTarget));
             modelBuilder.Entity<Deployment>().ToContainer(nameof(Deployment));
-            modelBuilder.Entity<DataDistribution>().ToContainer(nameof(DataDistribution));
 
             modelBuilder.Entity<Data>().OwnsOne(x => x.DataSchema, dataSchema =>
-            {
-                dataSchema.OwnsMany(x => x.DataColumns);
-            });
+            dataSchema.OwnsMany(y => y.DataColumns, dataColumn =>
+            dataColumn.OwnsMany(z => z.DataDistributions)));
         }
     }
 }
