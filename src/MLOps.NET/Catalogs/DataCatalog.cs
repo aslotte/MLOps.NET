@@ -2,7 +2,6 @@
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Catalogs
@@ -56,19 +55,5 @@ namespace MLOps.NET.Catalogs
         {
             await this.dataRepository.LogDataDistribution<T>(runId, dataView, columnName);
         }
-
-        /// <summary>
-        /// Get Data Distribution
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="runId"></param>
-        /// <param name="dataView"></param>
-        /// <param name="columnName"></param>
-        /// <returns></returns>
-        public List<DataDistribution> GetDataDistribution<T>(Guid runId, IDataView dataView, string columnName) where T : struct
-        {
-            return this.dataRepository.GetDataDistribution<T>(runId, dataView, columnName);
-        }
-
     }
 }

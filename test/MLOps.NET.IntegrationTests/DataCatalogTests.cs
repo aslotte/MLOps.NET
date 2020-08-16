@@ -85,10 +85,12 @@ namespace MLOps.NET.IntegrationTests
             await sut.Data.LogDataDistribution<Boolean>(run.RunId, data, "Sentiment");
 
             //Assert
-            var distributions = sut.Data.GetDataDistribution<Boolean>(run.RunId, data, "Sentiment");
+            var savedData = sut.Data.GetData(run.RunId);
 
-            distributions.Count
-                .Should().BeGreaterThan(0);
+            savedData.DataSchema
+                .DataColumns.First(x => x.Name == "Sentiment")
+                .DataDistribution
+                .Count.Should().BeGreaterThan(0);
         }
 
         private IDataView LoadData()

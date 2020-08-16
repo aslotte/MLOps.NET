@@ -1,7 +1,6 @@
 ﻿using Microsoft.ML;
 using MLOps.NET.Entities.Impl;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Storage
@@ -34,16 +33,6 @@ namespace MLOps.NET.Storage
         /// <param name="columnName"></param>
         /// <returns></returns>
         Task LogDataDistribution<T>(Guid runId, IDataView dataView, string columnName) where T : struct;
-
-        /// <summary>
-        /// Get Data Distribution
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="runId"></param>
-        /// <param name="dataView"></param>
-        /// <param name="columnName"></param>
-        /// <returns></returns>
-        List<DataDistribution> GetDataDistribution<T>(Guid runId, IDataView dataView, string columnName) where T : struct;
     }
 }
 

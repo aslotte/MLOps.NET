@@ -69,8 +69,11 @@ namespace MLOps.NET.Storage
             var data = db.Data
                 .Include(x => x.DataSchema.DataColumns)
                 .FirstOrDefault(x => x.RunId == runId);
-            if (data == null) return null;
 
+            foreach (var dataColumn in data.DataSchema.DataColumns)
+            {
+                db.Entry(dataColumn).Reference(x => x.DataDistribution);
+            }
             return data;
         }
 
@@ -94,24 +97,6 @@ namespace MLOps.NET.Storage
             db.DataDistributions.AddRange(list);
 
             await db.SaveChangesAsync();
-        }
-
-        ///<inheritdoc cref="IDataRepository"/>
-        public List<DataDistribution> GetDataDistribution<T>(Guid runId, IDataView dataView, string columnName) where T:struct
-        {
-            using var db = this.contextFactory.CreateDbContext();
-
-            var data = db.Data
-                .Include(d => d.DataSchema.DataColumns)
-                .First(d => d.RunId == runId);
-
-            var dataColumn = data.DataSchema
-                .DataColumns
-                .FirstOrDefault(c => c.Name == columnName);
-
-            var column = dataView.Schema.First(c => c.Name == columnName);
-
-            return GetDataDistributionForColumn<T>(dataView, column, dataColumn);
         }
 
         private List<DataDistribution> GetDataDistributionForColumn<T>(IDataView dataView, DataViewSchema.Column column, Entities.Impl.DataColumn dataColumn) where T : struct
