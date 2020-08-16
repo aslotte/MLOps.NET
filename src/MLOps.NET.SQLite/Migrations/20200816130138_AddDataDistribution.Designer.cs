@@ -8,8 +8,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MLOps.NET.SQLite.Migrations
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [DbContext(typeof(MLOpsSQLiteDbContext))]
-    [Migration("20200815235609_AddDataDistribution")]
+    [Migration("20200816130138_AddDataDistribution")]
     partial class AddDataDistribution
     {
         /// <summary>
@@ -66,9 +69,6 @@ namespace MLOps.NET.SQLite.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("DataDistributionId")
-                        .HasColumnType("TEXT");
-
                     b.Property<Guid>("DataSchemaId")
                         .HasColumnType("TEXT");
 
@@ -103,8 +103,7 @@ namespace MLOps.NET.SQLite.Migrations
 
                     b.HasKey("DataDistributionId");
 
-                    b.HasIndex("DataColumnId")
-                        .IsUnique();
+                    b.HasIndex("DataColumnId");
 
                     b.ToTable("DataDistribution");
                 });
@@ -347,8 +346,8 @@ namespace MLOps.NET.SQLite.Migrations
             modelBuilder.Entity("MLOps.NET.Entities.Impl.DataDistribution", b =>
                 {
                     b.HasOne("MLOps.NET.Entities.Impl.DataColumn", null)
-                        .WithOne("DataDistribution")
-                        .HasForeignKey("MLOps.NET.Entities.Impl.DataDistribution", "DataColumnId")
+                        .WithMany("DataDistributions")
+                        .HasForeignKey("DataColumnId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

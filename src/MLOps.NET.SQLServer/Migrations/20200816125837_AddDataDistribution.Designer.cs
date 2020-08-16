@@ -16,6 +16,10 @@ namespace MLOps.NET.SQLServer.Migrations
     [Migration("20200816125837_AddDataDistribution")]
     partial class AddDataDistribution
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="modelBuilder"></param>
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
