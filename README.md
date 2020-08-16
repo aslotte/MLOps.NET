@@ -50,7 +50,7 @@ To create an `MLOpsContext`, use the `MLOpsBuilder` with your desired configurat
 ```
   IMLOpsContext mlOpsContext = new MLOpsBuilder()
     .UseSQLite()
-    .UseAWSS3Repository("awsAccessKey", "awsSecretAccessKey", "regionName")
+    .UseAWSS3ModelRepository("awsAccessKey", "awsSecretAccessKey", "regionName")
     .Build();
 ```
 
@@ -59,14 +59,14 @@ To manage the lifecycle of a model, we'll need to track things such as the model
 
 To create an `Experiment` and a `Run`, access the `Lifecycle` catalog on the `MLOpsContext`
 ```
-  var experimentId = await mlOpsContext.LifeCycle.CreateExperimentAsync("FraudClassifier");
+  var experimentId = await mlOpsContext.LifeCycle.CreateExperimentAsync();
 
-  var runId = await mlOpsContext.LifeCycle.CreateRunAsync(experimentId, "{optional Git SHA}");
+  var run = await mlOpsContext.LifeCycle.CreateRunAsync(experimentId, "{optional Git SHA}");
 ```
 
 For simplicity, you can also create an experiment (if it does not yet exist) and a run in one line
 ```
-  var runId = await mlOpsContext.LifeCycle.CreateRunAsync("FraudClassifier", "{optional Git SHA}");
+  var run = await mlOpsContext.LifeCycle.CreateRunAsync(experimentName: "FraudClassifier", "{optional Git SHA}");
 ```
 
 With an `Experiment` and a `Run` created, we can track the model training process.
@@ -102,20 +102,23 @@ To log the data schema and the data hash (to be used to compare data for two dif
   await mlOpsContext.Data.LogDataAsync(runId, dataView);
 ```
 
-Support to log the data distribution is being added.
+To log the distribution of a given column, e.g. how many rows in a given dataset are positive and how many are negative, use the `LogDistributionAsync` method
+
+```
+  await mlOpsContext.Data.LogDataDistribution<bool>(run.RunId, dataView, nameof(Review.Sentiment));
+```
 
 #### Model repository
 The end product of any model development effort is the actual model itself. `MLOps.NET` offers the ability to store your model either in a storage account in Azure, an S3 bucket in AWS or locally on a fileshare of your choosing. 
 
 To upload a model from a run
 ```
-  await mlOpsContext.Model.UploadAsync(runId, "pathToModel");
+  var runArtifact = await mlOpsContext.Model.UploadAsync(runId, "pathToModel");
 ```
 
 To register a model for deployment
 ```
-  var runArtifactId = mlOpsContext.Model.GetRunArtifacts(runId).First();
-  await mlOpsContext.Model.RegisterModel(experimentId, runArtifactId, registeredBy: "John Doe");
+  var registeredModel = await mlOpsContext.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, registeredBy: "John Doe", description: "Altered weights");
 ```
 
 #### Model deployment
@@ -125,15 +128,15 @@ Methods to deploy a model can be found on the `Deployment` catalog.
 To deploy a model, start by creating a deployment target:
 
 ```
-var deploymentTarget = await mlOpsContext.Deployment.CreateDeploymentTargetAsync(deploymentTargetName: "Test");
+var deploymentTarget = await mlOpsContext.Deployment.CreateDeploymentTargetAsync(deploymentTargetName: "Test", isProduction: false);
 ```
 
 Given a deployment target and a registered model, you can then deploy the model to a given environment:
 
 ```
-  var deploymentUri = await mlOpsContext.Deployment.DeployModelAsync(deploymentTarget, registeredModel, deployedBy: "John Doe");
+  var deployment = await mlOpsContext.Deployment.DeployModelAsync(deploymentTarget, registeredModel, deployedBy: "John Doe");
 ```
-The URI or the path to the model (which can be used by a consuming application) will be returned. It's also possible to get the URI/path to deployed model by doing the following:
+The model is deployed to `deployment.DeploymentUri`, which can be used by a consuming application. It's also possible to get the URI/path to deployed model by doing the following:
 
 ```
   var deployment = await mlOpsContext.Deployment.GetDeployments()
