@@ -2,12 +2,12 @@ name: Integration Tests (MLOps.NET.SQLServer)
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
     paths-ignore:
     - 'README.md'
     - 'images/**'        
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
     paths-ignore:
     - 'README.md'
     - 'images/**'        
