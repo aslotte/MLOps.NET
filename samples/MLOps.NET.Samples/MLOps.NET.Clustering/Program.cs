@@ -13,16 +13,15 @@ namespace MLOps.NET.Clustering
     {
         static async Task Main(string[] args)
         {
-            // MLOps: Create experiment and run
+            // MLOps: Create experiment and run.RunId
             var mlOpsContext = new MLOpsBuilder()
                 .UseSQLite()
                 .UseLocalFileModelRepository()
                 .Build();
 
-            Console.WriteLine("Creating an MLOps Run");
-            var experimentId = await mlOpsContext.LifeCycle.CreateExperimentAsync("Iris Predictor");
-            var runId = await mlOpsContext.LifeCycle.CreateRunAsync(experimentId);
-            Console.WriteLine($"Run created with Id {runId}");
+            Console.WriteLine("Creating an MLOps run.RunId");
+            var run = await mlOpsContext.LifeCycle.CreateRunAsync("Iris Predictor");
+            Console.WriteLine($"run.RunId created with Id {run.RunId}");
 
             var mlContext = new MLContext(seed: 1);
 
@@ -42,11 +41,11 @@ namespace MLOps.NET.Clustering
 
             var trainedModel = trainingPipeline.Fit(testTrainTest.TrainSet);
 
-            await mlOpsContext.Training.LogHyperParametersAsync<KMeansTrainer>(runId, trainer);
+            await mlOpsContext.Training.LogHyperParametersAsync<KMeansTrainer>(run.RunId, trainer);
 
             //MLOps: Training time
-            await mlOpsContext.LifeCycle.SetTrainingTimeAsync(runId);
-            Console.WriteLine($"Training time:{mlOpsContext.LifeCycle.GetRun(runId).TrainingTime}");
+            await mlOpsContext.LifeCycle.SetTrainingTimeAsync(run.RunId);
+            Console.WriteLine($"Training time:{mlOpsContext.LifeCycle.GetRun(run.RunId).TrainingTime}");
 
             Console.WriteLine("Evaluating the model");
             var predictions = trainedModel.Transform(testTrainTest.TestSet);
@@ -54,35 +53,31 @@ namespace MLOps.NET.Clustering
 
             //MLOps: Log Metrics
             Console.WriteLine("Logging metrics");
-            await mlOpsContext.Evaluation.LogMetricsAsync(runId, metrics);
+            await mlOpsContext.Evaluation.LogMetricsAsync(run.RunId, metrics);
 
             //Save the model
             mlContext.Model.Save(trainedModel, testTrainTest.TrainSet.Schema, "IrisModel.zip");
 
             //MLOps: Upload artifact/model
             Console.WriteLine("Uploading artifact");
-            await mlOpsContext.Model.UploadAsync(runId, "IrisModel.zip");
-
-            //MLOps: Upload artifact/model
-            Console.WriteLine("Uploading artifact");
-            await mlOpsContext.Model.UploadAsync(runId, "IrisModel.zip");
+            var runArtifact = await mlOpsContext.Model.UploadAsync(run.RunId, "IrisModel.zip");
 
             //MLOps: Optional - Register model
             Console.WriteLine("Registering model");
-            var runArtifact = mlOpsContext.Model.GetRunArtifacts(runId).First();
-            await mlOpsContext.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "John Doe");
-            var registeredModel = mlOpsContext.Model.GetLatestRegisteredModel(experimentId);
+            var registeredModel = await mlOpsContext.Model.RegisterModel(run.ExperimentId, runArtifact.RunArtifactId, "John Doe");
 
             //MLOps: Optional - Create deployment target
             Console.WriteLine("Creating a deployment target");
-            await mlOpsContext.Deployment.CreateDeploymentTargetAsync("Test");
-            var deploymentTarget = mlOpsContext.Deployment.GetDeploymentTargets().First(x => x.Name == "Test");
+            var deploymentTarget = await mlOpsContext.Deployment.CreateDeploymentTargetAsync("Test");
 
             //MLOps: Optional - Deploy model
             Console.WriteLine("Deploying the model");
-            var deploymentUri = await mlOpsContext.Deployment.DeployModelAsync(deploymentTarget, registeredModel, deployedBy: "John Doe");
+            var deployment = await mlOpsContext.Deployment.DeployModelAsync(deploymentTarget, registeredModel, deployedBy: "John Doe");
 
-            Console.WriteLine($"Model deployed to: {deploymentUri}");
+            //MLOps: Optional - Get the run if you want to vizualize inspect it
+            run = mlOpsContext.LifeCycle.GetRun(run.RunId);
+
+            Console.WriteLine($"Model deployed to: {deployment.DeploymentUri}");
         }
     }
 }

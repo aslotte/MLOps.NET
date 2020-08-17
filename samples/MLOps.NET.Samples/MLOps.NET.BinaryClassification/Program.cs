@@ -22,9 +22,8 @@ namespace MLOps.NET.BinaryClassification
                 .Build();
 
             Console.WriteLine("Creating an MLOps Run");
-            var experimentId = await mlOpsContext.LifeCycle.CreateExperimentAsync("Titanic Survival Predictor");
-            var runId = await mlOpsContext.LifeCycle.CreateRunAsync(experimentId);
-            Console.WriteLine($"Run created with Id {runId}");
+            var run = await mlOpsContext.LifeCycle.CreateRunAsync("Titanic Survival Predictor");
+            Console.WriteLine($"Run created with Id {run.RunId}");
 
             var mlContext = new MLContext(seed: 1);
 
@@ -33,7 +32,7 @@ namespace MLOps.NET.BinaryClassification
             var testTrainTest = mlContext.Data.TrainTestSplit(data);
 
             //MLOps: Log data - e.g. schema, columns, types and a hash to track changes
-            await mlOpsContext.Data.LogDataAsync(runId, data);
+            await mlOpsContext.Data.LogDataAsync(run.RunId, data);
 
             var features = new[] { nameof(ModelInput.Pclass), nameof(ModelInput.Sex), nameof(ModelInput.Age), nameof(ModelInput.SibSp), nameof(ModelInput.Parch), nameof(ModelInput.Fare), nameof(ModelInput.Embarked) };
 
@@ -55,12 +54,12 @@ namespace MLOps.NET.BinaryClassification
             var trainedModel = trainingPipeline.Fit(testTrainTest.TrainSet);
 
             //MLOps: Log hyperparameters for the selected trainer
-            await mlOpsContext.Training.LogHyperParametersAsync(runId, trainer);
+            await mlOpsContext.Training.LogHyperParametersAsync(run.RunId, trainer);
             stopwatch.Stop();
 
             //MLOps: Training time
-            await mlOpsContext.LifeCycle.SetTrainingTimeAsync(runId, stopwatch.Elapsed);
-            Console.WriteLine($"Training time:{mlOpsContext.LifeCycle.GetRun(runId).TrainingTime}");
+            await mlOpsContext.LifeCycle.SetTrainingTimeAsync(run.RunId, stopwatch.Elapsed);
+            Console.WriteLine($"Training time:{mlOpsContext.LifeCycle.GetRun(run.RunId).TrainingTime}");
 
             Console.WriteLine("Evaluating the model");
             var predictions = trainedModel.Transform(testTrainTest.TestSet);
@@ -68,32 +67,32 @@ namespace MLOps.NET.BinaryClassification
 
             //MLOps: Log Metrics
             Console.WriteLine("Logging metrics");
-            await mlOpsContext.Evaluation.LogMetricsAsync(runId, metrics);
-            await mlOpsContext.Evaluation.LogConfusionMatrixAsync(runId, metrics.ConfusionMatrix);
+            await mlOpsContext.Evaluation.LogMetricsAsync(run.RunId, metrics);
+            await mlOpsContext.Evaluation.LogConfusionMatrixAsync(run.RunId, metrics.ConfusionMatrix);
 
             //Save the model
             mlContext.Model.Save(trainedModel, testTrainTest.TrainSet.Schema, "BinaryClassificationModel.zip");
 
             //MLOps: Upload artifact/model
             Console.WriteLine("Uploading artifact");
-            await mlOpsContext.Model.UploadAsync(runId, "BinaryClassificationModel.zip");
+            var runArtifact = await mlOpsContext.Model.UploadAsync(run.RunId, "BinaryClassificationModel.zip");
 
             //MLOps: Optional - Register model
             Console.WriteLine("Registering model");
-            var runArtifact = mlOpsContext.Model.GetRunArtifacts(runId).First();
-            await mlOpsContext.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "John Doe");
-            var registeredModel = mlOpsContext.Model.GetLatestRegisteredModel(experimentId);
+            var registeredModel = await mlOpsContext.Model.RegisterModel(run.ExperimentId, runArtifact.RunArtifactId, "John Doe");
 
             //MLOps: Optional - Create deployment target
             Console.WriteLine("Creating a deployment target");
-            await mlOpsContext.Deployment.CreateDeploymentTargetAsync("Test");
-            var deploymentTarget = mlOpsContext.Deployment.GetDeploymentTargets().First(x => x.Name == "Test");
+            var deploymentTarget = await mlOpsContext.Deployment.CreateDeploymentTargetAsync("Test");
 
             //MLOps: Optional - Deploy model
             Console.WriteLine("Deploying the model");
-            var deploymentUri = await mlOpsContext.Deployment.DeployModelAsync(deploymentTarget, registeredModel, deployedBy: "John Doe");
+            var deployment = await mlOpsContext.Deployment.DeployModelAsync(deploymentTarget, registeredModel, deployedBy: "John Doe");
 
-            Console.WriteLine($"Model deployed to: {deploymentUri}");
+            //MLOps: Optional - Get the run if you want to vizualize inspect it
+            run = mlOpsContext.LifeCycle.GetRun(run.RunId);
+
+            Console.WriteLine($"Model deployed to: {deployment.DeploymentUri}");
         }
     }
 }
