@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MLOps.NET.ApiTemplate", "MLOps.NET.ApiTemplate\MLOps.NET.ApiTemplate.csproj", "{F08893F1-8DEE-42E0-9A8C-F51F6508BBB3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MLOps.NET.Api-1.5.1", "MLOps.NET.Api-1.5.1\MLOps.NET.Api-1.5.1.csproj", "{F08893F1-8DEE-42E0-9A8C-F51F6508BBB3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

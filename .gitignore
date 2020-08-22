@@ -384,4 +384,4 @@ MLOps.NET.Azure/obj/Debug/netstandard2.0/MLOps.NET.Azure.csprojAssemblyReference
 src/MLOps.NET.SQLite/local.db
 src/MLOps.NET.SQLite/local.db
 src/MLOps.NET.SQLite/local.db
-src/deployment/test/**
+src/MLOps.NET.Templates/test/**
