@@ -1,9 +1,11 @@
 ﻿using ConsoleTables;
 using Dynamitey.DynamicObjects;
 using mlops.Settings;
+using MLOps.NET.Azure;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Extensions;
 using MLOps.NET.SQLite;
+using MLOps.NET.SQLServer;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -12,18 +14,71 @@ using System.Linq;
 namespace MLOps.NET.CLI
 {
     /// <summary>
-    /// 
+    /// Helper methods to execute commands from cli
     /// </summary>
     internal class CommandHelper
     {
-        private readonly IMLOpsContext mlOpsContext;
+        private IMLOpsContext mlOpsContext;
+        private readonly SettingsHelper settingsHelper;
 
-        public CommandHelper()
+        public CommandHelper(SettingsHelper settingsHelper)
         {
-            mlOpsContext = new MLOpsBuilder().UseSQLite().UseLocalFileModelRepository().Build();
+            this.settingsHelper = settingsHelper;
+            CreateMLOpsContext();
         }
+
         /// <summary>
-        /// 
+        /// Update Data Source
+        /// </summary>
+        /// <param name="options"></param>
+        internal void UpdateDataSource(SetDataSourceOptions options)
+        {
+            settingsHelper.UpdateDataSource(options);
+        }
+
+        private void CreateMLOpsContext()
+        {
+            var settings = settingsHelper.GetSettings();
+            if (settings == null)
+                return;
+
+            switch(settings.DataSource)
+            {
+                case DataSource.CosmosDb:
+                    mlOpsContext = new MLOpsBuilder()
+                                   .UseLocalFileModelRepository()
+                                   .UseCosmosDb(settings.CosmosDb.EndPoint, settings.CosmosDb.AccountKey)
+                                   .Build();
+                    break;
+
+                case DataSource.SQLServer:
+                    mlOpsContext = new MLOpsBuilder()
+                                    .UseLocalFileModelRepository()
+                                    .UseSQLServer(settings.SQLServer.ConnectionString)
+                                    .Build();
+                    break;
+                case DataSource.SQLite:
+                    mlOpsContext = new MLOpsBuilder()
+                                    .UseLocalFileModelRepository()
+                                    .UseSQLite()
+                                    .Build();
+                    break;
+                default:
+                    throw new Exception("Unsupported data source");
+            }
+        }
+
+        /// <summary>
+        /// Create Experiment
+        /// </summary>
+        /// <param name="options"></param>
+        internal void CreateExperiment(CreateExperimentOptions options)
+        {
+            Console.WriteLine(mlOpsContext.LifeCycle.CreateExperimentAsync(options.ExperimentName).Result);
+        }
+
+        /// <summary>
+        /// List Runs
         /// </summary>
         /// <param name="options"></param>
         internal void ListRuns(ListRunsOptions options)
@@ -40,12 +95,12 @@ namespace MLOps.NET.CLI
 
         internal void SetCosmosConfiguration(ConfigCosmosOptions options)
         {
-            var settings = new Settings();
-            settings.SetCosmosConfiguration(options);
+            settingsHelper.SetCosmosConfiguration(options);
+            CreateMLOpsContext();
         }
 
         /// <summary>
-        /// 
+        /// List Run Artifacts
         /// </summary>
         /// <param name="options"></param>
         internal void ListRunArtifacts(ListRunArtifactsOptions options)
@@ -61,7 +116,7 @@ namespace MLOps.NET.CLI
         }
 
         /// <summary>
-        /// 
+        /// List Metrics
         /// </summary>
         /// <param name="options"></param>
         internal void ListMetrics(ListMetricsOptions options)

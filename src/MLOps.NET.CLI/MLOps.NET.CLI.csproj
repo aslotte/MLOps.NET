@@ -19,12 +19,7 @@
     <PackageReference Include="MLOps.NET" Version="1.1.0" />
     <PackageReference Include="MLOps.NET.Azure" Version="1.1.0" />
     <PackageReference Include="MLOps.NET.SQLite" Version="1.1.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <PackageReference Include="MLOps.NET.SQLServer" Version="1.1.0" />
   </ItemGroup>
 
 </Project>

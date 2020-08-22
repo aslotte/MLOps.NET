@@ -9,16 +9,15 @@ namespace MLOps.NET.CLI
     {
         public static void Main(string[] args)
         {
-    
-         
+            var commandHelper = new CommandHelper(new SettingsHelper());
 
-            var commandHelper = new CommandHelper();
-
-            Parser.Default.ParseArguments<ListRunsOptions, ListRunArtifactsOptions, ListMetricsOptions,ConfigCosmosOptions>(args)
+            Parser.Default.ParseArguments<SetDataSourceOptions,ListRunsOptions, ListRunArtifactsOptions, ListMetricsOptions,ConfigCosmosOptions, CreateExperimentOptions>(args)
+                    .WithParsed<SetDataSourceOptions>(commandHelper.UpdateDataSource)
                     .WithParsed<ListRunsOptions>(commandHelper.ListRuns)
                     .WithParsed<ListRunArtifactsOptions>(commandHelper.ListRunArtifacts)
                     .WithParsed<ListMetricsOptions>(commandHelper.ListMetrics)
-                    .WithParsed<ConfigCosmosOptions>(commandHelper.SetCosmosConfiguration);
+                    .WithParsed<ConfigCosmosOptions>(commandHelper.SetCosmosConfiguration)
+                    .WithParsed<CreateExperimentOptions>(commandHelper.CreateExperiment);
         }
 
     }
