@@ -44,7 +44,7 @@ namespace MLOps.NET.CLI
         internal void CreateRun(CreateRunOptions options)
         {
             CreateMLOpsContextIfNotExists();
-            Console.WriteLine($"Created Run  {mlOpsContext.LifeCycle.CreateRunAsync(options.ExperimentId).Result}");
+            Console.WriteLine($"Created Run {mlOpsContext.LifeCycle.CreateRunAsync(options.ExperimentId).Result.RunId}");
         }
 
         private void CreateMLOpsContext()
