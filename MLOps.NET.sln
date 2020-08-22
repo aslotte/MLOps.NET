@@ -37,6 +37,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.AWS.Tests", "test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.AWS.IntegrationTests", "test\MLOps.NET.AWS.IntegrationTests\MLOps.NET.AWS.IntegrationTests.csproj", "{A45E6A71-DF5B-49DB-B78C-864740A81D6F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.Templates", "src\MLOps.NET.Templates\MLOps.NET.Templates.csproj", "{47937BAB-B8A1-42DB-A7BC-483022851135}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -103,6 +105,10 @@ Global
 		{A45E6A71-DF5B-49DB-B78C-864740A81D6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A45E6A71-DF5B-49DB-B78C-864740A81D6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A45E6A71-DF5B-49DB-B78C-864740A81D6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47937BAB-B8A1-42DB-A7BC-483022851135}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47937BAB-B8A1-42DB-A7BC-483022851135}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47937BAB-B8A1-42DB-A7BC-483022851135}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47937BAB-B8A1-42DB-A7BC-483022851135}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -123,6 +129,7 @@ Global
 		{F8403022-3BE3-4491-A0E7-4E8EE0338957} = {BFA1E5BE-95E8-4A9B-BE55-8EFA8F8488F1}
 		{8EF5AE0B-17DC-4909-8298-31AC27377184} = {D826364F-D0C6-4FB9-A4D1-837372F6367C}
 		{A45E6A71-DF5B-49DB-B78C-864740A81D6F} = {D826364F-D0C6-4FB9-A4D1-837372F6367C}
+		{47937BAB-B8A1-42DB-A7BC-483022851135} = {BFA1E5BE-95E8-4A9B-BE55-8EFA8F8488F1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {44F93107-BB01-4A51-BBCB-A475BE891E6A}
