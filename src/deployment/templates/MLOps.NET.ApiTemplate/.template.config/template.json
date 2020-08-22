@@ -1,0 +1,12 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "Alexander Slotte",
+    "classifications": [ "MLOps.NET", "ML.NET" ],
+    "identity": "MLOpsNET.MLNET.API",
+    "name": "ASP.NET Core API for ML.NET",
+    "shortName": "MLOps.NET.ApiTemplate",
+    "tags": {
+      "language": "C#",
+      "type": "project"
+    }
+  }
