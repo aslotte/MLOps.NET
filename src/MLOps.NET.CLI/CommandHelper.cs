@@ -24,8 +24,8 @@ namespace MLOps.NET.CLI
         public CommandHelper(SettingsHelper settingsHelper)
         {
             this.settingsHelper = settingsHelper;
-            CreateMLOpsContext();
         }
+
 
         /// <summary>
         /// Update Data Source
@@ -34,6 +34,17 @@ namespace MLOps.NET.CLI
         internal void UpdateDataSource(SetDataSourceOptions options)
         {
             settingsHelper.UpdateDataSource(options);
+            Console.WriteLine($"Data Source updated to {options.DataSource.ToString()}");
+        }
+
+        /// <summary>
+        /// Create run
+        /// </summary>
+        /// <param name="options"></param>
+        internal void CreateRun(CreateRunOptions options)
+        {
+            CreateMLOpsContextIfNotExists();
+            Console.WriteLine($"Created Run  {mlOpsContext.LifeCycle.CreateRunAsync(options.ExperimentId).Result}");
         }
 
         private void CreateMLOpsContext()
@@ -46,9 +57,9 @@ namespace MLOps.NET.CLI
             {
                 case DataSource.CosmosDb:
                     mlOpsContext = new MLOpsBuilder()
-                                   .UseLocalFileModelRepository()
-                                   .UseCosmosDb(settings.CosmosDb.EndPoint, settings.CosmosDb.AccountKey)
-                                   .Build();
+                                     .UseLocalFileModelRepository()
+                                     .UseCosmosDb(settings.CosmosDb.EndPoint,settings.CosmosDb.AccountKey)
+                                     .Build();
                     break;
 
                 case DataSource.SQLServer:
@@ -74,7 +85,14 @@ namespace MLOps.NET.CLI
         /// <param name="options"></param>
         internal void CreateExperiment(CreateExperimentOptions options)
         {
-            Console.WriteLine(mlOpsContext.LifeCycle.CreateExperimentAsync(options.ExperimentName).Result);
+            CreateMLOpsContextIfNotExists();
+            Console.WriteLine($"Created experiment  {mlOpsContext.LifeCycle.CreateExperimentAsync(options.ExperimentName).Result}");
+        }
+
+        private void CreateMLOpsContextIfNotExists()
+        {
+            if (mlOpsContext == null)
+                CreateMLOpsContext();
         }
 
         /// <summary>
@@ -83,6 +101,7 @@ namespace MLOps.NET.CLI
         /// <param name="options"></param>
         internal void ListRuns(ListRunsOptions options)
         {
+            CreateMLOpsContextIfNotExists();
             var experiment = mlOpsContext.LifeCycle.GetExperiment(options.ExperimentName);
             ConsoleTable.From(experiment.Runs.Select(r => new
             {
@@ -97,6 +116,7 @@ namespace MLOps.NET.CLI
         {
             settingsHelper.SetCosmosConfiguration(options);
             CreateMLOpsContext();
+            Console.WriteLine($"configuration updated for cosmos db {options.Endpoint}");
         }
 
         /// <summary>
@@ -105,6 +125,7 @@ namespace MLOps.NET.CLI
         /// <param name="options"></param>
         internal void ListRunArtifacts(ListRunArtifactsOptions options)
         {
+            CreateMLOpsContextIfNotExists();
             var runArtifacts = mlOpsContext.LifeCycle.GetRun(options.RunId).RunArtifacts;
             ConsoleTable.From(runArtifacts.Select(r => new
             {
@@ -121,6 +142,7 @@ namespace MLOps.NET.CLI
         /// <param name="options"></param>
         internal void ListMetrics(ListMetricsOptions options)
         {
+            CreateMLOpsContextIfNotExists();
             var metrics = mlOpsContext.LifeCycle.GetRun(options.RunId).Metrics;
             ConsoleTable.From(metrics.Select(m => new
             {
