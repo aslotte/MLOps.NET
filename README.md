@@ -31,7 +31,7 @@ A client application to vizualize and manage the ML lifecycle is currently in th
 To create an `MLOpsContext`, use the `MLOpsBuilder` with your desired configuration. You can mix and match the location of your model repository and metadata store as you please.
 
 #### Azure with CosmosDb
-```
+```csharp
   IMLOpsContext mlOpsContext = new MLOpsBuilder()
     .UseCosmosDb("accountEndPoint", "accountKey")
     .UseAzureBlobModelRepository("connectionString")
@@ -39,7 +39,7 @@ To create an `MLOpsContext`, use the `MLOpsBuilder` with your desired configurat
 ```
 
 #### SQL Server with Local model repository
-```
+```csharp
   IMLOpsContext mlOpsContext = new MLOpsBuilder()
     .UseSQLServer("connectionString")
     .UseLocalFileModelRepository()
@@ -47,7 +47,7 @@ To create an `MLOpsContext`, use the `MLOpsBuilder` with your desired configurat
 ```
 
 #### AWS with SQLite
-```
+```csharp
   IMLOpsContext mlOpsContext = new MLOpsBuilder()
     .UseSQLite()
     .UseAWSS3ModelRepository("awsAccessKey", "awsSecretAccessKey", "regionName")
@@ -58,14 +58,14 @@ To create an `MLOpsContext`, use the `MLOpsBuilder` with your desired configurat
 To manage the lifecycle of a model, we'll need to track things such as the model's evaluation metrics, hyper-parameters used during training and so forth. We organize this under the concept of experiments and runs. An experiment is the logical grouping of a model we are trying to develop, e.g. a fraud classifier or recommendation engine. For a given experiment, we can create a number of runs. Each run represents one attempt to train a given model, which is associated with the run conditions and evaluation metrics achieved. 
 
 To create an `Experiment` and a `Run`, access the `Lifecycle` catalog on the `MLOpsContext`
-```
+```csharp
   var experimentId = await mlOpsContext.LifeCycle.CreateExperimentAsync();
 
   var run = await mlOpsContext.LifeCycle.CreateRunAsync(experimentId, "{optional Git SHA}");
 ```
 
 For simplicity, you can also create an experiment (if it does not yet exist) and a run in one line
-```
+```csharp
   var run = await mlOpsContext.LifeCycle.CreateRunAsync(experimentName: "FraudClassifier", "{optional Git SHA}");
 ```
 
@@ -73,23 +73,23 @@ With an `Experiment` and a `Run` created, we can track the model training proces
 
 ##### Hyperparameters
 You can access the operations necessary to track hyperparameters on the `Training` catalog. You can either track individual hyperparameters, such as number of epocs as follows:
-```
+```csharp
   await mlOpsContext.Training.LogHyperParameterAsync(runId, "NumberOfEpochs", epocs);
 ```
 
 Alternatively, you can pass in the entire appended trainer and MLOps.NET will automatically log all of the trainer's hyperparameters for you
-```
+```csharp
   await mlOpsContext.Training.LogHyperParameterAsync<SdcaLogisticRegressionBinaryTrainer>(runId, trainer);
 ```
 
 ##### Evaluation metrics
 You can access the operations necessary to track evaluation metrics on the `Evaluation` catalog. Similarly to tracking hyperparameters, you can either log individual evaluation metrics as follows:
-```
+```csharp
   await mlOpsContext.Evaluation.LogMetricAsync(runId, "F1Score", 0.99d);
 ```
 
 Alternatively, you can pass the entire `ML.NET` evaluation metric result and `MLOps.NET` will log all related evaluation metrics for you automatically.
-```
+```csharp
   await mlOpsContext.Evaluation.LogMetricsAsync<CalibratedBinaryClassificationMetrics>(runId, metric);
 ```
 
@@ -98,13 +98,12 @@ Alternatively, you can pass the entire `ML.NET` evaluation metric result and `ML
 There are a number of useful methods on the `Data` catalog to track the data used for training. This will give you a nice audit trail to understand what data was used to train a specific model, as well as how the data looked and if it has changed in between models.
 
 To log the data schema and the data hash (to be used to compare data for two different models), you can use the `LogDataAsync` method
-```
+```csharp
   await mlOpsContext.Data.LogDataAsync(runId, dataView);
 ```
 
 To log the distribution of a given column, e.g. how many rows in a given dataset are positive and how many are negative, use the `LogDistributionAsync` method
-
-```
+```csharp
   await mlOpsContext.Data.LogDataDistribution<bool>(run.RunId, dataView, nameof(Review.Sentiment));
 ```
 
@@ -112,12 +111,12 @@ To log the distribution of a given column, e.g. how many rows in a given dataset
 The end product of any model development effort is the actual model itself. `MLOps.NET` offers the ability to store your model either in a storage account in Azure, an S3 bucket in AWS or locally on a fileshare of your choosing. 
 
 To upload a model from a run
-```
+```csharp
   var runArtifact = await mlOpsContext.Model.UploadAsync(runId, "pathToModel");
 ```
 
 To register a model for deployment
-```
+```csharp
   var registeredModel = await mlOpsContext.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, registeredBy: "John Doe", description: "Altered weights");
 ```
 
@@ -126,19 +125,16 @@ Once a model has been registered, it's possible to deploy it to a given deployme
 
 Methods to deploy a model can be found on the `Deployment` catalog. 
 To deploy a model, start by creating a deployment target:
-
-```
+```csharp
 var deploymentTarget = await mlOpsContext.Deployment.CreateDeploymentTargetAsync(deploymentTargetName: "Test", isProduction: false);
 ```
 
 Given a deployment target and a registered model, you can then deploy the model to a given environment:
-
-```
+```csharp
   var deployment = await mlOpsContext.Deployment.DeployModelAsync(deploymentTarget, registeredModel, deployedBy: "John Doe");
 ```
 The model is deployed to `deployment.DeploymentUri`, which can be used by a consuming application. It's also possible to get the URI/path to deployed model by doing the following:
-
-```
+```csharp
   var deployment = await mlOpsContext.Deployment.GetDeployments()
     .FirstOrDefault(x => x.DeploymentTarget.Name == "Test");
 
