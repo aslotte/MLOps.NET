@@ -2,11 +2,11 @@ name: Samples (MLOps.NET.Samples)
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
     paths:
       - 'samples/**'  
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
     paths-ignore:
       - 'samples/**'
 jobs:
