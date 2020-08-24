@@ -31,7 +31,11 @@ jobs:
       uses: github/codeql-action/init@v1
       with:
         languages: csharp
-
+    
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.300
     - name: Install dependencies
       run: dotnet restore MLOps.NET.sln
     - name: Build
