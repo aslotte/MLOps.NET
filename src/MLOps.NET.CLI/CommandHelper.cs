@@ -1,6 +1,7 @@
 ﻿using ConsoleTables;
 using Dynamitey.DynamicObjects;
 using mlops.Settings;
+using MLOps.NET.AWS;
 using MLOps.NET.Azure;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Extensions;
@@ -26,15 +27,32 @@ namespace MLOps.NET.CLI
             this.settingsHelper = settingsHelper;
         }
 
+        internal void UpdateSQLServer(ConfigSQLServerOptions options)
+        {
+            settingsHelper.UpdateSQLServer(options);
+            Console.WriteLine($"sql server connection string updated");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="options"></param>
+        internal void UpdateS3ModelRepository(ConfigAWSS3Options options)
+        {
+            settingsHelper.UpdateS3ModelRepository(options);
+            Console.WriteLine($"S3 model repository updated");
+        }
+
 
         /// <summary>
         /// Update Data Source
         /// </summary>
         /// <param name="options"></param>
-        internal void UpdateDataSource(SetDataSourceOptions options)
+        internal void UpdateStorageProvider(SetStorageProviderOptions options)
         {
-            settingsHelper.UpdateDataSource(options);
+            settingsHelper.UpdateStorageProvider(options);
             Console.WriteLine($"Data Source updated to {options.DataSource.ToString()}");
+            Console.WriteLine($"Model repository updated to {options.ModelRepository.ToString()}");
         }
 
         /// <summary>
@@ -52,30 +70,56 @@ namespace MLOps.NET.CLI
             var settings = settingsHelper.GetSettings();
             if (settings == null)
                 return;
+            var mlOpsBuilder = new MLOpsBuilder();
+            mlOpsBuilder = UpdateDataSource(settings);
+            UpdateModelRepository(settings, mlOpsBuilder);
+        }
 
-            switch(settings.DataSource)
+        private MLOpsBuilder UpdateDataSource(Settings settings)
+        {
+            MLOpsBuilder mlOpsBuilder;
+            switch (settings.DataSource)
             {
                 case DataSource.CosmosDb:
-                    mlOpsContext = new MLOpsBuilder()
-                                     .UseLocalFileModelRepository()
-                                     .UseCosmosDb(settings.CosmosDb.EndPoint,settings.CosmosDb.AccountKey)
-                                     .Build();
+                    mlOpsBuilder = new MLOpsBuilder()
+                                     .UseCosmosDb(settings.CosmosDb.EndPoint, settings.CosmosDb.AccountKey);
+
                     break;
 
                 case DataSource.SQLServer:
-                    mlOpsContext = new MLOpsBuilder()
-                                    .UseLocalFileModelRepository()
-                                    .UseSQLServer(settings.SQLServer.ConnectionString)
-                                    .Build();
+                    mlOpsBuilder = new MLOpsBuilder()
+                                    .UseSQLServer(settings.SQLServer.ConnectionString);
+
                     break;
                 case DataSource.SQLite:
-                    mlOpsContext = new MLOpsBuilder()
-                                    .UseLocalFileModelRepository()
-                                    .UseSQLite()
-                                    .Build();
+                    mlOpsBuilder = new MLOpsBuilder()
+                                    .UseSQLite();
+
                     break;
                 default:
                     throw new Exception("Unsupported data source");
+            }
+
+            return mlOpsBuilder;
+        }
+
+        private void UpdateModelRepository(Settings settings, MLOpsBuilder mlOpsBuilder)
+        {
+            switch (settings.ModelRepository)
+            {
+                case ModelRepository.LocalFile:
+                    mlOpsContext = mlOpsBuilder.UseLocalFileModelRepository().Build();
+                    break;
+                case ModelRepository.S3:
+                    mlOpsContext = mlOpsBuilder
+                                  .UseAWSS3ModelRepository(settings.S3Config.AwsAccessKeyId, settings.S3Config.AwsSecretAccessKey, settings.S3Config.RegionName)
+                                  .Build();
+                    break;
+                case ModelRepository.BlobStorage:
+                    mlOpsContext = mlOpsBuilder.UseAzureBlobModelRepository(settings.BlobStorageConfig.ConnectionString).Build();
+                    break;
+                default:
+                    throw new Exception("Unsupported model respository");
             }
         }
 

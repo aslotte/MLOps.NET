@@ -1,15 +1,7 @@
-﻿using ConsoleTables;
-using Dynamitey.DynamicObjects;
-using mlops.Settings;
-using MLOps.NET.Entities.Impl;
-using MLOps.NET.Extensions;
-using MLOps.NET.SQLite;
+﻿using mlops.Settings;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
-using System.Linq;
 
 namespace MLOps.NET.CLI
 {
@@ -20,11 +12,11 @@ namespace MLOps.NET.CLI
     {
         private readonly string settingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mlops", "appsettings.json");
 
-        public DataSource GetDataSource()
+        internal void UpdateSQLServer(ConfigSQLServerOptions options)
         {
-            var json = File.ReadAllText(settingsPath);
-            var setting = JsonConvert.DeserializeObject<Settings>(json);
-            return setting.DataSource;
+            var setting = GetSettings();
+            setting.SQLServer.ConnectionString = options.ConnectionString;
+            SaveSettings(setting);
         }
 
         /// <summary>
@@ -39,11 +31,29 @@ namespace MLOps.NET.CLI
             SaveSettings(setting);
         }
 
-        internal void UpdateDataSource(SetDataSourceOptions options)
+        internal void UpdateStorageProvider(SetStorageProviderOptions options)
         {
             var setting = GetSettings();
-            setting = setting ?? new Settings();
+            setting ??= new Settings();
             setting.DataSource = options.DataSource;
+            setting.ModelRepository = options.ModelRepository;
+            SaveSettings(setting);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="options"></param>
+        internal void UpdateS3ModelRepository(ConfigAWSS3Options options)
+        {
+            var setting = GetSettings();
+            setting ??= new Settings();
+            setting.S3Config = new AWSS3Config
+            {
+                AwsAccessKeyId = options.AwsAccessKeyId,
+                AwsSecretAccessKey = options.AwsSecretAccessKey,
+                RegionName = options.RegionName
+            };
             SaveSettings(setting);
         }
 

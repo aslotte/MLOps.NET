@@ -1,5 +1,4 @@
 ﻿using CommandLine;
-using mlops.Settings;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,13 +8,13 @@ namespace MLOps.NET.CLI
     /// <summary>
     /// 
     /// </summary>
-    [Verb("set-datasource", HelpText = "Set data source")]
-    public class SetDataSourceOptions
+    [Verb("config-sql-server", HelpText = "Set configuration values for sql server")]
+    public class ConfigSQLServerOptions
     {
         /// <summary>
         /// 
         /// </summary>
-        [Option("datasource",Required =true)]
-        public DataSource DataSource { get; set; }
+        [Option("connection-string",Required =true)]
+        public string ConnectionString { get; set; }
     }
 }

@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.1.7" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.7" />
     <PackageReference Include="MLOps.NET" Version="1.1.0" />
+    <PackageReference Include="MLOps.NET.AWS" Version="1.1.0" />
     <PackageReference Include="MLOps.NET.Azure" Version="1.1.0" />
     <PackageReference Include="MLOps.NET.SQLite" Version="1.1.0" />
     <PackageReference Include="MLOps.NET.SQLServer" Version="1.1.0" />

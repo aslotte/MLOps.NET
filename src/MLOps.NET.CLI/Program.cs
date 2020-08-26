@@ -11,8 +11,11 @@ namespace MLOps.NET.CLI
         {
             var commandHelper = new CommandHelper(new SettingsHelper());
 
-            Parser.Default.ParseArguments<SetDataSourceOptions,ListRunsOptions, ListRunArtifactsOptions, ListMetricsOptions,ConfigCosmosOptions, CreateExperimentOptions, CreateRunOptions>(args)
-                    .WithParsed<SetDataSourceOptions>(commandHelper.UpdateDataSource)
+            Parser.Default.ParseArguments<SetStorageProviderOptions, ConfigAWSS3Options, ConfigSQLServerOptions,ListRunsOptions, ListRunArtifactsOptions, 
+                    ListMetricsOptions,ConfigCosmosOptions, CreateExperimentOptions, CreateRunOptions>(args)
+                    .WithParsed<SetStorageProviderOptions>(commandHelper.UpdateStorageProvider)
+                    .WithParsed<ConfigAWSS3Options>(commandHelper.UpdateS3ModelRepository)
+                    .WithParsed<ConfigSQLServerOptions>(commandHelper.UpdateSQLServer)
                     .WithParsed<ListRunsOptions>(commandHelper.ListRuns)
                     .WithParsed<ListRunArtifactsOptions>(commandHelper.ListRunArtifacts)
                     .WithParsed<ListMetricsOptions>(commandHelper.ListMetrics)
