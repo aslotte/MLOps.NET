@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace MLOps.NET.IntegrationTests.Docker
 {
+    [TestCategory("Integration")]
     [TestClass]
     public class CliExecutorTests
     {
