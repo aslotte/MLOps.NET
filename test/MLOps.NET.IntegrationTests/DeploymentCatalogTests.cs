@@ -16,10 +16,11 @@ namespace MLOps.NET.IntegrationTests
             await sut.Deployment.CreateDeploymentTargetAsync("Production");
 
             //Assert
-            var deploymentTargets = sut.Deployment.GetDeploymentTargets();
-            deploymentTargets.First().Name.Should().Be("Production");
-            deploymentTargets.First().CreatedDate.Date.Should().Be(DateTime.UtcNow.Date);
-            deploymentTargets.First().IsProduction.Should().BeFalse();
+            var deploymentTarget = sut.Deployment.GetDeploymentTargets().FirstOrDefault(x => x.Name == "Prodution");
+            deploymentTarget.Should().NotBeNull();
+
+            deploymentTarget.CreatedDate.Date.Should().Be(DateTime.UtcNow.Date);
+            deploymentTarget.IsProduction.Should().BeFalse();
         }
 
         [TestMethod]
