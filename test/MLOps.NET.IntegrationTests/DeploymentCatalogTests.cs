@@ -16,7 +16,7 @@ namespace MLOps.NET.IntegrationTests
             await sut.Deployment.CreateDeploymentTargetAsync("Production");
 
             //Assert
-            var deploymentTarget = sut.Deployment.GetDeploymentTargets().FirstOrDefault(x => x.Name == "Prodution");
+            var deploymentTarget = sut.Deployment.GetDeploymentTargets().FirstOrDefault(x => x.Name == "Production");
             deploymentTarget.Should().NotBeNull();
 
             deploymentTarget.CreatedDate.Date.Should().Be(DateTime.UtcNow.Date);
