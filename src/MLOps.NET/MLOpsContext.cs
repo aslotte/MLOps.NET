@@ -28,7 +28,6 @@ namespace MLOps.NET
             if (confusionMatrixRepository == null) throw new ArgumentNullException(nameof(confusionMatrixRepository));
             if (hyperParameterRepository == null) throw new ArgumentNullException(nameof(hyperParameterRepository));
             if (deploymentRepository == null) throw new ArgumentNullException(nameof(deploymentRepository));
-            if (dockerContext == null) throw new ArgumentNullException(nameof(dockerContext));
 
             this.LifeCycle = new LifeCycleCatalog(experimentRepository, runRepository, new Clock());
             this.Data = new DataCatalog(dataRepository);

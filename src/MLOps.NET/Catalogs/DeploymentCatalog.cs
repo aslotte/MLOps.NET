@@ -1,5 +1,6 @@
 ﻿using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Entities.Impl;
+using MLOps.NET.Extensions;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Interfaces;
 using System;
@@ -82,6 +83,8 @@ namespace MLOps.NET.Catalogs
         /// <returns></returns>
         public async Task<Deployment> DeployModelToContainerAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy)
         {
+            AssertContainerRegistryHasBeenConfigured();
+
             var experiment = this.experimentRepository.GetExperiment(registeredModel.ExperimentId);
 
             using var model = new MemoryStream();
@@ -118,6 +121,14 @@ namespace MLOps.NET.Catalogs
         public List<Deployment> GetDeployments(Guid experimentId)
         {
             return this.deploymentRepository.GetDeployments(experimentId);
+        }
+
+        private void AssertContainerRegistryHasBeenConfigured()
+        {
+            if (dockerContext == null)
+            {
+                throw new InvalidOperationException($"A container registry has not been configured. Please configure a container registry by calling {nameof(MLOpsBuilderExtensions.UseContainerRegistry)} first");
+            }
         }
     }
 }
