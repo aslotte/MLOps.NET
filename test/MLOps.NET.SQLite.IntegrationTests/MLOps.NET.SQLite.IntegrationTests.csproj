@@ -24,4 +24,10 @@
     <ProjectReference Include="..\MLOps.NET.Tests.Common\MLOps.NET.Tests.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
