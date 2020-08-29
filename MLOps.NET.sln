@@ -37,6 +37,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.AWS.Tests", "test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLOps.NET.AWS.IntegrationTests", "test\MLOps.NET.AWS.IntegrationTests\MLOps.NET.AWS.IntegrationTests.csproj", "{A45E6A71-DF5B-49DB-B78C-864740A81D6F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", "{8AB880D4-678B-4DDF-A560-D07F0301519A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MLOps.NET.Benchmarks", "Benchmarks\MLOps.NET.Benchmarks\MLOps.NET.Benchmarks.csproj", "{7547EBD6-6D86-4C83-8B0F-0E85526AA667}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
