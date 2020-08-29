@@ -1,4 +1,7 @@
-﻿using MLOps.NET.Storage;
+﻿using Dynamitey;
+using MLOps.NET.Docker;
+using MLOps.NET.Docker.Settings;
+using MLOps.NET.Storage;
 using MLOps.NET.Storage.Deployments;
 using System.IO.Abstractions;
 
@@ -18,6 +21,29 @@ namespace MLOps.NET.Extensions
         public static MLOpsBuilder UseLocalFileModelRepository(this MLOpsBuilder builder, string destinationFolder = null)
         {
             builder.UseModelRepository(new LocalFileModelRepository(new FileSystem(), new ModelPathGenerator(), destinationFolder));
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Configures a container registry
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="registryName"></param>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public static MLOpsBuilder UseContainerRegistry(this MLOpsBuilder builder, string registryName, string username, string password)
+        {
+            var settings = new DockerSettings
+            {
+                RegistryName = registryName,
+                Password = password,
+                Username = username
+            };
+
+            var dockerContext = new DockerContext(new CliExecutor(settings), new FileSystem(), settings);
+            builder.UseDockerContext(dockerContext);
 
             return builder;
         }

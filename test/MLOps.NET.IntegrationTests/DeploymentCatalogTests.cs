@@ -66,6 +66,19 @@ namespace MLOps.NET.IntegrationTests
             registeredModel.Deployments.Should().HaveCount(2);
         }
 
+        [TestMethod]
+        public async Task DeployModelAsContainer_ShouldDeployModelToRegistry()
+        {
+            //Arrange
+            var registeredModel = await CreateRegisteredModel();
+            var deploymentTarget = await CreateDeploymentTarget("Prod");
+
+            //Act
+            var deployment = await sut.Deployment.DeployModelToContainerAsync(deploymentTarget, registeredModel, "MLOps.NET team");
+
+            //Assert
+        }
+
         private async Task<RegisteredModel> CreateRegisteredModel()
         {
             var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");

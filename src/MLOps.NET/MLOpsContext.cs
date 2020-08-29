@@ -1,4 +1,5 @@
 ﻿using MLOps.NET.Catalogs;
+using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Interfaces;
 using MLOps.NET.Utilities;
@@ -16,7 +17,8 @@ namespace MLOps.NET
             IMetricRepository metricRepository,
             IConfusionMatrixRepository confusionMatrixRepository,
             IHyperParameterRepository hyperParameterRepository,
-            IDeploymentRepository deploymentRepository)
+            IDeploymentRepository deploymentRepository, 
+            IDockerContext dockerContext)
         {
             if (modelRepository == null) throw new ArgumentNullException(nameof(modelRepository));
             if (experimentRepository == null) throw new ArgumentNullException(nameof(experimentRepository));
@@ -26,13 +28,14 @@ namespace MLOps.NET
             if (confusionMatrixRepository == null) throw new ArgumentNullException(nameof(confusionMatrixRepository));
             if (hyperParameterRepository == null) throw new ArgumentNullException(nameof(hyperParameterRepository));
             if (deploymentRepository == null) throw new ArgumentNullException(nameof(deploymentRepository));
+            if (dockerContext == null) throw new ArgumentNullException(nameof(dockerContext));
 
             this.LifeCycle = new LifeCycleCatalog(experimentRepository, runRepository, new Clock());
             this.Data = new DataCatalog(dataRepository);
             this.Evaluation = new EvaluationCatalog(metricRepository, confusionMatrixRepository);
             this.Model = new ModelCatalog(modelRepository, runRepository);
             this.Training = new TrainingCatalog(hyperParameterRepository);
-            this.Deployment = new DeploymentCatalog(deploymentRepository, modelRepository, experimentRepository);
+            this.Deployment = new DeploymentCatalog(deploymentRepository, modelRepository, experimentRepository, dockerContext);
         }
 
         ///<inheritdoc cref="IMLOpsContext"/>
