@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Docker;
 using MLOps.NET.Docker.Settings;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -101,11 +102,32 @@ namespace MLOps.NET.IntegrationTests
             var deploymentTarget = await sut.Deployment.CreateDeploymentTargetAsync("Prod");
 
             //Act
-            await sut.Deployment.DeployModelToContainerAsync(deploymentTarget, registeredModel, "deployedBy");
+            var deployment = await sut.Deployment.DeployModelToContainerAsync(deploymentTarget, registeredModel, "deployedBy");
 
             //Assert
+            deployment.Should().NotBeNull();
+
             var imageExists = await cliExecutor.RunDockerPull(tagName);
             imageExists.Should().BeTrue();
         }
+
+        [TestMethod]
+        public async Task DeployModelToContainerAsync_ShouldBaseImageOfModelAndProject()
+        {
+            //Arrange
+            await cliExecutor.RemoveDockerImage(tagName);
+
+            var run = await sut.LifeCycle.CreateRunAsync(this.experimentName);
+            var runArtifact = await sut.Model.UploadAsync(run.RunId, @"Data/model.txt");
+            var registeredModel = await sut.Model.RegisterModel(run.ExperimentId, runArtifact.RunArtifactId, "registerby");
+            var deploymentTarget = await sut.Deployment.CreateDeploymentTargetAsync("Prod");
+
+            //Act
+            await sut.Deployment.DeployModelToContainerAsync(deploymentTarget, registeredModel, "deployedBy");
+
+            //Assert
+            File.Exists("image/ML.NET.Web.Embedded.csproj").Should().BeTrue();
+            File.Exists("image/model.zip").Should().BeTrue();
+        }  
     }
 }
