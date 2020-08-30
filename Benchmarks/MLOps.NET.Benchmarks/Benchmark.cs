@@ -1,5 +1,4 @@
 ﻿using BenchmarkDotNet.Running;
-using System;
 
 namespace MLOps.NET.Benchmarks
 {
@@ -7,7 +6,25 @@ namespace MLOps.NET.Benchmarks
     {
         public static void Main(string[] args)
         {
-            var lifeCylceCatalogBenchmarks = BenchmarkRunner.Run<LifeCylceCatalogBenchmarks>();
+            SQLiteBenchmarks();
+            SQLServerBenchmarks();
+            SQLServerAzure();
         }
+
+        public static void SQLiteBenchmarks()
+        {
+            var lifeCycleCatalogBenchmarks = BenchmarkRunner.Run<LifeCycleCatalogSQLiteBenchmark>();
+        }
+
+        public static void SQLServerBenchmarks()
+        {
+            var lifeCycleCatalogBenchmarks = BenchmarkRunner.Run<LifeCycleCatalogSQLServerBenchmark>();
+        }
+
+        public static void SQLServerAzure()
+        {
+            var lifeCycleCatalogBenchmarks = BenchmarkRunner.Run<LifeCycleCatalogAzureBenchmark>();
+        }
+
     }
 }

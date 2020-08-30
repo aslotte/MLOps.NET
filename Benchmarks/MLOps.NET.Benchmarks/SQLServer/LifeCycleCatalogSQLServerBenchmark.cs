@@ -5,20 +5,20 @@ using System.Threading.Tasks;
 
 namespace MLOps.NET.Benchmarks
 {
-    public class LifeCylceCatalogBenchmarks
+    public class LifeCycleCatalogSQLServerBenchmark
     {
         private IMLOpsContext sut;
 
         [GlobalSetup]
         public void Initialize()
         {
-            sut = BenchmarkSetup.Initialize();
+            sut = BenchmarkSetup.InitializeSQLServer();
         }
 
         [Benchmark]
         public async Task CreateRunAsync()
         {
-            await sut.LifeCycle.CreateRunAsync("Benchmark");
+            await sut.LifeCycle.CreateRunAsync("Benchmark SQLServer");
         }
     }
 }
