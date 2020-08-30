@@ -47,7 +47,7 @@ namespace MLOps.NET.Docker.Interfaces
         Task<bool> RunDockerPull(string tagName);
 
         /// <summary>
-        /// Runs docker image rm
+        /// Runs docker image rm (remove image)
         /// </summary>
         /// <param name="tagName"></param>
         /// <returns></returns>

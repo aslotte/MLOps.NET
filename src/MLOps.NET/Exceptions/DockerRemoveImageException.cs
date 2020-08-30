@@ -3,7 +3,7 @@
 namespace MLOps.NET.Exceptions
 {
     /// <summary>
-    /// Custom exception for failure to run docker image rm
+    /// Custom exception for failure to run docker image rm (remove image)
     /// </summary>
     public class DockerRemoveImageException : Exception
     {
