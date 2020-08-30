@@ -85,18 +85,14 @@ namespace MLOps.NET.Catalogs
             AssertContainerRegistryHasBeenConfigured();
 
             var experiment = this.experimentRepository.GetExperiment(registeredModel.ExperimentId);
-
             using var model = new MemoryStream();
-            await modelRepository.DownloadModelAsync(registeredModel.RunId, model);
 
             await dockerContext.BuildImage(experiment.ExperimentName, registeredModel, model);
             await dockerContext.PushImage(experiment.ExperimentName, registeredModel);
 
             //Todo in Issue #305 (Deploy to cluster)
 
-            var deploymentUri = "";
-
-            return await this.deploymentRepository.CreateDeploymentAsync(deploymentTarget, registeredModel, deployedBy, deploymentUri);
+            return await this.deploymentRepository.CreateDeploymentAsync(deploymentTarget, registeredModel, deployedBy, deploymentUri: "");
         }
 
         /// <summary>
