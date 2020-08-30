@@ -12,6 +12,8 @@ namespace MLOps.NET.SQLite.IntegrationTests
         public void Initialize()
         {
             sut = IntegrationTestSetup.Initialize();
+
+            base.SetUp();
         }
 
         [TestCleanup]
@@ -20,19 +22,6 @@ namespace MLOps.NET.SQLite.IntegrationTests
             var context = IntegrationTestSetup.CreateDbContext();
 
             await base.TearDown(context);
-        }
-
-        [TestMethod]
-        public async Task DeployModelToContainerAsync_ShouldDeployModelToRegistry()
-        {
-            //Arrange
-            var registeredModel = await CreateRegisteredModel();
-            var deploymentTarget = await CreateDeploymentTarget("Prod");
-
-            //Act
-            var deployment = await sut.Deployment.DeployModelToContainerAsync(deploymentTarget, registeredModel, "MLOps.NET team");
-
-            //Assert
         }
     }
 }

@@ -30,16 +30,16 @@ namespace MLOps.NET.Docker
 
             await this.CopyModel(model);
 
-            //Later copy over model input and output
+            //Later copy over input and output
 
-            var imageTag = $"{dockerSettings.RegistryName}/{experimentName}:{registeredModel.Version}";
+            var imageTag = ComposeImageTag(experimentName, registeredModel);
             await cliExecutor.RunDockerBuild(imageTag);
         }
 
         ///<inheritdoc cref="IDockerContext"/>
         public async Task PushImage(string experimentName, RegisteredModel registeredModel)
         {
-            var imageTag = $"{dockerSettings.RegistryName}/{experimentName}:{registeredModel.Version}";
+            var imageTag = ComposeImageTag(experimentName, registeredModel);
             await cliExecutor.RunDockerPush(imageTag);
         }
 
@@ -48,6 +48,11 @@ namespace MLOps.NET.Docker
             using var fileStream = fileSystem.FileStream.Create($"{dockerSettings.DirectoryName}/{dockerSettings.ModelName}", FileMode.Create, FileAccess.Write);
 
             await model.CopyToAsync(fileStream);
+        }
+
+        private string ComposeImageTag(string experimentName, RegisteredModel registeredModel)
+        {
+            return $"{dockerSettings.RegistryName}/{experimentName}:{registeredModel.Version}";
         }
     }
 }

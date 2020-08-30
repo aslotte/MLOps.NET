@@ -15,8 +15,13 @@ namespace MLOps.NET.Azure.IntegrationTests
 
             return new MLOpsBuilder()
                 .UseLocalFileModelRepository()
-                .UseCosmosDb(configuration[ConfigurationKeys.CosmosEndPoint],
+                .UseCosmosDb(
+                configuration[ConfigurationKeys.CosmosEndPoint],
                 configuration[ConfigurationKeys.CosmosAccountKey])
+                .UseContainerRegistry(
+                configuration[ConfigurationKeys.RegistryName],
+                configuration[ConfigurationKeys.Username],
+                configuration[ConfigurationKeys.Password])
                 .Build();
         }
 

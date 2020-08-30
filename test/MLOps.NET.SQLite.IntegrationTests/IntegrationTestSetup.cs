@@ -16,7 +16,10 @@ namespace MLOps.NET.SQLite.IntegrationTests
             return new MLOpsBuilder()
                 .UseLocalFileModelRepository()
                 .UseSQLite()
-                .UseContainerRegistry(configuration[ConfigurationKeys.RegistryName], configuration[ConfigurationKeys.Username], configuration[ConfigurationKeys.Password])
+                .UseContainerRegistry(
+                configuration[ConfigurationKeys.RegistryName], 
+                configuration[ConfigurationKeys.Username], 
+                configuration[ConfigurationKeys.Password])
                 .Build();
         }
 

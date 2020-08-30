@@ -12,6 +12,8 @@ namespace MLOps.NET.Azure.IntegrationTests
         public void Initialize()
         {
             sut = IntegrationTestSetup.Initialize();
+
+            base.SetUp();
         }
 
         [TestCleanup]

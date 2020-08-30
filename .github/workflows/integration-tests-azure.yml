@@ -17,6 +17,10 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
+      registry: 
+        image: registry:2
+        ports:
+          - 5000:5000
       azure: 
         image: mcr.microsoft.com/azure-storage/azurite
         ports:

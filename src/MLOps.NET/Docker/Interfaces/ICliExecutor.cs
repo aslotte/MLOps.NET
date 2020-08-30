@@ -38,5 +38,19 @@ namespace MLOps.NET.Docker.Interfaces
         /// <param name="tagName"></param>
         /// <returns></returns>
         Task RunDockerPush(string tagName);
+
+        /// <summary>
+        /// Runs docker pull
+        /// </summary>
+        /// <param name="tagName"></param>
+        /// <returns>True if image exists</returns>
+        Task<bool> RunDockerPull(string tagName);
+
+        /// <summary>
+        /// Runs docker image rm
+        /// </summary>
+        /// <param name="tagName"></param>
+        /// <returns></returns>
+        Task RemoveDockerImage(string tagName);
     }
 }

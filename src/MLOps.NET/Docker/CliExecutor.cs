@@ -61,7 +61,7 @@ namespace MLOps.NET.Docker
             try
             {
                 await Cli.Wrap("docker")
-                    .WithArguments($"build --tag {tagName} --file ./{dockerSettings.DirectoryName}/Dockerfile {dockerSettings.DirectoryName}")
+                    .WithArguments($"build --tag {tagName.ToLower()} --file {dockerSettings.DirectoryName}/Dockerfile {dockerSettings.DirectoryName}")
                     .ExecuteBufferedAsync();
             }
             catch (Exception ex)
@@ -75,12 +75,42 @@ namespace MLOps.NET.Docker
             try
             {
                 await Cli.Wrap("docker")
-                    .WithArguments($"push {tagName}")
+                    .WithArguments($"push {tagName.ToLower()}")
                     .ExecuteBufferedAsync();
             }
             catch (Exception ex)
             {
                 throw new DockerPushException($"Unable to run docker push for {tagName}", ex);
+            }
+        }
+
+        public async Task<bool> RunDockerPull(string tagName)
+        {
+            try
+            {
+               var command = await Cli.Wrap("docker")
+                    .WithArguments($"pull {tagName.ToLower()}")
+                    .ExecuteBufferedAsync();
+
+                return command.ExitCode == 0;
+            }
+            catch (Exception ex)
+            {
+                throw new DockerPullException($"Unable to run docker pull for {tagName}", ex);
+            }
+        }
+
+        public async Task RemoveDockerImage(string tagName)
+        {
+            try
+            {
+                await Cli.Wrap("docker")
+                    .WithArguments($"image rm {tagName.ToLower()}")
+                    .ExecuteBufferedAsync();
+            }
+            catch 
+            {
+                //intentionally left empty
             }
         }
     }

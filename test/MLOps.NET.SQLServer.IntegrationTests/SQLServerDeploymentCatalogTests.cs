@@ -12,6 +12,8 @@ namespace MLOps.NET.SQLServer.IntegrationTests
         public void Initialize()
         {
             sut = IntegrationTestSetup.Initialize();
+
+            base.SetUp();
         }
 
         [TestCleanup]
