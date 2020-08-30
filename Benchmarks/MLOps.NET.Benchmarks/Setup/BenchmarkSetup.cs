@@ -17,7 +17,7 @@ namespace MLOps.NET.Benchmarks
 
         internal static IMLOpsContext InitializeSQLServer()
         {
-            var configuration = ConfigurationFactory.GetConfiguration();
+            var configuration = ConfigurationFactory.GetConfiguration("appsettingssqlserver.json");
 
             return new MLOpsBuilder()
                 .UseLocalFileModelRepository()
@@ -27,7 +27,7 @@ namespace MLOps.NET.Benchmarks
 
         internal static IMLOpsContext InitializeAzure()
         {
-            var configuration = ConfigurationFactory.GetConfiguration();
+            var configuration = ConfigurationFactory.GetConfiguration("appsettingsazure.json");
 
             return new MLOpsBuilder()
                 .UseLocalFileModelRepository()

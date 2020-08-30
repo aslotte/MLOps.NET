@@ -4,10 +4,10 @@ namespace MLOps.NET.Benchmarks
 {
     public static class ConfigurationFactory
     {
-        public static IConfiguration GetConfiguration()
+        public static IConfiguration GetConfiguration(string configuration)
         {
             return new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
+                .AddJsonFile(configuration)
                 .AddEnvironmentVariables()
                 .Build();
         }

@@ -21,4 +21,13 @@
     <ProjectReference Include="..\..\src\MLOps.NET\MLOps.NET.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Settings\appsettingsazure.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Settings\appsettingssqlserver.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
