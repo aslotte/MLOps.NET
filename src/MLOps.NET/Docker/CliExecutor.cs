@@ -74,6 +74,7 @@ namespace MLOps.NET.Docker
         {
             try
             {
+                //Todo in Issue #304 (run docker login and add integration tests)
                 await Cli.Wrap("docker")
                     .WithArguments($"push {tagName.ToLower()}")
                     .ExecuteBufferedAsync();

@@ -6,7 +6,6 @@ using MLOps.NET.Storage.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection.Metadata;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Catalogs
@@ -93,7 +92,7 @@ namespace MLOps.NET.Catalogs
             await dockerContext.BuildImage(experiment.ExperimentName, registeredModel, model);
             await dockerContext.PushImage(experiment.ExperimentName, registeredModel);
 
-            //Deploy to cluster
+            //Todo in Issue #305 (Deploy to cluster)
 
             var deploymentUri = "";
 

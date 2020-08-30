@@ -4,11 +4,8 @@ using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Docker.Settings;
 using MLOps.NET.Entities.Impl;
 using Moq;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Tests.Deployments
@@ -44,7 +41,7 @@ namespace MLOps.NET.Tests.Deployments
             await sut.BuildImage("Test", registeredModel, new MemoryStream());
 
             //Assert
-            mockCliExecutor.Verify(x => x.InstallTemplatePackage(), Times.Once());        
+            mockCliExecutor.Verify(x => x.InstallTemplatePackage(), Times.Once());
         }
 
         [TestMethod]
