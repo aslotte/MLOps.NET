@@ -11,6 +11,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="CosmosDb\" />
+    <Folder Include="SQLServer\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\MLOps.NET.SQLite\MLOps.NET.SQLite.csproj" />
     <ProjectReference Include="..\..\src\MLOps.NET\MLOps.NET.csproj" />
   </ItemGroup>
 
