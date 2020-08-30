@@ -96,5 +96,21 @@ namespace MLOps.NET.Tests
             //Arrange
             this.deploymentRepositoryMock.Verify(x => x.CreateDeploymentAsync(deploymentTarget, registeredModel, It.IsAny<string>(), It.IsAny<string>()), Times.Once());
         }
+
+        [TestMethod]
+        public async Task BuildAndPushImageAsync_ShouldNotCallCreateDeploymentAsync()
+        {
+            //Arrange
+            var registeredModel = new RegisteredModel();
+
+            this.experimentRepositoryMock.Setup(x => x.GetExperiment(It.IsAny<Guid>()))
+                .Returns(new Experiment(experimentName: "MyExperiment"));
+
+            //Act
+            await sut.BuildAndPushImageAsync(registeredModel);
+
+            //Arrange
+            this.deploymentRepositoryMock.Verify(x => x.CreateDeploymentAsync(It.IsAny<DeploymentTarget>(), registeredModel, It.IsAny<string>(), It.IsAny<string>()), Times.Never());
+        }
     }
 }

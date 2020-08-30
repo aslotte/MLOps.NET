@@ -86,6 +86,21 @@ namespace MLOps.NET.Catalogs
         /// <returns></returns>
         public async Task<Deployment> DeployModelToContainerAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy)
         {
+            await BuildAndPushImageAsync(registeredModel);
+
+            //Todo in Issue #305 (Deploy to cluster)
+
+            return await this.deploymentRepository.CreateDeploymentAsync(deploymentTarget, registeredModel, deployedBy, deploymentUri: "");
+        }
+
+        /// <summary>
+        /// Builds a docker image for an ASP.NET Core Web App with an ML.NET model
+        /// embedded and pushes it to the registry defined in UseContainerRegistry
+        /// </summary>
+        /// <param name="registeredModel"></param>
+        /// <returns></returns>
+        public async Task BuildAndPushImageAsync(RegisteredModel registeredModel)
+        {
             AssertContainerRegistryHasBeenConfigured();
 
             var experiment = this.experimentRepository.GetExperiment(registeredModel.ExperimentId);
@@ -93,10 +108,6 @@ namespace MLOps.NET.Catalogs
 
             await dockerContext.BuildImage(experiment.ExperimentName, registeredModel, model);
             await dockerContext.PushImage(experiment.ExperimentName, registeredModel);
-
-            //Todo in Issue #305 (Deploy to cluster)
-
-            return await this.deploymentRepository.CreateDeploymentAsync(deploymentTarget, registeredModel, deployedBy, deploymentUri: "");
         }
 
         /// <summary>
