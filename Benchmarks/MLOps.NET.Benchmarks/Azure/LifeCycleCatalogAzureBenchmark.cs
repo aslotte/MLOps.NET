@@ -1,6 +1,4 @@
 ﻿using BenchmarkDotNet.Attributes;
-using MLOps.NET.Extensions;
-using MLOps.NET.SQLite;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Benchmarks
