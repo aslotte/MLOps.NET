@@ -17,9 +17,7 @@ namespace MLOps.NET.SQLServer.IntegrationTests
                 .UseLocalFileModelRepository()
                 .UseSQLServer(configuration[ConfigurationKeys.ConnectionString])
                 .UseContainerRegistry(
-                configuration[ConfigurationKeys.RegistryName],
-                configuration[ConfigurationKeys.Username],
-                configuration[ConfigurationKeys.Password])
+                configuration[ConfigurationKeys.RegistryName])
                 .Build();
         }
 
