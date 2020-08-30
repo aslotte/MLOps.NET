@@ -74,9 +74,7 @@ namespace MLOps.NET.Docker
         {
             try
             {
-                var loginRequired = !string.IsNullOrEmpty(dockerSettings.Username) && !string.IsNullOrEmpty(dockerSettings.Password);
-
-                if (loginRequired)
+                if (dockerSettings.RequiresAuthentication)
                 {
                     await Cli.Wrap("docker")
                         .WithArguments($"login {dockerSettings.RegistryName} --username {dockerSettings.Username} --password {dockerSettings.Password}")
