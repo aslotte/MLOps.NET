@@ -12,6 +12,8 @@ namespace MLOps.NET.SQLite.IntegrationTests
         public void Initialize()
         {
             sut = IntegrationTestSetup.Initialize();
+
+            base.SetUp();
         }
 
         [TestCleanup]

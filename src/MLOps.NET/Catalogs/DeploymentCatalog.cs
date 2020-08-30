@@ -1,8 +1,11 @@
-﻿using MLOps.NET.Entities.Impl;
+﻿using MLOps.NET.Docker.Interfaces;
+using MLOps.NET.Entities.Impl;
+using MLOps.NET.Extensions;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Catalogs
@@ -15,6 +18,7 @@ namespace MLOps.NET.Catalogs
         private readonly IDeploymentRepository deploymentRepository;
         private readonly IModelRepository modelRepository;
         private readonly IExperimentRepository experimentRepository;
+        private readonly IDockerContext dockerContext;
 
         /// <summary>
         /// Ctor
@@ -22,13 +26,16 @@ namespace MLOps.NET.Catalogs
         /// <param name="deploymentRepository"></param>
         /// <param name="modelRepository"></param>
         /// <param name="experimentRepository"></param>
+        /// <param name="dockerContext"></param>
         public DeploymentCatalog(IDeploymentRepository deploymentRepository,
             IModelRepository modelRepository,
-            IExperimentRepository experimentRepository)
+            IExperimentRepository experimentRepository,
+            IDockerContext dockerContext)
         {
             this.deploymentRepository = deploymentRepository;
             this.modelRepository = modelRepository;
             this.experimentRepository = experimentRepository;
+            this.dockerContext = dockerContext;
         }
 
         /// <summary>
@@ -51,7 +58,7 @@ namespace MLOps.NET.Catalogs
         }
 
         /// <summary>
-        /// Deploys a registered model
+        /// Deploys a registered model to a URI
         /// </summary>
         /// <param name="deploymentTarget"></param>
         /// <param name="registeredModel"></param>
@@ -64,6 +71,43 @@ namespace MLOps.NET.Catalogs
             var deploymentUri = await this.modelRepository.DeployModelAsync(deploymentTarget, registeredModel, experiment);
 
             return await this.deploymentRepository.CreateDeploymentAsync(deploymentTarget, registeredModel, deployedBy, deploymentUri);
+        }
+
+        /// <summary>
+        /// Deploys a model to a container in a cluster by
+        /// - Building an ASP.NET Core Web App to wrap around the ML.NET Model
+        /// - Builds a Docker Image based on the project
+        /// - Pushes the image to the registry defined in UseContainerRegistry
+        /// - Deploys the model to a cluster
+        /// </summary>
+        /// <param name="deploymentTarget"></param>
+        /// <param name="registeredModel"></param>
+        /// <param name="deployedBy"></param>
+        /// <returns></returns>
+        public async Task<Deployment> DeployModelToContainerAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy)
+        {
+            await BuildAndPushImageAsync(registeredModel);
+
+            //Todo in Issue #305 (Deploy to cluster)
+
+            return await this.deploymentRepository.CreateDeploymentAsync(deploymentTarget, registeredModel, deployedBy, deploymentUri: "");
+        }
+
+        /// <summary>
+        /// Builds a docker image for an ASP.NET Core Web App with an ML.NET model
+        /// embedded and pushes it to the registry defined in UseContainerRegistry
+        /// </summary>
+        /// <param name="registeredModel"></param>
+        /// <returns></returns>
+        public async Task BuildAndPushImageAsync(RegisteredModel registeredModel)
+        {
+            AssertContainerRegistryHasBeenConfigured();
+
+            var experiment = this.experimentRepository.GetExperiment(registeredModel.ExperimentId);
+            using var model = new MemoryStream();
+
+            await dockerContext.BuildImage(experiment.ExperimentName, registeredModel, model);
+            await dockerContext.PushImage(experiment.ExperimentName, registeredModel);
         }
 
         /// <summary>
@@ -87,6 +131,14 @@ namespace MLOps.NET.Catalogs
         public List<Deployment> GetDeployments(Guid experimentId)
         {
             return this.deploymentRepository.GetDeployments(experimentId);
+        }
+
+        private void AssertContainerRegistryHasBeenConfigured()
+        {
+            if (dockerContext == null)
+            {
+                throw new InvalidOperationException($"A container registry has not been configured. Please configure a container registry by calling {nameof(MLOpsBuilderExtensions.UseContainerRegistry)} first");
+            }
         }
     }
 }

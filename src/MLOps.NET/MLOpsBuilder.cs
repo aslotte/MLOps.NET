@@ -1,3 +1,4 @@
+using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Services;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Database;
@@ -21,6 +22,7 @@ namespace MLOps.NET
         private IHyperParameterRepository hyperParameterRepository;
         private DeploymentRepository deploymentRepository;
         private IModelRepository modelRepository;
+        private IDockerContext dockerContext;
 
         /// <summary>
         /// Build the <see cref="IMLOpsContext"/> using the provided configuration
@@ -28,7 +30,7 @@ namespace MLOps.NET
         /// <returns>Configured <see cref="IMLOpsContext"/></returns>
         public IMLOpsContext Build()
         {
-            return new MLOpsContext(modelRepository, experimentRepository, runRepository, dataRepository, metricRepository, confusionMatrixRepository, hyperParameterRepository, deploymentRepository);
+            return new MLOpsContext(modelRepository, experimentRepository, runRepository, dataRepository, metricRepository, confusionMatrixRepository, hyperParameterRepository, deploymentRepository, dockerContext);
         }
 
         /// <summary>
@@ -61,6 +63,12 @@ namespace MLOps.NET
             if (this.modelRepository != null) throw new InvalidOperationException("ModelRepository is already configured");
 
             this.modelRepository = modelRepository ?? throw new ArgumentNullException(nameof(modelRepository));
+            return this;
+        }
+
+        internal MLOpsBuilder UseDockerContext(IDockerContext dockerContext)
+        {
+            this.dockerContext = dockerContext;
             return this;
         }
     }
