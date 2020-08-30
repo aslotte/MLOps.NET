@@ -40,6 +40,8 @@ namespace MLOps.NET.Docker
         public async Task PushImage(string experimentName, RegisteredModel registeredModel)
         {
             var imageTag = ComposeImageTag(experimentName, registeredModel);
+
+            await cliExecutor.RunDockerLogin();
             await cliExecutor.RunDockerPush(imageTag);
         }
 

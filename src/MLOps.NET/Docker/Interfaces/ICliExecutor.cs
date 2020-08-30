@@ -33,6 +33,12 @@ namespace MLOps.NET.Docker.Interfaces
         Task RunDockerBuild(string tagName);
 
         /// <summary>
+        /// Runs docker login if username and password have been provided
+        /// </summary>
+        /// <returns></returns>
+        Task RunDockerLogin();
+
+        /// <summary>
         /// Runs docker push
         /// </summary>
         /// <param name="tagName"></param>

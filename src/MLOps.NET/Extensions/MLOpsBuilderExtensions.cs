@@ -1,5 +1,4 @@
-﻿using Dynamitey;
-using MLOps.NET.Docker;
+﻿using MLOps.NET.Docker;
 using MLOps.NET.Docker.Settings;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Deployments;
@@ -26,7 +25,7 @@ namespace MLOps.NET.Extensions
         }
 
         /// <summary>
-        /// Configures a container registry
+        /// Configures a container registry with authetication
         /// </summary>
         /// <param name="builder"></param>
         /// <param name="registryName"></param>
@@ -40,6 +39,25 @@ namespace MLOps.NET.Extensions
                 RegistryName = registryName,
                 Password = password,
                 Username = username
+            };
+
+            var dockerContext = new DockerContext(new CliExecutor(settings), new FileSystem(), settings);
+            builder.UseDockerContext(dockerContext);
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Configures container registry without authentication
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="registryName"></param>
+        /// <returns></returns>
+        public static MLOpsBuilder UseContainerRegistry(this MLOpsBuilder builder, string registryName)
+        {
+            var settings = new DockerSettings
+            {
+                RegistryName = registryName,
             };
 
             var dockerContext = new DockerContext(new CliExecutor(settings), new FileSystem(), settings);
