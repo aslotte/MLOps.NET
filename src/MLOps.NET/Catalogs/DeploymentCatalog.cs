@@ -74,7 +74,11 @@ namespace MLOps.NET.Catalogs
         }
 
         /// <summary>
-        /// Deploys a model to a container in a cluster
+        /// Deploys a model to a container in a cluster by
+        /// - Building an ASP.NET Core Web App to wrap around the ML.NET Model
+        /// - Builds a Docker Image based on the project
+        /// - Pushes the image to the registry defined in UseContainerRegistry
+        /// - Deploys the model to a cluster
         /// </summary>
         /// <param name="deploymentTarget"></param>
         /// <param name="registeredModel"></param>

@@ -30,7 +30,7 @@ namespace MLOps.NET.Docker
 
             await this.CopyModel(model);
 
-            //Later copy over input and output
+            //Todo: Issue #302 (Copy over ModelInput.cs and ModelOutput.cs)
 
             var imageTag = ComposeImageTag(experimentName, registeredModel);
             await cliExecutor.RunDockerBuild(imageTag);
