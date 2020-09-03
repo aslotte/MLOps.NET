@@ -9,7 +9,7 @@ namespace MLOps.NET.CLI
     {
         public static void Main(string[] args)
         {
-            var commandHelper = new CommandHelper(new SettingsHelper());
+            var commandHelper = new CommandHelper(new CliSettingsWriter());
 
             Parser.Default.ParseArguments<SetStorageProviderOptions, ConfigAWSS3Options, ConfigSQLServerOptions,ListRunsOptions, ListRunArtifactsOptions, 
                     ListMetricsOptions,ConfigCosmosOptions, CreateExperimentOptions, CreateRunOptions>(args)

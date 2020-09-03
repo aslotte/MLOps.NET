@@ -1,14 +1,11 @@
 ﻿using CommandLine;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MLOps.NET.CLI
 {
-    [Verb("ls-runs", HelpText = "List runs")]
-    class ListRunsOptions
+    [Verb("ls-runs", HelpText = "List runs for a run")]
+    internal sealed class ListRunsOptions
     {
-        [Option("exp-name",Required =true)]
+        [Option("experiment-name", Required = true)]
         public string ExperimentName { get; set; }
     }
 }

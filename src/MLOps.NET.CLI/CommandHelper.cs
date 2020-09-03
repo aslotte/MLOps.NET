@@ -1,28 +1,21 @@
 ﻿using ConsoleTables;
-using Dynamitey.DynamicObjects;
-using mlops.Settings;
 using MLOps.NET.AWS;
 using MLOps.NET.Azure;
-using MLOps.NET.Entities.Impl;
+using MLOps.NET.CLI.Settings;
 using MLOps.NET.Extensions;
 using MLOps.NET.SQLite;
 using MLOps.NET.SQLServer;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 
 namespace MLOps.NET.CLI
 {
-    /// <summary>
-    /// Helper methods to execute commands from cli
-    /// </summary>
     internal class CommandHelper
     {
         private IMLOpsContext mlOpsContext;
-        private readonly SettingsHelper settingsHelper;
+        private readonly CliSettingsWriter settingsHelper;
 
-        public CommandHelper(SettingsHelper settingsHelper)
+        public CommandHelper(CliSettingsWriter settingsHelper)
         {
             this.settingsHelper = settingsHelper;
         }
@@ -30,126 +23,102 @@ namespace MLOps.NET.CLI
         internal void UpdateSQLServer(ConfigSQLServerOptions options)
         {
             settingsHelper.UpdateSQLServer(options);
-            Console.WriteLine($"sql server connection string updated");
+            Console.WriteLine($"SQL Server has been configured");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="options"></param>
         internal void UpdateS3ModelRepository(ConfigAWSS3Options options)
         {
             settingsHelper.UpdateS3ModelRepository(options);
-            Console.WriteLine($"S3 model repository updated");
+            Console.WriteLine($"AWS S3 has been configured");
         }
 
-
-        /// <summary>
-        /// Update Data Source
-        /// </summary>
-        /// <param name="options"></param>
         internal void UpdateStorageProvider(SetStorageProviderOptions options)
         {
             settingsHelper.UpdateStorageProvider(options);
-            Console.WriteLine($"Data Source updated to {options.DataSource.ToString()}");
-            Console.WriteLine($"Model repository updated to {options.ModelRepository.ToString()}");
+            Console.WriteLine($"The Data Source has been updated to {options.DataSource}");
+            Console.WriteLine($"The Model repository has been updated to {options.ModelRepository}");
         }
 
-        /// <summary>
-        /// Create run
-        /// </summary>
-        /// <param name="options"></param>
         internal void CreateRun(CreateRunOptions options)
         {
             CreateMLOpsContextIfNotExists();
-            Console.WriteLine($"Created Run {mlOpsContext.LifeCycle.CreateRunAsync(options.ExperimentId).Result.RunId}");
+
+            var run = mlOpsContext.LifeCycle.CreateRunAsync(options.ExperimentId).Result;
+            Console.WriteLine($"Created Run {run.RunId}");
         }
 
-        private void CreateMLOpsContext()
+        private IMLOpsContext CreateMLOpsContext()
         {
             var settings = settingsHelper.GetSettings();
-            if (settings == null)
-                return;
+
             var mlOpsBuilder = new MLOpsBuilder();
-            mlOpsBuilder = UpdateDataSource(settings);
+
+            UpdateDataSource(settings, mlOpsBuilder);
             UpdateModelRepository(settings, mlOpsBuilder);
+
+            return mlOpsBuilder.Build();
         }
 
-        private MLOpsBuilder UpdateDataSource(Settings settings)
+        private void UpdateDataSource(CliSettings settings, MLOpsBuilder mlOpsBuilder)
         {
-            MLOpsBuilder mlOpsBuilder;
             switch (settings.DataSource)
             {
                 case DataSource.CosmosDb:
-                    mlOpsBuilder = new MLOpsBuilder()
-                                     .UseCosmosDb(settings.CosmosDb.EndPoint, settings.CosmosDb.AccountKey);
-
+                    mlOpsBuilder.UseCosmosDb(settings.CosmosDb.EndPoint, settings.CosmosDb.AccountKey);
                     break;
-
                 case DataSource.SQLServer:
-                    mlOpsBuilder = new MLOpsBuilder()
-                                    .UseSQLServer(settings.SQLServer.ConnectionString);
-
+                    mlOpsBuilder.UseSQLServer(settings.SQLServer.ConnectionString);
                     break;
                 case DataSource.SQLite:
-                    mlOpsBuilder = new MLOpsBuilder()
-                                    .UseSQLite();
-
+                    mlOpsBuilder.UseSQLite();
                     break;
                 default:
-                    throw new Exception("Unsupported data source");
+                    throw new InvalidOperationException($"The selected data source {settings.DataSource} is not supported");
             }
-
-            return mlOpsBuilder;
         }
 
-        private void UpdateModelRepository(Settings settings, MLOpsBuilder mlOpsBuilder)
+        private void UpdateModelRepository(CliSettings settings, MLOpsBuilder mlOpsBuilder)
         {
             switch (settings.ModelRepository)
             {
                 case ModelRepository.LocalFile:
-                    mlOpsContext = mlOpsBuilder.UseLocalFileModelRepository().Build();
+                    mlOpsBuilder.UseLocalFileModelRepository();
                     break;
                 case ModelRepository.S3:
-                    mlOpsContext = mlOpsBuilder
-                                  .UseAWSS3ModelRepository(settings.S3Config.AwsAccessKeyId, settings.S3Config.AwsSecretAccessKey, settings.S3Config.RegionName)
-                                  .Build();
+                    mlOpsBuilder.UseAWSS3ModelRepository(settings.S3Config.AwsAccessKeyId, settings.S3Config.AwsSecretAccessKey, settings.S3Config.RegionName);
                     break;
                 case ModelRepository.BlobStorage:
-                    mlOpsContext = mlOpsBuilder.UseAzureBlobModelRepository(settings.BlobStorageConfig.ConnectionString).Build();
+                    mlOpsBuilder.UseAzureBlobModelRepository(settings.BlobStorageConfig.ConnectionString);
                     break;
                 default:
-                    throw new Exception("Unsupported model respository");
+                    throw new InvalidOperationException($"The selected model repository {settings.ModelRepository} is not supported");
             }
         }
 
-        /// <summary>
-        /// Create Experiment
-        /// </summary>
-        /// <param name="options"></param>
         internal void CreateExperiment(CreateExperimentOptions options)
         {
             CreateMLOpsContextIfNotExists();
-            Console.WriteLine($"Created experiment  {mlOpsContext.LifeCycle.CreateExperimentAsync(options.ExperimentName).Result}");
+
+            var experimentId = mlOpsContext.LifeCycle.CreateExperimentAsync(options.ExperimentName).Result;
+            Console.WriteLine($"Created experiment {experimentId}");
         }
 
         private void CreateMLOpsContextIfNotExists()
         {
             if (mlOpsContext == null)
-                CreateMLOpsContext();
+            {
+                mlOpsContext = CreateMLOpsContext();
+            }             
         }
 
-        /// <summary>
-        /// List Runs
-        /// </summary>
-        /// <param name="options"></param>
         internal void ListRuns(ListRunsOptions options)
         {
             CreateMLOpsContextIfNotExists();
+
             var experiment = mlOpsContext.LifeCycle.GetExperiment(options.ExperimentName);
             ConsoleTable.From(experiment.Runs.Select(r => new
             {
-                RunId = r.RunId,
+                r.RunId,
                 Date = r.RunDate
             }))
             .Configure(o => o.NumberAlignment = Alignment.Right)
@@ -160,38 +129,30 @@ namespace MLOps.NET.CLI
         {
             settingsHelper.SetCosmosConfiguration(options);
             CreateMLOpsContext();
-            Console.WriteLine($"configuration updated for cosmos db {options.Endpoint}");
+            Console.WriteLine($"CosmosDB has been configured");
         }
 
-        /// <summary>
-        /// List Run Artifacts
-        /// </summary>
-        /// <param name="options"></param>
         internal void ListRunArtifacts(ListRunArtifactsOptions options)
         {
             CreateMLOpsContextIfNotExists();
             var runArtifacts = mlOpsContext.LifeCycle.GetRun(options.RunId).RunArtifacts;
             ConsoleTable.From(runArtifacts.Select(r => new
             {
-                RunArtifactId = r.RunArtifactId,
+                r.RunArtifactId,
                 Date = r.Name
             }))
             .Configure(o => o.NumberAlignment = Alignment.Right)
             .Write(Format.MarkDown);
         }
 
-        /// <summary>
-        /// List Metrics
-        /// </summary>
-        /// <param name="options"></param>
         internal void ListMetrics(ListMetricsOptions options)
         {
             CreateMLOpsContextIfNotExists();
             var metrics = mlOpsContext.LifeCycle.GetRun(options.RunId).Metrics;
             ConsoleTable.From(metrics.Select(m => new
             {
-                MetricName = m.MetricName,
-                Value = m.Value
+                m.MetricName,
+                m.Value
             }))
             .Configure(o => o.NumberAlignment = Alignment.Right)
             .Write(Format.MarkDown);

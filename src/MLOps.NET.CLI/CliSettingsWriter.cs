@@ -1,14 +1,11 @@
-﻿using mlops.Settings;
+﻿using MLOps.NET.CLI.Settings;
 using Newtonsoft.Json;
 using System;
 using System.IO;
 
 namespace MLOps.NET.CLI
 {
-    /// <summary>
-    /// Helper method to read and update settings
-    /// </summary>
-    internal class SettingsHelper
+    internal class CliSettingsWriter
     {
         private readonly string settingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mlops", "appsettings.json");
 
@@ -19,10 +16,6 @@ namespace MLOps.NET.CLI
             SaveSettings(setting);
         }
 
-        /// <summary>
-        /// Set Cosmos Configuration
-        /// </summary>
-        /// <param name="options"></param>
         public void SetCosmosConfiguration(ConfigCosmosOptions options)
         {
             var setting = GetSettings();
@@ -34,48 +27,31 @@ namespace MLOps.NET.CLI
         internal void UpdateStorageProvider(SetStorageProviderOptions options)
         {
             var setting = GetSettings();
-            setting ??= new Settings();
             setting.DataSource = options.DataSource;
             setting.ModelRepository = options.ModelRepository;
             SaveSettings(setting);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="options"></param>
         internal void UpdateS3ModelRepository(ConfigAWSS3Options options)
         {
             var setting = GetSettings();
-            setting ??= new Settings();
-            setting.S3Config = new AWSS3Config
-            {
-                AwsAccessKeyId = options.AwsAccessKeyId,
-                AwsSecretAccessKey = options.AwsSecretAccessKey,
-                RegionName = options.RegionName
-            };
+            setting.S3Config.AwsAccessKeyId = options.AwsAccessKeyId;
+            setting.S3Config.AwsSecretAccessKey = options.AwsSecretAccessKey;
+            setting.S3Config.RegionName = options.RegionName;
             SaveSettings(setting);
         }
 
-        /// <summary>
-        /// Get Settings
-        /// </summary>
-        /// <returns></returns>
-        public Settings GetSettings()
+        public CliSettings GetSettings()
         {
             if (!File.Exists(settingsPath))
             {
-                File.WriteAllText(settingsPath, "");
+                File.WriteAllText(settingsPath, string.Empty);
             }
             var json = File.ReadAllText(settingsPath);
-            return JsonConvert.DeserializeObject<Settings>(json);
+            return JsonConvert.DeserializeObject<CliSettings>(json) ?? new CliSettings();
         }
 
-        /// <summary>
-        /// Get Settings
-        /// </summary>
-        /// <returns></returns>
-        private void SaveSettings(Settings settings)
+        private void SaveSettings(CliSettings settings)
         {
             File.WriteAllText(settingsPath, JsonConvert.SerializeObject(settings));
         }
