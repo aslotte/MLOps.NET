@@ -9,19 +9,20 @@ namespace MLOps.NET.CLI
     {
         public static void Main(string[] args)
         {
-            var commandHelper = new CommandHelper(new CliSettingsWriter());
+            var mLOpsBuilderCliHelper = new MLOpsBuilderCliHelper(new CliSettingsWriter());
+            var lifeCycleCatalogCliHelper = new LifeCycleCatalogCliHelper(new CliSettingsWriter());
 
-            Parser.Default.ParseArguments<SetStorageProviderOptions, ConfigAWSS3Options, ConfigSQLServerOptions,ListRunsOptions, ListRunArtifactsOptions, 
+            Parser.Default.ParseArguments<SetStorageProviderOptions, ConfigAWSS3Options, ConfigSQLServerOptions,ListRunsOptions,ListRunArtifactsOptions, 
                     ListMetricsOptions,ConfigCosmosOptions, CreateExperimentOptions, CreateRunOptions>(args)
-                    .WithParsed<SetStorageProviderOptions>(commandHelper.UpdateStorageProvider)
-                    .WithParsed<ConfigAWSS3Options>(commandHelper.UpdateS3ModelRepository)
-                    .WithParsed<ConfigSQLServerOptions>(commandHelper.UpdateSQLServer)
-                    .WithParsed<ListRunsOptions>(commandHelper.ListRuns)
-                    .WithParsed<ListRunArtifactsOptions>(commandHelper.ListRunArtifacts)
-                    .WithParsed<ListMetricsOptions>(commandHelper.ListMetrics)
-                    .WithParsed<ConfigCosmosOptions>(commandHelper.SetCosmosConfiguration)
-                    .WithParsed<CreateExperimentOptions>(commandHelper.CreateExperiment)
-                    .WithParsed<CreateRunOptions>(commandHelper.CreateRun);
+                    .WithParsed<SetStorageProviderOptions>(mLOpsBuilderCliHelper.UpdateStorageProvider)
+                    .WithParsed<ConfigAWSS3Options>(mLOpsBuilderCliHelper.UpdateS3ModelRepository)
+                    .WithParsed<ConfigSQLServerOptions>(mLOpsBuilderCliHelper.UpdateSQLServer)
+                    .WithParsed<ListRunsOptions>(lifeCycleCatalogCliHelper.ListRuns)
+                    .WithParsed<ListRunArtifactsOptions>(lifeCycleCatalogCliHelper.ListRunArtifacts)
+                    .WithParsed<ListMetricsOptions>(lifeCycleCatalogCliHelper.ListMetrics)
+                    .WithParsed<ConfigCosmosOptions>(mLOpsBuilderCliHelper.SetCosmosConfiguration)
+                    .WithParsed<CreateExperimentOptions>(lifeCycleCatalogCliHelper.CreateExperiment)
+                    .WithParsed<CreateRunOptions>(lifeCycleCatalogCliHelper.CreateRun);
         }
 
     }
