@@ -7,7 +7,6 @@
     <ToolCommandName>mlops</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <AssemblyName>MLOps.NET.CLI</AssemblyName>
-    <RootNamespace>MLOps.NET.CLI</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,11 +15,14 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.7" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.1.7" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.7" />
-    <PackageReference Include="MLOps.NET" Version="1.1.0" />
-    <PackageReference Include="MLOps.NET.AWS" Version="1.1.0" />
-    <PackageReference Include="MLOps.NET.Azure" Version="1.1.0" />
-    <PackageReference Include="MLOps.NET.SQLite" Version="1.1.0" />
-    <PackageReference Include="MLOps.NET.SQLServer" Version="1.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MLOps.NET.AWS\MLOps.NET.AWS.csproj" />
+    <ProjectReference Include="..\MLOps.NET.Azure\MLOps.NET.Azure.csproj" />
+    <ProjectReference Include="..\MLOps.NET.SQLite\MLOps.NET.SQLite.csproj" />
+    <ProjectReference Include="..\MLOps.NET.SQLServer\MLOps.NET.SQLServer.csproj" />
+    <ProjectReference Include="..\MLOps.NET\MLOps.NET.csproj" />
   </ItemGroup>
 
 </Project>
