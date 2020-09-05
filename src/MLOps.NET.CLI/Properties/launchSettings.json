@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "MLOps.NET.CLI": {
+      "commandName": "Project"
+    }
+  }
+}
