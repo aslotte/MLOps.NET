@@ -1,7 +1,4 @@
 ﻿using CommandLine;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 
 namespace MLOps.NET.CLI
 {
@@ -9,20 +6,22 @@ namespace MLOps.NET.CLI
     {
         public static void Main(string[] args)
         {
-            var mLOpsBuilderCliHelper = new MLOpsBuilderCliHelper(new CliSettingsWriter());
-            var lifeCycleCatalogCliHelper = new LifeCycleCatalogCliHelper(new CliSettingsWriter());
+            var cliSettingsWriter = new CliSettingsWriter();
 
-            Parser.Default.ParseArguments<SetStorageProviderOptions, ConfigAWSS3Options, ConfigSQLServerOptions,ListRunsOptions,ListRunArtifactsOptions, 
-                    ListMetricsOptions,ConfigCosmosOptions, CreateExperimentOptions, CreateRunOptions>(args)
-                    .WithParsed<SetStorageProviderOptions>(mLOpsBuilderCliHelper.UpdateStorageProvider)
-                    .WithParsed<ConfigAWSS3Options>(mLOpsBuilderCliHelper.UpdateS3ModelRepository)
-                    .WithParsed<ConfigSQLServerOptions>(mLOpsBuilderCliHelper.UpdateSQLServer)
-                    .WithParsed<ListRunsOptions>(lifeCycleCatalogCliHelper.ListRuns)
-                    .WithParsed<ListRunArtifactsOptions>(lifeCycleCatalogCliHelper.ListRunArtifacts)
-                    .WithParsed<ListMetricsOptions>(lifeCycleCatalogCliHelper.ListMetrics)
-                    .WithParsed<ConfigCosmosOptions>(mLOpsBuilderCliHelper.SetCosmosConfiguration)
-                    .WithParsed<CreateExperimentOptions>(lifeCycleCatalogCliHelper.CreateExperiment)
-                    .WithParsed<CreateRunOptions>(lifeCycleCatalogCliHelper.CreateRun);
+            var mlOpsBuilderCli = new MLOpsBuilderCli(cliSettingsWriter);
+            var lifeCycleCatalogCli = new LifeCycleCatalogCli(mlOpsBuilderCli);
+
+            Parser.Default.ParseArguments<SetStorageProviderOptions, ConfigAWSS3Options, ConfigSQLServerOptions, ListRunsOptions, ListRunArtifactsOptions,
+                    ListMetricsOptions, ConfigCosmosOptions, CreateExperimentOptions, CreateRunOptions>(args)
+                    .WithParsed<SetStorageProviderOptions>(mlOpsBuilderCli.SetStorageProvider)
+                    .WithParsed<ConfigAWSS3Options>(mlOpsBuilderCli.ConfigureS3ModelRepository)
+                    .WithParsed<ConfigSQLServerOptions>(mlOpsBuilderCli.ConfigureSQLServer)
+                    .WithParsed<ListRunsOptions>(lifeCycleCatalogCli.ListRuns)
+                    .WithParsed<ListRunArtifactsOptions>(lifeCycleCatalogCli.ListRunArtifacts)
+                    .WithParsed<ListMetricsOptions>(lifeCycleCatalogCli.ListMetrics)
+                    .WithParsed<ConfigCosmosOptions>(mlOpsBuilderCli.ConfigureCosmosDb)
+                    .WithParsed<CreateExperimentOptions>(lifeCycleCatalogCli.CreateExperiment)
+                    .WithParsed<CreateRunOptions>(lifeCycleCatalogCli.CreateRun);
         }
 
     }

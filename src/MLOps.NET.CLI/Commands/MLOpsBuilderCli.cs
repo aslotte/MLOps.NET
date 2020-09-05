@@ -1,30 +1,28 @@
-﻿using ConsoleTables;
-using MLOps.NET.AWS;
+﻿using MLOps.NET.AWS;
 using MLOps.NET.Azure;
+using MLOps.NET.CLI.Commands.Interfaces;
 using MLOps.NET.CLI.Settings;
 using MLOps.NET.Extensions;
 using MLOps.NET.SQLite;
 using MLOps.NET.SQLServer;
 using System;
-using System.Linq;
 
 namespace MLOps.NET.CLI
 {
-    internal class MLOpsBuilderCliBase
+    internal sealed class MLOpsBuilderCli : IMLOpsBuilderCli
     {
-        protected IMLOpsContext mlOpsContext;
-        protected readonly CliSettingsWriter settingsHelper;
+        private readonly CliSettingsWriter settingsHelper;
 
-        public MLOpsBuilderCliBase(CliSettingsWriter settingsHelper)
+        public MLOpsBuilderCli(CliSettingsWriter settingsHelper)
         {
             this.settingsHelper = settingsHelper;
         }
 
-        protected IMLOpsContext CreateMLOpsContext()
+        public IMLOpsContext CreateMLOpsContext()
         {
             var settings = settingsHelper.GetSettings();
 
-            var mlOpsBuilder = new NET.MLOpsBuilder();
+            var mlOpsBuilder = new MLOpsBuilder();
 
             UpdateDataSource(settings, mlOpsBuilder);
             UpdateModelRepository(settings, mlOpsBuilder);
@@ -32,15 +30,33 @@ namespace MLOps.NET.CLI
             return mlOpsBuilder.Build();
         }
 
-        protected void CreateMLOpsContextIfNotExists()
+        public void ConfigureSQLServer(ConfigSQLServerOptions options)
         {
-            if (mlOpsContext == null)
-            {
-                mlOpsContext = CreateMLOpsContext();
-            }
+            settingsHelper.UpdateSQLServer(options);
+            Console.WriteLine($"SQL Server has been configured");
         }
 
-        private void UpdateDataSource(CliSettings settings, NET.MLOpsBuilder mlOpsBuilder)
+        public void ConfigureS3ModelRepository(ConfigAWSS3Options options)
+        {
+            settingsHelper.UpdateS3ModelRepository(options);
+            Console.WriteLine($"AWS S3 has been configured");
+        }
+
+        public void SetStorageProvider(SetStorageProviderOptions options)
+        {
+            settingsHelper.UpdateStorageProvider(options);
+            Console.WriteLine($"The Data Source has been updated to {options.DataSource}");
+            Console.WriteLine($"The Model repository has been updated to {options.ModelRepository}");
+        }
+
+        public void ConfigureCosmosDb(ConfigCosmosOptions options)
+        {
+            settingsHelper.SetCosmosConfiguration(options);
+            CreateMLOpsContext();
+            Console.WriteLine($"CosmosDB has been configured");
+        }
+
+        private void UpdateDataSource(CliSettings settings, MLOpsBuilder mlOpsBuilder)
         {
             switch (settings.DataSource)
             {
@@ -58,7 +74,7 @@ namespace MLOps.NET.CLI
             }
         }
 
-        private void UpdateModelRepository(CliSettings settings, NET.MLOpsBuilder mlOpsBuilder)
+        private void UpdateModelRepository(CliSettings settings, MLOpsBuilder mlOpsBuilder)
         {
             switch (settings.ModelRepository)
             {

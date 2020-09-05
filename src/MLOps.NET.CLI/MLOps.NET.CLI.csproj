@@ -6,8 +6,8 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>mlops</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
-    <AssemblyName>mlops</AssemblyName>
-    <RootNamespace>mlops</RootNamespace>
+    <AssemblyName>MLOps.NET.CLI</AssemblyName>
+    <RootNamespace>MLOps.NET.CLI</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
