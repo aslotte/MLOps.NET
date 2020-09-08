@@ -76,5 +76,38 @@ namespace MLOps.NET.Tests.Deployments
             var tagName = $"{dockerSettings.RegistryName}/Test:{registeredModel.Version}";
             mockCliExecutor.Verify(x => x.RunDockerBuild(tagName), Times.Once());
         }
+
+        [TestMethod]
+        public async Task PushImage_ShouldRunDockerLogin()
+        {
+            //Arrange
+            var registeredModel = new RegisteredModel
+            {
+                Version = 1
+            };
+
+            //Act
+            await sut.PushImage("Test", registeredModel);
+
+            //Assert
+            mockCliExecutor.Verify(x => x.RunDockerLogin(), Times.Once());
+        }
+
+        [TestMethod]
+        public async Task PushImage_ShouldRunDockerPush()
+        {
+            //Arrange
+            var registeredModel = new RegisteredModel
+            {
+                Version = 1
+            };
+
+            //Act
+            await sut.PushImage("Test", registeredModel);
+
+            //Assert
+            var tagName = $"{dockerSettings.RegistryName}/Test:{registeredModel.Version}";
+            mockCliExecutor.Verify(x => x.RunDockerPush(tagName), Times.Once());
+        }
     }
 }
