@@ -32,6 +32,6 @@ namespace MLOps.NET.Tests.Deployments
 
             //Assert
             Assert.IsTrue(modelOutput.Contains("Probability"));
-        }
+            }
     }
 }
