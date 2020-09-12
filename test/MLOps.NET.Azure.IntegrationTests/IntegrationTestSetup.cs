@@ -19,9 +19,7 @@ namespace MLOps.NET.Azure.IntegrationTests
                 configuration[ConfigurationKeys.CosmosEndPoint],
                 configuration[ConfigurationKeys.CosmosAccountKey])
                 .UseContainerRegistry(
-                configuration[ConfigurationKeys.RegistryName],
-                configuration[ConfigurationKeys.Username],
-                configuration[ConfigurationKeys.Password])
+                configuration[ConfigurationKeys.RegistryName])
                 .Build();
         }
 

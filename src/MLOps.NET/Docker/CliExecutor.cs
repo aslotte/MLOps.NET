@@ -70,11 +70,27 @@ namespace MLOps.NET.Docker
             }
         }
 
+        public async Task RunDockerLogin()
+        {
+            try
+            {
+                if (dockerSettings.RequiresAuthentication)
+                {
+                    await Cli.Wrap("docker")
+                        .WithArguments($"login {dockerSettings.RegistryName} --username {dockerSettings.Username} --password {dockerSettings.Password}")
+                        .ExecuteBufferedAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new DockerLoginException($"Unable to run docker login", ex);
+            }
+        }
+
         public async Task RunDockerPush(string tagName)
         {
             try
             {
-                //Todo in Issue #304 (run docker login and add integration tests)
                 await Cli.Wrap("docker")
                     .WithArguments($"push {tagName.ToLower()}")
                     .ExecuteBufferedAsync();
