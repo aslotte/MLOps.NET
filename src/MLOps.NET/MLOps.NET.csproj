@@ -5,6 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Templates\BinaryClassificatonModelOutput.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Templates\BinaryClassificatonModelOutput.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CliWrap" Version="3.1.0" />
     <PackageReference Include="Dynamitey" Version="2.0.10.189" />
     <PackageReference Include="Microsoft.ML" Version="1.5.1" />
