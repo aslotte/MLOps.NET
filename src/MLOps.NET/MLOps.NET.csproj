@@ -6,10 +6,22 @@
 
   <ItemGroup>
     <Compile Remove="Templates\BinaryClassificatonModelOutput.cs" />
+    <Compile Remove="Templates\ClusteringModelOutput.cs" />
+    <Compile Remove="Templates\MultiClassClassificatonModelOutput.cs" />
+    <Compile Remove="Templates\RegressionModelOutput.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Templates\BinaryClassificatonModelOutput.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\ClusteringModelOutput.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\MultiClassClassificatonModelOutput.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\RegressionModelOutput.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

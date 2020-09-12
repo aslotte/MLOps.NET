@@ -18,15 +18,15 @@ namespace MLOps.NET.Storage.Deployments
         /// <returns></returns>
         public string GenerateDefinition(string className, MLTaskType mLTaskType)
         {
-            var modelOutput = string.Empty;
+            var classText = string.Empty;
             switch(mLTaskType)
             {
                 case MLTaskType.BinaryClassification:
-                    modelOutput = File.ReadAllText("Templates/BinaryClassificatonModelOutput.cs");
+                    classText = File.ReadAllText("Templates/BinaryClassificatonModelOutput.cs");
                     break;
             }
 
-            return modelOutput;
+            return classText;
         }
     }
 }
