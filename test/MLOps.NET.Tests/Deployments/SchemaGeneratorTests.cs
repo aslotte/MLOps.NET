@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.ML.Data;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Docker;
 using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Docker.Settings;
@@ -28,10 +29,34 @@ namespace MLOps.NET.Tests.Deployments
             //Arrang
 
             //Act
-            var modelOutput = sut.GenerateDefinition("ModelOutput", MLTaskType.BinaryClassification);
+            var modelOutput = sut.GenerateDefinition("ModelOutput");
 
             //Assert
             Assert.IsTrue(modelOutput.Contains("Probability"));
             }
+    }
+
+    public class ModelOutput
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        [ColumnName("PredictedLabel")]
+        public bool Prediction { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public float[] Score { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public float Probability { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool Label { get; set; }
     }
 }

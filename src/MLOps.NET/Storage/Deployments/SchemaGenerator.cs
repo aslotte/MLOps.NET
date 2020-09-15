@@ -1,7 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.CSharp;
+using ICSharpCode.Decompiler.TypeSystem;
 using System.IO;
-using System.Text;
+using System.Linq;
+using System.Reflection;
 
 namespace MLOps.NET.Storage.Deployments
 {
@@ -14,19 +16,21 @@ namespace MLOps.NET.Storage.Deployments
         /// 
         /// </summary>
         /// <param name="className"></param>
-        /// <param name="mLTaskType"></param>
         /// <returns></returns>
-        public string GenerateDefinition(string className, MLTaskType mLTaskType)
+        public string GenerateDefinition(string className)
         {
-            var classText = string.Empty;
-            switch(mLTaskType)
+            var assembly = Assembly.GetCallingAssembly();
+            var typeFullName = "";
+            foreach (var item in assembly.DefinedTypes.ToList())
             {
-                case MLTaskType.BinaryClassification:
-                    classText = File.ReadAllText("Templates/BinaryClassificatonModelOutput.cs");
+                if (item.Name.ToLowerInvariant() == className.ToLowerInvariant())
+                {
+                    typeFullName = item.FullName;
                     break;
+                }
             }
-
-            return classText;
+            var decompiler = new CSharpDecompiler(Path.GetFileName(assembly.Location), new DecompilerSettings() { ThrowOnAssemblyResolveErrors = false });
+            return decompiler.DecompileTypeAsString(new FullTypeName(typeFullName));
         }
     }
 }

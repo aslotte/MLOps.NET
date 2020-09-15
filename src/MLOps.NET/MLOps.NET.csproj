@@ -5,30 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Templates\BinaryClassificatonModelOutput.cs" />
-    <Compile Remove="Templates\ClusteringModelOutput.cs" />
-    <Compile Remove="Templates\MultiClassClassificatonModelOutput.cs" />
-    <Compile Remove="Templates\RegressionModelOutput.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Templates\BinaryClassificatonModelOutput.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Templates\ClusteringModelOutput.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Templates\MultiClassClassificatonModelOutput.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Templates\RegressionModelOutput.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="CliWrap" Version="3.1.0" />
     <PackageReference Include="Dynamitey" Version="2.0.10.189" />
+    <PackageReference Include="ICSharpCode.Decompiler" Version="6.1.0.5902" />
     <PackageReference Include="Microsoft.ML" Version="1.5.1" />
     <PackageReference Include="System.IO.Abstractions" Version="12.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.8" />
