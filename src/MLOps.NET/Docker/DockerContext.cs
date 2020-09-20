@@ -24,16 +24,16 @@ namespace MLOps.NET.Docker
         ///<inheritdoc cref="IDockerContext"/>
         public async Task BuildImage(string experimentName, RegisteredModel registeredModel, Stream model)
         {
-            await cliExecutor.InstallTemplatePackage();
+            await cliExecutor.InstallTemplatePackage(dockerSettings);
 
-            await cliExecutor.CreateTemplateProject();
+            await cliExecutor.CreateTemplateProject(dockerSettings);
 
             await this.CopyModel(model);
 
             //Todo: Issue #302 (Copy over ModelInput.cs and ModelOutput.cs)
 
             var imageTag = ComposeImageTag(experimentName, registeredModel);
-            await cliExecutor.RunDockerBuild(imageTag);
+            await cliExecutor.RunDockerBuild(imageTag, dockerSettings);
         }
 
         ///<inheritdoc cref="IDockerContext"/>
@@ -41,7 +41,7 @@ namespace MLOps.NET.Docker
         {
             var imageTag = ComposeImageTag(experimentName, registeredModel);
 
-            await cliExecutor.RunDockerLogin();
+            await cliExecutor.RunDockerLogin(dockerSettings);
             await cliExecutor.RunDockerPush(imageTag);
         }
 
@@ -52,7 +52,7 @@ namespace MLOps.NET.Docker
             await model.CopyToAsync(fileStream);
         }
 
-        private string ComposeImageTag(string experimentName, RegisteredModel registeredModel)
+        public string ComposeImageTag(string experimentName, RegisteredModel registeredModel)
         {
             return $"{dockerSettings.RegistryName}/{experimentName}:{registeredModel.Version}";
         }

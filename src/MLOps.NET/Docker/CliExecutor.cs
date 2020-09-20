@@ -3,6 +3,7 @@ using CliWrap.Buffered;
 using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Docker.Settings;
 using MLOps.NET.Exceptions;
+using MLOps.NET.Kubernetes.Settings;
 using System;
 using System.Threading.Tasks;
 
@@ -10,16 +11,9 @@ namespace MLOps.NET.Docker
 {
     ///<inheritdoc cref="ICliExecutor"/>
     internal class CliExecutor : ICliExecutor
-    {
-        private readonly DockerSettings dockerSettings;
-
-        public CliExecutor(DockerSettings dockerSettings)
-        {
-            this.dockerSettings = dockerSettings;
-        }
-
+    { 
         ///<inheritdoc cref="ICliExecutor"/>
-        public async Task InstallTemplatePackage()
+        public async Task InstallTemplatePackage(DockerSettings dockerSettings)
         {
             try
             {
@@ -42,7 +36,7 @@ namespace MLOps.NET.Docker
         }
 
         ///<inheritdoc cref="ICliExecutor"/>
-        public async Task CreateTemplateProject()
+        public async Task CreateTemplateProject(DockerSettings dockerSettings)
         {
             try
             {
@@ -56,7 +50,7 @@ namespace MLOps.NET.Docker
             }
         }
 
-        public async Task RunDockerBuild(string tagName)
+        public async Task RunDockerBuild(string tagName, DockerSettings dockerSettings)
         {
             try
             {
@@ -70,7 +64,7 @@ namespace MLOps.NET.Docker
             }
         }
 
-        public async Task RunDockerLogin()
+        public async Task RunDockerLogin(DockerSettings dockerSettings)
         {
             try
             {
@@ -114,6 +108,34 @@ namespace MLOps.NET.Docker
             catch (Exception ex)
             {
                 throw new DockerPullException($"Unable to run docker pull for {tagName}", ex);
+            }
+        }
+
+        public async Task CreateNamespace(string name, KubernetesSettings kubernetesSettings)
+        {
+            try
+            {
+                var command = await Cli.Wrap("kubectl")
+                     .WithArguments($"create namespace {name.ToLower()} --kubeconfig {kubernetesSettings.KubeConfigPath}")
+                     .ExecuteBufferedAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new CreateNamespaceException($"Unable to create namespace for {name}", ex);
+            }
+        }
+
+        public async Task CreateImagePullSecret(KubernetesSettings kubernetesSettings, DockerSettings dockerSettings, string namespaceName)
+        {
+            try
+            {
+                var command = await Cli.Wrap("kubectl")
+                     .WithArguments($"create secret docker-registry {kubernetesSettings.ImagePullSecretName} --namespace {namespaceName} --docker-server {dockerSettings.RegistryName} --docker-username {dockerSettings.Username} --docker-password {dockerSettings.Password} --kubeconfig {kubernetesSettings.KubeConfigPath}")
+                     .ExecuteBufferedAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new CreateImagePullSecretException($"Unable to create secret {kubernetesSettings.ImagePullSecretName} for namespace {namespaceName}", ex);
             }
         }
 

@@ -2,6 +2,7 @@
 using MLOps.NET.Catalogs;
 using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Entities.Impl;
+using MLOps.NET.Kubernetes.Interfaces;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Interfaces;
 using Moq;
@@ -20,6 +21,7 @@ namespace MLOps.NET.Tests
         private Mock<IModelRepository> modelRepositoryMock;
         private Mock<IExperimentRepository> experimentRepositoryMock;
         private Mock<IDockerContext> dockerContextMock;
+        private Mock<IKubernetesContext> kubernetesContextMock;
 
         [TestInitialize]
         public void Initialize()
@@ -28,8 +30,9 @@ namespace MLOps.NET.Tests
             this.modelRepositoryMock = new Mock<IModelRepository>();
             this.experimentRepositoryMock = new Mock<IExperimentRepository>();
             this.dockerContextMock = new Mock<IDockerContext>();
+            this.kubernetesContextMock = new Mock<IKubernetesContext>();
 
-            this.sut = new DeploymentCatalog(deploymentRepositoryMock.Object, modelRepositoryMock.Object, experimentRepositoryMock.Object, dockerContextMock.Object);
+            this.sut = new DeploymentCatalog(deploymentRepositoryMock.Object, modelRepositoryMock.Object, experimentRepositoryMock.Object, dockerContextMock.Object, kubernetesContextMock.Object);
         }
 
         [ExpectedException(typeof(InvalidOperationException), "A container registry has not been configured. Please configure a container registry by calling UseContainerRegistry first")]
@@ -37,7 +40,7 @@ namespace MLOps.NET.Tests
         public async Task DeployModelToContainerAsync_GivenNoDockerContext_ShouldThrowException()
         {
             //Arrange
-            this.sut = new DeploymentCatalog(deploymentRepositoryMock.Object, modelRepositoryMock.Object, experimentRepositoryMock.Object, null);
+            this.sut = new DeploymentCatalog(deploymentRepositoryMock.Object, modelRepositoryMock.Object, experimentRepositoryMock.Object, null, null);
 
             var deploymentTarget = new DeploymentTarget("Test");
             var registeredModel = new RegisteredModel();

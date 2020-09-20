@@ -41,7 +41,7 @@ namespace MLOps.NET.Tests.Deployments
             await sut.BuildImage("Test", registeredModel, new MemoryStream());
 
             //Assert
-            mockCliExecutor.Verify(x => x.InstallTemplatePackage(), Times.Once());
+            mockCliExecutor.Verify(x => x.InstallTemplatePackage(dockerSettings), Times.Once());
         }
 
         [TestMethod]
@@ -57,7 +57,7 @@ namespace MLOps.NET.Tests.Deployments
             await sut.BuildImage("Test", registeredModel, new MemoryStream());
 
             //Assert
-            mockCliExecutor.Verify(x => x.CreateTemplateProject(), Times.Once());
+            mockCliExecutor.Verify(x => x.CreateTemplateProject(dockerSettings), Times.Once());
         }
 
         [TestMethod]
@@ -74,7 +74,7 @@ namespace MLOps.NET.Tests.Deployments
 
             //Assert
             var tagName = $"{dockerSettings.RegistryName}/Test:{registeredModel.Version}";
-            mockCliExecutor.Verify(x => x.RunDockerBuild(tagName), Times.Once());
+            mockCliExecutor.Verify(x => x.RunDockerBuild(tagName, dockerSettings), Times.Once());
         }
 
         [TestMethod]
@@ -90,7 +90,7 @@ namespace MLOps.NET.Tests.Deployments
             await sut.PushImage("Test", registeredModel);
 
             //Assert
-            mockCliExecutor.Verify(x => x.RunDockerLogin(), Times.Once());
+            mockCliExecutor.Verify(x => x.RunDockerLogin(dockerSettings), Times.Once());
         }
 
         [TestMethod]

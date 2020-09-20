@@ -24,7 +24,7 @@ namespace MLOps.NET.IntegrationTests
             };
 
             this.tagName = $"{dockerSettings.RegistryName}/{experimentName}:1";
-            cliExecutor = new CliExecutor(dockerSettings);
+            cliExecutor = new CliExecutor();
         }
 
         [TestMethod]

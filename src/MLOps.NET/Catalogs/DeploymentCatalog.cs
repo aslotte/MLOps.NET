@@ -1,6 +1,8 @@
 ﻿using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Extensions;
+using MLOps.NET.Kubernetes.Interfaces;
+using MLOps.NET.Kubernetes.Settings;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Interfaces;
 using System;
@@ -19,6 +21,7 @@ namespace MLOps.NET.Catalogs
         private readonly IModelRepository modelRepository;
         private readonly IExperimentRepository experimentRepository;
         private readonly IDockerContext dockerContext;
+        private readonly IKubernetesContext kubernetesContext;
 
         /// <summary>
         /// Ctor
@@ -27,15 +30,18 @@ namespace MLOps.NET.Catalogs
         /// <param name="modelRepository"></param>
         /// <param name="experimentRepository"></param>
         /// <param name="dockerContext"></param>
+        /// <param name="kubernetesContext"></param>
         public DeploymentCatalog(IDeploymentRepository deploymentRepository,
             IModelRepository modelRepository,
             IExperimentRepository experimentRepository,
-            IDockerContext dockerContext)
+            IDockerContext dockerContext,
+            IKubernetesContext kubernetesContext)
         {
             this.deploymentRepository = deploymentRepository;
             this.modelRepository = modelRepository;
             this.experimentRepository = experimentRepository;
             this.dockerContext = dockerContext;
+            this.kubernetesContext = kubernetesContext;
         }
 
         /// <summary>
@@ -94,6 +100,27 @@ namespace MLOps.NET.Catalogs
         }
 
         /// <summary>
+        /// Deploys a container to a Kubernetes cluster configured in the MLOpsBuilder.
+        /// The container will be deployed into the 
+        /// namespace {experimentName}-{deploymentTargetName}
+        /// </summary>
+        /// <param name="deploymentTarget"></param>
+        /// <param name="registeredModel"></param>
+        /// <returns></returns>
+        public async Task DeployContainerToCluster(DeploymentTarget deploymentTarget, RegisteredModel registeredModel)
+        {
+            AssertKubernetesClusterHasBeenConfigured();
+
+            var experimentName = experimentRepository.GetExperiment(registeredModel.ExperimentId).ExperimentName;
+
+            var containerToDeploy = dockerContext.ComposeImageTag(experimentName, registeredModel);
+
+            var namespaceName = await kubernetesContext.CreateNamespace(experimentName, deploymentTarget);
+
+            await kubernetesContext.DeployContainer(experimentName, deploymentTarget, containerToDeploy, namespaceName);
+        }
+
+        /// <summary>
         /// Builds a docker image for an ASP.NET Core Web App with an ML.NET model
         /// embedded and pushes it to the registry defined in UseContainerRegistry
         /// </summary>
@@ -103,7 +130,7 @@ namespace MLOps.NET.Catalogs
         {
             AssertContainerRegistryHasBeenConfigured();
 
-            var experiment = this.experimentRepository.GetExperiment(registeredModel.ExperimentId);
+            var experiment = experimentRepository.GetExperiment(registeredModel.ExperimentId);
             using var model = new MemoryStream();
 
             await dockerContext.BuildImage(experiment.ExperimentName, registeredModel, model);
@@ -138,6 +165,14 @@ namespace MLOps.NET.Catalogs
             if (dockerContext == null)
             {
                 throw new InvalidOperationException($"A container registry has not been configured. Please configure a container registry by calling {nameof(MLOpsBuilderExtensions.UseContainerRegistry)} first");
+            }
+        }
+
+        private void AssertKubernetesClusterHasBeenConfigured()
+        {
+            if (kubernetesContext == null)
+            {
+                throw new InvalidOperationException($"A kubernetes cluster has not been configured. Please configure a kubernetes cluster by calling {nameof(MLOpsBuilderExtensions.UseKubernetes)} first");
             }
         }
     }

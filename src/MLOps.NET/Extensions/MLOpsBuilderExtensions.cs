@@ -1,5 +1,9 @@
 ﻿using MLOps.NET.Docker;
+using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Docker.Settings;
+using MLOps.NET.Kubernetes;
+using MLOps.NET.Kubernetes.Interfaces;
+using MLOps.NET.Kubernetes.Settings;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Deployments;
 using System;
@@ -49,8 +53,8 @@ namespace MLOps.NET.Extensions
                 Username = username
             };
 
-            var dockerContext = new DockerContext(new CliExecutor(settings), new FileSystem(), settings);
-            builder.UseDockerContext(dockerContext);
+            var dockerContext = new DockerContext(new CliExecutor(), new FileSystem(), settings);
+            builder.UseDockerContext(dockerContext, settings);
 
             return builder;
         }
@@ -73,8 +77,33 @@ namespace MLOps.NET.Extensions
                 RegistryName = registryName,
             };
 
-            var dockerContext = new DockerContext(new CliExecutor(settings), new FileSystem(), settings);
-            builder.UseDockerContext(dockerContext);
+            var dockerContext = new DockerContext(new CliExecutor(), new FileSystem(), settings);
+            builder.UseDockerContext(dockerContext, settings);
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Configures to use Kubernetes with the full path to the kubeconfig
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="kubeconfigPath"></param>
+        /// <returns></returns>
+        public static MLOpsBuilder UseKubernetes(this MLOpsBuilder builder, string kubeconfigPath)
+        {
+            if (string.IsNullOrEmpty(kubeconfigPath)) throw new InvalidOperationException($"{nameof(kubeconfigPath)} cannot be empty");
+
+            var settings = new KubernetesSettings
+            {
+                KubeConfigPath = kubeconfigPath
+            };
+
+            IKubernetesContext CreateKubernetesContext(DockerSettings dockerSettings)
+            {
+                return new KubernetesContext(new CliExecutor(), settings, dockerSettings);
+            };
+
+            builder.UseKubernetesContext(CreateKubernetesContext);
 
             return builder;
         }

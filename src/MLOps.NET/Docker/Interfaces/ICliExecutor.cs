@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using MLOps.NET.Docker.Settings;
+using MLOps.NET.Kubernetes.Settings;
+using System.Threading.Tasks;
 
 namespace MLOps.NET.Docker.Interfaces
 {
@@ -10,8 +12,9 @@ namespace MLOps.NET.Docker.Interfaces
         /// <summary>
         /// Installs the dotnet new template package ML.NET.Templates
         /// </summary>
+        /// <param name="dockerSettings"></param>
         /// <returns></returns>
-        Task InstallTemplatePackage();
+        Task InstallTemplatePackage(DockerSettings dockerSettings);
 
         /// <summary>
         /// Uninstall the dotnet new template package for ML.NET.Templates
@@ -22,21 +25,24 @@ namespace MLOps.NET.Docker.Interfaces
         /// <summary>
         /// Creates a template project
         /// </summary>
+        /// <param name="dockerSettings"></param>
         /// <returns></returns>
-        Task CreateTemplateProject();
+        Task CreateTemplateProject(DockerSettings dockerSettings);
 
         /// <summary>
         /// Runs docker build
         /// </summary>
         /// <param name="tagName"></param>
+        /// <param name="dockerSettings"></param>
         /// <returns></returns>
-        Task RunDockerBuild(string tagName);
+        Task RunDockerBuild(string tagName, DockerSettings dockerSettings);
 
         /// <summary>
         /// Runs docker login if username and password have been provided
         /// </summary>
+        /// <param name="dockerSettings"></param>
         /// <returns></returns>
-        Task RunDockerLogin();
+        Task RunDockerLogin(DockerSettings dockerSettings);
 
         /// <summary>
         /// Runs docker push
@@ -58,5 +64,21 @@ namespace MLOps.NET.Docker.Interfaces
         /// <param name="tagName"></param>
         /// <returns></returns>
         Task RemoveDockerImage(string tagName);
+
+        /// <summary>
+        /// Runs kubectl create namespace
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="kubernetesSettings"></param>
+        /// <returns></returns>
+        Task CreateNamespace(string name, KubernetesSettings kubernetesSettings);
+
+        /// <summary>
+        /// Creates an image pull secret for a Kubernetes namespace
+        /// </summary>
+        /// <param name="kubernetesSettings"></param>
+        /// <param name="dockerSettings"></param>
+        /// <param name="namespaceName"></param>
+        Task CreateImagePullSecret(KubernetesSettings kubernetesSettings, DockerSettings dockerSettings, string namespaceName);
     }
 }

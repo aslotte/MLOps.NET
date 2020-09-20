@@ -25,5 +25,12 @@ namespace MLOps.NET.Docker.Interfaces
         /// <param name="registeredModel"></param>
         /// <returns></returns>
         Task PushImage(string experimentName, RegisteredModel registeredModel);
+
+        /// <summary>
+        /// Creates an image tag
+        /// </summary>
+        /// <param name="experimentName"></param>
+        /// <param name="registeredModel"></param>
+        string ComposeImageTag(string experimentName, RegisteredModel registeredModel);
     }
 }
