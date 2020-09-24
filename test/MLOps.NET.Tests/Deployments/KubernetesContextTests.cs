@@ -4,9 +4,9 @@ using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Docker.Settings;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Kubernetes;
+using MLOps.NET.Kubernetes.Interfaces;
 using MLOps.NET.Kubernetes.Settings;
 using Moq;
-using System.IO.Abstractions;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Tests.Deployments
@@ -17,6 +17,7 @@ namespace MLOps.NET.Tests.Deployments
         private DockerSettings dockerSettings;
         private KubernetesSettings kubernetesSettings;
         private Mock<ICliExecutor> mockCliExecutor;
+        private Mock<IManifestParameterizator> mockManifestParameterizator;
         private KubernetesContext sut;
 
         [TestInitialize]
@@ -30,7 +31,9 @@ namespace MLOps.NET.Tests.Deployments
             this.kubernetesSettings = new KubernetesSettings();
 
             this.mockCliExecutor = new Mock<ICliExecutor>();
-            this.sut = new KubernetesContext(mockCliExecutor.Object, kubernetesSettings, dockerSettings, new FileSystem());
+            this.mockManifestParameterizator = new Mock<IManifestParameterizator>();
+
+            this.sut = new KubernetesContext(mockCliExecutor.Object, kubernetesSettings, dockerSettings, mockManifestParameterizator.Object);
         }
 
         [TestMethod]
@@ -77,6 +80,70 @@ namespace MLOps.NET.Tests.Deployments
 
             //Assert
             this.mockCliExecutor.Verify(x => x.CreateImagePullSecret(kubernetesSettings, dockerSettings, namespaceName), Times.Once());
+        }
+
+        [TestMethod]
+        public async Task DeployContainerAsync_ShouldCallKubectlApplyForDeployManifest()
+        {
+            //Arrange
+            var experimentName = "experiment";
+            var deploymentTarget = new DeploymentTarget("Test");
+            var imageName = "image123";
+            var namespaceName = "experiment-test";
+
+            //Act
+            await this.sut.DeployContainerAsync(experimentName, deploymentTarget, imageName, namespaceName);
+
+            //Assert
+            this.mockCliExecutor.Verify(x => x.KubctlApplyAsync(kubernetesSettings, "deploy.yml"), Times.Once());
+        }
+
+        [TestMethod]
+        public async Task DeployContainerAsync_ShouldCallKubectlApplyForServiceManifest()
+        {
+            //Arrange
+            var experimentName = "experiment";
+            var deploymentTarget = new DeploymentTarget("Test");
+            var imageName = "image123";
+            var namespaceName = "experiment-test";
+
+            //Act
+            await this.sut.DeployContainerAsync(experimentName, deploymentTarget, imageName, namespaceName);
+
+            //Assert
+            this.mockCliExecutor.Verify(x => x.KubctlApplyAsync(kubernetesSettings, "service.yml"), Times.Once());
+        }
+
+        [TestMethod]
+        public async Task DeployContainerAsync_ShouldCallParameterizeServiceManifest()
+        {
+            //Arrange
+            var experimentName = "experiment";
+            var deploymentTarget = new DeploymentTarget("Test");
+            var imageName = "image123";
+            var namespaceName = "experiment-test";
+
+            //Act
+            await this.sut.DeployContainerAsync(experimentName, deploymentTarget, imageName, namespaceName);
+
+            //Assert
+            this.mockManifestParameterizator.Verify(x => x.ParameterizeServiceManifest(experimentName, namespaceName), Times.Once());
+        }
+
+        [TestMethod]
+        public async Task DeployContainerAsync_ShouldCallParameterizeDeployManifest()
+        {
+            //Arrange
+            var experimentName = "experiment";
+            var deploymentTarget = new DeploymentTarget("Test");
+            var imageName = "image123";
+            var namespaceName = "experiment-test";
+
+            //Act
+            await this.sut.DeployContainerAsync(experimentName, deploymentTarget, imageName, namespaceName);
+
+            //Assert
+            this.mockManifestParameterizator.Verify(x => x.ParameterizeDeploymentManifest(experimentName, imageName), Times.Once());
         }
     }
 }
