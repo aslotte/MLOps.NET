@@ -29,13 +29,13 @@ namespace MLOps.NET.Kubernetes
 
         public async Task<string> CreateNamespaceAsync(string experimentName, DeploymentTarget deploymentTarget)
         {
-            var name = $"{experimentName}-{deploymentTarget.Name}";
+            var name = $"{experimentName}-{deploymentTarget.Name}".ToLower();
 
             await cliExecutor.CreateNamespaceAsync(name, kubernetesSettings);
             return name;
         }
 
-        public async Task DeployContainer(string experimentName, DeploymentTarget deploymentTarget, string containerToDeploy, string namespaceName)
+        public async Task DeployContainerAsync(string experimentName, DeploymentTarget deploymentTarget, string containerToDeploy, string namespaceName)
         {
             await cliExecutor.CreateImagePullSecret(kubernetesSettings, dockerSettings, namespaceName);
 
@@ -49,7 +49,8 @@ namespace MLOps.NET.Kubernetes
         private void ParametrizeService(string experimentName, string namespaceName)
         {
             var manifest = ReadResource(ServiceManifestName);
-            manifest = string.Format(manifest, experimentName, namespaceName);
+            manifest = manifest.Replace(nameof(experimentName), experimentName);
+            manifest = manifest.Replace(nameof(namespaceName), namespaceName);
 
             WriteFile(ServiceManifestName, manifest);
         }
@@ -57,14 +58,15 @@ namespace MLOps.NET.Kubernetes
         private void ParametrizeDeployment(string experimentName, string imageName)
         {
             var manifest = ReadResource(DeployManifestName);
-            manifest = string.Format(manifest, experimentName, imageName);
+            manifest = manifest.Replace(nameof(experimentName), experimentName);
+            manifest = manifest.Replace(nameof(imageName), imageName);
 
             WriteFile(DeployManifestName, manifest);
         }
 
         private void WriteFile(string fileName, string content)
         {
-            var basePath = Assembly.GetExecutingAssembly().Location;
+            var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var filePath = Path.Join(basePath, fileName);
 
             this.fileSystem.File.WriteAllText(filePath, content);
@@ -72,8 +74,8 @@ namespace MLOps.NET.Kubernetes
 
         private string ReadResource(string fileName)
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = string.Join("MLOps.NET", "Manifests", fileName);
+            var assembly = Assembly.GetAssembly(typeof(KubernetesContext));
+            var resourceName = string.Join(".", assembly.GetName().Name, "Kubernetes.Manifests", fileName);
 
             using Stream stream = assembly.GetManifestResourceStream(resourceName);
             using StreamReader reader = new StreamReader(stream);

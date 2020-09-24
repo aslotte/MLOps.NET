@@ -1,20 +1,20 @@
 ﻿apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {experimentName}
+  name: experimentName
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {experimentName} 
+      app: experimentName 
   template:
     metadata:
       labels:
-        app: {experimentName}
+        app: experimentName
     spec:
       containers:
-        - name: {experimentName}
-          image: {imageName}
+        - name: experimentName
+          image: imageName
           resources:
             limits:
               memory: "500Mi"

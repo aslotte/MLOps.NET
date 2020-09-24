@@ -1,8 +1,8 @@
 ﻿apiVersion: v1
 kind: Service
 metadata:
-  name: {experimentName}
-  namespace: {namespaceName}
+  name: experimentName
+  namespace: namespaceName
 spec:
   type: NodePort
   ports:
@@ -10,4 +10,4 @@ spec:
     nodePort: 30001
     protocol: TCP
   selector:
-    app: {experimentName}
+    app: experimentName
