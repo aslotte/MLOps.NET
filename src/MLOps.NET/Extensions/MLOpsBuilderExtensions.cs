@@ -100,7 +100,7 @@ namespace MLOps.NET.Extensions
 
             IKubernetesContext CreateKubernetesContext(DockerSettings dockerSettings)
             {
-                return new KubernetesContext(new CliExecutor(), settings, dockerSettings);
+                return new KubernetesContext(new CliExecutor(), settings, dockerSettings, new FileSystem());
             };
 
             builder.UseKubernetesContext(CreateKubernetesContext);

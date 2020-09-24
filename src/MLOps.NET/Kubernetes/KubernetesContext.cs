@@ -56,7 +56,6 @@ namespace MLOps.NET.Kubernetes
         private void ParametrizeDeployment(string experimentName, string imageName)
         {
             var manifest = ReadResource(DeployManifestName);
-
             manifest = string.Format(manifest, experimentName, imageName);
 
             WriteFile(DeployManifestName, manifest);
