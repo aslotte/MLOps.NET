@@ -51,11 +51,12 @@ namespace MLOps.NET.Kubernetes
             manifest = string.Format(manifest, experimentName, namespaceName);
 
             WriteFile(ServiceManifestName, manifest);
-
         }
+
         private void ParametrizeDeployment(string experimentName, string imageName)
         {
             var manifest = ReadResource(DeployManifestName);
+
             manifest = string.Format(manifest, experimentName, imageName);
 
             WriteFile(DeployManifestName, manifest);
@@ -72,7 +73,7 @@ namespace MLOps.NET.Kubernetes
         private string ReadResource(string fileName)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = string.Join(assembly.FullName, "Manifests", fileName);
+            var resourceName = string.Join("MLOps.NET", "Manifests", fileName);
 
             using Stream stream = assembly.GetManifestResourceStream(resourceName);
             using StreamReader reader = new StreamReader(stream);
