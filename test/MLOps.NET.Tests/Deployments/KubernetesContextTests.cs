@@ -44,7 +44,7 @@ namespace MLOps.NET.Tests.Deployments
             var name = await this.sut.CreateNamespaceAsync(experimentName, deploymentTarget);
 
             //Assert
-            var expectedName = $"{experimentName}-{deploymentTarget.Name}";
+            var expectedName = $"{experimentName}-{deploymentTarget.Name}".ToLower();
             name.Should().Be(expectedName);
         }
 
@@ -59,8 +59,24 @@ namespace MLOps.NET.Tests.Deployments
             var name = await this.sut.CreateNamespaceAsync(experimentName, deploymentTarget);
 
             //Assert
-            var expectedName = $"{experimentName}-{deploymentTarget.Name}";
+            var expectedName = $"{experimentName}-{deploymentTarget.Name}".ToLower();
             this.mockCliExecutor.Verify(x => x.CreateNamespaceAsync(expectedName, kubernetesSettings), Times.Once());
+        }
+
+        [TestMethod]
+        public async Task DeployContainerAsync_ShouldCallCreateImagePullSecret()
+        {
+            //Arrange
+            var experimentName = "experiment";
+            var deploymentTarget = new DeploymentTarget("Test");
+            var imageName = "image123";
+            var namespaceName = "experiment-test";
+
+            //Act
+            await this.sut.DeployContainerAsync(experimentName, deploymentTarget, imageName, namespaceName);
+
+            //Assert
+            this.mockCliExecutor.Verify(x => x.CreateImagePullSecret(kubernetesSettings, dockerSettings, namespaceName), Times.Once());
         }
     }
 }
