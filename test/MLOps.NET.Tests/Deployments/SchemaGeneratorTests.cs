@@ -10,6 +10,7 @@ using System.IO;
 using System.IO.Abstractions;
 using FluentAssertions;
 using System.Threading.Tasks;
+using MLOps.NET.Tests.Common.Data;
 
 namespace MLOps.NET.Tests.Deployments
 {
@@ -34,36 +35,13 @@ namespace MLOps.NET.Tests.Deployments
 
             //Assert
             modelOutput.Should().Contain("using Microsoft.ML.Data;");
-            modelOutput.Should().Contain("namespace MLOps.NET.Tests.Deployments");
+            modelOutput.Should().Contain("namespace MLOps.NET.Tests.Common.Data");
             modelOutput.Should().Contain("public class BinaryClassificationModelOutput");
+            modelOutput.Should().Contain("[ColumnName(\"PredictedLabel\")]");
             modelOutput.Should().Contain("public bool Prediction");
             modelOutput.Should().Contain("public float[] Score");
             modelOutput.Should().Contain("public float Probability");
             modelOutput.Should().Contain("public bool Label");
         }
-    }
-
-    public class ModelOutput
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        [ColumnName("PredictedLabel")]
-        public bool Prediction { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public float[] Score { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public float Probability { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool Label { get; set; }
     }
 }

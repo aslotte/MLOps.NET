@@ -8,18 +8,11 @@ using System.Reflection;
 
 namespace MLOps.NET.Storage.Deployments
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public sealed class SchemaGenerator
+    ///<inheritdoc cref="ISchemaGenerator"/>
+    internal sealed class SchemaGenerator : ISchemaGenerator
     {
-        /// <summary>
-        /// Searches the entire app domain to return the class definition as a string, using ilSpy
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="className"></param>
-        /// <returns></returns>
-        public string GenerateDefinition<T>(string className) where T:class
+        ///<inheritdoc cref="ISchemaGenerator"/>
+        public string GenerateDefinition<T>(string className) where T : class
         {
             AppDomain currentDomain = AppDomain.CurrentDomain;
             var assemblies = currentDomain.GetAssemblies();
@@ -31,7 +24,7 @@ namespace MLOps.NET.Storage.Deployments
                 throw new Exception($"Type {typeof(T).FullName} does not exist in the app domain");
 
             var decompiler = new CSharpDecompiler(Path.GetFileName(typeInfo.Assembly.Location), new DecompilerSettings() { ThrowOnAssemblyResolveErrors = false });
-            return decompiler.DecompileTypeAsString(new FullTypeName(typeInfo.FullName)).Replace($"class {typeof(T).Name}",$"class {className}");
+            return decompiler.DecompileTypeAsString(new FullTypeName(typeInfo.FullName)).Replace($"class {typeof(T).Name}", $"class {className}");
         }
     }
 }
