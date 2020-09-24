@@ -26,11 +26,12 @@ namespace MLOps.NET.Kubernetes
             this.dockerSettings = dockerSettings;
             this.fileSystem = fileSystem;
         }
-        public async Task<string> CreateNamespace(string experimentName, DeploymentTarget deploymentTarget)
+
+        public async Task<string> CreateNamespaceAsync(string experimentName, DeploymentTarget deploymentTarget)
         {
             var name = $"{experimentName}-{deploymentTarget.Name}";
 
-            await cliExecutor.CreateNamespace(name, kubernetesSettings);
+            await cliExecutor.CreateNamespaceAsync(name, kubernetesSettings);
             return name;
         }
 

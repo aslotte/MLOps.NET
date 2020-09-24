@@ -111,7 +111,7 @@ namespace MLOps.NET.Docker
             }
         }
 
-        public async Task CreateNamespace(string name, KubernetesSettings kubernetesSettings)
+        public async Task CreateNamespaceAsync(string name, KubernetesSettings kubernetesSettings)
         {
             try
             {

@@ -14,7 +14,7 @@ namespace MLOps.NET.Kubernetes.Interfaces
         /// <param name="experimentName"></param>
         /// <param name="deploymentTarget"></param>
         /// <returns></returns>
-        Task<string> CreateNamespace(string experimentName, DeploymentTarget deploymentTarget);
+        Task<string> CreateNamespaceAsync(string experimentName, DeploymentTarget deploymentTarget);
 
         /// <summary>
         /// Deploys a container to the configured Kubernetes cluster

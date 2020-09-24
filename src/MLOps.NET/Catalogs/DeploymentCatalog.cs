@@ -115,7 +115,7 @@ namespace MLOps.NET.Catalogs
 
             var containerToDeploy = dockerContext.ComposeImageTag(experimentName, registeredModel);
 
-            var namespaceName = await kubernetesContext.CreateNamespace(experimentName, deploymentTarget);
+            var namespaceName = await kubernetesContext.CreateNamespaceAsync(experimentName, deploymentTarget);
 
             await kubernetesContext.DeployContainer(experimentName, deploymentTarget, containerToDeploy, namespaceName);
         }

@@ -71,7 +71,7 @@ namespace MLOps.NET.Docker.Interfaces
         /// <param name="name"></param>
         /// <param name="kubernetesSettings"></param>
         /// <returns></returns>
-        Task CreateNamespace(string name, KubernetesSettings kubernetesSettings);
+        Task CreateNamespaceAsync(string name, KubernetesSettings kubernetesSettings);
 
         /// <summary>
         /// Creates an image pull secret for a Kubernetes namespace
