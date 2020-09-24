@@ -5,6 +5,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Kubernetes\Manifests\deploy.yml" />
+    <None Remove="Kubernetes\Manifests\service.yml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Kubernetes\Manifests\deploy.yml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Kubernetes\Manifests\service.yml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CliWrap" Version="3.2.0" />
     <PackageReference Include="Dynamitey" Version="2.0.10.189" />
     <PackageReference Include="Microsoft.ML" Version="1.5.2" />

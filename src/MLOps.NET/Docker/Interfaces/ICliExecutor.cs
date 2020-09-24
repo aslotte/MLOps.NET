@@ -80,5 +80,13 @@ namespace MLOps.NET.Docker.Interfaces
         /// <param name="dockerSettings"></param>
         /// <param name="namespaceName"></param>
         Task CreateImagePullSecret(KubernetesSettings kubernetesSettings, DockerSettings dockerSettings, string namespaceName);
+
+        /// <summary>
+        /// Applies Kubernetes manifest to cluster
+        /// </summary>
+        /// <param name="kubernetesSettings"></param>
+        /// <param name="manifestName"></param>
+        /// <returns></returns>
+        Task KubctlApplyAsync(KubernetesSettings kubernetesSettings, string manifestName);
     }
 }

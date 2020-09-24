@@ -139,6 +139,20 @@ namespace MLOps.NET.Docker
             }
         }
 
+        public async Task KubctlApplyAsync(KubernetesSettings kubernetesSettings, string manifestName)
+        {
+            try
+            {
+                var command = await Cli.Wrap("kubectl")
+                     .WithArguments($"apply -f {manifestName} --kubeconfig {kubernetesSettings.KubeConfigPath}")
+                     .ExecuteBufferedAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new KubectlApplyException($"Unable to apply Kubernetes manifest {manifestName}", ex);
+            }
+        }
+
         public async Task RemoveDockerImage(string tagName)
         {
             try

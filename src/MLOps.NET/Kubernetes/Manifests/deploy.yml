@@ -1,0 +1,25 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {experimentName}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {experimentName} 
+  template:
+    metadata:
+      labels:
+        app: {experimentName}
+    spec:
+      containers:
+        - name: {experimentName}
+          image: {imageName}
+          resources:
+            limits:
+              memory: "500Mi"
+              cpu: "1000m"
+          ports:
+            - containerPort: 80
+      imagePullSecrets:
+        - name: mlopsnet
