@@ -19,7 +19,7 @@ MLOps.NET is a data science tool to track and manage the lifecycle of a [ML.NET]
   - Versioned registered models
 - Model deployment (Azure Blob Storage, AWS S3, local)
   - URI based deployment
-  - Containerized deployment (in roadmap)
+  - Containerized deployments to a Kubernetes cluster (**currently being worked on**)
   - Manual deployment (in roadmap)
   
 A client application to vizualize and manage the ML lifecycle is currently in the [roadmap](https://github.com/aslotte/MLOps.NET/blob/master/images/roadmap.png) to be worked on.
