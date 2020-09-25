@@ -84,7 +84,7 @@ namespace MLOps.NET.Catalogs
         /// - Building an ASP.NET Core Web App to wrap around the ML.NET Model
         /// - Builds a Docker Image based on the project
         /// - Pushes the image to the registry defined in UseContainerRegistry
-        /// - Deploys the model to a cluster
+        /// - Deploys the model to a cluster defined in UseKubernetes
         /// </summary>
         /// <param name="deploymentTarget"></param>
         /// <param name="registeredModel"></param>
@@ -95,6 +95,8 @@ namespace MLOps.NET.Catalogs
             await BuildAndPushImageAsync(registeredModel);
 
             await DeployContainerToCluster(deploymentTarget, registeredModel);
+
+            //TODO: Get the service url and set that in the deployment
 
             return await this.deploymentRepository.CreateDeploymentAsync(deploymentTarget, registeredModel, deployedBy, deploymentUri: "");
         }
@@ -107,7 +109,7 @@ namespace MLOps.NET.Catalogs
         /// <param name="deploymentTarget"></param>
         /// <param name="registeredModel"></param>
         /// <returns></returns>
-        public async Task DeployContainerToCluster(DeploymentTarget deploymentTarget, RegisteredModel registeredModel)
+        private async Task DeployContainerToCluster(DeploymentTarget deploymentTarget, RegisteredModel registeredModel)
         {
             AssertKubernetesClusterHasBeenConfigured();
 

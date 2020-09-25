@@ -101,6 +101,23 @@ namespace MLOps.NET.Tests
         }
 
         [TestMethod]
+        public async Task DeployModelToContainerAsync_ShouldCallDeployContainerAsync()
+        {
+            //Arrange
+            var deploymentTarget = new DeploymentTarget("Test");
+            var registeredModel = new RegisteredModel();
+
+            this.experimentRepositoryMock.Setup(x => x.GetExperiment(It.IsAny<Guid>()))
+                .Returns(new Experiment(experimentName: "MyExperiment"));
+
+            //Act
+            await sut.DeployModelToContainerAsync(deploymentTarget, registeredModel, "registeredBy");
+
+            //Arrange
+            this.kubernetesContextMock.Verify(x => x.DeployContainerAsync("MyExperiment", deploymentTarget, It.IsAny<string>(), "myexperiment-test"), Times.Once());
+        }
+
+        [TestMethod]
         public async Task BuildAndPushImageAsync_ShouldNotCallCreateDeploymentAsync()
         {
             //Arrange
