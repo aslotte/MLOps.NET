@@ -25,7 +25,6 @@ namespace MLOps.NET.Docker
         public async Task BuildImage(string experimentName, RegisteredModel registeredModel, Stream model)
         {
             await cliExecutor.InstallTemplatePackage(dockerSettings);
-
             await cliExecutor.CreateTemplateProject(dockerSettings);
 
             await this.CopyModel(model);
@@ -33,6 +32,7 @@ namespace MLOps.NET.Docker
             //Todo: Issue #302 (Copy over ModelInput.cs and ModelOutput.cs)
 
             var imageTag = ComposeImageTag(experimentName, registeredModel);
+
             await cliExecutor.RunDockerBuild(imageTag, dockerSettings);
         }
 

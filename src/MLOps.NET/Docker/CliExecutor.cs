@@ -17,6 +17,8 @@ namespace MLOps.NET.Docker
         {
             try
             {
+                Console.WriteLine("Installing dotnet new templates...");
+
                 await Cli.Wrap("dotnet")
                     .WithArguments($"new --install ML.NET.Templates::{dockerSettings.TemplatePackageVersion}")
                     .ExecuteBufferedAsync();
@@ -40,6 +42,8 @@ namespace MLOps.NET.Docker
         {
             try
             {
+                Console.WriteLine("Creating template project...");
+
                 await Cli.Wrap("dotnet")
                     .WithArguments($"new {dockerSettings.TemplateName} --force --output {dockerSettings.DirectoryName}")
                     .ExecuteBufferedAsync();
@@ -54,6 +58,8 @@ namespace MLOps.NET.Docker
         {
             try
             {
+                Console.WriteLine("Running docker build...");
+
                 await Cli.Wrap("docker")
                     .WithArguments($"build --tag {tagName.ToLower()} --file {dockerSettings.DirectoryName}/Dockerfile {dockerSettings.DirectoryName}")
                     .ExecuteBufferedAsync();
@@ -85,6 +91,8 @@ namespace MLOps.NET.Docker
         {
             try
             {
+                Console.WriteLine("Running docker push...");
+
                 await Cli.Wrap("docker")
                     .WithArguments($"push {tagName.ToLower()}")
                     .ExecuteBufferedAsync();
@@ -115,13 +123,15 @@ namespace MLOps.NET.Docker
         {
             try
             {
+                Console.WriteLine("Running kubectl create namespace...");
+
                 var command = await Cli.Wrap("kubectl")
                      .WithArguments($"create namespace {name.ToLower()} --kubeconfig {kubernetesSettings.KubeConfigPath}")
                      .ExecuteBufferedAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                throw new CreateNamespaceException($"Unable to create namespace for {name}", ex);
+                //intentionally left empty
             }
         }
 
@@ -129,13 +139,15 @@ namespace MLOps.NET.Docker
         {
             try
             {
+                Console.WriteLine("Running kubectl create imagePullSecret...");
+
                 var command = await Cli.Wrap("kubectl")
                      .WithArguments($"create secret docker-registry {kubernetesSettings.ImagePullSecretName} --namespace {namespaceName} --docker-server {dockerSettings.RegistryName} --docker-username {dockerSettings.Username} --docker-password {dockerSettings.Password} --kubeconfig {kubernetesSettings.KubeConfigPath}")
                      .ExecuteBufferedAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                throw new CreateImagePullSecretException($"Unable to create secret {kubernetesSettings.ImagePullSecretName} for namespace {namespaceName}", ex);
+                //intentionally left empty
             }
         }
 
@@ -143,6 +155,8 @@ namespace MLOps.NET.Docker
         {
             try
             {
+                Console.WriteLine($"Running kubectl apply {manifestName}...");
+
                 var command = await Cli.Wrap("kubectl")
                      .WithArguments($"apply -f {manifestName} --kubeconfig {kubernetesSettings.KubeConfigPath}")
                      .ExecuteBufferedAsync();

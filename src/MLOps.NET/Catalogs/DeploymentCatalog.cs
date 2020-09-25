@@ -94,7 +94,7 @@ namespace MLOps.NET.Catalogs
         {
             await BuildAndPushImageAsync(registeredModel);
 
-            //Todo in Issue #305 (Deploy to cluster)
+            await DeployContainerToCluster(deploymentTarget, registeredModel);
 
             return await this.deploymentRepository.CreateDeploymentAsync(deploymentTarget, registeredModel, deployedBy, deploymentUri: "");
         }
@@ -112,7 +112,6 @@ namespace MLOps.NET.Catalogs
             AssertKubernetesClusterHasBeenConfigured();
 
             var experimentName = experimentRepository.GetExperiment(registeredModel.ExperimentId).ExperimentName;
-
             var containerToDeploy = dockerContext.ComposeImageTag(experimentName, registeredModel);
 
             var namespaceName = await kubernetesContext.CreateNamespaceAsync(experimentName, deploymentTarget);
