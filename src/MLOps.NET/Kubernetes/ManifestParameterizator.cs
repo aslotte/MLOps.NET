@@ -8,10 +8,10 @@ namespace MLOps.NET.Kubernetes
 {
     internal sealed class ManifestParameterizator : IManifestParameterizator
     {
-        private readonly FileSystem fileSystem;
+        private readonly IFileSystem fileSystem;
         private readonly KubernetesSettings kubernetesSettings;
 
-        public ManifestParameterizator(FileSystem fileSystem, KubernetesSettings kubernetesSettings)
+        public ManifestParameterizator(IFileSystem fileSystem, KubernetesSettings kubernetesSettings)
         {
             this.fileSystem = fileSystem;
             this.kubernetesSettings = kubernetesSettings;
@@ -20,8 +20,8 @@ namespace MLOps.NET.Kubernetes
         public void ParameterizeServiceManifest(string experimentName, string namespaceName)
         {
             var manifest = ReadResource(kubernetesSettings.ServiceManifestName);
-            manifest = manifest.Replace(nameof(experimentName), experimentName);
-            manifest = manifest.Replace(nameof(namespaceName), namespaceName);
+            manifest = manifest.Replace(nameof(experimentName), experimentName.ToLower());
+            manifest = manifest.Replace(nameof(namespaceName), namespaceName.ToLower());
 
             WriteFile(kubernetesSettings.ServiceManifestName, manifest);
         }
@@ -29,8 +29,8 @@ namespace MLOps.NET.Kubernetes
         public void ParameterizeDeploymentManifest(string experimentName, string imageName)
         {
             var manifest = ReadResource(kubernetesSettings.DeployManifestName);
-            manifest = manifest.Replace(nameof(experimentName), experimentName);
-            manifest = manifest.Replace(nameof(imageName), imageName);
+            manifest = manifest.Replace(nameof(experimentName), experimentName.ToLower());
+            manifest = manifest.Replace(nameof(imageName), imageName.ToLower());
 
             WriteFile(kubernetesSettings.DeployManifestName, manifest);
         }
