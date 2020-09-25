@@ -54,7 +54,8 @@ namespace MLOps.NET.Docker
 
         public string ComposeImageTag(string experimentName, RegisteredModel registeredModel)
         {
-            return $"{dockerSettings.RegistryName}/{experimentName}:{registeredModel.Version}";
+            var imageName = experimentName.Replace(" ", string.Empty).Trim();
+            return $"{dockerSettings.RegistryName}/{imageName}:{registeredModel.Version}".ToLower();
         }
     }
 }

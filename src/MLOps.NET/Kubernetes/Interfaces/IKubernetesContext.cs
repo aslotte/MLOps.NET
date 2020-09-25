@@ -21,9 +21,9 @@ namespace MLOps.NET.Kubernetes.Interfaces
         /// </summary>
         /// <param name="experimentName"></param>
         /// <param name="deploymentTarget"></param>
-        /// <param name="containerName"></param>
+        /// <param name="imageName"></param>
         /// <param name="namespaceName"></param>
         /// <returns></returns>
-        Task DeployContainerAsync(string experimentName, DeploymentTarget deploymentTarget, string containerName, string namespaceName);
+        Task DeployContainerAsync(string experimentName, DeploymentTarget deploymentTarget, string imageName, string namespaceName);
     }
 }

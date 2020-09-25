@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using FluentAssertions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Docker;
 using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Docker.Settings;
@@ -108,6 +109,22 @@ namespace MLOps.NET.Tests.Deployments
             //Assert
             var tagName = $"{dockerSettings.RegistryName}/Test:{registeredModel.Version}";
             mockCliExecutor.Verify(x => x.RunDockerPush(tagName), Times.Once());
+        }
+
+        [TestMethod]
+        public void ComposeTag_ShouldRemoveSpacesAndReturnToLower()
+        {
+            //Arrange
+            var registeredModel = new RegisteredModel
+            {
+                Version = 1
+            };
+
+            //Act
+            var imageTag = sut.ComposeImageTag("Test Experiment Name", registeredModel);
+
+            //Assert
+            imageTag.Should().Be("registry/testexperimentname:1");
         }
     }
 }

@@ -112,11 +112,11 @@ namespace MLOps.NET.Catalogs
             AssertKubernetesClusterHasBeenConfigured();
 
             var experimentName = experimentRepository.GetExperiment(registeredModel.ExperimentId).ExperimentName;
-            var containerToDeploy = dockerContext.ComposeImageTag(experimentName, registeredModel);
+            var imageName = dockerContext.ComposeImageTag(experimentName, registeredModel);
 
             var namespaceName = await kubernetesContext.CreateNamespaceAsync(experimentName, deploymentTarget);
 
-            await kubernetesContext.DeployContainerAsync(experimentName, deploymentTarget, containerToDeploy, namespaceName);
+            await kubernetesContext.DeployContainerAsync(experimentName, deploymentTarget, imageName, namespaceName);
         }
 
         /// <summary>
