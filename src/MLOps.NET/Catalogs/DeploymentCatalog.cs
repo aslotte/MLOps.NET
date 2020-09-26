@@ -142,8 +142,8 @@ namespace MLOps.NET.Catalogs
 
             (string ModelInput, string ModelOutput) GetSchema()
             {
-                var modelInput = schemaGenerator.GenerateDefinition<TModelInput>("ModelInput.cs");
-                var modelOutput = schemaGenerator.GenerateDefinition<TModelOutput>("ModelOutput.cs");
+                var modelInput = schemaGenerator.GenerateDefinition<TModelInput>("ModelInput");
+                var modelOutput = schemaGenerator.GenerateDefinition<TModelOutput>("ModelOutput");
                 return (modelInput, modelOutput);
             }
 

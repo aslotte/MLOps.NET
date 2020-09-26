@@ -25,6 +25,8 @@ namespace MLOps.NET.Docker
         ///<inheritdoc cref="IDockerContext"/>
         public async Task BuildImage(string experimentName, RegisteredModel registeredModel, Stream model, Func<(string ModelInput, string ModelOutput)> GetSchema)
         {
+            RemoveUpImageDirectory();
+
             await cliExecutor.InstallTemplatePackage(dockerSettings);
             await cliExecutor.CreateTemplateProject(dockerSettings);
 
@@ -45,6 +47,14 @@ namespace MLOps.NET.Docker
             await cliExecutor.RunDockerPush(imageTag);
         }
 
+        private void RemoveUpImageDirectory()
+        {
+            if (fileSystem.Directory.Exists(dockerSettings.DirectoryName))
+            {
+                fileSystem.Directory.Delete(dockerSettings.DirectoryName, recursive: true);
+            }
+        }
+
         private async Task CopyModel(Stream model)
         {
             using var fileStream = fileSystem.FileStream.Create($"{dockerSettings.DirectoryName}/{dockerSettings.ModelName}", FileMode.Create, FileAccess.Write);
@@ -56,8 +66,8 @@ namespace MLOps.NET.Docker
         {
             var (modelInput, modelOutput) = GetSchema();
 
-            await fileSystem.File.WriteAllTextAsync($"{dockerSettings.DirectoryName}/{"ModelInput.cs"}", modelInput);
-            await fileSystem.File.WriteAllTextAsync($"{dockerSettings.DirectoryName}/{"ModelOutput.cs"}", modelOutput);
+            await fileSystem.File.WriteAllTextAsync($"{dockerSettings.DirectoryName}/Schema/{"ModelInput.cs"}", modelInput);
+            await fileSystem.File.WriteAllTextAsync($"{dockerSettings.DirectoryName}/Schema/{"ModelOutput.cs"}", modelOutput);
         }
 
         public string ComposeImageTag(string experimentName, RegisteredModel registeredModel)
