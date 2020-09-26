@@ -36,8 +36,8 @@ namespace MLOps.NET.Tests
             this.kubernetesContextMock = new Mock<IKubernetesContext>();
             this.schemaGeneratorMock = new Mock<ISchemaGenerator>();
 
-            schemaGeneratorMock.Setup(x => x.GenerateDefinition<ModelInput>("ModelInput.cs")).Returns("input");
-            schemaGeneratorMock.Setup(x => x.GenerateDefinition<ModelOutput>("ModelOutput.cs")).Returns("output");
+            schemaGeneratorMock.Setup(x => x.GenerateDefinition<ModelInput>("ModelInput")).Returns("input");
+            schemaGeneratorMock.Setup(x => x.GenerateDefinition<ModelOutput>("ModelOutput")).Returns("output");
 
             this.sut = new DeploymentCatalog(deploymentRepositoryMock.Object, modelRepositoryMock.Object, experimentRepositoryMock.Object, dockerContextMock.Object, kubernetesContextMock.Object, schemaGeneratorMock.Object);
         }

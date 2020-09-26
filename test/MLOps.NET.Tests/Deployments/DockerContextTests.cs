@@ -41,8 +41,6 @@ namespace MLOps.NET.Tests.Deployments
                 Version = 1
             };
 
-            this.mockFileSystem.AddDirectory("image/model.zip");
-
             //Act
             await sut.BuildImage("Test", registeredModel, new MemoryStream(), GetSchema);
 
@@ -59,8 +57,6 @@ namespace MLOps.NET.Tests.Deployments
                 Version = 1
             };
 
-            this.mockFileSystem.AddDirectory("image/model.zip");
-
             //Act
             await sut.BuildImage("Test", registeredModel, new MemoryStream(), GetSchema);
 
@@ -76,8 +72,6 @@ namespace MLOps.NET.Tests.Deployments
             {
                 Version = 1
             };
-
-            this.mockFileSystem.AddDirectory("image/model.zip");
 
             //Act
             await sut.BuildImage("Test", registeredModel, new MemoryStream(), GetSchema);
