@@ -12,10 +12,10 @@ namespace MLOps.NET.Docker
     internal sealed class DockerContext : IDockerContext
     {
         private readonly ICliExecutor cliExecutor;
-        private readonly FileSystem fileSystem;
+        private readonly IFileSystem fileSystem;
         private readonly DockerSettings dockerSettings;
 
-        public DockerContext(ICliExecutor cliExecutor, FileSystem fileSystem, DockerSettings dockerSettings)
+        public DockerContext(ICliExecutor cliExecutor, IFileSystem fileSystem, DockerSettings dockerSettings)
         {
             this.cliExecutor = cliExecutor;
             this.fileSystem = fileSystem;

@@ -22,7 +22,7 @@ spec:
   type: NodePort
   ports:
   - port: 80
-    nodePort: 30001
+    nodePort: 30099
     protocol: TCP
   selector:
     app: testexperiment";

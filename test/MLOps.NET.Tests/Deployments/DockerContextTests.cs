@@ -7,6 +7,7 @@ using MLOps.NET.Entities.Impl;
 using Moq;
 using System.IO;
 using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Tests.Deployments
@@ -16,6 +17,7 @@ namespace MLOps.NET.Tests.Deployments
     {
         private DockerSettings dockerSettings;
         private Mock<ICliExecutor> mockCliExecutor;
+        private MockFileSystem mockFileSystem;
         private DockerContext sut;
 
         [TestInitialize]
@@ -26,7 +28,8 @@ namespace MLOps.NET.Tests.Deployments
                 RegistryName = "registry"
             };
             this.mockCliExecutor = new Mock<ICliExecutor>();
-            this.sut = new DockerContext(mockCliExecutor.Object, new FileSystem(), dockerSettings);
+            this.mockFileSystem = new MockFileSystem();
+            this.sut = new DockerContext(mockCliExecutor.Object, mockFileSystem, dockerSettings);
         }
 
         [TestMethod]
@@ -37,6 +40,8 @@ namespace MLOps.NET.Tests.Deployments
             {
                 Version = 1
             };
+
+            this.mockFileSystem.AddDirectory("image/model.zip");
 
             //Act
             await sut.BuildImage("Test", registeredModel, new MemoryStream(), GetSchema);
@@ -54,6 +59,8 @@ namespace MLOps.NET.Tests.Deployments
                 Version = 1
             };
 
+            this.mockFileSystem.AddDirectory("image/model.zip");
+
             //Act
             await sut.BuildImage("Test", registeredModel, new MemoryStream(), GetSchema);
 
@@ -70,11 +77,13 @@ namespace MLOps.NET.Tests.Deployments
                 Version = 1
             };
 
+            this.mockFileSystem.AddDirectory("image/model.zip");
+
             //Act
             await sut.BuildImage("Test", registeredModel, new MemoryStream(), GetSchema);
 
             //Assert
-            var tagName = $"{dockerSettings.RegistryName}/Test:{registeredModel.Version}";
+            var tagName = $"{dockerSettings.RegistryName}/Test:{registeredModel.Version}".ToLower();
             mockCliExecutor.Verify(x => x.RunDockerBuild(tagName, dockerSettings), Times.Once());
         }
 
@@ -107,7 +116,7 @@ namespace MLOps.NET.Tests.Deployments
             await sut.PushImage("Test", registeredModel);
 
             //Assert
-            var tagName = $"{dockerSettings.RegistryName}/Test:{registeredModel.Version}";
+            var tagName = $"{dockerSettings.RegistryName}/Test:{registeredModel.Version}".ToLower();
             mockCliExecutor.Verify(x => x.RunDockerPush(tagName), Times.Once());
         }
 

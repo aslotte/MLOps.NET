@@ -114,14 +114,20 @@ namespace MLOps.NET.Tests
             var deploymentTarget = new DeploymentTarget("Test");
             var registeredModel = new RegisteredModel();
 
+            this.dockerContextMock.Setup(x => x.ComposeImageTag(It.IsAny<string>(), It.IsAny<RegisteredModel>()))
+                .Returns("imagetag");
+
             this.experimentRepositoryMock.Setup(x => x.GetExperiment(It.IsAny<Guid>()))
                 .Returns(new Experiment(experimentName: "MyExperiment"));
+
+            this.kubernetesContextMock.Setup(x => x.CreateNamespaceAsync(It.IsAny<string>(), It.IsAny<DeploymentTarget>()))
+                .Returns(Task.FromResult("myexperiment-test"));
 
             //Act
             await sut.DeployModelToContainerAsync<ModelInput, ModelOutput>(deploymentTarget, registeredModel, "registeredBy");
 
             //Arrange
-            this.kubernetesContextMock.Verify(x => x.DeployContainerAsync("MyExperiment", deploymentTarget, It.IsAny<string>(), "myexperiment-test"), Times.Once());
+            this.kubernetesContextMock.Verify(x => x.DeployContainerAsync("MyExperiment", deploymentTarget, "imagetag", "myexperiment-test"), Times.Once());
         }
 
         [TestMethod]
