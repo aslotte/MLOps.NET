@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Docker;
 using MLOps.NET.Docker.Settings;
+using MLOps.NET.Tests.Common.Data;
 using System;
 using System.IO;
 using System.Linq;
@@ -101,7 +102,7 @@ namespace MLOps.NET.IntegrationTests
             var registeredModel = await sut.Model.RegisterModel(run.ExperimentId, runArtifact.RunArtifactId, "registerby");
 
             //Act
-            await sut.Deployment.BuildAndPushImageAsync(registeredModel);
+            await sut.Deployment.BuildAndPushImageAsync<ModelInput, ModelOutput>(registeredModel);
 
             //Assert
             var imageExists = await cliExecutor.RunDockerPull(tagName);
@@ -119,11 +120,11 @@ namespace MLOps.NET.IntegrationTests
             var registeredModel = await sut.Model.RegisterModel(run.ExperimentId, runArtifact.RunArtifactId, "registerby");
 
             //Act
-            await sut.Deployment.BuildAndPushImageAsync(registeredModel);
+            await sut.Deployment.BuildAndPushImageAsync<ModelInput, ModelOutput>(registeredModel);
 
             //Assert
             File.Exists("image/ML.NET.Web.Embedded.csproj").Should().BeTrue();
             File.Exists("image/model.zip").Should().BeTrue();
-        }  
+        }
     }
 }

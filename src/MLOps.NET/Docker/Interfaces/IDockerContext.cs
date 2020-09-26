@@ -1,4 +1,5 @@
 ﻿using MLOps.NET.Entities.Impl;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -15,8 +16,9 @@ namespace MLOps.NET.Docker.Interfaces
         /// <param name="experimentName"></param>
         /// <param name="registeredModel"></param>
         /// <param name="model"></param>
+        /// <param name="GetSchema"></param>
         /// <returns></returns>
-        Task BuildImage(string experimentName, RegisteredModel registeredModel, Stream model);
+        Task BuildImage(string experimentName, RegisteredModel registeredModel, Stream model, Func<(string ModelInput, string ModelOutput)> GetSchema);
 
         /// <summary>
         /// Pushes a docker image to a registry

@@ -4,7 +4,9 @@ using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Kubernetes.Interfaces;
 using MLOps.NET.Storage;
+using MLOps.NET.Storage.Deployments;
 using MLOps.NET.Storage.Interfaces;
+using MLOps.NET.Tests.Common.Data;
 using Moq;
 using System;
 using System.IO;
@@ -22,6 +24,7 @@ namespace MLOps.NET.Tests
         private Mock<IExperimentRepository> experimentRepositoryMock;
         private Mock<IDockerContext> dockerContextMock;
         private Mock<IKubernetesContext> kubernetesContextMock;
+        private Mock<ISchemaGenerator> schemaGeneratorMock;
 
         [TestInitialize]
         public void Initialize()
@@ -31,8 +34,12 @@ namespace MLOps.NET.Tests
             this.experimentRepositoryMock = new Mock<IExperimentRepository>();
             this.dockerContextMock = new Mock<IDockerContext>();
             this.kubernetesContextMock = new Mock<IKubernetesContext>();
+            this.schemaGeneratorMock = new Mock<ISchemaGenerator>();
 
-            this.sut = new DeploymentCatalog(deploymentRepositoryMock.Object, modelRepositoryMock.Object, experimentRepositoryMock.Object, dockerContextMock.Object, kubernetesContextMock.Object);
+            schemaGeneratorMock.Setup(x => x.GenerateDefinition<ModelInput>("ModelInput.cs")).Returns("input");
+            schemaGeneratorMock.Setup(x => x.GenerateDefinition<ModelOutput>("ModelOutput.cs")).Returns("output");
+
+            this.sut = new DeploymentCatalog(deploymentRepositoryMock.Object, modelRepositoryMock.Object, experimentRepositoryMock.Object, dockerContextMock.Object, kubernetesContextMock.Object, schemaGeneratorMock.Object);
         }
 
         [ExpectedException(typeof(InvalidOperationException), "A container registry has not been configured. Please configure a container registry by calling UseContainerRegistry first")]
@@ -40,13 +47,13 @@ namespace MLOps.NET.Tests
         public async Task DeployModelToContainerAsync_GivenNoDockerContext_ShouldThrowException()
         {
             //Arrange
-            this.sut = new DeploymentCatalog(deploymentRepositoryMock.Object, modelRepositoryMock.Object, experimentRepositoryMock.Object, null, null);
+            this.sut = new DeploymentCatalog(deploymentRepositoryMock.Object, modelRepositoryMock.Object, experimentRepositoryMock.Object, null, null, null);
 
             var deploymentTarget = new DeploymentTarget("Test");
             var registeredModel = new RegisteredModel();
 
             //Act
-            await sut.DeployModelToContainerAsync(deploymentTarget, registeredModel, "registeredBy");
+            await sut.DeployModelToContainerAsync<ModelInput, ModelOutput>(deploymentTarget, registeredModel, "registeredBy");
         }
 
         [TestMethod]
@@ -60,10 +67,10 @@ namespace MLOps.NET.Tests
                 .Returns(new Experiment(experimentName: "MyExperiment"));
 
             //Act
-            await sut.DeployModelToContainerAsync(deploymentTarget, registeredModel, "registeredBy");
+            await sut.DeployModelToContainerAsync<ModelInput, ModelOutput>(deploymentTarget, registeredModel, "registeredBy");
 
             //Arrange
-            this.dockerContextMock.Verify(x => x.BuildImage("MyExperiment", registeredModel, It.IsAny<Stream>()), Times.Once());
+            this.dockerContextMock.Verify(x => x.BuildImage("MyExperiment", registeredModel, It.IsAny<Stream>(), It.IsAny<Func<(string, string)>>()), Times.Once());
         }
 
         [TestMethod]
@@ -77,7 +84,7 @@ namespace MLOps.NET.Tests
                 .Returns(new Experiment(experimentName: "MyExperiment"));
 
             //Act
-            await sut.DeployModelToContainerAsync(deploymentTarget, registeredModel, "registeredBy");
+            await sut.DeployModelToContainerAsync<ModelInput, ModelOutput>(deploymentTarget, registeredModel, "registeredBy");
 
             //Arrange
             this.dockerContextMock.Verify(x => x.PushImage("MyExperiment", registeredModel), Times.Once());
@@ -94,7 +101,7 @@ namespace MLOps.NET.Tests
                 .Returns(new Experiment(experimentName: "MyExperiment"));
 
             //Act
-            await sut.DeployModelToContainerAsync(deploymentTarget, registeredModel, "registeredBy");
+            await sut.DeployModelToContainerAsync<ModelInput, ModelOutput>(deploymentTarget, registeredModel, "registeredBy");
 
             //Arrange
             this.deploymentRepositoryMock.Verify(x => x.CreateDeploymentAsync(deploymentTarget, registeredModel, It.IsAny<string>(), It.IsAny<string>()), Times.Once());
@@ -111,7 +118,7 @@ namespace MLOps.NET.Tests
                 .Returns(new Experiment(experimentName: "MyExperiment"));
 
             //Act
-            await sut.DeployModelToContainerAsync(deploymentTarget, registeredModel, "registeredBy");
+            await sut.DeployModelToContainerAsync<ModelInput, ModelOutput>(deploymentTarget, registeredModel, "registeredBy");
 
             //Arrange
             this.kubernetesContextMock.Verify(x => x.DeployContainerAsync("MyExperiment", deploymentTarget, It.IsAny<string>(), "myexperiment-test"), Times.Once());
@@ -127,7 +134,7 @@ namespace MLOps.NET.Tests
                 .Returns(new Experiment(experimentName: "MyExperiment"));
 
             //Act
-            await sut.BuildAndPushImageAsync(registeredModel);
+            await sut.BuildAndPushImageAsync<ModelInput, ModelOutput>(registeredModel);
 
             //Arrange
             this.deploymentRepositoryMock.Verify(x => x.CreateDeploymentAsync(It.IsAny<DeploymentTarget>(), registeredModel, It.IsAny<string>(), It.IsAny<string>()), Times.Never());

@@ -96,13 +96,13 @@ namespace MLOps.NET.IntegrationTests
         private IDataView LoadData()
         {
             var mlContext = new MLContext(seed: 1);
-            return mlContext.Data.LoadFromTextFile<ProductReview>("Data/product_reviews.csv", hasHeader: true, separatorChar: ',');
+            return mlContext.Data.LoadFromTextFile<ModelInput>("Data/product_reviews.csv", hasHeader: true, separatorChar: ',');
         }
 
         private IDataView LoadUpdatedData()
         {
             var mlContext = new MLContext(seed: 1);
-            return mlContext.Data.LoadFromTextFile<ProductReview>("Data/product_reviews_updated.csv", hasHeader: true, separatorChar: ',');
+            return mlContext.Data.LoadFromTextFile<ModelInput>("Data/product_reviews_updated.csv", hasHeader: true, separatorChar: ',');
         }
     }
 }

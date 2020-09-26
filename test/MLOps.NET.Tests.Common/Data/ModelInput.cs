@@ -2,7 +2,7 @@
 
 namespace MLOps.NET.Tests.Common.Data
 {
-    public class ProductReview
+    public class ModelInput
     {
         [LoadColumn(0)]
         public bool Sentiment;

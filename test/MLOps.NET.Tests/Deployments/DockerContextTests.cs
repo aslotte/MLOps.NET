@@ -39,7 +39,7 @@ namespace MLOps.NET.Tests.Deployments
             };
 
             //Act
-            await sut.BuildImage("Test", registeredModel, new MemoryStream());
+            await sut.BuildImage("Test", registeredModel, new MemoryStream(), GetSchema);
 
             //Assert
             mockCliExecutor.Verify(x => x.InstallTemplatePackage(dockerSettings), Times.Once());
@@ -55,7 +55,7 @@ namespace MLOps.NET.Tests.Deployments
             };
 
             //Act
-            await sut.BuildImage("Test", registeredModel, new MemoryStream());
+            await sut.BuildImage("Test", registeredModel, new MemoryStream(), GetSchema);
 
             //Assert
             mockCliExecutor.Verify(x => x.CreateTemplateProject(dockerSettings), Times.Once());
@@ -71,7 +71,7 @@ namespace MLOps.NET.Tests.Deployments
             };
 
             //Act
-            await sut.BuildImage("Test", registeredModel, new MemoryStream());
+            await sut.BuildImage("Test", registeredModel, new MemoryStream(), GetSchema);
 
             //Assert
             var tagName = $"{dockerSettings.RegistryName}/Test:{registeredModel.Version}";
@@ -126,5 +126,7 @@ namespace MLOps.NET.Tests.Deployments
             //Assert
             imageTag.Should().Be("registry/testexperimentname:1");
         }
+
+        private (string ModelInput, string ModelOutput) GetSchema() => ("input", "output");
     }
 }

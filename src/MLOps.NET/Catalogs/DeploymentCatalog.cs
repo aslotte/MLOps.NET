@@ -4,6 +4,7 @@ using MLOps.NET.Extensions;
 using MLOps.NET.Kubernetes.Interfaces;
 using MLOps.NET.Kubernetes.Settings;
 using MLOps.NET.Storage;
+using MLOps.NET.Storage.Deployments;
 using MLOps.NET.Storage.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,7 @@ namespace MLOps.NET.Catalogs
         private readonly IExperimentRepository experimentRepository;
         private readonly IDockerContext dockerContext;
         private readonly IKubernetesContext kubernetesContext;
+        private readonly ISchemaGenerator schemaGenerator;
 
         /// <summary>
         /// Ctor
@@ -31,17 +33,20 @@ namespace MLOps.NET.Catalogs
         /// <param name="experimentRepository"></param>
         /// <param name="dockerContext"></param>
         /// <param name="kubernetesContext"></param>
+        /// <param name="schemaGenerator"></param>
         public DeploymentCatalog(IDeploymentRepository deploymentRepository,
             IModelRepository modelRepository,
             IExperimentRepository experimentRepository,
             IDockerContext dockerContext,
-            IKubernetesContext kubernetesContext)
+            IKubernetesContext kubernetesContext, 
+            ISchemaGenerator schemaGenerator)
         {
             this.deploymentRepository = deploymentRepository;
             this.modelRepository = modelRepository;
             this.experimentRepository = experimentRepository;
             this.dockerContext = dockerContext;
             this.kubernetesContext = kubernetesContext;
+            this.schemaGenerator = schemaGenerator;
         }
 
         /// <summary>
@@ -90,9 +95,11 @@ namespace MLOps.NET.Catalogs
         /// <param name="registeredModel"></param>
         /// <param name="deployedBy"></param>
         /// <returns></returns>
-        public async Task<Deployment> DeployModelToContainerAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy)
+        public async Task<Deployment> DeployModelToContainerAsync<TModelInput, TModelOutput>(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy) 
+            where TModelInput : class
+            where TModelOutput : class
         {
-            await BuildAndPushImageAsync(registeredModel);
+            await BuildAndPushImageAsync<TModelInput, TModelOutput>(registeredModel);
 
             await DeployContainerToCluster(deploymentTarget, registeredModel);
 
@@ -124,17 +131,26 @@ namespace MLOps.NET.Catalogs
         /// <summary>
         /// Builds a docker image for an ASP.NET Core Web App with an ML.NET model
         /// embedded and pushes it to the registry defined in UseContainerRegistry
+        /// Utilizes the TModelInput and TModelOutput as the schema
         /// </summary>
         /// <param name="registeredModel"></param>
         /// <returns></returns>
-        public async Task BuildAndPushImageAsync(RegisteredModel registeredModel)
+        public async Task BuildAndPushImageAsync<TModelInput, TModelOutput>(RegisteredModel registeredModel) where TModelInput : class
+          where TModelOutput : class
         {
             AssertContainerRegistryHasBeenConfigured();
+
+            (string ModelInput, string ModelOutput) GetSchema()
+            {
+                var modelInput = schemaGenerator.GenerateDefinition<TModelInput>("ModelInput.cs");
+                var modelOutput = schemaGenerator.GenerateDefinition<TModelOutput>("ModelOutput.cs");
+                return (modelInput, modelOutput);
+            }
 
             var experiment = experimentRepository.GetExperiment(registeredModel.ExperimentId);
             using var model = new MemoryStream();
 
-            await dockerContext.BuildImage(experiment.ExperimentName, registeredModel, model);
+            await dockerContext.BuildImage(experiment.ExperimentName, registeredModel, model, GetSchema);
             await dockerContext.PushImage(experiment.ExperimentName, registeredModel);
         }
 

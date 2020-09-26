@@ -2,6 +2,7 @@
 using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Kubernetes.Interfaces;
 using MLOps.NET.Storage;
+using MLOps.NET.Storage.Deployments;
 using MLOps.NET.Storage.Interfaces;
 using MLOps.NET.Utilities;
 using System;
@@ -36,7 +37,7 @@ namespace MLOps.NET
             this.Evaluation = new EvaluationCatalog(metricRepository, confusionMatrixRepository);
             this.Model = new ModelCatalog(modelRepository, runRepository);
             this.Training = new TrainingCatalog(hyperParameterRepository);
-            this.Deployment = new DeploymentCatalog(deploymentRepository, modelRepository, experimentRepository, dockerContext, kubernetesContext);
+            this.Deployment = new DeploymentCatalog(deploymentRepository, modelRepository, experimentRepository, dockerContext, kubernetesContext, new SchemaGenerator());
         }
 
         ///<inheritdoc cref="IMLOpsContext"/>
