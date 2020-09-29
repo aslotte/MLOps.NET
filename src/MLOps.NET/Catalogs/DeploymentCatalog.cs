@@ -148,7 +148,9 @@ namespace MLOps.NET.Catalogs
             }
 
             var experiment = experimentRepository.GetExperiment(registeredModel.ExperimentId);
+
             using var model = new MemoryStream();
+            await modelRepository.DownloadModelAsync(registeredModel.RunId, out model);
 
             await dockerContext.BuildImage(experiment.ExperimentName, registeredModel, model, GetSchema);
             await dockerContext.PushImage(experiment.ExperimentName, registeredModel);

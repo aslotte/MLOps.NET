@@ -58,7 +58,8 @@ namespace MLOps.NET.Docker
 
         private async Task CopyModel(Stream model)
         {
-            using var fileStream = fileSystem.FileStream.Create($"{dockerSettings.DirectoryName}/{dockerSettings.ModelName}", FileMode.Create, FileAccess.Write);
+            var path = $"{dockerSettings.DirectoryName}/{dockerSettings.ModelName}";
+            using var fileStream = fileSystem.FileStream.Create(path, FileMode.Create, FileAccess.Write);
 
             await model.CopyToAsync(fileStream);
         }

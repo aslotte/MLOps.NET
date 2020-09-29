@@ -4,10 +4,8 @@ metadata:
   name: experimentName
   namespace: namespaceName
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
   - port: 80
-    nodePort: 30099
-    protocol: TCP
   selector:
     app: experimentName
