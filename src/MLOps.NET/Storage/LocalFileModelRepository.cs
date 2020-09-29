@@ -52,6 +52,8 @@ namespace MLOps.NET.Storage
             }
             using var fileStream = this.fileSystem.File.OpenRead(sourceFile);
             await fileStream.CopyToAsync(destination);
+
+            destination.Position = 0;
         }
 
         public async Task<string> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, Experiment experiment)

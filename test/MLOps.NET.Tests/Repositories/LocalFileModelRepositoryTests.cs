@@ -72,6 +72,24 @@ namespace MLOps.NET.Tests
             Encoding.Default.GetString(memStream.ToArray()).Should().Be("test");
         }
 
+
+        [TestMethod]
+        public async Task UploadModelAsync_ShouldSetPositionToZero()
+        {
+            //Arrange       
+            var runId = Guid.NewGuid();
+
+            //Act
+            await sut.UploadModelAsync(runId, @"Data/model.txt");
+
+            //Assert
+            using var memoryStream = new MemoryStream();
+            await sut.DownloadModelAsync(runId, memoryStream);
+
+            memoryStream.Should().NotBeNull();
+            memoryStream.Position.Should().Be(0);
+        }
+
         [TestMethod]
         public async Task DownloadModel_ThrowsIfFileDoesNotExist()
         {
