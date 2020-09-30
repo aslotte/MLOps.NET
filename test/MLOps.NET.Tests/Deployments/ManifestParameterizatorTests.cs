@@ -45,8 +45,8 @@ spec:
           image: image-namewithcaps
           resources:
             limits:
-              memory: ""500Mi""
-              cpu: ""1000m""
+              memory: ""250Mi""
+              cpu: ""500m""
           ports:
             - containerPort: 80
       imagePullSecrets:

@@ -7,6 +7,7 @@ using MLOps.NET.Kubernetes.Settings;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Deployments;
 using System;
+using System.IO;
 using System.IO.Abstractions;
 
 namespace MLOps.NET.Extensions
@@ -84,18 +85,18 @@ namespace MLOps.NET.Extensions
         }
 
         /// <summary>
-        /// Configures to use Kubernetes with the full path to the kubeconfig
+        /// Configures to use Kubernetes with the full path to the kubeconfig or the kubeconfig content
         /// </summary>
         /// <param name="builder"></param>
-        /// <param name="kubeconfigPath"></param>
+        /// <param name="kubeconfigPathOrContent"></param>
         /// <returns></returns>
-        public static MLOpsBuilder UseKubernetes(this MLOpsBuilder builder, string kubeconfigPath)
+        public static MLOpsBuilder UseKubernetes(this MLOpsBuilder builder, string kubeconfigPathOrContent)
         {
-            if (string.IsNullOrEmpty(kubeconfigPath)) throw new InvalidOperationException($"{nameof(kubeconfigPath)} cannot be empty");
+            if (string.IsNullOrEmpty(kubeconfigPathOrContent)) throw new InvalidOperationException($"{nameof(kubeconfigPathOrContent)} cannot be empty");
 
             var settings = new KubernetesSettings
             {
-                KubeConfigPath = kubeconfigPath
+                KubeConfigPath = SetKubeConfig(kubeconfigPathOrContent)
             };
 
             IKubernetesContext CreateKubernetesContext(DockerSettings dockerSettings)
@@ -106,6 +107,22 @@ namespace MLOps.NET.Extensions
             builder.UseKubernetesContext(CreateKubernetesContext);
 
             return builder;
+        }
+
+        /// <summary>
+        /// It is possible that the Kubeconfig can be passed in as either a path to the file
+        /// or as the content it self, in which place we need to store it to a file first
+        /// </summary>
+        /// <param name="kubeconfigPathOrContent"></param>
+        /// <returns></returns>
+        private static string SetKubeConfig(string kubeconfigPathOrContent)
+        {
+            if (Path.IsPathFullyQualified(kubeconfigPathOrContent)) return kubeconfigPathOrContent;
+
+            var kubeConfigPath = Path.Combine(Directory.GetCurrentDirectory(), "kubeconfig");
+            File.WriteAllText(kubeConfigPath, kubeconfigPathOrContent);
+
+            return kubeConfigPath;
         }
     }
 }
