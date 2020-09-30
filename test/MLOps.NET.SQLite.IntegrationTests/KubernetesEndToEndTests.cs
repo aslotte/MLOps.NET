@@ -1,14 +1,19 @@
-﻿using FluentAssertions;
+﻿using CliWrap;
+using CliWrap.Buffered;
+using FluentAssertions;
 using Microsoft.ML;
 using Microsoft.ML.Transforms;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MLOps.NET.Entities.Impl;
 using MLOps.NET.Extensions;
 using MLOps.NET.SQLite.IntegrationTests.Constants;
 using MLOps.NET.SQLite.IntegrationTests.Schema;
 using MLOps.NET.Tests.Common.Configuration;
-using System;
+using Newtonsoft.Json;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.SQLite.IntegrationTests
@@ -65,22 +70,46 @@ namespace MLOps.NET.SQLite.IntegrationTests
             var registeredModel = await sut.Model.RegisterModel(run.ExperimentId, runArtifact.RunArtifactId, string.Empty);
             var deploymentTarget = await sut.Deployment.CreateDeploymentTargetAsync("Test");
 
+            //Act
             var deployment = await sut.Deployment.DeployModelToContainerAsync<ModelInput, ModelOutput>(deploymentTarget, registeredModel, string.Empty);
 
             //Assert
-            var httpClient = new HttpClient();
-            var request = new HttpRequestMessage
-            {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri(deployment.DeploymentUri)
-            };
-
-            //Add JSON payload here
-
-            var response = await httpClient.SendAsync(request);
+            var response = await CallDeployedApi(deployment);
             response.IsSuccessStatusCode.Should().BeTrue();
 
-            //Add call to remove namespace or deployent after test is complete, e.g. via CLIExecutor
+            await CleanUpKubernetesResourcesAsync();
+        }
+
+        private async Task<HttpResponseMessage> CallDeployedApi(Deployment deployment)
+        {
+            var payload = new
+            {
+                PClass = 3,
+                Sex = "male",
+                Age = 4
+            };
+
+            var json = JsonConvert.SerializeObject(payload);
+            var requestMessage = new StringContent(json, Encoding.UTF8, "application/json");
+            using var client = new HttpClient();
+            return await client.PostAsync(deployment.DeploymentUri, requestMessage);
+        }
+
+        private async Task CleanUpKubernetesResourcesAsync()
+        {
+            var path = SetKubeConfig(ConfigurationFactory.GetConfiguration()[ConfigurationKeys.KubeConfig]);
+
+            await Cli.Wrap("kubectl").WithArguments($"delete ns titanic-test --kubeconfig {path}").ExecuteBufferedAsync();
+        }
+
+        private static string SetKubeConfig(string kubeconfigPathOrContent)
+        {
+            if (Path.IsPathFullyQualified(kubeconfigPathOrContent)) return kubeconfigPathOrContent;
+
+            var kubeConfigPath = Path.Combine(Directory.GetCurrentDirectory(), "kubeconfig");
+            File.WriteAllText(kubeConfigPath, kubeconfigPathOrContent);
+
+            return kubeConfigPath;
         }
     }
 }
