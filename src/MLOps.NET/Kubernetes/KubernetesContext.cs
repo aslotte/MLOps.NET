@@ -41,9 +41,9 @@ namespace MLOps.NET.Kubernetes
             await cliExecutor.KubctlApplyAsync(kubernetesSettings, kubernetesSettings.DeployManifestName);
             await cliExecutor.KubctlApplyAsync(kubernetesSettings, kubernetesSettings.ServiceManifestName);
 
-            var externalIP = await cliExecutor.GetServiceExternalIP(kubernetesSettings, experimentName, namespaceName);
+            var externalIP = await cliExecutor.GetServiceExternalIPAsync(kubernetesSettings, experimentName, namespaceName);
 
-            return Path.Combine(externalIP, "/api/Prediction");
+            return externalIP + "/api/Prediction";
         }
     }
 }

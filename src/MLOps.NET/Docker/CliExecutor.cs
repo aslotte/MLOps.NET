@@ -183,7 +183,7 @@ namespace MLOps.NET.Docker
             }
         }
 
-        public async Task<string> GetServiceExternalIP(KubernetesSettings kubernetesSettings, string experimentName, string namespaceName)
+        public async Task<string> GetServiceExternalIPAsync(KubernetesSettings kubernetesSettings, string experimentName, string namespaceName)
         {
             try
             {
@@ -199,7 +199,7 @@ namespace MLOps.NET.Docker
                     timePassed += interval;
 
                     var command = await Cli.Wrap("kubectl")
-                         .WithArguments($"get service -name {experimentName} --namespace {namespaceName} --kubeconfig {kubernetesSettings.KubeConfigPath}")
+                         .WithArguments($"get service -name {experimentName.ToLower()} --namespace {namespaceName} --kubeconfig {kubernetesSettings.KubeConfigPath}")
                          .ExecuteBufferedAsync();
 
                     using StringReader reader = new StringReader(command.StandardOutput);
@@ -209,17 +209,18 @@ namespace MLOps.NET.Docker
 
                     var externalIP = reader.ReadLine().Split("   ")[3];
 
-                    if (!externalIP.ToLower().Contains("pending"))
+                    if (!string.IsNullOrEmpty(externalIP) && !externalIP.ToLower().Contains("pending"))
                     {
                         return externalIP;
                     }
-                    Console.WriteLine("The external IP address is still pending");
+
+                    Console.WriteLine("The external IP address is still pending...");
                 }
-                return string.Empty;
+                return "unknown";
             }
             catch
             {
-                return string.Empty;
+                return "unknown";
             }
         }
     }

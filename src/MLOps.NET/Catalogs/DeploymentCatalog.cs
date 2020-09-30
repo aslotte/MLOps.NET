@@ -101,7 +101,7 @@ namespace MLOps.NET.Catalogs
         {
             await BuildAndPushImageAsync<TModelInput, TModelOutput>(registeredModel);
 
-            var deploymentUri = await DeployContainerToCluster(deploymentTarget, registeredModel);    
+            var deploymentUri = await DeployContainerToCluster(deploymentTarget, registeredModel);
 
             return await this.deploymentRepository.CreateDeploymentAsync(deploymentTarget, registeredModel, deployedBy, deploymentUri);
         }

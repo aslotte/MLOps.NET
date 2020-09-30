@@ -96,6 +96,6 @@ namespace MLOps.NET.Docker.Interfaces
         /// <param name="experimentName"></param>
         /// <param name="namespaceName"></param>
         /// <returns></returns>
-        Task<string> GetServiceExternalIP(KubernetesSettings kubernetesSettings, string experimentName, string namespaceName);
+        Task<string> GetServiceExternalIPAsync(KubernetesSettings kubernetesSettings, string experimentName, string namespaceName);
     }
 }
