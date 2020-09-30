@@ -26,11 +26,12 @@ namespace MLOps.NET.Kubernetes
             WriteFile(kubernetesSettings.ServiceManifestName, manifest);
         }
 
-        public void ParameterizeDeploymentManifest(string experimentName, string imageName)
+        public void ParameterizeDeploymentManifest(string experimentName, string imageName, string namespaceName)
         {
             var manifest = ReadResource(kubernetesSettings.DeployManifestName);
             manifest = manifest.Replace(nameof(experimentName), experimentName.ToLower());
             manifest = manifest.Replace(nameof(imageName), imageName.ToLower());
+            manifest = manifest.Replace(nameof(namespaceName), namespaceName.ToLower());
 
             WriteFile(kubernetesSettings.DeployManifestName, manifest);
         }

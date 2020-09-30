@@ -34,8 +34,7 @@ namespace MLOps.NET.Kubernetes
         {
             await cliExecutor.CreateImagePullSecret(kubernetesSettings, dockerSettings, namespaceName);
 
-            manifestParameterizator.ParameterizeDeploymentManifest(experimentName, containerToDeploy);
-
+            manifestParameterizator.ParameterizeDeploymentManifest(experimentName, containerToDeploy, namespaceName);
             manifestParameterizator.ParameterizeServiceManifest(experimentName, namespaceName);
 
             await cliExecutor.KubctlApplyAsync(kubernetesSettings, kubernetesSettings.DeployManifestName);

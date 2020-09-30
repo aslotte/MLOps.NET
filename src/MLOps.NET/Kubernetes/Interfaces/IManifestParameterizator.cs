@@ -21,6 +21,7 @@ namespace MLOps.NET.Kubernetes.Interfaces
         /// </summary>
         /// <param name="experimentName"></param>
         /// <param name="imageName"></param>
-        void ParameterizeDeploymentManifest(string experimentName, string imageName);
+        /// <param name="namespaceName"></param>
+        void ParameterizeDeploymentManifest(string experimentName, string imageName, string namespaceName);
     }
 }
