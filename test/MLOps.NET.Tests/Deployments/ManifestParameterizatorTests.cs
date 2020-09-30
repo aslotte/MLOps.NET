@@ -19,11 +19,9 @@ metadata:
   name: testexperiment
   namespace: namespace123
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
   - port: 80
-    nodePort: 30099
-    protocol: TCP
   selector:
     app: testexperiment";
 
@@ -31,6 +29,7 @@ spec:
 kind: Deployment
 metadata:
   name: testexperiment
+  namespace: namespace
 spec:
   replicas: 1
   selector:

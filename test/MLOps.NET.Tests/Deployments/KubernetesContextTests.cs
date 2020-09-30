@@ -76,7 +76,7 @@ namespace MLOps.NET.Tests.Deployments
             var namespaceName = "experiment-test";
 
             //Act
-            await this.sut.DeployContainerAsync(experimentName, deploymentTarget, imageName, namespaceName);
+            await this.sut.DeployContainerAsync(experimentName, imageName, namespaceName);
 
             //Assert
             this.mockCliExecutor.Verify(x => x.CreateImagePullSecret(kubernetesSettings, dockerSettings, namespaceName), Times.Once());
@@ -92,7 +92,7 @@ namespace MLOps.NET.Tests.Deployments
             var namespaceName = "experiment-test";
 
             //Act
-            await this.sut.DeployContainerAsync(experimentName, deploymentTarget, imageName, namespaceName);
+            await this.sut.DeployContainerAsync(experimentName, imageName, namespaceName);
 
             //Assert
             this.mockCliExecutor.Verify(x => x.KubctlApplyAsync(kubernetesSettings, "deploy.yml"), Times.Once());
@@ -108,7 +108,7 @@ namespace MLOps.NET.Tests.Deployments
             var namespaceName = "experiment-test";
 
             //Act
-            await this.sut.DeployContainerAsync(experimentName, deploymentTarget, imageName, namespaceName);
+            await this.sut.DeployContainerAsync(experimentName, imageName, namespaceName);
 
             //Assert
             this.mockCliExecutor.Verify(x => x.KubctlApplyAsync(kubernetesSettings, "service.yml"), Times.Once());
@@ -124,7 +124,7 @@ namespace MLOps.NET.Tests.Deployments
             var namespaceName = "experiment-test";
 
             //Act
-            await this.sut.DeployContainerAsync(experimentName, deploymentTarget, imageName, namespaceName);
+            await this.sut.DeployContainerAsync(experimentName, imageName, namespaceName);
 
             //Assert
             this.mockManifestParameterizator.Verify(x => x.ParameterizeServiceManifest(experimentName, namespaceName), Times.Once());
@@ -140,10 +140,10 @@ namespace MLOps.NET.Tests.Deployments
             var namespaceName = "experiment-test";
 
             //Act
-            await this.sut.DeployContainerAsync(experimentName, deploymentTarget, imageName, namespaceName);
+            await this.sut.DeployContainerAsync(experimentName, imageName, namespaceName);
 
             //Assert
-            this.mockManifestParameterizator.Verify(x => x.ParameterizeDeploymentManifest(experimentName, imageName), Times.Once());
+            this.mockManifestParameterizator.Verify(x => x.ParameterizeDeploymentManifest(experimentName, imageName, namespaceName), Times.Once());
         }
     }
 }

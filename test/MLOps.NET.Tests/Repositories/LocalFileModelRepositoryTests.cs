@@ -72,20 +72,20 @@ namespace MLOps.NET.Tests
             Encoding.Default.GetString(memStream.ToArray()).Should().Be("test");
         }
 
-
         [TestMethod]
-        public async Task UploadModelAsync_ShouldSetPositionToZero()
+        public async Task DownloadModelAsync_ShouldSetPositionToZero()
         {
             //Arrange       
             var runId = Guid.NewGuid();
 
-            //Act
-            await sut.UploadModelAsync(runId, @"Data/model.txt");
+            var filePath = mockFileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mlops", "model-repository", $"{runId}.zip");
+            mockFileSystem.AddFile(filePath, new MockFileData("test"));
 
-            //Assert
+            //Act
             using var memoryStream = new MemoryStream();
             await sut.DownloadModelAsync(runId, memoryStream);
 
+            //Assert
             memoryStream.Should().NotBeNull();
             memoryStream.Position.Should().Be(0);
         }
