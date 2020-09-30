@@ -88,5 +88,14 @@ namespace MLOps.NET.Docker.Interfaces
         /// <param name="manifestName"></param>
         /// <returns></returns>
         Task KubctlApplyAsync(KubernetesSettings kubernetesSettings, string manifestName);
+
+        /// <summary>
+        /// Gets the external IP address of the exposed Kubernetes service
+        /// </summary>
+        /// <param name="kubernetesSettings"></param>
+        /// <param name="experimentName"></param>
+        /// <param name="namespaceName"></param>
+        /// <returns></returns>
+        Task<string> GetServiceExternalIP(KubernetesSettings kubernetesSettings, string experimentName, string namespaceName);
     }
 }

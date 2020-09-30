@@ -127,7 +127,7 @@ namespace MLOps.NET.Tests
             await sut.DeployModelToContainerAsync<ModelInput, ModelOutput>(deploymentTarget, registeredModel, "registeredBy");
 
             //Arrange
-            this.kubernetesContextMock.Verify(x => x.DeployContainerAsync("MyExperiment", deploymentTarget, "imagetag", "myexperiment-test"), Times.Once());
+            this.kubernetesContextMock.Verify(x => x.DeployContainerAsync("MyExperiment", "imagetag", "myexperiment-test"), Times.Once());
         }
 
         [TestMethod]

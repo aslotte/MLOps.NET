@@ -5,6 +5,8 @@ using MLOps.NET.Docker.Settings;
 using MLOps.NET.Exceptions;
 using MLOps.NET.Kubernetes.Settings;
 using System;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Docker
@@ -178,6 +180,46 @@ namespace MLOps.NET.Docker
             catch 
             {
                 //intentionally left empty
+            }
+        }
+
+        public async Task<string> GetServiceExternalIP(KubernetesSettings kubernetesSettings, string experimentName, string namespaceName)
+        {
+            try
+            {
+                Console.WriteLine($"Fetching external IP...");
+
+                int timeout = 3 * 60 * 1000;
+                int timePassed = 0;
+                int interval = 5 * 1000;
+
+                while (timePassed < timeout)
+                {
+                    Thread.Sleep(interval);
+                    timePassed += interval;
+
+                    var command = await Cli.Wrap("kubectl")
+                         .WithArguments($"get service -name {experimentName} --namespace {namespaceName} --kubeconfig {kubernetesSettings.KubeConfigPath}")
+                         .ExecuteBufferedAsync();
+
+                    using StringReader reader = new StringReader(command.StandardOutput);
+
+                    //Skip first line with headers
+                    reader.ReadLine();
+
+                    var externalIP = reader.ReadLine().Split("   ")[3];
+
+                    if (!externalIP.ToLower().Contains("pending"))
+                    {
+                        return externalIP;
+                    }
+                    Console.WriteLine("The external IP address is still pending");
+                }
+                return string.Empty;
+            }
+            catch
+            {
+                return string.Empty;
             }
         }
     }

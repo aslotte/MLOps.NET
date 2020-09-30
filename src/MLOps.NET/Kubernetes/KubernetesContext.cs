@@ -3,6 +3,7 @@ using MLOps.NET.Docker.Settings;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Kubernetes.Interfaces;
 using MLOps.NET.Kubernetes.Settings;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Kubernetes
@@ -30,7 +31,7 @@ namespace MLOps.NET.Kubernetes
             return name;
         }
 
-        public async Task DeployContainerAsync(string experimentName, DeploymentTarget deploymentTarget, string containerToDeploy, string namespaceName)
+        public async Task<string> DeployContainerAsync(string experimentName, string containerToDeploy, string namespaceName)
         {
             await cliExecutor.CreateImagePullSecret(kubernetesSettings, dockerSettings, namespaceName);
 
@@ -39,6 +40,10 @@ namespace MLOps.NET.Kubernetes
 
             await cliExecutor.KubctlApplyAsync(kubernetesSettings, kubernetesSettings.DeployManifestName);
             await cliExecutor.KubctlApplyAsync(kubernetesSettings, kubernetesSettings.ServiceManifestName);
+
+            var externalIP = await cliExecutor.GetServiceExternalIP(kubernetesSettings, experimentName, namespaceName);
+
+            return Path.Combine(externalIP, "/api/Prediction");
         }
     }
 }

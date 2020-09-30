@@ -101,11 +101,9 @@ namespace MLOps.NET.Catalogs
         {
             await BuildAndPushImageAsync<TModelInput, TModelOutput>(registeredModel);
 
-            await DeployContainerToCluster(deploymentTarget, registeredModel);
+            var deploymentUri = await DeployContainerToCluster(deploymentTarget, registeredModel);    
 
-            //TODO: Get the service url and set that in the deployment
-
-            return await this.deploymentRepository.CreateDeploymentAsync(deploymentTarget, registeredModel, deployedBy, deploymentUri: "");
+            return await this.deploymentRepository.CreateDeploymentAsync(deploymentTarget, registeredModel, deployedBy, deploymentUri);
         }
 
         /// <summary>
@@ -116,7 +114,7 @@ namespace MLOps.NET.Catalogs
         /// <param name="deploymentTarget"></param>
         /// <param name="registeredModel"></param>
         /// <returns></returns>
-        private async Task DeployContainerToCluster(DeploymentTarget deploymentTarget, RegisteredModel registeredModel)
+        private async Task<string> DeployContainerToCluster(DeploymentTarget deploymentTarget, RegisteredModel registeredModel)
         {
             AssertKubernetesClusterHasBeenConfigured();
 
@@ -125,7 +123,7 @@ namespace MLOps.NET.Catalogs
 
             var namespaceName = await kubernetesContext.CreateNamespaceAsync(experimentName, deploymentTarget);
 
-            await kubernetesContext.DeployContainerAsync(experimentName, deploymentTarget, imageName, namespaceName);
+            return await kubernetesContext.DeployContainerAsync(experimentName, imageName, namespaceName);
         }
 
         /// <summary>

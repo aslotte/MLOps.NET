@@ -20,10 +20,9 @@ namespace MLOps.NET.Kubernetes.Interfaces
         /// Deploys a container to the configured Kubernetes cluster
         /// </summary>
         /// <param name="experimentName"></param>
-        /// <param name="deploymentTarget"></param>
         /// <param name="imageName"></param>
         /// <param name="namespaceName"></param>
         /// <returns></returns>
-        Task DeployContainerAsync(string experimentName, DeploymentTarget deploymentTarget, string imageName, string namespaceName);
+        Task<string> DeployContainerAsync(string experimentName, string imageName, string namespaceName);
     }
 }

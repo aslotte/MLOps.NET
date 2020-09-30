@@ -87,7 +87,7 @@ spec:
             var imageName = "image-nameWithCaps";
 
             //Act
-            sut.ParameterizeDeploymentManifest(experimentName, imageName);
+            sut.ParameterizeDeploymentManifest(experimentName, imageName, "namespace");
 
             //Assert
             var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
