@@ -29,6 +29,8 @@ namespace MLOps.NET.Tests
             this.runRepositoryMock = new Mock<IRunRepository>();
             this.packageDependencyMock = new Mock<IPackageDependencyIdentifier>();
 
+            packageDependencyMock.Setup(x => x.IdentifyPackageDependencies()).Returns(new List<PackageDependency>());
+
             this.sut = new LifeCycleCatalog(experimentRepositoryMock.Object, runRepositoryMock.Object, clockMock.Object, packageDependencyMock.Object);
         }
 
@@ -97,6 +99,28 @@ namespace MLOps.NET.Tests
 
             //Assert
             this.runRepositoryMock.Verify(x => x.CreateRunAsync(It.IsAny<Guid>(), new List<PackageDependency>(), string.Empty), Times.Once());
+        }
+
+        [TestMethod]
+        public async Task CreateRunAsync_WithDependencies_ShouldProvidePackageDependencies()
+        {
+            //Arrange
+            var dependencies = new List<PackageDependency>
+            {
+                new PackageDependency
+                {
+                    Name = "Microsoft.ML",
+                    Version = "1.5.2"
+                }
+            };
+
+            packageDependencyMock.Setup(x => x.IdentifyPackageDependencies()).Returns(dependencies);
+
+            //Act
+            var runId = await sut.CreateRunAsync(Guid.NewGuid());
+
+            //Assert
+            this.runRepositoryMock.Verify(x => x.CreateRunAsync(It.IsAny<Guid>(), dependencies, string.Empty), Times.Once());
         }
     }
 }
