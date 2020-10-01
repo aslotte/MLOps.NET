@@ -37,5 +37,10 @@
         /// dotnet new template name
         /// </summary>
         public string TemplateName => "mlnet-web-embedded";
+
+        /// <summary>
+        /// Project name
+        /// </summary>
+        public string ProjectName => "ML.NET.Web.Embedded.csproj";
     }
 }

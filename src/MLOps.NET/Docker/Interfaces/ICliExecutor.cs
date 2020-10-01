@@ -1,5 +1,7 @@
 ﻿using MLOps.NET.Docker.Settings;
+using MLOps.NET.Entities.Impl;
 using MLOps.NET.Kubernetes.Settings;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Docker.Interfaces
@@ -15,6 +17,12 @@ namespace MLOps.NET.Docker.Interfaces
         /// <param name="dockerSettings"></param>
         /// <returns></returns>
         Task InstallTemplatePackage(DockerSettings dockerSettings);
+
+        /// <summary>
+        /// Adds package dependencies
+        /// </summary>
+        /// <returns></returns>
+        Task AddPackageDependencies(DockerSettings dockerSettings, List<PackageDependency> packageDependencies);
 
         /// <summary>
         /// Uninstall the dotnet new template package for ML.NET.Templates

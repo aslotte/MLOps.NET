@@ -2,9 +2,11 @@
 using CliWrap.Buffered;
 using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Docker.Settings;
+using MLOps.NET.Entities.Impl;
 using MLOps.NET.Exceptions;
 using MLOps.NET.Kubernetes.Settings;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,6 +31,28 @@ namespace MLOps.NET.Docker
             {
                 throw new TemplateInstallationException($"Unable to install dotnet new template package ML.NET.Templates with version {dockerSettings.TemplatePackageVersion}", ex);
             }
+        }
+
+        ///<inheritdoc cref="ICliExecutor"/>
+        public async Task AddPackageDependencies(DockerSettings dockerSettings, List<PackageDependency> packageDependencies)
+        {
+            var projectPath = Path.Join(dockerSettings.DirectoryName, dockerSettings.ProjectName);
+
+            foreach (var package in packageDependencies)
+            {
+                try
+                {
+                    Console.WriteLine($"Installing dotnet package dependency {package.Name} with version {package.Version}...");
+
+                    await Cli.Wrap("dotnet")
+                        .WithArguments($"add {projectPath} package {package.Name} --version {package.Version}")
+                        .ExecuteBufferedAsync();
+                }
+                catch (Exception ex)
+                {
+                    throw new AddPackageDependencyException($"Unable to add package dependency {package.Name} with version {package.Version}", ex);
+                }
+            }         
         }
 
         ///<inheritdoc cref="ICliExecutor"/>
