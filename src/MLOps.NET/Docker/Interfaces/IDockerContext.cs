@@ -33,6 +33,6 @@ namespace MLOps.NET.Docker.Interfaces
         /// </summary>
         /// <param name="experimentName"></param>
         /// <param name="registeredModel"></param>
-        string ComposeImageTag(string experimentName, RegisteredModel registeredModel);
+        string ComposeImageName(string experimentName, RegisteredModel registeredModel);
     }
 }

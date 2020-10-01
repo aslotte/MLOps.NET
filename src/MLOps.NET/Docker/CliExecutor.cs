@@ -56,19 +56,19 @@ namespace MLOps.NET.Docker
             }
         }
 
-        public async Task RunDockerBuild(string tagName, DockerSettings dockerSettings)
+        public async Task RunDockerBuild(DockerSettings dockerSettings, string imageName)
         {
             try
             {
                 Console.WriteLine("Running docker build...");
 
                 await Cli.Wrap("docker")
-                    .WithArguments($"build --tag {tagName.ToLower()} --file {dockerSettings.DirectoryName}/Dockerfile {dockerSettings.DirectoryName}")
+                    .WithArguments($"build --tag {imageName.ToLower()} --file {dockerSettings.DirectoryName}/Dockerfile {dockerSettings.DirectoryName}")
                     .ExecuteBufferedAsync();
             }
             catch (Exception ex)
             {
-                throw new DockerBuildException($"Unable to run docker build for {tagName}", ex);
+                throw new DockerBuildException($"Unable to run docker build for {imageName}", ex);
             }
         }
 
@@ -89,46 +89,46 @@ namespace MLOps.NET.Docker
             }
         }
 
-        public async Task RunDockerPush(string tagName)
+        public async Task RunDockerPush(string imageName)
         {
             try
             {
                 Console.WriteLine("Running docker push...");
 
                 await Cli.Wrap("docker")
-                    .WithArguments($"push {tagName.ToLower()}")
+                    .WithArguments($"push {imageName.ToLower()}")
                     .ExecuteBufferedAsync();
             }
             catch (Exception ex)
             {
-                throw new DockerPushException($"Unable to run docker push for {tagName}", ex);
+                throw new DockerPushException($"Unable to run docker push for {imageName}", ex);
             }
         }
 
-        public async Task<bool> RunDockerPull(string tagName)
+        public async Task<bool> RunDockerPull(string imageName)
         {
             try
             {
                var command = await Cli.Wrap("docker")
-                    .WithArguments($"pull {tagName.ToLower()}")
+                    .WithArguments($"pull {imageName.ToLower()}")
                     .ExecuteBufferedAsync();
 
                 return command.ExitCode == 0;
             }
             catch (Exception ex)
             {
-                throw new DockerPullException($"Unable to run docker pull for {tagName}", ex);
+                throw new DockerPullException($"Unable to run docker pull for {imageName}", ex);
             }
         }
 
-        public async Task CreateNamespaceAsync(string name, KubernetesSettings kubernetesSettings)
+        public async Task CreateNamespaceAsync(KubernetesSettings kubernetesSettings, string namespaceName)
         {
             try
             {
                 Console.WriteLine("Running kubectl create namespace...");
 
                 var command = await Cli.Wrap("kubectl")
-                     .WithArguments($"create namespace {name.ToLower()} --kubeconfig {kubernetesSettings.KubeConfigPath}")
+                     .WithArguments($"create namespace {namespaceName.ToLower()} --kubeconfig {kubernetesSettings.KubeConfigPath}")
                      .ExecuteBufferedAsync();
             }
             catch
@@ -144,7 +144,7 @@ namespace MLOps.NET.Docker
                 Console.WriteLine("Running kubectl create imagePullSecret...");
 
                 var command = await Cli.Wrap("kubectl")
-                     .WithArguments($"create secret docker-registry {kubernetesSettings.ImagePullSecretName} --namespace {namespaceName} --docker-server {dockerSettings.RegistryName} --docker-username {dockerSettings.Username} --docker-password {dockerSettings.Password} --kubeconfig {kubernetesSettings.KubeConfigPath}")
+                     .WithArguments($"create secret docker-registry {kubernetesSettings.ImagePullSecretName} --namespace {namespaceName.ToLower()} --docker-server {dockerSettings.RegistryName} --docker-username {dockerSettings.Username} --docker-password {dockerSettings.Password} --kubeconfig {kubernetesSettings.KubeConfigPath}")
                      .ExecuteBufferedAsync();
             }
             catch
@@ -169,12 +169,12 @@ namespace MLOps.NET.Docker
             }
         }
 
-        public async Task RemoveDockerImage(string tagName)
+        public async Task RemoveDockerImage(string imageName)
         {
             try
             {
                 await Cli.Wrap("docker")
-                    .WithArguments($"image rm {tagName.ToLower()}")
+                    .WithArguments($"image rm {imageName}")
                     .ExecuteBufferedAsync();
             }
             catch 
@@ -199,7 +199,7 @@ namespace MLOps.NET.Docker
                     timePassed += interval;
 
                     var command = await Cli.Wrap("kubectl")
-                         .WithArguments($"get service -name {experimentName.ToLower()} --namespace {namespaceName} --kubeconfig {kubernetesSettings.KubeConfigPath}")
+                         .WithArguments($"get service -name {experimentName.ToLower()} --namespace {namespaceName.ToLower()} --kubeconfig {kubernetesSettings.KubeConfigPath}")
                          .ExecuteBufferedAsync();
 
                     using StringReader reader = new StringReader(command.StandardOutput);

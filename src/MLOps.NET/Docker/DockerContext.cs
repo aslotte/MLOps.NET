@@ -33,15 +33,15 @@ namespace MLOps.NET.Docker
             await this.CopyModel(model);
             await this.CopySchema(GetSchema);
 
-            var imageTag = ComposeImageTag(experimentName, registeredModel);
+            var imageName = ComposeImageName(experimentName, registeredModel);
 
-            await cliExecutor.RunDockerBuild(imageTag, dockerSettings);
+            await cliExecutor.RunDockerBuild(dockerSettings, imageName);
         }
 
         ///<inheritdoc cref="IDockerContext"/>
         public async Task PushImage(string experimentName, RegisteredModel registeredModel)
         {
-            var imageTag = ComposeImageTag(experimentName, registeredModel);
+            var imageTag = ComposeImageName(experimentName, registeredModel);
 
             await cliExecutor.RunDockerLogin(dockerSettings);
             await cliExecutor.RunDockerPush(imageTag);
@@ -75,7 +75,7 @@ namespace MLOps.NET.Docker
             await fileSystem.File.WriteAllTextAsync($"{directoryPath}/{"ModelOutput.cs"}", modelOutput);
         }
 
-        public string ComposeImageTag(string experimentName, RegisteredModel registeredModel)
+        public string ComposeImageName(string experimentName, RegisteredModel registeredModel)
         {
             var imageName = experimentName.Replace(" ", string.Empty).Trim();
             return $"{dockerSettings.RegistryName}/{imageName}:{registeredModel.Version}".ToLower();

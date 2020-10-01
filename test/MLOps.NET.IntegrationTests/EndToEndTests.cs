@@ -40,7 +40,7 @@ namespace MLOps.NET.IntegrationTests
 
             var registeredModel = await sut.Model.RegisterModel(experimentId, runArtifact.RunArtifactId, "The MLOps.NET Team", "Model Registered By Test");
             var deploymentTarget = await sut.Deployment.CreateDeploymentTargetAsync("Test");
-            await sut.Deployment.DeployModelAsync(deploymentTarget, registeredModel, "The MLOps Team");
+            await sut.Deployment.DeployModelToUriAsync(deploymentTarget, registeredModel, "The MLOps Team");
 
             deploymentTarget = sut.Deployment.GetDeploymentTargets().First();
             var experiment = sut.LifeCycle.GetExperiment("test");

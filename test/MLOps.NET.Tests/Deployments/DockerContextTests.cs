@@ -6,7 +6,6 @@ using MLOps.NET.Docker.Settings;
 using MLOps.NET.Entities.Impl;
 using Moq;
 using System.IO;
-using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Threading.Tasks;
 
@@ -77,8 +76,8 @@ namespace MLOps.NET.Tests.Deployments
             await sut.BuildImage("Test", registeredModel, new MemoryStream(), GetSchema);
 
             //Assert
-            var tagName = $"{dockerSettings.RegistryName}/Test:{registeredModel.Version}".ToLower();
-            mockCliExecutor.Verify(x => x.RunDockerBuild(tagName, dockerSettings), Times.Once());
+            var imageName = $"{dockerSettings.RegistryName}/Test:{registeredModel.Version}".ToLower();
+            mockCliExecutor.Verify(x => x.RunDockerBuild(dockerSettings, imageName), Times.Once());
         }
 
         [TestMethod]
@@ -124,7 +123,7 @@ namespace MLOps.NET.Tests.Deployments
             };
 
             //Act
-            var imageTag = sut.ComposeImageTag("Test Experiment Name", registeredModel);
+            var imageTag = sut.ComposeImageName("Test Experiment Name", registeredModel);
 
             //Assert
             imageTag.Should().Be("registry/testexperimentname:1");

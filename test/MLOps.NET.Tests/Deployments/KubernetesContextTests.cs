@@ -63,7 +63,7 @@ namespace MLOps.NET.Tests.Deployments
 
             //Assert
             var expectedName = $"{experimentName}-{deploymentTarget.Name}".ToLower();
-            this.mockCliExecutor.Verify(x => x.CreateNamespaceAsync(expectedName, kubernetesSettings), Times.Once());
+            this.mockCliExecutor.Verify(x => x.CreateNamespaceAsync(kubernetesSettings, expectedName), Times.Once());
         }
 
         [TestMethod]
@@ -144,6 +144,41 @@ namespace MLOps.NET.Tests.Deployments
 
             //Assert
             this.mockManifestParameterizator.Verify(x => x.ParameterizeDeploymentManifest(experimentName, imageName, namespaceName), Times.Once());
+        }
+
+        [TestMethod]
+        public async Task DeployContainerAsync_ShouldCallGetExternalIP()
+        {
+            //Arrange
+            var experimentName = "experiment";
+            var deploymentTarget = new DeploymentTarget("Test");
+            var imageName = "image123";
+            var namespaceName = "experiment-test";
+
+            //Act
+            await this.sut.DeployContainerAsync(experimentName, imageName, namespaceName);
+
+            //Assert
+            this.mockCliExecutor.Verify(x => x.GetServiceExternalIPAsync(kubernetesSettings, experimentName, namespaceName), Times.Once());
+        }
+
+        [TestMethod]
+        public async Task DeployContainerAsync_ShouldConstructExternalIPAddressCorrectly()
+        {
+            //Arrange
+            var experimentName = "experiment";
+            var deploymentTarget = new DeploymentTarget("Test");
+            var imageName = "image123";
+            var namespaceName = "experiment-test";
+
+            this.mockCliExecutor.Setup(x => x.GetServiceExternalIPAsync(kubernetesSettings, experimentName, namespaceName))
+                .Returns(Task.FromResult("127.0.0.1"));
+
+            //Act
+            var externalIp = await this.sut.DeployContainerAsync(experimentName, imageName, namespaceName);
+
+            //Assert
+            externalIp.Should().Be("http://127.0.0.1/api/Prediction");
         }
     }
 }

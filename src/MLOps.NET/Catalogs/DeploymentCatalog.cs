@@ -2,7 +2,6 @@
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Extensions;
 using MLOps.NET.Kubernetes.Interfaces;
-using MLOps.NET.Kubernetes.Settings;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Deployments;
 using MLOps.NET.Storage.Interfaces;
@@ -38,7 +37,7 @@ namespace MLOps.NET.Catalogs
             IModelRepository modelRepository,
             IExperimentRepository experimentRepository,
             IDockerContext dockerContext,
-            IKubernetesContext kubernetesContext, 
+            IKubernetesContext kubernetesContext,
             ISchemaGenerator schemaGenerator)
         {
             this.deploymentRepository = deploymentRepository;
@@ -69,14 +68,13 @@ namespace MLOps.NET.Catalogs
         }
 
         /// <summary>
-        /// Deploys a registered model to a URI
+        /// Deploys a registered model to an URI so that it can be consumed by e.g. an ASP.NET Core Web App
         /// </summary>
         /// <param name="deploymentTarget"></param>
         /// <param name="registeredModel"></param>
         /// <param name="deployedBy"></param>
-        /// <returns>A deployment</returns>
         /// <returns></returns>
-        public async Task<Deployment> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy)
+        public async Task<Deployment> DeployModelToUriAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy)
         {
             var experiment = this.experimentRepository.GetExperiment(registeredModel.ExperimentId);
             var deploymentUri = await this.modelRepository.DeployModelAsync(deploymentTarget, registeredModel, experiment);
@@ -85,17 +83,17 @@ namespace MLOps.NET.Catalogs
         }
 
         /// <summary>
-        /// Deploys a model to a container in a cluster by
-        /// - Building an ASP.NET Core Web App to wrap around the ML.NET Model
-        /// - Builds a Docker Image based on the project
-        /// - Pushes the image to the registry defined in UseContainerRegistry
-        /// - Deploys the model to a cluster defined in UseKubernetes
+        /// Deploys a model to a Docker container in a Kubernetes Cluster using the following steps
+        /// - Generates an ASP.NET Core API to serve the model via dynamically generated ModelInput and ModelOutput
+        /// - Builds a Docker Image
+        /// - Pushes the Docker Image to the registry defined in UseContainerRegistry
+        /// - Deploys the Docker Image to a Kubernetes cluster defined in UseKubernetes
         /// </summary>
         /// <param name="deploymentTarget"></param>
         /// <param name="registeredModel"></param>
         /// <param name="deployedBy"></param>
         /// <returns></returns>
-        public async Task<Deployment> DeployModelToContainerAsync<TModelInput, TModelOutput>(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy) 
+        public async Task<Deployment> DeployModelToKubernetesAsync<TModelInput, TModelOutput>(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy)
             where TModelInput : class
             where TModelOutput : class
         {
@@ -107,29 +105,8 @@ namespace MLOps.NET.Catalogs
         }
 
         /// <summary>
-        /// Deploys a container to a Kubernetes cluster configured in the MLOpsBuilder.
-        /// The container will be deployed into the 
-        /// namespace {experimentName}-{deploymentTargetName}
-        /// </summary>
-        /// <param name="deploymentTarget"></param>
-        /// <param name="registeredModel"></param>
-        /// <returns></returns>
-        private async Task<string> DeployContainerToCluster(DeploymentTarget deploymentTarget, RegisteredModel registeredModel)
-        {
-            AssertKubernetesClusterHasBeenConfigured();
-
-            var experimentName = experimentRepository.GetExperiment(registeredModel.ExperimentId).ExperimentName;
-            var imageName = dockerContext.ComposeImageTag(experimentName, registeredModel);
-
-            var namespaceName = await kubernetesContext.CreateNamespaceAsync(experimentName, deploymentTarget);
-
-            return await kubernetesContext.DeployContainerAsync(experimentName, imageName, namespaceName);
-        }
-
-        /// <summary>
-        /// Builds a docker image for an ASP.NET Core Web App with an ML.NET model
-        /// embedded and pushes it to the registry defined in UseContainerRegistry
-        /// Utilizes the TModelInput and TModelOutput as the schema
+        /// - Builds a Docker Image for an ASP.NET Core App using <typeparamref name="TModelInput"/> and <typeparamref name="TModelOutput"/>
+        /// - Pushes the Docker Image to the registry defined in UseContainerRegistry
         /// </summary>
         /// <param name="registeredModel"></param>
         /// <returns></returns>
@@ -155,7 +132,7 @@ namespace MLOps.NET.Catalogs
         }
 
         /// <summary>
-        /// Returns the URI to a deployed model
+        /// Get the deployment URI
         /// </summary>
         /// <param name="experimentId"></param>
         /// <param name="deploymentTarget"></param>
@@ -175,6 +152,18 @@ namespace MLOps.NET.Catalogs
         public List<Deployment> GetDeployments(Guid experimentId)
         {
             return this.deploymentRepository.GetDeployments(experimentId);
+        }
+
+        private async Task<string> DeployContainerToCluster(DeploymentTarget deploymentTarget, RegisteredModel registeredModel)
+        {
+            AssertKubernetesClusterHasBeenConfigured();
+
+            var experimentName = experimentRepository.GetExperiment(registeredModel.ExperimentId).ExperimentName;
+            var imageName = dockerContext.ComposeImageName(experimentName, registeredModel);
+
+            var namespaceName = await kubernetesContext.CreateNamespaceAsync(experimentName, deploymentTarget);
+
+            return await kubernetesContext.DeployContainerAsync(experimentName, imageName, namespaceName);
         }
 
         private void AssertContainerRegistryHasBeenConfigured()

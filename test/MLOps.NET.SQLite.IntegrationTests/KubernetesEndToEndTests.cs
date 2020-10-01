@@ -71,7 +71,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
             var deploymentTarget = await sut.Deployment.CreateDeploymentTargetAsync("Test");
 
             //Act
-            var deployment = await sut.Deployment.DeployModelToContainerAsync<ModelInput, ModelOutput>(deploymentTarget, registeredModel, string.Empty);
+            var deployment = await sut.Deployment.DeployModelToKubernetesAsync<ModelInput, ModelOutput>(deploymentTarget, registeredModel, string.Empty);
 
             //Assert
             var response = await CallDeployedApi(deployment);

@@ -60,7 +60,7 @@ namespace MLOps.NET.IntegrationTests
             var deploymentTarget = await sut.Deployment.CreateDeploymentTargetAsync("Prod");
 
             //Act
-            await sut.Deployment.DeployModelAsync(deploymentTarget, registeredModel, "By me");
+            await sut.Deployment.DeployModelToUriAsync(deploymentTarget, registeredModel, "By me");
 
             //Assert
             var deployment = sut.Deployment.GetDeployments(registeredModel.ExperimentId).First();
@@ -80,8 +80,8 @@ namespace MLOps.NET.IntegrationTests
             var testDeploymentTarget = await sut.Deployment.CreateDeploymentTargetAsync("Test");
             var prodDeploymentTarget = await sut.Deployment.CreateDeploymentTargetAsync("Prod");
 
-            await sut.Deployment.DeployModelAsync(testDeploymentTarget, registeredModel, "By me");
-            await sut.Deployment.DeployModelAsync(prodDeploymentTarget, registeredModel, "By me");
+            await sut.Deployment.DeployModelToUriAsync(testDeploymentTarget, registeredModel, "By me");
+            await sut.Deployment.DeployModelToUriAsync(prodDeploymentTarget, registeredModel, "By me");
 
             //Act
             registeredModel = sut.Model.GetLatestRegisteredModel(registeredModel.ExperimentId);

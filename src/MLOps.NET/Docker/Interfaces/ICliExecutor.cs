@@ -32,10 +32,10 @@ namespace MLOps.NET.Docker.Interfaces
         /// <summary>
         /// Runs docker build
         /// </summary>
-        /// <param name="tagName"></param>
+        /// <param name="imageName"></param>
         /// <param name="dockerSettings"></param>
         /// <returns></returns>
-        Task RunDockerBuild(string tagName, DockerSettings dockerSettings);
+        Task RunDockerBuild(DockerSettings dockerSettings, string imageName);
 
         /// <summary>
         /// Runs docker login if username and password have been provided
@@ -47,31 +47,31 @@ namespace MLOps.NET.Docker.Interfaces
         /// <summary>
         /// Runs docker push
         /// </summary>
-        /// <param name="tagName"></param>
+        /// <param name="imageName"></param>
         /// <returns></returns>
-        Task RunDockerPush(string tagName);
+        Task RunDockerPush(string imageName);
 
         /// <summary>
         /// Runs docker pull
         /// </summary>
-        /// <param name="tagName"></param>
+        /// <param name="imageName"></param>
         /// <returns>True if image exists</returns>
-        Task<bool> RunDockerPull(string tagName);
+        Task<bool> RunDockerPull(string imageName);
 
         /// <summary>
         /// Runs docker image rm (remove image)
         /// </summary>
-        /// <param name="tagName"></param>
+        /// <param name="imageName"></param>
         /// <returns></returns>
-        Task RemoveDockerImage(string tagName);
+        Task RemoveDockerImage(string imageName);
 
         /// <summary>
         /// Runs kubectl create namespace
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="namespaceName"></param>
         /// <param name="kubernetesSettings"></param>
         /// <returns></returns>
-        Task CreateNamespaceAsync(string name, KubernetesSettings kubernetesSettings);
+        Task CreateNamespaceAsync(KubernetesSettings kubernetesSettings, string namespaceName);
 
         /// <summary>
         /// Creates an image pull secret for a Kubernetes namespace

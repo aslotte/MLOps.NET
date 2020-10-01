@@ -3,7 +3,6 @@ using MLOps.NET.Docker.Settings;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Kubernetes.Interfaces;
 using MLOps.NET.Kubernetes.Settings;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Kubernetes
@@ -25,17 +24,17 @@ namespace MLOps.NET.Kubernetes
 
         public async Task<string> CreateNamespaceAsync(string experimentName, DeploymentTarget deploymentTarget)
         {
-            var name = $"{experimentName}-{deploymentTarget.Name}".ToLower();
+            var namespaceName = $"{experimentName}-{deploymentTarget.Name}".ToLower();
 
-            await cliExecutor.CreateNamespaceAsync(name, kubernetesSettings);
-            return name;
+            await cliExecutor.CreateNamespaceAsync(kubernetesSettings, namespaceName);
+            return namespaceName;
         }
 
-        public async Task<string> DeployContainerAsync(string experimentName, string containerToDeploy, string namespaceName)
+        public async Task<string> DeployContainerAsync(string experimentName, string imageName, string namespaceName)
         {
             await cliExecutor.CreateImagePullSecret(kubernetesSettings, dockerSettings, namespaceName);
 
-            manifestParameterizator.ParameterizeDeploymentManifest(experimentName, containerToDeploy, namespaceName);
+            manifestParameterizator.ParameterizeDeploymentManifest(experimentName, imageName, namespaceName);
             manifestParameterizator.ParameterizeServiceManifest(experimentName, namespaceName);
 
             await cliExecutor.KubctlApplyAsync(kubernetesSettings, kubernetesSettings.DeployManifestName);
