@@ -5,7 +5,7 @@ namespace MLOps.NET.Entities.Impl
     /// <summary>
     /// Entity holding information about a package dependency
     /// </summary>
-    public sealed class PackageDepedency
+    public sealed class PackageDependency
     {
         /// <summary>
         /// PackageDepedencyId

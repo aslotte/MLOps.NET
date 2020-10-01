@@ -1,10 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Catalogs;
 using MLOps.NET.Entities.Impl;
+using MLOps.NET.Services.Interfaces;
 using MLOps.NET.Storage;
 using MLOps.NET.Utilities;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Tests
@@ -16,6 +18,7 @@ namespace MLOps.NET.Tests
         private Mock<IClock> clockMock;
         private Mock<IExperimentRepository> experimentRepositoryMock;
         private Mock<IRunRepository> runRepositoryMock;
+        private Mock<IPackageDependencyIdentifier> packageDependencyMock;
         private LifeCycleCatalog sut;
 
         [TestInitialize]
@@ -24,7 +27,9 @@ namespace MLOps.NET.Tests
             this.clockMock = new Mock<IClock>();
             this.experimentRepositoryMock = new Mock<IExperimentRepository>();
             this.runRepositoryMock = new Mock<IRunRepository>();
-            this.sut = new LifeCycleCatalog(experimentRepositoryMock.Object, runRepositoryMock.Object, clockMock.Object);
+            this.packageDependencyMock = new Mock<IPackageDependencyIdentifier>();
+
+            this.sut = new LifeCycleCatalog(experimentRepositoryMock.Object, runRepositoryMock.Object, clockMock.Object, packageDependencyMock.Object);
         }
 
         [TestMethod]
@@ -80,7 +85,7 @@ namespace MLOps.NET.Tests
             var runId = await sut.CreateRunAsync(Guid.NewGuid(), gitCommitHash);
 
             //Assert
-            this.runRepositoryMock.Verify(x => x.CreateRunAsync(It.IsAny<Guid>(), gitCommitHash), Times.Once());
+            this.runRepositoryMock.Verify(x => x.CreateRunAsync(It.IsAny<Guid>(), new List<PackageDependency>(), gitCommitHash), Times.Once());
         }
 
         [TestMethod]
@@ -91,7 +96,7 @@ namespace MLOps.NET.Tests
             var runId = await sut.CreateRunAsync(Guid.NewGuid());
 
             //Assert
-            this.runRepositoryMock.Verify(x => x.CreateRunAsync(It.IsAny<Guid>(), string.Empty), Times.Once());
+            this.runRepositoryMock.Verify(x => x.CreateRunAsync(It.IsAny<Guid>(), new List<PackageDependency>(), string.Empty), Times.Once());
         }
     }
 }

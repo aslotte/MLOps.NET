@@ -14,10 +14,11 @@ namespace MLOps.NET.Storage
         /// Creates a unqiue run for a given experiment
         /// </summary>
         /// <param name="experimentId"></param>
+        /// <param name="packageDepedencies"></param>
         /// <param name="gitCommitHash">Optional, sets the linked git commit hash</param>
         /// <returns>Created run</returns>
         /// <returns></returns>
-        Task<Run> CreateRunAsync(Guid experimentId, string gitCommitHash = "");
+        Task<Run> CreateRunAsync(Guid experimentId, List<PackageDependency> packageDepedencies, string gitCommitHash = "");
 
         /// <summary>
         /// Get all runs by experiment id

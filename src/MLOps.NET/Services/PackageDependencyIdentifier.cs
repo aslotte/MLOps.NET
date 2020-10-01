@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyModel;
+using MLOps.NET.Entities.Impl;
 using MLOps.NET.Services.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace MLOps.NET.Services
 {
     internal sealed class PackageDependencyIdentifier : IPackageDependencyIdentifier
     {
-        public List<(string Name, string Version)> IdentifyPackageDependencies()
+        public List<PackageDependency> IdentifyPackageDependencies()
         {
             return DependencyContext.Load(Assembly.GetEntryAssembly())
                 .CompileLibraries
@@ -16,7 +17,11 @@ namespace MLOps.NET.Services
                 .Where(x => x.Type == "package")
                 .Select(x =>
                 {
-                    return (x.Name, x.Version);
+                    return new PackageDependency
+                    {
+                        Name = x.Name,
+                        Version = x.Version
+                    };
                 }).ToList();
         }
     }

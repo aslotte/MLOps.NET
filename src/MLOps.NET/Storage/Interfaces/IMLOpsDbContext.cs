@@ -69,7 +69,7 @@ namespace MLOps.NET.Storage.Interfaces
         /// <summary>
         /// Package Dependencies
         /// </summary>
-        DbSet<PackageDepedency> PackageDependencies { get; set; }
+        DbSet<PackageDependency> PackageDependencies { get; set; }
 
         /// <summary>
         /// Save changes

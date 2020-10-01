@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using MLOps.NET.Entities.Impl;
+using System.Collections.Generic;
 
 namespace MLOps.NET.Services.Interfaces
 {
@@ -11,6 +12,6 @@ namespace MLOps.NET.Services.Interfaces
         /// Identify ML.NET Package Dependencies
         /// </summary>
         /// <returns></returns>
-        List<(string Name, string Version)> IdentifyPackageDependencies();
+        List<PackageDependency> IdentifyPackageDependencies();
     }
 }

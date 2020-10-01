@@ -57,7 +57,7 @@ namespace MLOps.NET.Entities.Impl
         /// <summary>
         /// Package dependencies
         /// </summary>
-        public List<PackageDepedency> PackageDepedencies { get; set; }
+        public List<PackageDependency> PackageDepedencies { get; set; }
 
         /// <summary>
         /// TrainingTime

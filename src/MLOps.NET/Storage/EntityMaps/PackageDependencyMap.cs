@@ -4,9 +4,9 @@ using MLOps.NET.Entities.Impl;
 
 namespace MLOps.NET.Storage.EntityMaps
 {
-    internal sealed class PackageDependencyMap : IEntityTypeConfiguration<PackageDepedency>
+    internal sealed class PackageDependencyMap : IEntityTypeConfiguration<PackageDependency>
     {
-        public void Configure(EntityTypeBuilder<PackageDepedency> builder)
+        public void Configure(EntityTypeBuilder<PackageDependency> builder)
         {
             builder.Property(x => x.Name).IsRequired();
             builder.Property(x => x.Version).IsRequired();
