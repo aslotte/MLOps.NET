@@ -55,6 +55,11 @@ namespace MLOps.NET.Entities.Impl
         public List<RunArtifact> RunArtifacts { get; set; } = new List<RunArtifact>();
 
         /// <summary>
+        /// Package dependencies
+        /// </summary>
+        public List<PackageDepedency> PackageDepedencies { get; set; }
+
+        /// <summary>
         /// TrainingTime
         /// </summary>
         public TimeSpan? TrainingTime { get; set; }

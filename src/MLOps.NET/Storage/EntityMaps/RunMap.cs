@@ -27,6 +27,11 @@ namespace MLOps.NET.Storage.EntityMaps
                 .HasForeignKey(x => x.RunId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasMany(x => x.PackageDepedencies)
+                .WithOne()
+                .HasForeignKey(x => x.RunId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.HasOne(x => x.ConfusionMatrix)
                 .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);

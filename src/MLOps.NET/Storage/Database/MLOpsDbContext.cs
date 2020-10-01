@@ -79,5 +79,8 @@ namespace MLOps.NET.Storage.Database
 
         ///<inheritdoc cref="IMLOpsDbContext"/>
         public DbSet<Deployment> Deployments { get; set; }
+
+        ///<inheritdoc cref="IMLOpsDbContext"/>
+        public DbSet<PackageDepedency> PackageDependencies { get; set; }
     }
 }
