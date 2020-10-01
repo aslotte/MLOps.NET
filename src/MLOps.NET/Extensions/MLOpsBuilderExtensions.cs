@@ -1,8 +1,13 @@
 ﻿using MLOps.NET.Docker;
+using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Docker.Settings;
+using MLOps.NET.Kubernetes;
+using MLOps.NET.Kubernetes.Interfaces;
+using MLOps.NET.Kubernetes.Settings;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Deployments;
 using System;
+using System.IO;
 using System.IO.Abstractions;
 
 namespace MLOps.NET.Extensions
@@ -49,8 +54,8 @@ namespace MLOps.NET.Extensions
                 Username = username
             };
 
-            var dockerContext = new DockerContext(new CliExecutor(settings), new FileSystem(), settings);
-            builder.UseDockerContext(dockerContext);
+            var dockerContext = new DockerContext(new CliExecutor(), new FileSystem(), settings);
+            builder.UseDockerContext(dockerContext, settings);
 
             return builder;
         }
@@ -73,10 +78,51 @@ namespace MLOps.NET.Extensions
                 RegistryName = registryName,
             };
 
-            var dockerContext = new DockerContext(new CliExecutor(settings), new FileSystem(), settings);
-            builder.UseDockerContext(dockerContext);
+            var dockerContext = new DockerContext(new CliExecutor(), new FileSystem(), settings);
+            builder.UseDockerContext(dockerContext, settings);
 
             return builder;
+        }
+
+        /// <summary>
+        /// Configures to use Kubernetes with the full path to the kubeconfig or the kubeconfig content
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="kubeconfigPathOrContent"></param>
+        /// <returns></returns>
+        public static MLOpsBuilder UseKubernetes(this MLOpsBuilder builder, string kubeconfigPathOrContent)
+        {
+            if (string.IsNullOrEmpty(kubeconfigPathOrContent)) throw new InvalidOperationException($"{nameof(kubeconfigPathOrContent)} cannot be empty");
+
+            var settings = new KubernetesSettings
+            {
+                KubeConfigPath = SetKubeConfig(kubeconfigPathOrContent)
+            };
+
+            IKubernetesContext CreateKubernetesContext(DockerSettings dockerSettings)
+            {
+                return new KubernetesContext(new CliExecutor(), settings, dockerSettings, new ManifestParameterizator(new FileSystem(), settings));
+            };
+
+            builder.UseKubernetesContext(CreateKubernetesContext);
+
+            return builder;
+        }
+
+        /// <summary>
+        /// It is possible that the Kubeconfig can be passed in as either a path to the file
+        /// or as the content it self, in which place we need to store it to a file first
+        /// </summary>
+        /// <param name="kubeconfigPathOrContent"></param>
+        /// <returns></returns>
+        private static string SetKubeConfig(string kubeconfigPathOrContent)
+        {
+            if (Path.IsPathFullyQualified(kubeconfigPathOrContent)) return kubeconfigPathOrContent;
+
+            var kubeConfigPath = Path.Combine(Directory.GetCurrentDirectory(), "kubeconfig");
+            File.WriteAllText(kubeConfigPath, kubeconfigPathOrContent);
+
+            return kubeConfigPath;
         }
     }
 }

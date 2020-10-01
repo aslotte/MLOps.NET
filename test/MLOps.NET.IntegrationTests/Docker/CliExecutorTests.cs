@@ -11,12 +11,14 @@ namespace MLOps.NET.IntegrationTests.Docker
     [TestClass]
     public class CliExecutorTests
     {
+        private DockerSettings dockerSettings;
         private CliExecutor sut;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            this.sut = new CliExecutor(new DockerSettings());
+            this.dockerSettings = new DockerSettings();
+            this.sut = new CliExecutor();
         }
 
         [TestMethod]
@@ -24,10 +26,10 @@ namespace MLOps.NET.IntegrationTests.Docker
         {
             //Arrange
             await sut.UninstallTemplatePackage();
-            await sut.InstallTemplatePackage();
+            await sut.InstallTemplatePackage(dockerSettings);
 
             //Act
-            await sut.CreateTemplateProject();
+            await sut.CreateTemplateProject(dockerSettings);
 
             //Assert
             File.Exists("image/ML.NET.Web.Embedded.csproj").Should().BeTrue();

@@ -49,6 +49,23 @@ namespace MLOps.NET.AWS.IntegrationTests
         }
 
         [TestMethod]
+        public async Task UploadModelAsync_ShouldSetPositionToZero()
+        {
+            //Arrange       
+            var runId = Guid.NewGuid();
+
+            //Act
+            await sut.UploadModelAsync(runId, @"Data/model.txt");
+
+            //Assert
+            using var memoryStream = new MemoryStream();
+            await sut.DownloadModelAsync(runId, memoryStream);
+
+            memoryStream.Should().NotBeNull();
+            memoryStream.Position.Should().Be(0);
+        }
+
+        [TestMethod]
         public async Task DeployModelAsync_ShouldDeployModel()
         {
             //Arrange

@@ -1,11 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using FluentAssertions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Docker;
 using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Docker.Settings;
 using MLOps.NET.Entities.Impl;
 using Moq;
 using System.IO;
-using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Tests.Deployments
@@ -15,6 +16,7 @@ namespace MLOps.NET.Tests.Deployments
     {
         private DockerSettings dockerSettings;
         private Mock<ICliExecutor> mockCliExecutor;
+        private MockFileSystem mockFileSystem;
         private DockerContext sut;
 
         [TestInitialize]
@@ -25,7 +27,8 @@ namespace MLOps.NET.Tests.Deployments
                 RegistryName = "registry"
             };
             this.mockCliExecutor = new Mock<ICliExecutor>();
-            this.sut = new DockerContext(mockCliExecutor.Object, new FileSystem(), dockerSettings);
+            this.mockFileSystem = new MockFileSystem();
+            this.sut = new DockerContext(mockCliExecutor.Object, mockFileSystem, dockerSettings);
         }
 
         [TestMethod]
@@ -38,10 +41,10 @@ namespace MLOps.NET.Tests.Deployments
             };
 
             //Act
-            await sut.BuildImage("Test", registeredModel, new MemoryStream());
+            await sut.BuildImage("Test", registeredModel, new MemoryStream(), GetSchema);
 
             //Assert
-            mockCliExecutor.Verify(x => x.InstallTemplatePackage(), Times.Once());
+            mockCliExecutor.Verify(x => x.InstallTemplatePackage(dockerSettings), Times.Once());
         }
 
         [TestMethod]
@@ -54,10 +57,10 @@ namespace MLOps.NET.Tests.Deployments
             };
 
             //Act
-            await sut.BuildImage("Test", registeredModel, new MemoryStream());
+            await sut.BuildImage("Test", registeredModel, new MemoryStream(), GetSchema);
 
             //Assert
-            mockCliExecutor.Verify(x => x.CreateTemplateProject(), Times.Once());
+            mockCliExecutor.Verify(x => x.CreateTemplateProject(dockerSettings), Times.Once());
         }
 
         [TestMethod]
@@ -70,11 +73,11 @@ namespace MLOps.NET.Tests.Deployments
             };
 
             //Act
-            await sut.BuildImage("Test", registeredModel, new MemoryStream());
+            await sut.BuildImage("Test", registeredModel, new MemoryStream(), GetSchema);
 
             //Assert
-            var tagName = $"{dockerSettings.RegistryName}/Test:{registeredModel.Version}";
-            mockCliExecutor.Verify(x => x.RunDockerBuild(tagName), Times.Once());
+            var imageName = $"{dockerSettings.RegistryName}/Test:{registeredModel.Version}".ToLower();
+            mockCliExecutor.Verify(x => x.RunDockerBuild(dockerSettings, imageName), Times.Once());
         }
 
         [TestMethod]
@@ -90,7 +93,7 @@ namespace MLOps.NET.Tests.Deployments
             await sut.PushImage("Test", registeredModel);
 
             //Assert
-            mockCliExecutor.Verify(x => x.RunDockerLogin(), Times.Once());
+            mockCliExecutor.Verify(x => x.RunDockerLogin(dockerSettings), Times.Once());
         }
 
         [TestMethod]
@@ -106,8 +109,26 @@ namespace MLOps.NET.Tests.Deployments
             await sut.PushImage("Test", registeredModel);
 
             //Assert
-            var tagName = $"{dockerSettings.RegistryName}/Test:{registeredModel.Version}";
+            var tagName = $"{dockerSettings.RegistryName}/Test:{registeredModel.Version}".ToLower();
             mockCliExecutor.Verify(x => x.RunDockerPush(tagName), Times.Once());
         }
+
+        [TestMethod]
+        public void ComposeTag_ShouldRemoveSpacesAndReturnToLower()
+        {
+            //Arrange
+            var registeredModel = new RegisteredModel
+            {
+                Version = 1
+            };
+
+            //Act
+            var imageTag = sut.ComposeImageName("Test Experiment Name", registeredModel);
+
+            //Assert
+            imageTag.Should().Be("registry/testexperimentname:1");
+        }
+
+        private (string ModelInput, string ModelOutput) GetSchema() => ("input", "output");
     }
 }

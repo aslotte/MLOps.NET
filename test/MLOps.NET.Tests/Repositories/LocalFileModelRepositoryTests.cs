@@ -73,6 +73,24 @@ namespace MLOps.NET.Tests
         }
 
         [TestMethod]
+        public async Task DownloadModelAsync_ShouldSetPositionToZero()
+        {
+            //Arrange       
+            var runId = Guid.NewGuid();
+
+            var filePath = mockFileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mlops", "model-repository", $"{runId}.zip");
+            mockFileSystem.AddFile(filePath, new MockFileData("test"));
+
+            //Act
+            using var memoryStream = new MemoryStream();
+            await sut.DownloadModelAsync(runId, memoryStream);
+
+            //Assert
+            memoryStream.Should().NotBeNull();
+            memoryStream.Position.Should().Be(0);
+        }
+
+        [TestMethod]
         public async Task DownloadModel_ThrowsIfFileDoesNotExist()
         {
             var folderPath = mockFileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mlops", "model-repository");

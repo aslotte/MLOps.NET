@@ -21,6 +21,11 @@ jobs:
         image: registry:2
         ports:
           - 5000:5000
+    env:
+      ContainerAzure__RegistryName: ${{ secrets.AZURE_REGISTRYNAME }}
+      ContainerAzure__Username: ${{ secrets.AZURE_REGISTRYUSERNAME }}
+      ContainerAzure__Password: ${{ secrets.AZURE_REGISTRYPASSWORD }}
+      KubernetesAzure__KubeConfig: ${{ secrets.AZURE_KUBECONFIG }}
 
     steps:
     - uses: actions/checkout@v2

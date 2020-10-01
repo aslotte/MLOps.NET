@@ -4,7 +4,7 @@ using ICSharpCode.Decompiler.TypeSystem;
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
+using System.Text;
 
 namespace MLOps.NET.Storage.Deployments
 {
@@ -21,10 +21,41 @@ namespace MLOps.NET.Storage.Deployments
                                      .FirstOrDefault();
 
             if (typeInfo == null)
+            {
                 throw new Exception($"Type {typeof(T).FullName} does not exist in the app domain");
+            }
 
-            var decompiler = new CSharpDecompiler(Path.GetFileName(typeInfo.Assembly.Location), new DecompilerSettings() { ThrowOnAssemblyResolveErrors = false });
-            return decompiler.DecompileTypeAsString(new FullTypeName(typeInfo.FullName)).Replace($"class {typeof(T).Name}", $"class {className}");
+            var settings = new DecompilerSettings 
+            { 
+                ThrowOnAssemblyResolveErrors = false 
+            };
+            var fileName = Path.GetFileName(typeInfo.Assembly.Location);
+
+            var decompiler = new CSharpDecompiler(fileName, settings);
+
+            var definition = decompiler.DecompileTypeAsString(new FullTypeName(typeInfo.FullName));
+            definition = definition.Replace($"class {typeof(T).Name}", $"class {className}");
+
+            return ReplaceNamespace(definition);
+        }
+
+        private string ReplaceNamespace(string definition)
+        {
+            var newDefinition = new StringBuilder();
+
+            definition.Split(Environment.NewLine).ToList().ForEach(row =>
+            {
+                if (row.StartsWith("namespace"))
+                {
+                    newDefinition.AppendLine("namespace ML.NET.Web.Embedded.Schema");               
+                }
+                else
+                {
+                    newDefinition.AppendLine(row);
+                }
+            });
+
+            return newDefinition.ToString(); ;
         }
     }
 }
