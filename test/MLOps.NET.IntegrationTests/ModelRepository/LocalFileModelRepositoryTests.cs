@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Entities.Impl;
+using MLOps.NET.Services;
 using MLOps.NET.Storage;
-using MLOps.NET.Storage.Deployments;
 using System;
 using System.IO;
 using System.IO.Abstractions;
@@ -79,7 +79,7 @@ namespace MLOps.NET.IntegrationTests.ModelRepository
             //Assert
             fileInfo.Refresh();
             var lastUpdateTimeNewModel = fileInfo.LastAccessTime;
-            
+
             File.Exists(deployedPath).Should().BeTrue();
             lastUpdateTime.Ticks.Should().BeLessThan(lastUpdateTimeNewModel.Ticks);
         }

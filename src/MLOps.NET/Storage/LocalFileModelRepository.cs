@@ -1,5 +1,5 @@
 ﻿using MLOps.NET.Entities.Impl;
-using MLOps.NET.Storage.Deployments;
+using MLOps.NET.Services.Interfaces;
 using System;
 using System.IO;
 using System.IO.Abstractions;
@@ -14,8 +14,8 @@ namespace MLOps.NET.Storage
         private readonly IFileSystem fileSystem;
         private readonly IModelPathGenerator modelPathGenerator;
 
-        public LocalFileModelRepository(IFileSystem fileSystem, 
-            IModelPathGenerator modelPathGenerator, 
+        public LocalFileModelRepository(IFileSystem fileSystem,
+            IModelPathGenerator modelPathGenerator,
             string destinationFolder = null)
         {
             if (string.IsNullOrWhiteSpace(destinationFolder))

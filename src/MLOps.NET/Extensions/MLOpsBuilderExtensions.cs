@@ -1,11 +1,10 @@
 ﻿using MLOps.NET.Docker;
-using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Docker.Settings;
 using MLOps.NET.Kubernetes;
 using MLOps.NET.Kubernetes.Interfaces;
 using MLOps.NET.Kubernetes.Settings;
+using MLOps.NET.Services;
 using MLOps.NET.Storage;
-using MLOps.NET.Storage.Deployments;
 using System;
 using System.IO;
 using System.IO.Abstractions;

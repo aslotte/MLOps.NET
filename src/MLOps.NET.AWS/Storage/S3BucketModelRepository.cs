@@ -1,7 +1,7 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
 using MLOps.NET.Entities.Impl;
-using MLOps.NET.Storage.Deployments;
+using MLOps.NET.Services.Interfaces;
 using System;
 using System.IO;
 using System.Linq;

@@ -1,6 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using MLOps.NET.Entities.Impl;
-using MLOps.NET.Storage.Deployments;
+using MLOps.NET.Services.Interfaces;
 using System;
 using System.IO;
 using System.Threading.Tasks;

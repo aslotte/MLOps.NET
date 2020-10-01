@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MLOps.NET.Storage.Deployments;
+using MLOps.NET.Services;
 using MLOps.NET.Tests.Common.Data;
 
 namespace MLOps.NET.Tests.Deployments

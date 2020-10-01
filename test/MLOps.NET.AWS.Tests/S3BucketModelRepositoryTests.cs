@@ -1,8 +1,8 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MLOps.NET.Services;
 using MLOps.NET.Storage;
-using MLOps.NET.Storage.Deployments;
 using Moq;
 using System;
 using System.Collections.Generic;
