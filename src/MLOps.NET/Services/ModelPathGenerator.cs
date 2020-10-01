@@ -1,8 +1,9 @@
 ﻿using MLOps.NET.Entities.Impl;
+using MLOps.NET.Services.Interfaces;
 using System;
 using System.IO;
 
-namespace MLOps.NET.Storage.Deployments
+namespace MLOps.NET.Services
 {
     ///<inheritdoc cref="IModelPathGenerator"/>
     public sealed class ModelPathGenerator : IModelPathGenerator

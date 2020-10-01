@@ -1,7 +1,7 @@
 ﻿using MLOps.NET.Entities.Impl;
 using System;
 
-namespace MLOps.NET.Storage.Deployments
+namespace MLOps.NET.Services.Interfaces
 {
     /// <summary>
     /// Model file path generator

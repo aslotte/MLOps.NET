@@ -1,12 +1,13 @@
 ﻿using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.CSharp;
 using ICSharpCode.Decompiler.TypeSystem;
+using MLOps.NET.Services.Interfaces;
 using System;
 using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace MLOps.NET.Storage.Deployments
+namespace MLOps.NET.Services
 {
     ///<inheritdoc cref="ISchemaGenerator"/>
     internal sealed class SchemaGenerator : ISchemaGenerator
@@ -25,9 +26,9 @@ namespace MLOps.NET.Storage.Deployments
                 throw new Exception($"Type {typeof(T).FullName} does not exist in the app domain");
             }
 
-            var settings = new DecompilerSettings 
-            { 
-                ThrowOnAssemblyResolveErrors = false 
+            var settings = new DecompilerSettings
+            {
+                ThrowOnAssemblyResolveErrors = false
             };
             var fileName = Path.GetFileName(typeInfo.Assembly.Location);
 
@@ -47,7 +48,7 @@ namespace MLOps.NET.Storage.Deployments
             {
                 if (row.StartsWith("namespace"))
                 {
-                    newDefinition.AppendLine("namespace ML.NET.Web.Embedded.Schema");               
+                    newDefinition.AppendLine("namespace ML.NET.Web.Embedded.Schema");
                 }
                 else
                 {

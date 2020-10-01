@@ -2,8 +2,8 @@
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Extensions;
 using MLOps.NET.Kubernetes.Interfaces;
+using MLOps.NET.Services.Interfaces;
 using MLOps.NET.Storage;
-using MLOps.NET.Storage.Deployments;
 using MLOps.NET.Storage.Interfaces;
 using System;
 using System.Collections.Generic;

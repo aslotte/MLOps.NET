@@ -1,8 +1,8 @@
 ﻿using MLOps.NET.Catalogs;
 using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Kubernetes.Interfaces;
+using MLOps.NET.Services;
 using MLOps.NET.Storage;
-using MLOps.NET.Storage.Deployments;
 using MLOps.NET.Storage.Interfaces;
 using MLOps.NET.Utilities;
 using System;
@@ -12,14 +12,14 @@ namespace MLOps.NET
     ///<inheritdoc cref="IMLOpsContext"/>
     public class MLOpsContext : IMLOpsContext
     {
-        internal MLOpsContext(IModelRepository modelRepository, 
-            IExperimentRepository experimentRepository, 
+        internal MLOpsContext(IModelRepository modelRepository,
+            IExperimentRepository experimentRepository,
             IRunRepository runRepository,
             IDataRepository dataRepository,
             IMetricRepository metricRepository,
             IConfusionMatrixRepository confusionMatrixRepository,
             IHyperParameterRepository hyperParameterRepository,
-            IDeploymentRepository deploymentRepository, 
+            IDeploymentRepository deploymentRepository,
             IDockerContext dockerContext,
             IKubernetesContext kubernetesContext)
         {
