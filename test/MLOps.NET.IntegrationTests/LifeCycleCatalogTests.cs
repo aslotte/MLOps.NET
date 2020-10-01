@@ -123,5 +123,29 @@ namespace MLOps.NET.IntegrationTests
             //Assert
             experimentId.Should().Be(experimentId2);
         }
+
+        [TestMethod]
+        public async Task CreateRunAsync_GivenMLNETDependency_ShouldSetPackageDependencies()
+        {
+            var experimentId = await sut.LifeCycle.CreateExperimentAsync("test");
+
+            //Act
+            var run = await sut.LifeCycle.CreateRunAsync(experimentId);
+
+            //Assert
+            run = sut.LifeCycle.GetRun(run.RunId);
+            run.PackageDepedencies.Count().Should().BeGreaterThan(0);
+        }
+
+        [TestMethod]
+        public async Task CreateRunAndExperimentAsync_GivenMLNETDependency_ShouldSetPackageDependencies()
+        {
+            //Act
+            var run = await sut.LifeCycle.CreateRunAsync("test");
+
+            //Assert
+            run = sut.LifeCycle.GetRun(run.RunId);
+            run.PackageDepedencies.Count().Should().BeGreaterThan(0);
+        }
     }
 }
