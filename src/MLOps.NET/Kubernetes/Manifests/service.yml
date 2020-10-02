@@ -1,0 +1,11 @@
+﻿apiVersion: v1
+kind: Service
+metadata:
+  name: experimentName
+  namespace: namespaceName
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: experimentName

@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Entities.Impl;
-using MLOps.NET.Storage.Deployments;
+using MLOps.NET.Services;
 using System;
 using System.IO;
 

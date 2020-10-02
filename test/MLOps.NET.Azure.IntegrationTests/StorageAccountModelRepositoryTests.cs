@@ -4,8 +4,8 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Azure.IntegrationTests.Constants;
 using MLOps.NET.Entities.Impl;
+using MLOps.NET.Services;
 using MLOps.NET.Storage;
-using MLOps.NET.Storage.Deployments;
 using MLOps.NET.Tests.Common.Configuration;
 using System;
 using System.IO;
@@ -52,6 +52,24 @@ namespace MLOps.NET.Azure.IntegrationTests
 
             memoryStream.Should().NotBeNull();
             memoryStream.Length.Should().BeGreaterThan(0);
+        }
+
+
+        [TestMethod]
+        public async Task UploadModelAsync_ShouldSetPositionToZero()
+        {
+            //Arrange       
+            var runId = Guid.NewGuid();
+
+            //Act
+            await sut.UploadModelAsync(runId, @"Data/model.txt");
+
+            //Assert
+            using var memoryStream = new MemoryStream();
+            await sut.DownloadModelAsync(runId, memoryStream);
+
+            memoryStream.Should().NotBeNull();
+            memoryStream.Position.Should().Be(0);
         }
 
         [TestMethod]

@@ -1,9 +1,9 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.EntityFrameworkCore;
+using MLOps.NET.Services;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Database;
-using MLOps.NET.Storage.Deployments;
 
 namespace MLOps.NET.Azure
 {

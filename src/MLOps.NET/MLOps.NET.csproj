@@ -5,11 +5,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Kubernetes\Manifests\deploy.yml" />
+    <None Remove="Kubernetes\Manifests\service.yml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Kubernetes\Manifests\deploy.yml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Kubernetes\Manifests\service.yml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CliWrap" Version="3.2.0" />
     <PackageReference Include="Dynamitey" Version="2.0.10.189" />
     <PackageReference Include="ICSharpCode.Decompiler" Version="6.2.0.6124" />
     <PackageReference Include="Microsoft.ML" Version="1.5.2" />
-    <PackageReference Include="System.IO.Abstractions" Version="12.1.10" />
+    <PackageReference Include="System.IO.Abstractions" Version="12.2.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.8" />
   </ItemGroup>

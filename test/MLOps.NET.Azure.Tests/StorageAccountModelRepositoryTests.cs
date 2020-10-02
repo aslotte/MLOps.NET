@@ -2,8 +2,8 @@
 using Azure.Storage.Blobs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Entities.Impl;
+using MLOps.NET.Services;
 using MLOps.NET.Storage;
-using MLOps.NET.Storage.Deployments;
 using Moq;
 using System;
 using System.Threading.Tasks;

@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Docker;
 using MLOps.NET.Docker.Settings;
+using MLOps.NET.Tests.Common.Data;
 using System;
 using System.IO;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace MLOps.NET.IntegrationTests
             };
 
             this.tagName = $"{dockerSettings.RegistryName}/{experimentName}:1";
-            cliExecutor = new CliExecutor(dockerSettings);
+            cliExecutor = new CliExecutor();
         }
 
         [TestMethod]
@@ -59,7 +60,7 @@ namespace MLOps.NET.IntegrationTests
             var deploymentTarget = await sut.Deployment.CreateDeploymentTargetAsync("Prod");
 
             //Act
-            await sut.Deployment.DeployModelAsync(deploymentTarget, registeredModel, "By me");
+            await sut.Deployment.DeployModelToUriAsync(deploymentTarget, registeredModel, "By me");
 
             //Assert
             var deployment = sut.Deployment.GetDeployments(registeredModel.ExperimentId).First();
@@ -79,8 +80,8 @@ namespace MLOps.NET.IntegrationTests
             var testDeploymentTarget = await sut.Deployment.CreateDeploymentTargetAsync("Test");
             var prodDeploymentTarget = await sut.Deployment.CreateDeploymentTargetAsync("Prod");
 
-            await sut.Deployment.DeployModelAsync(testDeploymentTarget, registeredModel, "By me");
-            await sut.Deployment.DeployModelAsync(prodDeploymentTarget, registeredModel, "By me");
+            await sut.Deployment.DeployModelToUriAsync(testDeploymentTarget, registeredModel, "By me");
+            await sut.Deployment.DeployModelToUriAsync(prodDeploymentTarget, registeredModel, "By me");
 
             //Act
             registeredModel = sut.Model.GetLatestRegisteredModel(registeredModel.ExperimentId);
@@ -99,20 +100,17 @@ namespace MLOps.NET.IntegrationTests
             var run = await sut.LifeCycle.CreateRunAsync(this.experimentName);
             var runArtifact = await sut.Model.UploadAsync(run.RunId, @"Data/model.txt");
             var registeredModel = await sut.Model.RegisterModel(run.ExperimentId, runArtifact.RunArtifactId, "registerby");
-            var deploymentTarget = await sut.Deployment.CreateDeploymentTargetAsync("Prod");
 
             //Act
-            var deployment = await sut.Deployment.DeployModelToContainerAsync(deploymentTarget, registeredModel, "deployedBy");
+            await sut.Deployment.BuildAndPushImageAsync<ModelInput, ModelOutput>(registeredModel);
 
             //Assert
-            deployment.Should().NotBeNull();
-
             var imageExists = await cliExecutor.RunDockerPull(tagName);
             imageExists.Should().BeTrue();
         }
 
         [TestMethod]
-        public async Task DeployModelToContainerAsync_ShouldBaseImageOfModelAndProject()
+        public async Task BuildAndPushImageAsync_ShouldBaseImageOfModelAndProject()
         {
             //Arrange
             await cliExecutor.RemoveDockerImage(tagName);
@@ -120,14 +118,13 @@ namespace MLOps.NET.IntegrationTests
             var run = await sut.LifeCycle.CreateRunAsync(this.experimentName);
             var runArtifact = await sut.Model.UploadAsync(run.RunId, @"Data/model.txt");
             var registeredModel = await sut.Model.RegisterModel(run.ExperimentId, runArtifact.RunArtifactId, "registerby");
-            var deploymentTarget = await sut.Deployment.CreateDeploymentTargetAsync("Prod");
 
             //Act
-            await sut.Deployment.DeployModelToContainerAsync(deploymentTarget, registeredModel, "deployedBy");
+            await sut.Deployment.BuildAndPushImageAsync<ModelInput, ModelOutput>(registeredModel);
 
             //Assert
             File.Exists("image/ML.NET.Web.Embedded.csproj").Should().BeTrue();
             File.Exists("image/model.zip").Should().BeTrue();
-        }  
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using MLOps.NET.Entities.Impl;
-using MLOps.NET.Storage.Deployments;
+using MLOps.NET.Services.Interfaces;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -36,6 +36,8 @@ namespace MLOps.NET.Storage
                 throw new FileNotFoundException($"No model exists for Run ID {runId}");
             }
             await blobClient.DownloadToAsync(destination);
+
+            destination.Position = 0;
         }
 
         public async Task<string> DeployModelAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, Experiment experiment)

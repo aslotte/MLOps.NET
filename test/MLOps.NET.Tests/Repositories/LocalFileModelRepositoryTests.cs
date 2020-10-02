@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Entities.Impl;
+using MLOps.NET.Services;
 using MLOps.NET.Storage;
-using MLOps.NET.Storage.Deployments;
 using System;
 using System.IO;
 using System.IO.Abstractions.TestingHelpers;
@@ -70,6 +70,24 @@ namespace MLOps.NET.Tests
 
             // Assert
             Encoding.Default.GetString(memStream.ToArray()).Should().Be("test");
+        }
+
+        [TestMethod]
+        public async Task DownloadModelAsync_ShouldSetPositionToZero()
+        {
+            //Arrange       
+            var runId = Guid.NewGuid();
+
+            var filePath = mockFileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mlops", "model-repository", $"{runId}.zip");
+            mockFileSystem.AddFile(filePath, new MockFileData("test"));
+
+            //Act
+            using var memoryStream = new MemoryStream();
+            await sut.DownloadModelAsync(runId, memoryStream);
+
+            //Assert
+            memoryStream.Should().NotBeNull();
+            memoryStream.Position.Should().Be(0);
         }
 
         [TestMethod]

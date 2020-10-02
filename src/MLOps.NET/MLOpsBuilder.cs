@@ -1,4 +1,7 @@
 using MLOps.NET.Docker.Interfaces;
+using MLOps.NET.Docker.Settings;
+using MLOps.NET.Kubernetes.Interfaces;
+using MLOps.NET.Kubernetes.Settings;
 using MLOps.NET.Services;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Database;
@@ -24,6 +27,8 @@ namespace MLOps.NET
         private DeploymentRepository deploymentRepository;
         private IModelRepository modelRepository;
         private IDockerContext dockerContext;
+        private DockerSettings dockerSettings;
+        private IKubernetesContext kubernetesContext;
 
         /// <summary>
         /// Build the <see cref="IMLOpsContext"/> using the provided configuration
@@ -31,7 +36,7 @@ namespace MLOps.NET
         /// <returns>Configured <see cref="IMLOpsContext"/></returns>
         public IMLOpsContext Build()
         {
-            return new MLOpsContext(modelRepository, experimentRepository, runRepository, dataRepository, metricRepository, confusionMatrixRepository, hyperParameterRepository, deploymentRepository, dockerContext);
+            return new MLOpsContext(modelRepository, experimentRepository, runRepository, dataRepository, metricRepository, confusionMatrixRepository, hyperParameterRepository, deploymentRepository, dockerContext, kubernetesContext);
         }
 
         /// <summary>
@@ -67,9 +72,18 @@ namespace MLOps.NET
             return this;
         }
 
-        internal MLOpsBuilder UseDockerContext(IDockerContext dockerContext)
+        internal MLOpsBuilder UseDockerContext(IDockerContext dockerContext, DockerSettings dockerSettings)
         {
             this.dockerContext = dockerContext;
+            this.dockerSettings = dockerSettings;
+            return this;
+        }
+
+        internal MLOpsBuilder UseKubernetesContext(Func<DockerSettings, IKubernetesContext> createKubernetesContext)
+        {
+            if (this.dockerSettings == null) throw new InvalidOperationException("A Container Registry needs to be configured prior to configuring a Kubernetes cluster");
+
+            this.kubernetesContext = createKubernetesContext(this.dockerSettings);
             return this;
         }
     }
