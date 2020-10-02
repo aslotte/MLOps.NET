@@ -15,7 +15,7 @@ namespace MLOps.NET.SQLServer.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.7")
+                .HasAnnotation("ProductVersion", "3.1.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -240,6 +240,30 @@ namespace MLOps.NET.SQLServer.Migrations
                     b.ToTable("Metric");
                 });
 
+            modelBuilder.Entity("MLOps.NET.Entities.Impl.PackageDependency", b =>
+                {
+                    b.Property<Guid>("PackageDependencyId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("RunId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Version")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PackageDependencyId");
+
+                    b.HasIndex("RunId");
+
+                    b.ToTable("PackageDependency");
+                });
+
             modelBuilder.Entity("MLOps.NET.Entities.Impl.RegisteredModel", b =>
                 {
                     b.Property<Guid>("RegisteredModelId")
@@ -382,6 +406,15 @@ namespace MLOps.NET.SQLServer.Migrations
                 {
                     b.HasOne("MLOps.NET.Entities.Impl.Run", null)
                         .WithMany("Metrics")
+                        .HasForeignKey("RunId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MLOps.NET.Entities.Impl.PackageDependency", b =>
+                {
+                    b.HasOne("MLOps.NET.Entities.Impl.Run", null)
+                        .WithMany("PackageDepedencies")
                         .HasForeignKey("RunId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

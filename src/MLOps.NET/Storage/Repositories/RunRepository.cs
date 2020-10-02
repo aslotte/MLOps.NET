@@ -29,12 +29,13 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc cref="IRunRepository"/>
-        public async Task<Run> CreateRunAsync(Guid experimentId, string gitCommitHash = "")
+        public async Task<Run> CreateRunAsync(Guid experimentId, List<PackageDependency> packageDepedencies, string gitCommitHash = "")
         {
             using var db = this.contextFactory.CreateDbContext();
             var run = new Run(experimentId)
             {
-                GitCommitHash = gitCommitHash
+                GitCommitHash = gitCommitHash,
+                PackageDepedencies = packageDepedencies
             };
 
             await db.Runs.AddAsync(run);

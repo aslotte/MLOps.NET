@@ -13,6 +13,7 @@ namespace MLOps.NET.Storage.EntityResolvers
             db.Entry(entity).Collection(x => x.Metrics).Load();
             db.Entry(entity).Reference(x => x.ConfusionMatrix).Load();
             db.Entry(entity).Collection(x => x.RunArtifacts).Load();
+            db.Entry(entity).Collection(x => x.PackageDepedencies).Load();
 
             return entity;
         }
