@@ -127,7 +127,7 @@ namespace MLOps.NET.Catalogs
             using var model = new MemoryStream();
             await modelRepository.DownloadModelAsync(registeredModel.RunId, model);
 
-            await dockerContext.BuildImage(experiment.ExperimentName, registeredModel, model, GetSchema);
+            await dockerContext.BuildImage(experiment, registeredModel, model, GetSchema);
             await dockerContext.PushImage(experiment.ExperimentName, registeredModel);
         }
 
