@@ -98,9 +98,8 @@ namespace MLOps.NET.Tests
             modelInputSchema.Should().Contain("namespace MLOps.NET.Tests.Common.Data");
             modelInputSchema.Should().Contain("public class ModelInput");
             modelInputSchema.Should().Contain("[LoadColumn(0)]");
-            modelInputSchema.Should().Contain("public float PassengerId { get; set; }");
-            modelInputSchema.Should().Contain("[ColumnName(\"Label\")]");
-            modelInputSchema.Should().Contain("public bool Survived { get; set; }");
+            modelInputSchema.Should().Contain("public bool Sentiment;");
+            modelInputSchema.Should().Contain("public string Review;");
 
 
             modelOutputSchema.Should().Contain("using Microsoft.ML.Data;");
