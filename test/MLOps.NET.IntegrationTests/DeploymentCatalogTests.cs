@@ -143,7 +143,7 @@ namespace MLOps.NET.IntegrationTests
             //Assert
             var projectFile = File.ReadAllLines("image/ML.NET.Web.Embedded.csproj");
 
-            var references = projectFile.Where(x => x.StartsWith("PackageReference"));
+            var references = projectFile.Where(x => x.Contains("PackageReference"));
 
             references.Any(x => x.Contains(@"Include=""Microsoft.ML"" Version=""1.5.2""")).Should().BeTrue();
             references.Any(x => x.Contains(@"Include=""Microsoft.ML.CpuMath"" Version=""1.5.2""")).Should().BeTrue();
