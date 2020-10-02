@@ -2,9 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Entities.Impl;
+using MLOps.NET.Services;
+using MLOps.NET.Services.Interfaces;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Database;
-using MLOps.NET.Storage.Deployments;
 using MLOps.NET.Storage.EntityConfiguration;
 using MLOps.NET.Storage.EntityResolvers;
 using MLOps.NET.Tests.Common.Data;
@@ -37,7 +38,7 @@ namespace MLOps.NET.Tests
             this.clockMock = new Mock<IClock>();
             this.schemaGenerator = new SchemaGenerator();
 
-            this.sut = new RunRepository(contextFactory, clockMock.Object, schemaGenerator, new RunResolver(), new RegisteredModelResolver(), new ModelSchemaResolver());
+            this.sut = new Storage.RunRepository(contextFactory, clockMock.Object, schemaGenerator, new RunResolver(), new RegisteredModelResolver(), new ModelSchemaResolver());
         }
 
         [TestMethod]

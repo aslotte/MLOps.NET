@@ -5,7 +5,6 @@ using MLOps.NET.Kubernetes.Settings;
 using MLOps.NET.Services;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Database;
-using MLOps.NET.Storage.Deployments;
 using MLOps.NET.Storage.EntityResolvers;
 using MLOps.NET.Storage.Repositories;
 using MLOps.NET.Utilities;

@@ -1,6 +1,6 @@
 ﻿using MLOps.NET.Entities.Impl;
+using MLOps.NET.Services.Interfaces;
 using MLOps.NET.Storage.Database;
-using MLOps.NET.Storage.Deployments;
 using MLOps.NET.Storage.EntityResolvers;
 using MLOps.NET.Utilities;
 using System;
