@@ -2,6 +2,7 @@ using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Services;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Database;
+using MLOps.NET.Storage.Deployments;
 using MLOps.NET.Storage.EntityResolvers;
 using MLOps.NET.Storage.Repositories;
 using MLOps.NET.Utilities;
@@ -43,7 +44,7 @@ namespace MLOps.NET
             var experimentResolver = new ExperimentResolver(runResolver);
 
             this.experimentRepository = new ExperimentRepository(contextFactory, experimentResolver);
-            this.runRepository = new RunRepository(contextFactory, new Clock(), runResolver, new RegisteredModelResolver());
+            this.runRepository = new RunRepository(contextFactory, new Clock(), new SchemaGenerator(), runResolver, new RegisteredModelResolver(), new ModelSchemaResolver());
             this.dataRepository = new DataRepository(contextFactory, new DataResolver(), new DataCalculator());
             this.metricRepository = new MetricRepository(contextFactory);
             this.confusionMatrixRepository = new ConfusionMatrixRepository(contextFactory);

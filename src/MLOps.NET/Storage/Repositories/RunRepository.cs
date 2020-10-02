@@ -1,5 +1,6 @@
 ﻿using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage.Database;
+using MLOps.NET.Storage.Deployments;
 using MLOps.NET.Storage.EntityResolvers;
 using MLOps.NET.Utilities;
 using System;
@@ -14,18 +15,23 @@ namespace MLOps.NET.Storage
     {
         private readonly IDbContextFactory contextFactory;
         private readonly IClock clock;
+        private readonly ISchemaGenerator schemaGenerator;  
         private readonly IEntityResolver<Run> runResolver;
         private readonly IEntityResolver<RegisteredModel> registeredModelResolver;
+        private readonly IEntityResolver<ModelSchema> modelSchemaResolver;
 
         ///<inheritdoc cref="IRunRepository"/>
-        public RunRepository(IDbContextFactory contextFactory, IClock clock,
+        public RunRepository(IDbContextFactory contextFactory, IClock clock, ISchemaGenerator schemaGenerator,
             IEntityResolver<Run> runResolver,
-            IEntityResolver<RegisteredModel> registeredModelResolver)
+            IEntityResolver<RegisteredModel> registeredModelResolver,
+            IEntityResolver<ModelSchema> modelSchemaResolver)
         {
             this.contextFactory = contextFactory;
             this.clock = clock;
+            this.schemaGenerator = schemaGenerator;
             this.runResolver = runResolver;
             this.registeredModelResolver = registeredModelResolver;
+            this.modelSchemaResolver = modelSchemaResolver;
         }
 
         ///<inheritdoc cref="IRunRepository"/>
@@ -168,6 +174,24 @@ namespace MLOps.NET.Storage
                 .FirstOrDefault();
 
             return this.registeredModelResolver.BuildEntity(db, latestRegisteredModel);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TInput"></typeparam>
+        /// <typeparam name="TOutput"></typeparam>
+        /// <param name="runId"></param>
+        public async Task RegisterSchema<TInput, TOutput>(Guid runId) where TInput : class where TOutput : class
+        {
+            using var db = this.contextFactory.CreateDbContext();
+            var modelInput = schemaGenerator.GenerateDefinition<TInput>("ModelInput");
+            var modelOutput = schemaGenerator.GenerateDefinition<TOutput>("ModelOutput");
+            var modelInputSchema = new ModelSchema(runId, typeof(TInput).Name, modelInput);
+            var modelOutputSchema = new ModelSchema(runId, typeof(TOutput).Name, modelOutput);
+            db.Schemas.Add(modelInputSchema);
+            db.Schemas.Add(modelOutputSchema);
+            await db.SaveChangesAsync();
         }
     }
 }

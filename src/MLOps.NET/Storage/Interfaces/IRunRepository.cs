@@ -86,5 +86,14 @@ namespace MLOps.NET.Storage
         /// <param name="experimentId"></param>
         /// <returns></returns>
         RegisteredModel GetLatestRegisteredModel(Guid experimentId);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TInput"></typeparam>
+        /// <typeparam name="TOutput"></typeparam>
+        /// <param name="runId"></param>
+        /// <returns></returns>
+        Task RegisterSchema<TInput, TOutput>(Guid runId) where TInput : class where TOutput : class;
     }
 }

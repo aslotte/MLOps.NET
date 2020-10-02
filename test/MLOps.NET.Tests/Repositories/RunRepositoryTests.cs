@@ -4,8 +4,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Entities.Impl;
 using MLOps.NET.Storage;
 using MLOps.NET.Storage.Database;
+using MLOps.NET.Storage.Deployments;
 using MLOps.NET.Storage.EntityConfiguration;
 using MLOps.NET.Storage.EntityResolvers;
+using MLOps.NET.Tests.Common.Data;
 using MLOps.NET.Utilities;
 using Moq;
 using System;
@@ -19,6 +21,7 @@ namespace MLOps.NET.Tests
     public class RunRepositoryTests
     {
         private Mock<IClock> clockMock;
+        private ISchemaGenerator schemaGenerator;
         private DbContextFactory contextFactory;
         private IRunRepository sut;
 
@@ -32,8 +35,9 @@ namespace MLOps.NET.Tests
             this.contextFactory = new DbContextFactory(() => new MLOpsDbContext(options, RelationalEntityConfigurator.OnModelCreating));
 
             this.clockMock = new Mock<IClock>();
+            this.schemaGenerator = new SchemaGenerator();
 
-            this.sut = new RunRepository(contextFactory, clockMock.Object, new RunResolver(), new RegisteredModelResolver());
+            this.sut = new RunRepository(contextFactory, clockMock.Object, schemaGenerator, new RunResolver(), new RegisteredModelResolver(), new ModelSchemaResolver());
         }
 
         [TestMethod]
@@ -72,7 +76,41 @@ namespace MLOps.NET.Tests
 
             await db.SaveChangesAsync();
 
-            return (experiment.ExperimentId, runArtifact.RunArtifactId);
+            return (experiment.ExperimentId, runArtifact.RunId);
+        }
+
+        [TestMethod]
+        public async Task RegisterSchema_ShouldGetModelSchema()
+        {
+            //Arrange
+            var (ExperimentId, RunId) = await SetupSeedDate();
+
+            //Act
+            await this.sut.RegisterSchema<ModelInput,ModelOutput>(RunId);
+
+            //Assert
+            using var db = this.contextFactory.CreateDbContext();
+            var schemas = await db.Schemas.Where(s => s.RunId == RunId).ToListAsync();
+            var modelInputSchema = schemas.First(s => s.Name == "ModelInput").Value;
+            var modelOutputSchema = schemas.First(s => s.Name == "ModelOutput").Value;
+
+            modelInputSchema.Should().Contain("using Microsoft.ML.Data;");
+            modelInputSchema.Should().Contain("namespace MLOps.NET.Tests.Common.Data");
+            modelInputSchema.Should().Contain("public class ModelInput");
+            modelInputSchema.Should().Contain("[LoadColumn(0)]");
+            modelInputSchema.Should().Contain("public float PassengerId { get; set; }");
+            modelInputSchema.Should().Contain("[ColumnName(\"Label\")]");
+            modelInputSchema.Should().Contain("public bool Survived { get; set; }");
+
+
+            modelOutputSchema.Should().Contain("using Microsoft.ML.Data;");
+            modelOutputSchema.Should().Contain("namespace MLOps.NET.Tests.Common.Data");
+            modelOutputSchema.Should().Contain("public class BinaryClassificationModelOutput");
+            modelOutputSchema.Should().Contain("[ColumnName(\"PredictedLabel\")]");
+            modelOutputSchema.Should().Contain("public bool Prediction");
+            modelOutputSchema.Should().Contain("public float[] Score");
+            modelOutputSchema.Should().Contain("public float Probability");
+            modelOutputSchema.Should().Contain("public bool Label");
         }
     }
 }

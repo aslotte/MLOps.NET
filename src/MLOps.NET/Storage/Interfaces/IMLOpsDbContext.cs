@@ -67,6 +67,11 @@ namespace MLOps.NET.Storage.Interfaces
         DbSet<Deployment> Deployments { get; set; }
 
         /// <summary>
+        /// 
+        /// </summary>
+        DbSet<ModelSchema> Schemas { get; set; }
+
+        /// <summary>
         /// Save changes
         /// </summary>
         /// <returns></returns>
