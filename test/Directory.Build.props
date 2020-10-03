@@ -4,7 +4,8 @@
     <IsPackable>false</IsPackable>
     <!-- Don't warn about documentation for test projects -->
     <NoWarn>1591</NoWarn>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>    
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <LangVersion>preview</LangVersion>    
   </PropertyGroup>
   
 </Project>
