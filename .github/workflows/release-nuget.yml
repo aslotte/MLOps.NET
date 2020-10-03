@@ -15,7 +15,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1        
         with:
-          dotnet-version: 5.0.0-rc.1.x     
+          dotnet-version: 5.0.0-rc.1  
       - name: Install dependencies
         run: dotnet restore MLOps.NET.sln
       - name: Build
