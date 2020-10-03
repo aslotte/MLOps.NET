@@ -126,5 +126,20 @@ namespace MLOps.NET.IntegrationTests
             File.Exists("image/ML.NET.Web.Embedded.csproj").Should().BeTrue();
             File.Exists("image/model.zip").Should().BeTrue();
         }
+
+        [TestMethod]
+        public async Task RegisterSchemaAsync_ShouldSaveSchemasForARun()
+        {
+            //Arrange
+
+            var run = await sut.LifeCycle.CreateRunAsync(this.experimentName);
+
+            //Act
+            await sut.Deployment.RegisterSchema<ModelInput, ModelOutput>(run.RunId);
+
+            //Assert
+            var expectedRun = sut.LifeCycle.GetRun(run.RunId);
+            expectedRun.ModelSchemas.Count().Should().Be(2);
+        }
     }
 }

@@ -48,7 +48,7 @@ namespace MLOps.NET
             var experimentResolver = new ExperimentResolver(runResolver);
 
             this.experimentRepository = new ExperimentRepository(contextFactory, experimentResolver);
-            this.runRepository = new RunRepository(contextFactory, new Clock(), new SchemaGenerator(), runResolver, new RegisteredModelResolver(), new ModelSchemaResolver());
+            this.runRepository = new RunRepository(contextFactory, new Clock(), new SchemaGenerator(), runResolver, new RegisteredModelResolver());
             this.dataRepository = new DataRepository(contextFactory, new DataResolver(), new DataCalculator());
             this.metricRepository = new MetricRepository(contextFactory);
             this.confusionMatrixRepository = new ConfusionMatrixRepository(contextFactory);

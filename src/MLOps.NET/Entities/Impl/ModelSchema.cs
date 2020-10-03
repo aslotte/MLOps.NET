@@ -3,7 +3,7 @@
 namespace MLOps.NET.Entities.Impl
 {
     /// <summary>
-    /// Metric associated with a given training run
+    /// Model Schema associated with a given training run
     /// </summary>
     public sealed class ModelSchema
     {
@@ -27,7 +27,7 @@ namespace MLOps.NET.Entities.Impl
         public Guid ModelSchemaId { get; set; }
 
         /// <summary>
-        /// Name of metric, e.g. Accurarcy, F1Score or Precision/Recall
+        /// Name of model schema. ModelInput or ModelOutput
         /// </summary>
         public string Name { get; set; }
 

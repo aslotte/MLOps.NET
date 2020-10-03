@@ -38,7 +38,7 @@ namespace MLOps.NET.Tests
             this.clockMock = new Mock<IClock>();
             this.schemaGenerator = new SchemaGenerator();
 
-            this.sut = new Storage.RunRepository(contextFactory, clockMock.Object, schemaGenerator, new RunResolver(), new RegisteredModelResolver(), new ModelSchemaResolver());
+            this.sut = new Storage.RunRepository(contextFactory, clockMock.Object, schemaGenerator, new RunResolver(), new RegisteredModelResolver());
         }
 
         [TestMethod]
@@ -78,39 +78,6 @@ namespace MLOps.NET.Tests
             await db.SaveChangesAsync();
 
             return (experiment.ExperimentId, runArtifact.RunId);
-        }
-
-        [TestMethod]
-        public async Task RegisterSchema_ShouldGetModelSchema()
-        {
-            //Arrange
-            var (ExperimentId, RunId) = await SetupSeedDate();
-
-            //Act
-            await this.sut.RegisterSchema<ModelInput,ModelOutput>(RunId);
-
-            //Assert
-            using var db = this.contextFactory.CreateDbContext();
-            var schemas = await db.Schemas.Where(s => s.RunId == RunId).ToListAsync();
-            var modelInputSchema = schemas.First(s => s.Name == "ModelInput").Value;
-            var modelOutputSchema = schemas.First(s => s.Name == "ModelOutput").Value;
-
-            modelInputSchema.Should().Contain("using Microsoft.ML.Data;");
-            modelInputSchema.Should().Contain("namespace MLOps.NET.Tests.Common.Data");
-            modelInputSchema.Should().Contain("public class ModelInput");
-            modelInputSchema.Should().Contain("[LoadColumn(0)]");
-            modelInputSchema.Should().Contain("public bool Sentiment;");
-            modelInputSchema.Should().Contain("public string Review;");
-
-
-            modelOutputSchema.Should().Contain("using Microsoft.ML.Data;");
-            modelOutputSchema.Should().Contain("namespace MLOps.NET.Tests.Common.Data");
-            modelOutputSchema.Should().Contain("public class BinaryClassificationModelOutput");
-            modelOutputSchema.Should().Contain("[ColumnName(\"PredictedLabel\")]");
-            modelOutputSchema.Should().Contain("public bool Prediction");
-            modelOutputSchema.Should().Contain("public float[] Score");
-            modelOutputSchema.Should().Contain("public float Probability");
-            modelOutputSchema.Should().Contain("public bool Label");
         }
     }
 }

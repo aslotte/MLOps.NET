@@ -93,7 +93,8 @@ namespace MLOps.NET.Storage
         /// <typeparam name="TInput"></typeparam>
         /// <typeparam name="TOutput"></typeparam>
         /// <param name="runId"></param>
+        /// <param name="modelSchemas"></param>
         /// <returns></returns>
-        Task RegisterSchema<TInput, TOutput>(Guid runId) where TInput : class where TOutput : class;
+        Task RegisterSchema<TInput, TOutput>(Guid runId, List<ModelSchema> modelSchemas) where TInput : class where TOutput : class;
     }
 }

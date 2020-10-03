@@ -20,22 +20,25 @@ namespace MLOps.NET.Catalogs
         private readonly IDeploymentRepository deploymentRepository;
         private readonly IModelRepository modelRepository;
         private readonly IExperimentRepository experimentRepository;
+        private readonly IRunRepository runRepository;
         private readonly IDockerContext dockerContext;
         private readonly IKubernetesContext kubernetesContext;
         private readonly ISchemaGenerator schemaGenerator;
 
-        /// <summary>
-        /// Ctor
-        /// </summary>
-        /// <param name="deploymentRepository"></param>
-        /// <param name="modelRepository"></param>
-        /// <param name="experimentRepository"></param>
-        /// <param name="dockerContext"></param>
-        /// <param name="kubernetesContext"></param>
-        /// <param name="schemaGenerator"></param>
+    /// <summary>
+    /// Ctor
+    /// </summary>
+    /// <param name="deploymentRepository"></param>
+    /// <param name="modelRepository"></param>
+    /// <param name="experimentRepository"></param>
+    /// <param name="runRepository"></param>
+    /// <param name="dockerContext"></param>
+    /// <param name="kubernetesContext"></param>
+    /// <param name="schemaGenerator"></param>
         public DeploymentCatalog(IDeploymentRepository deploymentRepository,
             IModelRepository modelRepository,
             IExperimentRepository experimentRepository,
+            IRunRepository runRepository,
             IDockerContext dockerContext,
             IKubernetesContext kubernetesContext,
             ISchemaGenerator schemaGenerator)
@@ -43,6 +46,7 @@ namespace MLOps.NET.Catalogs
             this.deploymentRepository = deploymentRepository;
             this.modelRepository = modelRepository;
             this.experimentRepository = experimentRepository;
+            this.runRepository = runRepository;
             this.dockerContext = dockerContext;
             this.kubernetesContext = kubernetesContext;
             this.schemaGenerator = schemaGenerator;
@@ -142,6 +146,23 @@ namespace MLOps.NET.Catalogs
             var experiment = this.experimentRepository.GetExperiment(experimentId);
 
             return this.modelRepository.GetDeploymentUri(experiment, deploymentTarget);
+        }
+
+        /// <summary>
+        /// Registers the model input and model output schema definition to a run
+        /// </summary>
+        /// <typeparam name="TInput"></typeparam>
+        /// <typeparam name="TOutput"></typeparam>
+        /// <param name="runId"></param>
+        /// <returns></returns>
+        public async Task RegisterSchema<TInput, TOutput>(Guid runId) where TInput : class where TOutput : class
+        {
+            var modelInput = schemaGenerator.GenerateDefinition<TInput>("ModelInput");
+            var modelOutput = schemaGenerator.GenerateDefinition<TOutput>("ModelOutput");
+            var modelInputSchema = new ModelSchema(runId, "ModelInput", modelInput);
+            var modelOutputSchema = new ModelSchema(runId, "ModelOutput", modelOutput);
+            var schemas = new List<ModelSchema> { modelInputSchema, modelOutputSchema };
+            await this.runRepository.RegisterSchema<TInput, TOutput>(runId, schemas);
         }
 
         /// <summary>
