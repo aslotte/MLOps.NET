@@ -9,6 +9,7 @@ using MLOps.NET.Storage.Interfaces;
 using MLOps.NET.Tests.Common.Data;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Linq;
@@ -65,16 +66,28 @@ namespace MLOps.NET.Tests
         {
             //Arrange
             var deploymentTarget = new DeploymentTarget("Test");
-            var registeredModel = new RegisteredModel();
+            var registeredModel = new RegisteredModel
+            {
+                RunId = Guid.NewGuid()
+            };
+
+            var experiment = new Experiment(experimentName: "MyExperiment");
+            experiment.Runs = new List<Run>
+            {
+                new Run(experiment.ExperimentId)
+                {
+                    RunId = registeredModel.RunId
+                }
+            };
 
             this.experimentRepositoryMock.Setup(x => x.GetExperiment(It.IsAny<Guid>()))
-                .Returns(new Experiment(experimentName: "MyExperiment"));
+                .Returns(experiment);
 
             //Act
             await sut.DeployModelToKubernetesAsync<ModelInput, ModelOutput>(deploymentTarget, registeredModel, "registeredBy");
 
             //Arrange
-            this.dockerContextMock.Verify(x => x.BuildImage("MyExperiment", registeredModel, It.IsAny<Stream>(), It.IsAny<Func<(string, string)>>()), Times.Once());
+            this.dockerContextMock.Verify(x => x.BuildImage(experiment, registeredModel, It.IsAny<Stream>(), It.IsAny<Func<(string, string)>>()), Times.Once());
         }
 
         [TestMethod]

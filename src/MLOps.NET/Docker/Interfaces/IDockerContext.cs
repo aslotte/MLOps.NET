@@ -13,12 +13,12 @@ namespace MLOps.NET.Docker.Interfaces
         /// <summary>
         /// Builds a docker image
         /// </summary>
-        /// <param name="experimentName"></param>
+        /// <param name="experiment"></param>
         /// <param name="registeredModel"></param>
         /// <param name="model"></param>
         /// <param name="GetSchema"></param>
         /// <returns></returns>
-        Task BuildImage(string experimentName, RegisteredModel registeredModel, Stream model, Func<(string ModelInput, string ModelOutput)> GetSchema);
+        Task BuildImage(Experiment experiment, RegisteredModel registeredModel, Stream model, Func<(string ModelInput, string ModelOutput)> GetSchema);
 
         /// <summary>
         /// Pushes a docker image to a registry

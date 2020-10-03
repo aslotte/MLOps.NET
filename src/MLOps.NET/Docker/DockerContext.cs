@@ -4,6 +4,7 @@ using MLOps.NET.Entities.Impl;
 using System;
 using System.IO;
 using System.IO.Abstractions;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Docker
@@ -23,17 +24,23 @@ namespace MLOps.NET.Docker
         }
 
         ///<inheritdoc cref="IDockerContext"/>
-        public async Task BuildImage(string experimentName, RegisteredModel registeredModel, Stream model, Func<(string ModelInput, string ModelOutput)> GetSchema)
+        public async Task BuildImage(Experiment experiment, RegisteredModel registeredModel, Stream model, Func<(string ModelInput, string ModelOutput)> GetSchema)
         {
             ResetImageDirectory();
 
+            var packageDependencies = experiment.Runs
+                .First(x => x.RunId == registeredModel.RunId)
+                .PackageDepedencies;
+
             await cliExecutor.InstallTemplatePackage(dockerSettings);
             await cliExecutor.CreateTemplateProject(dockerSettings);
+            await cliExecutor.AddPackageDependencies(dockerSettings, packageDependencies);
 
             await this.CopyModel(model);
             await this.CopySchema(GetSchema);
 
-            var imageName = ComposeImageName(experimentName, registeredModel);
+
+            var imageName = ComposeImageName(experiment.ExperimentName, registeredModel);
 
             await cliExecutor.RunDockerBuild(dockerSettings, imageName);
         }

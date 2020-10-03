@@ -128,6 +128,29 @@ namespace MLOps.NET.IntegrationTests
         }
 
         [TestMethod]
+        public async Task BuildAndPushImageAsync_ShouldAddPackageDependencies()
+        {
+            //Arrange
+            await cliExecutor.RemoveDockerImage(tagName);
+
+            var run = await sut.LifeCycle.CreateRunAsync(this.experimentName);
+            var runArtifact = await sut.Model.UploadAsync(run.RunId, @"Data/model.txt");
+            var registeredModel = await sut.Model.RegisterModel(run.ExperimentId, runArtifact.RunArtifactId, "registerby");
+
+            //Act
+            await sut.Deployment.BuildAndPushImageAsync<ModelInput, ModelOutput>(registeredModel);
+
+            //Assert
+            var projectFile = File.ReadAllLines("image/ML.NET.Web.Embedded.csproj");
+
+            var references = projectFile.Where(x => x.Contains("PackageReference"));
+
+            references.Any(x => x.Contains(@"Include=""Microsoft.ML"" Version=""1.5.2""")).Should().BeTrue();
+            references.Any(x => x.Contains(@"Include=""Microsoft.ML.CpuMath"" Version=""1.5.2""")).Should().BeTrue();
+            references.Any(x => x.Contains(@"Include=""Microsoft.ML.DataView"" Version=""1.5.2""")).Should().BeTrue();
+        }
+
+        [TestMethod]
         public async Task RegisterSchemaAsync_ShouldSaveSchemasForARun()
         {
             //Arrange

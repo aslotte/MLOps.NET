@@ -1,4 +1,5 @@
 ﻿using MLOps.NET.Entities.Impl;
+using MLOps.NET.Services.Interfaces;
 using MLOps.NET.Storage;
 using MLOps.NET.Utilities;
 using System;
@@ -15,6 +16,7 @@ namespace MLOps.NET.Catalogs
         private readonly IExperimentRepository experimentRepository;
         private readonly IRunRepository runRepository;
         private readonly IClock clock;
+        private readonly IPackageDependencyIdentifier packageDependencyIdentifier;
 
         /// <summary>
         /// ctor       
@@ -22,11 +24,16 @@ namespace MLOps.NET.Catalogs
         /// <param name="experimentRepository"></param>
         /// <param name="runRepository"></param>
         /// <param name="clock">Abstraction of DateTime</param>
-        public LifeCycleCatalog(IExperimentRepository experimentRepository, IRunRepository runRepository, IClock clock)
+        /// <param name="packageDependencyIdentifier"></param>
+        public LifeCycleCatalog(IExperimentRepository experimentRepository, 
+            IRunRepository runRepository, 
+            IClock clock,
+            IPackageDependencyIdentifier packageDependencyIdentifier)
         {
             this.experimentRepository = experimentRepository;
             this.runRepository = runRepository;
             this.clock = clock;
+            this.packageDependencyIdentifier = packageDependencyIdentifier;
         }
 
         /// <summary>
@@ -47,7 +54,9 @@ namespace MLOps.NET.Catalogs
         /// <returns>The created run</returns>
         public async Task<Run> CreateRunAsync(Guid experimentId, string gitCommitHash = "")
         {
-            return await runRepository.CreateRunAsync(experimentId, gitCommitHash);
+            var dependencies = packageDependencyIdentifier.IdentifyPackageDependencies();
+
+            return await runRepository.CreateRunAsync(experimentId, dependencies, gitCommitHash);
         }
 
         /// <summary>
