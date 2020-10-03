@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Linq;
-using System.Collections.Generic;
 
 namespace MLOps.NET.Tests
 {
