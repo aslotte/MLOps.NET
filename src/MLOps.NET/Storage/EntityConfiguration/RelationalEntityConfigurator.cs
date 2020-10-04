@@ -28,6 +28,7 @@ namespace MLOps.NET.Storage.EntityConfiguration
             modelBuilder.Entity<Deployment>().ToTable(nameof(Deployment));
             modelBuilder.Entity<DataDistribution>().ToTable(nameof(DataDistribution));
             modelBuilder.Entity<PackageDependency>().ToTable(nameof(PackageDependency));
+            modelBuilder.Entity<ModelSchema>().ToTable(nameof(ModelSchema));
         }
     }
 }

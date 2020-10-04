@@ -1,5 +1,7 @@
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MLOps.NET.Constants;
+using MLOps.NET.Tests.Common.Data;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -146,6 +148,23 @@ namespace MLOps.NET.IntegrationTests
             //Assert
             run = sut.LifeCycle.GetRun(run.RunId);
             run.PackageDepedencies.Count().Should().BeGreaterThan(0);
+        }
+
+        [TestMethod]
+        public async Task RegisterSchema_GivenModelInputAndOutput_ShouldCreateModelSchemas()
+        {
+            //Arrange
+            var run = await sut.LifeCycle.CreateRunAsync("test");
+
+            //Act
+            await sut.LifeCycle.RegisterModelSchema<ModelInput, ModelOutput>(run.RunId);
+
+            //Assert
+            run = sut.LifeCycle.GetRun(run.RunId);
+
+            run.ModelSchemas.Count().Should().Be(2);
+            run.ModelSchemas.FirstOrDefault(x => x.Name == Constant.ModelInput).Should().NotBeNull();
+            run.ModelSchemas.FirstOrDefault(x => x.Name == Constant.ModelOutput).Should().NotBeNull();
         }
     }
 }
