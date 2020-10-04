@@ -24,6 +24,9 @@ MLOps.NET is a data science tool to track and manage the lifecycle of a [ML.NET]
   
 A client application to vizualize and manage the ML lifecycle is currently in the [roadmap](https://github.com/aslotte/MLOps.NET/blob/master/images/roadmap.png) to be worked on.
 
+### Articles
+- [Announcing MLOps.NET v1.2.0](https://www.alexanderslotte.com/announcing-mlops-net-v1-2/)
+
 ### Getting started
 
 `MLOps.NET` revolves around an `MLOpsContext`. The `MLOpsContext` contains catalogs for e.g.`Lifecycle`, `Data`, `Training`, `Evaluation` and `Deployment` to access operations helpful to manage your model's lifecycle.
