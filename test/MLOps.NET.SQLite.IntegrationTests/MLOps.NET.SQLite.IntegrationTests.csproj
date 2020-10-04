@@ -14,8 +14,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.100-rc.1.*" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.100-rc.1.*" />    
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0-rc.1.*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.0-rc.1.*" />    
   </ItemGroup>
 
   <ItemGroup>
