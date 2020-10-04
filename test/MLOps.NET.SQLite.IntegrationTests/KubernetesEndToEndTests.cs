@@ -160,7 +160,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
             //Act
             await sut.Deployment.DeployModelToKubernetesAsync(deploymentTarget, registeredModel, string.Empty);
 
-            //Excepts exception
+            //Expects exception
         }
 
         private async Task<HttpResponseMessage> CallDeployedApi(Deployment deployment)
