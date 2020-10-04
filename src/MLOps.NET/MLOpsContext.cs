@@ -32,7 +32,7 @@ namespace MLOps.NET
             if (hyperParameterRepository == null) throw new ArgumentNullException(nameof(hyperParameterRepository));
             if (deploymentRepository == null) throw new ArgumentNullException(nameof(deploymentRepository));
 
-            this.LifeCycle = new LifeCycleCatalog(experimentRepository, runRepository, new Clock(), new PackageDependencyIdentifier());
+            this.LifeCycle = new LifeCycleCatalog(experimentRepository, runRepository, new Clock(), new PackageDependencyIdentifier(), new SchemaGenerator());
             this.Data = new DataCatalog(dataRepository);
             this.Evaluation = new EvaluationCatalog(metricRepository, confusionMatrixRepository);
             this.Model = new ModelCatalog(modelRepository, runRepository);

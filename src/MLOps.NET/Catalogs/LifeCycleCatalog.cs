@@ -98,7 +98,7 @@ namespace MLOps.NET.Catalogs
             var modelOutput = new ModelSchema
             {
                 Name = Constant.ModelOutput,
-                Definition = schemaGenerator.GenerateDefinition<TModelInput>(Constant.ModelOutput)
+                Definition = schemaGenerator.GenerateDefinition<TModelOutput>(Constant.ModelOutput)
             };
 
             var modelSchemas = new List<ModelSchema> { modelInput, modelOutput };
