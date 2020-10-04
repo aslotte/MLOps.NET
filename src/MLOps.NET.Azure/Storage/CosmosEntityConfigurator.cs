@@ -28,6 +28,7 @@ namespace MLOps.NET.Azure.Storage
             modelBuilder.Entity<DeploymentTarget>().ToContainer(nameof(DeploymentTarget));
             modelBuilder.Entity<Deployment>().ToContainer(nameof(Deployment));
             modelBuilder.Entity<PackageDependency>().ToContainer(nameof(PackageDependency));
+            modelBuilder.Entity<ModelSchema>().ToContainer(nameof(ModelSchema));
         }
     }
 }
