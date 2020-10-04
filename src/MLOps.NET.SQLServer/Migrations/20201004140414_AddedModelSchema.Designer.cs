@@ -4,14 +4,20 @@ using MLOps.NET.SQLServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MLOps.NET.SQLServer.Migrations
 {
     [DbContext(typeof(MLOpsSQLDbContext))]
-    partial class MLOpsSQLDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201004140414_AddedModelSchema")]
+    partial class AddedModelSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="modelBuilder"></param>
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
