@@ -18,7 +18,7 @@ namespace MLOps.NET.Entities.Impl
         public Guid RunId { get; set; }
 
         /// <summary>
-        /// Name if model schema (ModelInput or ModelOutput)
+        /// Name of model schema (ModelInput or ModelOutput)
         /// </summary>
         public string Name { get; set; }
 
