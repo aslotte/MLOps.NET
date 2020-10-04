@@ -2,10 +2,10 @@
 {
     public class ModelOutput
     {
-        public string PredictedLabel;
+        public string PredictedLabel { get; set; }
 
-        public float[] Score;
+        public float Score { get; set; }
 
-        public float Probability;
+        public float Probability { get; set; }
     }
 }
