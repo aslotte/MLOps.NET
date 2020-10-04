@@ -132,15 +132,15 @@ namespace MLOps.NET.Catalogs
         /// <returns></returns>
         public async Task<Deployment> DeployModelToKubernetesAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy)
         {
+            var run = runRepository.GetRun(registeredModel.RunId);
+
+            if (!run.ModelSchemas.Any())
+            {
+                throw new ModelSchemaNotRegisteredException($"The model schema needs to be registered before deploying a model to a Kubernete cluster. Please use {nameof(LifeCycleCatalog.RegisterModelSchema)} prior to calling this method");
+            }
+
             (string ModelInput, string ModelOutput) GetSchema()
             {
-                var run = runRepository.GetRun(registeredModel.RunId);
-
-                if (!run.ModelSchemas.Any())
-                {
-                    throw new ModelSchemaNotRegisteredException($"The model schema needs to be registered before deploying a model to a Kubernete cluster. Please use {nameof(LifeCycleCatalog.RegisterModelSchema)} prior to calling this method");
-                }
-
                 var modelInput = run.ModelSchemas.First(x => x.Name == Constant.ModelInput);
                 var modelOutput = run.ModelSchemas.First(x => x.Name == Constant.ModelOutput);
 

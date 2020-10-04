@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Catalogs;
 using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Entities.Impl;
+using MLOps.NET.Exceptions;
 using MLOps.NET.Kubernetes.Interfaces;
 using MLOps.NET.Services.Interfaces;
 using MLOps.NET.Storage;
@@ -144,6 +145,34 @@ namespace MLOps.NET.Tests
 
             //Arrange
             this.kubernetesContextMock.Verify(x => x.DeployContainerAsync("MyExperiment", "imagetag", "myexperiment-test"), Times.Once());
+        }
+
+        [ExpectedException(typeof(ModelSchemaNotRegisteredException))]
+        [TestMethod]
+        public async Task DeployModelToContainerAsync_WithoutRegisteredSchema_ShouldThrowException()
+        {
+            //Arrange
+            var deploymentTarget = new DeploymentTarget("Test");
+            var registeredModel = new RegisteredModel();
+            var run = new Run(Guid.NewGuid())
+            {
+                ModelSchemas = new List<ModelSchema>()
+            };
+
+            this.dockerContextMock.Setup(x => x.ComposeImageName(It.IsAny<string>(), It.IsAny<RegisteredModel>()))
+                .Returns("imagetag");
+
+            this.experimentRepositoryMock.Setup(x => x.GetExperiment(It.IsAny<Guid>()))
+                .Returns(new Experiment(experimentName: "MyExperiment"));
+
+            this.runRepositoryMock.Setup(x => x.GetRun(It.IsAny<Guid>()))
+                .Returns(run);
+
+            this.kubernetesContextMock.Setup(x => x.CreateNamespaceAsync(It.IsAny<string>(), It.IsAny<DeploymentTarget>()))
+                .Returns(Task.FromResult("myexperiment-test"));
+
+            //Act
+            await sut.DeployModelToKubernetesAsync(deploymentTarget, registeredModel, "registeredBy");
         }
 
         [TestMethod]
