@@ -37,7 +37,7 @@ namespace MLOps.NET
             this.Evaluation = new EvaluationCatalog(metricRepository, confusionMatrixRepository);
             this.Model = new ModelCatalog(modelRepository, runRepository);
             this.Training = new TrainingCatalog(hyperParameterRepository);
-            this.Deployment = new DeploymentCatalog(deploymentRepository, modelRepository, experimentRepository, dockerContext, kubernetesContext, new SchemaGenerator());
+            this.Deployment = new DeploymentCatalog(deploymentRepository, modelRepository, experimentRepository, runRepository, dockerContext, kubernetesContext, new SchemaGenerator());
         }
 
         ///<inheritdoc cref="IMLOpsContext"/>

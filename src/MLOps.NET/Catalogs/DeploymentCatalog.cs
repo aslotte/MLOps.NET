@@ -1,5 +1,7 @@
-﻿using MLOps.NET.Docker.Interfaces;
+﻿using MLOps.NET.Constants;
+using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Entities.Impl;
+using MLOps.NET.Exceptions;
 using MLOps.NET.Extensions;
 using MLOps.NET.Kubernetes.Interfaces;
 using MLOps.NET.Services.Interfaces;
@@ -8,6 +10,8 @@ using MLOps.NET.Storage.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Catalogs
@@ -20,6 +24,7 @@ namespace MLOps.NET.Catalogs
         private readonly IDeploymentRepository deploymentRepository;
         private readonly IModelRepository modelRepository;
         private readonly IExperimentRepository experimentRepository;
+        private readonly IRunRepository runRepository;
         private readonly IDockerContext dockerContext;
         private readonly IKubernetesContext kubernetesContext;
         private readonly ISchemaGenerator schemaGenerator;
@@ -30,12 +35,14 @@ namespace MLOps.NET.Catalogs
         /// <param name="deploymentRepository"></param>
         /// <param name="modelRepository"></param>
         /// <param name="experimentRepository"></param>
+        /// <param name="runRepository"></param>
         /// <param name="dockerContext"></param>
         /// <param name="kubernetesContext"></param>
         /// <param name="schemaGenerator"></param>
         public DeploymentCatalog(IDeploymentRepository deploymentRepository,
             IModelRepository modelRepository,
             IExperimentRepository experimentRepository,
+            IRunRepository runRepository,
             IDockerContext dockerContext,
             IKubernetesContext kubernetesContext,
             ISchemaGenerator schemaGenerator)
@@ -43,6 +50,7 @@ namespace MLOps.NET.Catalogs
             this.deploymentRepository = deploymentRepository;
             this.modelRepository = modelRepository;
             this.experimentRepository = experimentRepository;
+            this.runRepository = runRepository;
             this.dockerContext = dockerContext;
             this.kubernetesContext = kubernetesContext;
             this.schemaGenerator = schemaGenerator;
@@ -97,7 +105,14 @@ namespace MLOps.NET.Catalogs
             where TModelInput : class
             where TModelOutput : class
         {
-            await BuildAndPushImageAsync<TModelInput, TModelOutput>(registeredModel);
+            (string ModelInput, string ModelOutput) GetSchema()
+            {
+                var modelInput = schemaGenerator.GenerateDefinition<TModelInput>(Constant.ModelInput);
+                var modelOutput = schemaGenerator.GenerateDefinition<TModelOutput>(Constant.ModelOutput);
+                return (modelInput, modelOutput);
+            }
+
+            await BuildAndPushImageAsync(registeredModel, GetSchema);
 
             var deploymentUri = await DeployContainerToCluster(deploymentTarget, registeredModel);
 
@@ -105,22 +120,50 @@ namespace MLOps.NET.Catalogs
         }
 
         /// <summary>
-        /// - Builds a Docker Image for an ASP.NET Core App using <typeparamref name="TModelInput"/> and <typeparamref name="TModelOutput"/>
+        /// Deploys a model to a Docker container in a Kubernetes Cluster using the following steps
+        /// - Generates an ASP.NET Core API to serve the model via the registered model schema
+        /// - Builds a Docker Image
+        /// - Pushes the Docker Image to the registry defined in UseContainerRegistry
+        /// - Deploys the Docker Image to a Kubernetes cluster defined in UseKubernetes
+        /// </summary>
+        /// <param name="deploymentTarget"></param>
+        /// <param name="registeredModel"></param>
+        /// <param name="deployedBy"></param>
+        /// <returns></returns>
+        public async Task<Deployment> DeployModelToKubernetesAsync(DeploymentTarget deploymentTarget, RegisteredModel registeredModel, string deployedBy)
+        {
+            (string ModelInput, string ModelOutput) GetSchema()
+            {
+                var run = runRepository.GetRun(registeredModel.RunId);
+
+                if (!run.ModelSchemas.Any())
+                {
+                    throw new ModelSchemaNotRegisteredException($"The model schema needs to be registered before deploying a model to a Kubernete cluster. Please use {nameof(LifeCycleCatalog.RegisterModelSchema)} prior to calling this method");
+                }
+
+                var modelInput = run.ModelSchemas.First(x => x.Name == Constant.ModelInput);
+                var modelOutput = run.ModelSchemas.First(x => x.Name == Constant.ModelOutput);
+
+                return (modelInput.Definition, modelOutput.Definition);
+            }
+
+            await BuildAndPushImageAsync(registeredModel, GetSchema);
+
+            var deploymentUri = await DeployContainerToCluster(deploymentTarget, registeredModel);
+
+            return await this.deploymentRepository.CreateDeploymentAsync(deploymentTarget, registeredModel, deployedBy, deploymentUri);
+        }
+
+        /// <summary>
+        /// - Builds a Docker Image for an ASP.NET Core App 
         /// - Pushes the Docker Image to the registry defined in UseContainerRegistry
         /// </summary>
         /// <param name="registeredModel"></param>
+        /// <param name="GetSchema"></param>
         /// <returns></returns>
-        public async Task BuildAndPushImageAsync<TModelInput, TModelOutput>(RegisteredModel registeredModel) where TModelInput : class
-          where TModelOutput : class
+        public async Task BuildAndPushImageAsync(RegisteredModel registeredModel, Func<(string ModelInput, string ModelOutput)> GetSchema)
         {
             AssertContainerRegistryHasBeenConfigured();
-
-            (string ModelInput, string ModelOutput) GetSchema()
-            {
-                var modelInput = schemaGenerator.GenerateDefinition<TModelInput>("ModelInput");
-                var modelOutput = schemaGenerator.GenerateDefinition<TModelOutput>("ModelOutput");
-                return (modelInput, modelOutput);
-            }
 
             var experiment = experimentRepository.GetExperiment(registeredModel.ExperimentId);
 
