@@ -1,8 +1,11 @@
-﻿using MLOps.NET.Entities.Impl;
+﻿using Dynamitey.DynamicObjects;
+using MLOps.NET.Constants;
+using MLOps.NET.Entities.Impl;
 using MLOps.NET.Services.Interfaces;
 using MLOps.NET.Storage;
 using MLOps.NET.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,6 +20,7 @@ namespace MLOps.NET.Catalogs
         private readonly IRunRepository runRepository;
         private readonly IClock clock;
         private readonly IPackageDependencyIdentifier packageDependencyIdentifier;
+        private readonly ISchemaGenerator schemaGenerator;
 
         /// <summary>
         /// ctor       
@@ -25,15 +29,18 @@ namespace MLOps.NET.Catalogs
         /// <param name="runRepository"></param>
         /// <param name="clock">Abstraction of DateTime</param>
         /// <param name="packageDependencyIdentifier"></param>
+        /// <param name="schemaGenerator"></param>
         public LifeCycleCatalog(IExperimentRepository experimentRepository, 
             IRunRepository runRepository, 
             IClock clock,
-            IPackageDependencyIdentifier packageDependencyIdentifier)
+            IPackageDependencyIdentifier packageDependencyIdentifier,
+            ISchemaGenerator schemaGenerator)
         {
             this.experimentRepository = experimentRepository;
             this.runRepository = runRepository;
             this.clock = clock;
             this.packageDependencyIdentifier = packageDependencyIdentifier;
+            this.schemaGenerator = schemaGenerator;
         }
 
         /// <summary>
@@ -69,6 +76,34 @@ namespace MLOps.NET.Catalogs
         {
             var experimentId = await CreateExperimentAsync(experimentName);
             return await CreateRunAsync(experimentId, gitCommitHash);
+        }
+
+        /// <summary>
+        /// Register the ModelInput and the ModelOutput schema of a run
+        /// </summary>
+        /// <typeparam name="TModelInput"></typeparam>
+        /// <typeparam name="TModelOutput"></typeparam>
+        /// <param name="runId"></param>
+        /// <returns></returns>
+        public async Task RegisterModelSchema<TModelInput, TModelOutput>(Guid runId) 
+            where TModelInput : class
+            where TModelOutput : class
+        {
+            var modelInput = new ModelSchema
+            {
+                Name = Constant.ModelInput,
+                Definition = schemaGenerator.GenerateDefinition<TModelInput>(Constant.ModelInput)
+            };
+
+            var modelOutput = new ModelSchema
+            {
+                Name = Constant.ModelOutput,
+                Definition = schemaGenerator.GenerateDefinition<TModelInput>(Constant.ModelOutput)
+            };
+
+            var modelSchemas = new List<ModelSchema> { modelInput, modelOutput };
+
+            await this.runRepository.CreateModelSchemaAsync(runId, modelSchemas);
         }
 
         /// <summary>
