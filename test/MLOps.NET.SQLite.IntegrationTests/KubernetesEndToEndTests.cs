@@ -5,6 +5,7 @@ using Microsoft.ML;
 using Microsoft.ML.Transforms;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Entities.Impl;
+using MLOps.NET.Exceptions;
 using MLOps.NET.Extensions;
 using MLOps.NET.SQLite.IntegrationTests.Constants;
 using MLOps.NET.SQLite.IntegrationTests.Schema;
@@ -78,6 +79,88 @@ namespace MLOps.NET.SQLite.IntegrationTests
             response.IsSuccessStatusCode.Should().BeTrue();
 
             await CleanUpKubernetesResourcesAsync();
+        }
+
+        [TestMethod]
+        public async Task DeployModel_GivenACompleteRunWithRegisteredSchema_ShouldDeployModelToContainer()
+        {
+            //Arrange and Act
+            var mlContext = new MLContext(seed: 2);
+
+            var run = await sut.LifeCycle.CreateRunAsync("titanic");
+            await sut.LifeCycle.RegisterModelSchema<ModelInput, ModelOutput>(run.RunId);
+
+            var data = mlContext.Data.LoadFromTextFile<ModelInput>("Data/titanic.csv", hasHeader: true, separatorChar: ',');
+            var testTrainTest = mlContext.Data.TrainTestSplit(data);
+
+            var dataProcessingPipeline =
+                mlContext.Transforms.ReplaceMissingValues(nameof(ModelInput.Age), replacementMode: MissingValueReplacingEstimator.ReplacementMode.Mean)
+                .Append(mlContext.Transforms.Categorical.OneHotEncoding(nameof(ModelInput.Sex)))
+                .Append(mlContext.Transforms.Categorical.OneHotEncoding(nameof(ModelInput.Pclass)))
+                .Append(mlContext.Transforms.Concatenate("Features", nameof(ModelInput.Pclass), nameof(ModelInput.Sex), nameof(ModelInput.Age)));
+
+            var trainer = dataProcessingPipeline.Append(mlContext.BinaryClassification.Trainers
+                .LbfgsLogisticRegression(nameof(ModelInput.Survived)));
+
+            await sut.Training.LogHyperParametersAsync(run.RunId, trainer);
+
+            var model = trainer.Fit(testTrainTest.TrainSet);
+
+            mlContext.Model.Save(model, testTrainTest.TrainSet.Schema, "model.zip");
+            await sut.Model.UploadAsync(run.RunId, "model.zip");
+
+            var runArtifact = sut.Model.GetRunArtifacts(run.RunId).First();
+
+            var registeredModel = await sut.Model.RegisterModel(run.ExperimentId, runArtifact.RunArtifactId, string.Empty);
+            var deploymentTarget = await sut.Deployment.CreateDeploymentTargetAsync("Test");
+
+            //Act
+            var deployment = await sut.Deployment.DeployModelToKubernetesAsync(deploymentTarget, registeredModel, string.Empty);
+
+            //Assert
+            var response = await CallDeployedApi(deployment);
+            response.IsSuccessStatusCode.Should().BeTrue();
+
+            await CleanUpKubernetesResourcesAsync();
+        }
+
+        [ExpectedException(typeof(ModelSchemaNotRegisteredException))]
+        [TestMethod]
+        public async Task DeployModel_GivenACompleteRunWithoutRegisteredSchema_ShouldThrowException()
+        {
+            //Arrange and Act
+            var mlContext = new MLContext(seed: 2);
+
+            var run = await sut.LifeCycle.CreateRunAsync("titanic");
+
+            var data = mlContext.Data.LoadFromTextFile<ModelInput>("Data/titanic.csv", hasHeader: true, separatorChar: ',');
+            var testTrainTest = mlContext.Data.TrainTestSplit(data);
+
+            var dataProcessingPipeline =
+                mlContext.Transforms.ReplaceMissingValues(nameof(ModelInput.Age), replacementMode: MissingValueReplacingEstimator.ReplacementMode.Mean)
+                .Append(mlContext.Transforms.Categorical.OneHotEncoding(nameof(ModelInput.Sex)))
+                .Append(mlContext.Transforms.Categorical.OneHotEncoding(nameof(ModelInput.Pclass)))
+                .Append(mlContext.Transforms.Concatenate("Features", nameof(ModelInput.Pclass), nameof(ModelInput.Sex), nameof(ModelInput.Age)));
+
+            var trainer = dataProcessingPipeline.Append(mlContext.BinaryClassification.Trainers
+                .LbfgsLogisticRegression(nameof(ModelInput.Survived)));
+
+            await sut.Training.LogHyperParametersAsync(run.RunId, trainer);
+
+            var model = trainer.Fit(testTrainTest.TrainSet);
+
+            mlContext.Model.Save(model, testTrainTest.TrainSet.Schema, "model.zip");
+            await sut.Model.UploadAsync(run.RunId, "model.zip");
+
+            var runArtifact = sut.Model.GetRunArtifacts(run.RunId).First();
+
+            var registeredModel = await sut.Model.RegisterModel(run.ExperimentId, runArtifact.RunArtifactId, string.Empty);
+            var deploymentTarget = await sut.Deployment.CreateDeploymentTargetAsync("Test");
+
+            //Act
+            await sut.Deployment.DeployModelToKubernetesAsync(deploymentTarget, registeredModel, string.Empty);
+
+            //Expects exception
         }
 
         private async Task<HttpResponseMessage> CallDeployedApi(Deployment deployment)
