@@ -121,15 +121,16 @@ To register a model for deployment
 ```
 
 #### Model deployment
-Once a model has been registered, it's possible to deploy it to a given deployment target, either through a URI or to Kubernetes. A deployment target can be thought of as a specific environment in which you can serve your model, e.g. Test, Stage and Production. `MLOps.NET` currently supports serving a model via an URI so that an ASP.NET Core application can consume the model, as well as to Kubernetes so the model can be consumed through a RESTful endpoint.
+Once a model has been registered, it's possible to deploy it to a given deployment target. A deployment target can be thought of as a specific environment from which you can serve your model, e.g. Test, Stage and Production. `MLOps.NET` currently supports deploying the model to an URI so that an ASP.NET Core application can consume it, or to a Kubernetes cluster so that the model can be consumed through a RESTful endpoint.
 
 Methods to deploy a model can be found on the `Deployment` catalog. 
 To deploy a model, start by creating a deployment target:
 ```csharp
 var deploymentTarget = await mlOpsContext.Deployment.CreateDeploymentTargetAsync(deploymentTargetName: "Test", isProduction: false);
 ```
+
 ##### Deploy a model to a URI
-Given a deployment target and a registered model, you can then deploy the model to a URI:
+Given a deployment target and a registered model, you can then deploy the model to a URI
 ```csharp
   var deployment = await mlOpsContext.Deployment.DeployModelToUriAsync(deploymentTarget, registeredModel, deployedBy: "John Doe");
 ```
@@ -143,8 +144,9 @@ The model is deployed to `deployment.DeploymentUri`, which can be used by a cons
 
 Deploying a model for an experiment to a given deployment target, e.g. Test, will automatically overwrite the existing model, thus the consuming application will not need to update it's URI/path to the model it's consuming. `ML.NET` will automatically poll for changes to the file making it seamless and allowing the consuming application and the ML.NET model to have different release cycles.
 
-#### Deploy a model to Kubernetes
-To deploy a model to Kubernetes you'll need to configure a Container Registry and a Kubernetes cluster via the `MLOpsBuilder`
+##### Deploy a model to Kubernetes
+To deploy a model to Kubernetes you'll need to configure a Container Registry and a Kubernetes cluster via the `MLOpsBuilder`.
+`MLOps.NET` is agnostic of cloud provider so you can have your container registry either live locally or in the cloud (private/public). You are free to host your Kubernetes cluster either in Azure, AWS or elsewhere, the tool simply finds it using the provided kubeconfig. Note that the `UseKubernetes` method either takes the absolute path to the  kubeconfig or the content of the kubeconfig itself, which can be useful if we are configuring it via a CI pipeline. 
 
 ```csharp
   IMLOpsContext = new MLOpsBuilder()
@@ -163,12 +165,12 @@ We can then deploy the model to the Kubernetes cluster
   //e.g. http://52.146.48.228/api/Prediction
 ```
 
-If you don't know the `ModelInput` and `ModelOutput` at deployment time, you can register the model schema before hand using the `RegisterModelSchema<TModelInput, TModelOutput>` method
+If you don't know the `ModelInput` and `ModelOutput` at deployment time, you can register the model schema during the run
 ```csharp
   await sut.LifeCycle.RegisterModelSchema<ModelInput, ModelOutput>(run.RunId);
 ```
 
-At deployment time, you may then call
+This simplifies the call at deployment time
 ```csharp
   var deployment = await sut.Deployment.DeployModelToKubernetesAsync(deploymentTarget, registeredModel, "deployedBy");
   
