@@ -149,7 +149,7 @@ To deploy a model to Kubernetes you'll need to configure a Container Registry an
 `MLOps.NET` is agnostic of cloud provider so you can have your container registry either live locally or in the cloud (private/public). You are free to host your Kubernetes cluster either in Azure, AWS or elsewhere, the tool simply finds it using the provided kubeconfig. Note that the `UseKubernetes` method either takes the absolute path to the  kubeconfig or the content of the kubeconfig itself, which can be useful if we are configuring it via a CI pipeline. 
 
 ```csharp
-  IMLOpsContext = new MLOpsBuilder()
+  IMLOpsContext mlOpsContext = new MLOpsBuilder()
     .UseLocalFileModelRepository()
     .UseSQLite()
     .UseContainerRegistry("RegistryName", "UserName", "Password")
