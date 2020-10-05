@@ -45,7 +45,17 @@ namespace MLOps.NET.Storage
         }
 
         ///<inheritdoc cref="IRunRepository"/>
+        public async Task CreateModelSchemaAsync(Guid runId, List<ModelSchema> modelSchemas)
+        {
+            using var db = this.contextFactory.CreateDbContext();
+            var run = db.Runs.FirstOrDefault(x => x.RunId == runId);
 
+            run.ModelSchemas = modelSchemas;
+
+            await db.SaveChangesAsync();
+        }
+
+        ///<inheritdoc cref="IRunRepository"/>
         public Run GetRun(Guid runId)
         {
             using var db = this.contextFactory.CreateDbContext();

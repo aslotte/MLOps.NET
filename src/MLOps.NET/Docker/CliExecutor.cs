@@ -231,7 +231,7 @@ namespace MLOps.NET.Docker
                     //Skip first line with headers
                     reader.ReadLine();
 
-                    var externalIP = reader.ReadLine().Split("   ")[3];
+                    var externalIP = reader.ReadLine().Split("   ")[3].Trim();
 
                     if (!string.IsNullOrEmpty(externalIP) && !externalIP.ToLower().Contains("pending"))
                     {

@@ -19,10 +19,13 @@ MLOps.NET is a data science tool to track and manage the lifecycle of a [ML.NET]
   - Versioned registered models
 - Model deployment (Azure Blob Storage, AWS S3, local)
   - URI based deployment
-  - Containerized deployments to a Kubernetes cluster (**currently being worked on**)
+  - Containerized deployments to a Kubernetes cluster
   - Manual deployment (in roadmap)
   
 A client application to vizualize and manage the ML lifecycle is currently in the [roadmap](https://github.com/aslotte/MLOps.NET/blob/master/images/roadmap.png) to be worked on.
+
+### Articles
+- [Announcing MLOps.NET v1.2.0](https://www.alexanderslotte.com/announcing-mlops-net-v1-2/)
 
 ### Getting started
 
@@ -51,6 +54,16 @@ To create an `MLOpsContext`, use the `MLOpsBuilder` with your desired configurat
   IMLOpsContext mlOpsContext = new MLOpsBuilder()
     .UseSQLite()
     .UseAWSS3ModelRepository("awsAccessKey", "awsSecretAccessKey", "regionName")
+    .Build();
+```
+
+#### With a Container Registry and a Kubernetes Cluster
+```csharp
+  IMLOpsContext mlOpsContext = new MLOpsBuilder()
+    .UseLocalFileModelRepository()
+    .UseSQLite()
+    .UseContainerRegistry("RegistryName", "UserName", "Password")
+    .UseKubernetes("kubeconfigPathOrContent")
     .Build();
 ```
 
@@ -121,7 +134,7 @@ To register a model for deployment
 ```
 
 #### Model deployment
-Once a model has been registered, it's possible to deploy it to a given deployment target. A deployment target can be thought of as a specific environment in which you can serve your model, e.g. Test, Stage and Production. `MLOps.NET` currently supports serving a model via an URI or path, so that e.g. an ASP.NET Core application can consume the model. Similarily to the model repository, a deployment repository will be automatically created for you either in Azure Blob Storage, AWS S3 or on a local file share.
+Once a model has been registered, it's possible to deploy it to a given deployment target. A deployment target can be thought of as a specific environment from which you can serve your model, e.g. Test, Stage and Production. `MLOps.NET` currently supports deploying the model to an URI so that an ASP.NET Core application can consume it, or to a Kubernetes cluster so that the model can be consumed through a RESTful endpoint.
 
 Methods to deploy a model can be found on the `Deployment` catalog. 
 To deploy a model, start by creating a deployment target:
@@ -129,9 +142,10 @@ To deploy a model, start by creating a deployment target:
 var deploymentTarget = await mlOpsContext.Deployment.CreateDeploymentTargetAsync(deploymentTargetName: "Test", isProduction: false);
 ```
 
-Given a deployment target and a registered model, you can then deploy the model to a given environment:
+##### Deploy a model to a URI
+Given a deployment target and a registered model, you can then deploy the model to a URI
 ```csharp
-  var deployment = await mlOpsContext.Deployment.DeployModelAsync(deploymentTarget, registeredModel, deployedBy: "John Doe");
+  var deployment = await mlOpsContext.Deployment.DeployModelToUriAsync(deploymentTarget, registeredModel, deployedBy: "John Doe");
 ```
 The model is deployed to `deployment.DeploymentUri`, which can be used by a consuming application. It's also possible to get the URI/path to deployed model by doing the following:
 ```csharp
@@ -143,7 +157,39 @@ The model is deployed to `deployment.DeploymentUri`, which can be used by a cons
 
 Deploying a model for an experiment to a given deployment target, e.g. Test, will automatically overwrite the existing model, thus the consuming application will not need to update it's URI/path to the model it's consuming. `ML.NET` will automatically poll for changes to the file making it seamless and allowing the consuming application and the ML.NET model to have different release cycles.
 
-We're actively working on supporting other deployment scenarios such as via Docker containers. 
+##### Deploy a model to Kubernetes
+To deploy a model to Kubernetes you'll need to configure a Container Registry and a Kubernetes cluster via the `MLOpsBuilder`.
+`MLOps.NET` is agnostic of cloud provider so you can have your container registry either live locally or in the cloud (private/public). You are free to host your Kubernetes cluster either in Azure, AWS or elsewhere, the tool simply finds it using the provided kubeconfig. Note that the `UseKubernetes` method either takes the absolute path to the  kubeconfig or the content of the kubeconfig itself, which can be useful if we are configuring it via a CI pipeline. 
+
+```csharp
+  IMLOpsContext mlOpsContext = new MLOpsBuilder()
+    .UseLocalFileModelRepository()
+    .UseSQLite()
+    .UseContainerRegistry("RegistryName", "UserName", "Password")
+    .UseKubernetes("kubeconfigPathOrContent")
+    .Build();
+```
+
+We can then deploy the model to the Kubernetes cluster 
+```csharp
+  var deployment = await sut.Deployment.DeployModelToKubernetesAsync<ModelInput, ModelOutput>(deploymentTarget, registeredModel, "deployedBy");
+  
+  deployment.deploymentUri
+  //e.g. http://52.146.48.228/api/Prediction
+```
+
+If you don't know the `ModelInput` and `ModelOutput` at deployment time, you can register the model schema during the run
+```csharp
+  await sut.LifeCycle.RegisterModelSchema<ModelInput, ModelOutput>(run.RunId);
+```
+
+This simplifies the call at deployment time
+```csharp
+  var deployment = await sut.Deployment.DeployModelToKubernetesAsync(deploymentTarget, registeredModel, "deployedBy");
+  
+  deployment.deploymentUri
+  //e.g. http://52.146.48.228/api/Prediction
+```
 
 ## Contribute
 We welcome contributors! Before getting started, take a moment to read our [contributing guidelines](https://github.com/aslotte/MLOps.NET/blob/master/Contributing.md) as well as the [docs for new developers](https://github.com/aslotte/MLOps.NET/wiki/Contributing-to-the-repository) on how to set up your local environment.
