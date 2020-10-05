@@ -6,8 +6,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.ML" Version="1.5.1" />
-		<PackageReference Include="MLOps.NET.SQLite" Version="1.1.0" />
+		<PackageReference Include="Microsoft.ML" Version="1.5.2" />
+		<PackageReference Include="MLOps.NET.SQLite" Version="1.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>
