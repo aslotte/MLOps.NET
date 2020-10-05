@@ -57,6 +57,16 @@ To create an `MLOpsContext`, use the `MLOpsBuilder` with your desired configurat
     .Build();
 ```
 
+#### With a Container Registry and a Kubernetes Cluster
+```csharp
+  IMLOpsContext mlOpsContext = new MLOpsBuilder()
+    .UseLocalFileModelRepository()
+    .UseSQLite()
+    .UseContainerRegistry("RegistryName", "UserName", "Password")
+    .UseKubernetes("kubeconfigPathOrContent")
+    .Build();
+```
+
 #### Experiment tracking
 To manage the lifecycle of a model, we'll need to track things such as the model's evaluation metrics, hyper-parameters used during training and so forth. We organize this under the concept of experiments and runs. An experiment is the logical grouping of a model we are trying to develop, e.g. a fraud classifier or recommendation engine. For a given experiment, we can create a number of runs. Each run represents one attempt to train a given model, which is associated with the run conditions and evaluation metrics achieved. 
 
