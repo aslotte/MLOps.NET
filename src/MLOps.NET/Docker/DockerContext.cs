@@ -1,4 +1,5 @@
-﻿using MLOps.NET.Docker.Interfaces;
+﻿using MLOps.NET.Constants;
+using MLOps.NET.Docker.Interfaces;
 using MLOps.NET.Docker.Settings;
 using MLOps.NET.Entities.Impl;
 using System;
@@ -78,8 +79,8 @@ namespace MLOps.NET.Docker
             var directoryPath = $"{dockerSettings.DirectoryName}/Schema";
             fileSystem.Directory.CreateDirectory(directoryPath);
 
-            await fileSystem.File.WriteAllTextAsync($"{directoryPath}/{"ModelInput.cs"}", modelInput);
-            await fileSystem.File.WriteAllTextAsync($"{directoryPath}/{"ModelOutput.cs"}", modelOutput);
+            await fileSystem.File.WriteAllTextAsync($"{directoryPath}/{Constant.ModelInput}.cs", modelInput);
+            await fileSystem.File.WriteAllTextAsync($"{directoryPath}/{Constant.ModelOutput}.cs", modelOutput);
         }
 
         public string ComposeImageName(string experimentName, RegisteredModel registeredModel)

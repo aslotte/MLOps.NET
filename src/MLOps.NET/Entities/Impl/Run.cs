@@ -60,6 +60,11 @@ namespace MLOps.NET.Entities.Impl
         public List<PackageDependency> PackageDepedencies { get; set; }
 
         /// <summary>
+        /// Model Schemas
+        /// </summary>
+        public List<ModelSchema> ModelSchemas { get; set; }
+
+        /// <summary>
         /// TrainingTime
         /// </summary>
         public TimeSpan? TrainingTime { get; set; }

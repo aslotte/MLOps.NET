@@ -84,7 +84,7 @@ namespace MLOps.NET.MulticlassClassification
 
             //MLOps: Optional - Deploy model
             Console.WriteLine("Deploying the model");
-            var deployment = await mlOpsContext.Deployment.DeployModelAsync(deploymentTarget, registeredModel, deployedBy: "John Doe");
+            var deployment = await mlOpsContext.Deployment.DeployModelToUriAsync(deploymentTarget, registeredModel, deployedBy: "John Doe");
 
             //MLOps: Optional - Get the run if you want to vizualize inspect it
             run = mlOpsContext.LifeCycle.GetRun(run.RunId);

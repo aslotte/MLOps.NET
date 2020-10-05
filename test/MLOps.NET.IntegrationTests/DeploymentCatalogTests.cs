@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MLOps.NET.Constants;
 using MLOps.NET.Docker;
 using MLOps.NET.Docker.Settings;
 using MLOps.NET.Tests.Common.Data;
@@ -100,9 +101,20 @@ namespace MLOps.NET.IntegrationTests
             var run = await sut.LifeCycle.CreateRunAsync(this.experimentName);
             var runArtifact = await sut.Model.UploadAsync(run.RunId, @"Data/model.txt");
             var registeredModel = await sut.Model.RegisterModel(run.ExperimentId, runArtifact.RunArtifactId, "registerby");
+            await sut.LifeCycle.RegisterModelSchema<ModelInput, ModelOutput>(run.RunId);
+
+            (string ModelInput, string ModelOutput) GetSchema()
+            {
+                run = sut.LifeCycle.GetRun(run.RunId);
+
+                var modelInput = run.ModelSchemas.First(x => x.Name == Constant.ModelInput);
+                var modelOutput = run.ModelSchemas.First(x => x.Name == Constant.ModelOutput);
+
+                return (modelInput.Definition, modelOutput.Definition);
+            }
 
             //Act
-            await sut.Deployment.BuildAndPushImageAsync<ModelInput, ModelOutput>(registeredModel);
+            await sut.Deployment.BuildAndPushImageAsync(registeredModel, GetSchema);
 
             //Assert
             var imageExists = await cliExecutor.RunDockerPull(tagName);
@@ -118,9 +130,20 @@ namespace MLOps.NET.IntegrationTests
             var run = await sut.LifeCycle.CreateRunAsync(this.experimentName);
             var runArtifact = await sut.Model.UploadAsync(run.RunId, @"Data/model.txt");
             var registeredModel = await sut.Model.RegisterModel(run.ExperimentId, runArtifact.RunArtifactId, "registerby");
+            await sut.LifeCycle.RegisterModelSchema<ModelInput, ModelOutput>(run.RunId);
+
+            (string ModelInput, string ModelOutput) GetSchema()
+            {
+                run = sut.LifeCycle.GetRun(run.RunId);
+
+                var modelInput = run.ModelSchemas.First(x => x.Name == Constant.ModelInput);
+                var modelOutput = run.ModelSchemas.First(x => x.Name == Constant.ModelOutput);
+
+                return (modelInput.Definition, modelOutput.Definition);
+            }
 
             //Act
-            await sut.Deployment.BuildAndPushImageAsync<ModelInput, ModelOutput>(registeredModel);
+            await sut.Deployment.BuildAndPushImageAsync(registeredModel, GetSchema);
 
             //Assert
             File.Exists("image/ML.NET.Web.Embedded.csproj").Should().BeTrue();
@@ -134,11 +157,23 @@ namespace MLOps.NET.IntegrationTests
             await cliExecutor.RemoveDockerImage(tagName);
 
             var run = await sut.LifeCycle.CreateRunAsync(this.experimentName);
+            await sut.LifeCycle.RegisterModelSchema<ModelInput, ModelOutput>(run.RunId);       
+
+            (string ModelInput, string ModelOutput) GetSchema()
+            {
+                run = sut.LifeCycle.GetRun(run.RunId);
+
+                var modelInput = run.ModelSchemas.First(x => x.Name == Constant.ModelInput);
+                var modelOutput = run.ModelSchemas.First(x => x.Name == Constant.ModelOutput);
+
+                return (modelInput.Definition, modelOutput.Definition);
+            }
+
             var runArtifact = await sut.Model.UploadAsync(run.RunId, @"Data/model.txt");
             var registeredModel = await sut.Model.RegisterModel(run.ExperimentId, runArtifact.RunArtifactId, "registerby");
 
             //Act
-            await sut.Deployment.BuildAndPushImageAsync<ModelInput, ModelOutput>(registeredModel);
+            await sut.Deployment.BuildAndPushImageAsync(registeredModel, GetSchema);
 
             //Assert
             var projectFile = File.ReadAllLines("image/ML.NET.Web.Embedded.csproj");

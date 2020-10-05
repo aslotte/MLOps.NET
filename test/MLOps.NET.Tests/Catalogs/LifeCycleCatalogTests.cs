@@ -1,8 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Catalogs;
+using MLOps.NET.Constants;
 using MLOps.NET.Entities.Impl;
+using MLOps.NET.Services;
 using MLOps.NET.Services.Interfaces;
 using MLOps.NET.Storage;
+using MLOps.NET.Tests.Common.Data;
 using MLOps.NET.Utilities;
 using Moq;
 using System;
@@ -19,6 +22,7 @@ namespace MLOps.NET.Tests
         private Mock<IExperimentRepository> experimentRepositoryMock;
         private Mock<IRunRepository> runRepositoryMock;
         private Mock<IPackageDependencyIdentifier> packageDependencyMock;
+        private Mock<ISchemaGenerator> schemaGeneratorMock;
         private LifeCycleCatalog sut;
 
         [TestInitialize]
@@ -28,10 +32,11 @@ namespace MLOps.NET.Tests
             this.experimentRepositoryMock = new Mock<IExperimentRepository>();
             this.runRepositoryMock = new Mock<IRunRepository>();
             this.packageDependencyMock = new Mock<IPackageDependencyIdentifier>();
+            this.schemaGeneratorMock = new Mock<ISchemaGenerator>();
 
             packageDependencyMock.Setup(x => x.IdentifyPackageDependencies()).Returns(new List<PackageDependency>());
 
-            this.sut = new LifeCycleCatalog(experimentRepositoryMock.Object, runRepositoryMock.Object, clockMock.Object, packageDependencyMock.Object);
+            this.sut = new LifeCycleCatalog(experimentRepositoryMock.Object, runRepositoryMock.Object, clockMock.Object, packageDependencyMock.Object, schemaGeneratorMock.Object);
         }
 
         [TestMethod]
@@ -121,6 +126,32 @@ namespace MLOps.NET.Tests
 
             //Assert
             this.runRepositoryMock.Verify(x => x.CreateRunAsync(It.IsAny<Guid>(), dependencies, string.Empty), Times.Once());
+        }
+
+        [TestMethod]
+        public async Task RegisterSchema_ShouldCallSchemaGenerator()
+        {
+            //Arrange
+
+            //Act
+            await sut.RegisterModelSchema<ModelInput, ModelOutput>(Guid.NewGuid());
+
+            //Assert
+            this.schemaGeneratorMock.Verify(x => x.GenerateDefinition<ModelInput>(Constant.ModelInput), Times.Once());
+            this.schemaGeneratorMock.Verify(x => x.GenerateDefinition<ModelOutput>(Constant.ModelOutput), Times.Once());
+        }
+
+        [TestMethod]
+        public async Task RegisterSchema_ShouldCallRunRepoitory()
+        {
+            //Arrange
+            var runId = Guid.NewGuid();
+
+            //Act
+            await sut.RegisterModelSchema<ModelInput, ModelOutput>(runId);
+
+            //Assert
+            this.runRepositoryMock.Verify(x => x.CreateModelSchemaAsync(runId, It.IsAny<List<ModelSchema>>()), Times.Once());
         }
     }
 }

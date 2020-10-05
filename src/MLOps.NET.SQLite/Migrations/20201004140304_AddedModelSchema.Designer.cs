@@ -3,14 +3,23 @@ using System;
 using MLOps.NET.SQLite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MLOps.NET.SQLite.Migrations
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [DbContext(typeof(MLOpsSQLiteDbContext))]
-    partial class MLOpsSQLiteDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201004140304_AddedModelSchema")]
+    partial class AddedModelSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="modelBuilder"></param>
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

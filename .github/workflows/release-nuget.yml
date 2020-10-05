@@ -54,5 +54,12 @@ jobs:
           PROJECT_FILE_PATH: src/MLOps.NET.SQLServer/MLOps.NET.SQLServer.csproj
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}     
           VERSION_STATIC: 1.0.0
+          TAG_COMMIT: false    
+      - name: Publish MLOps.NET.CLI          
+        uses: brandedoutcast/publish-nuget@v2.5.2
+        with:
+          PROJECT_FILE_PATH: src/MLOps.NET.CLI/MLOps.NET.CLI.csproj
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}     
+          VERSION_STATIC: 1.0.0
           TAG_COMMIT: false           
                                                                          

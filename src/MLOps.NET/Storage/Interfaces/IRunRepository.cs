@@ -21,6 +21,14 @@ namespace MLOps.NET.Storage
         Task<Run> CreateRunAsync(Guid experimentId, List<PackageDependency> packageDepedencies, string gitCommitHash = "");
 
         /// <summary>
+        /// Adds model schemas to a Run
+        /// </summary>
+        /// <param name="runId"></param>
+        /// <param name="modelSchemas"></param>
+        /// <returns></returns>
+        Task CreateModelSchemaAsync(Guid runId, List<ModelSchema> modelSchemas);
+
+        /// <summary>
         /// Get all runs by experiment id
         /// </summary>
         /// <param name="experimentId"></param>

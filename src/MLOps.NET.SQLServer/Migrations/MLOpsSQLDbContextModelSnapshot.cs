@@ -240,6 +240,30 @@ namespace MLOps.NET.SQLServer.Migrations
                     b.ToTable("Metric");
                 });
 
+            modelBuilder.Entity("MLOps.NET.Entities.Impl.ModelSchema", b =>
+                {
+                    b.Property<Guid>("ModelSchemaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Definition")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("RunId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ModelSchemaId");
+
+                    b.HasIndex("RunId");
+
+                    b.ToTable("ModelSchema");
+                });
+
             modelBuilder.Entity("MLOps.NET.Entities.Impl.PackageDependency", b =>
                 {
                     b.Property<Guid>("PackageDependencyId")
@@ -406,6 +430,15 @@ namespace MLOps.NET.SQLServer.Migrations
                 {
                     b.HasOne("MLOps.NET.Entities.Impl.Run", null)
                         .WithMany("Metrics")
+                        .HasForeignKey("RunId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MLOps.NET.Entities.Impl.ModelSchema", b =>
+                {
+                    b.HasOne("MLOps.NET.Entities.Impl.Run", null)
+                        .WithMany("ModelSchemas")
                         .HasForeignKey("RunId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
