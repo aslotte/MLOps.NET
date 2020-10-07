@@ -7,7 +7,7 @@ on:
       - 'samples/**'  
   pull_request:
     branches: [ main ]
-    paths-ignore:
+    paths:
       - 'samples/**'
 jobs:
   Build-samples:
