@@ -28,6 +28,7 @@ A client application to vizualize and manage the ML lifecycle is currently in th
 - [Announcing MLOps.NET v1.2.0](https://www.alexanderslotte.com/announcing-mlops-net-v1-2/)
 - [Get Started with MLOps.NET](https://www.alexanderslotte.com/get-started-with-mlops-net/)
 - [Experiment Tracking with MLOps.NET](https://www.alexanderslotte.com/how-to-track-your-model-training-with-mlops-net/)
+- [Exploring Model Repositories with MLOps.NET](https://www.alexanderslotte.com/exploring-model-repositories-with-mlops-net/)
 
 ### Getting started
 
