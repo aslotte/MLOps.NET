@@ -24,7 +24,7 @@
     <PackageReference Include="ICSharpCode.Decompiler" Version="6.2.1.6137" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="3.1.6" />
     <PackageReference Include="Microsoft.ML" Version="1.5.2" />
-    <PackageReference Include="System.IO.Abstractions" Version="12.2.5" />
+    <PackageReference Include="System.IO.Abstractions" Version="12.2.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.9" />
   </ItemGroup>
