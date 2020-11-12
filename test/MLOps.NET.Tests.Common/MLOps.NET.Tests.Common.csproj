@@ -1,7 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+<<<<<<< Updated upstream
     <TargetFramework>netstandard2.0</TargetFramework>
+=======
+    <TargetFramework>net5.0</TargetFramework>
+>>>>>>> Stashed changes
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
