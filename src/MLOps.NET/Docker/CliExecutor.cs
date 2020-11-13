@@ -44,6 +44,25 @@ namespace MLOps.NET.Docker
                 {
                     Console.WriteLine($"Installing dotnet package dependency {package.Name} with version {package.Version}...");
 
+                    if (Directory.Exists("image"))
+                    {
+                        Console.WriteLine("The image directory does indeed exist");
+                    }
+                    if (File.Exists(projectPath))
+                    {
+                        Console.WriteLine("The project does indeed exist");
+                    }
+
+                    var directory = Directory.GetCurrentDirectory();
+                    Console.WriteLine($"Current directory is {directory}");
+
+                    Console.WriteLine("Files in this directory are:");
+                    var files = Directory.GetFiles(directory);
+                    foreach (var file in files)
+                    {
+                        Console.WriteLine(file);
+                    }
+
                     await Cli.Wrap("dotnet")
                         .WithArguments($"add {projectPath} package {package.Name} --version {package.Version}")
                         .ExecuteBufferedAsync();
