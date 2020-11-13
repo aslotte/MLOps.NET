@@ -53,11 +53,14 @@ namespace MLOps.NET.Docker
                         Console.WriteLine("The project does indeed exist");
                     }
 
+                    
                     var directory = Directory.GetCurrentDirectory();
                     Console.WriteLine($"Current directory is {directory}");
 
-                    Console.WriteLine("Files in this directory are:");
-                    var files = Directory.GetFiles(directory);
+                    var imageDir = Path.Join(directory, "image");
+
+                    Console.WriteLine("Files in image directory are:");
+                    var files = Directory.GetFiles(imageDir);
                     foreach (var file in files)
                     {
                         Console.WriteLine(file);
