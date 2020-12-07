@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.IO;
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MLOps.NET.Storage;
 using Moq;
@@ -53,6 +55,25 @@ namespace MLOps.NET.SQLite.Tests
 
             //Assert
             unitUnderTest.LifeCycle.Should().NotBeNull();
+        }
+
+        [TestMethod]
+        public void UseSqlLite_ConfiguresAlternativeSQLiteDbPath()
+        {
+            var tempPath = Path.GetTempPath();
+            var tmpDbName = Guid.NewGuid().ToString();
+            var tmpDbPath = Path.Combine(tempPath, $"{tmpDbName}.db");
+
+            //Act
+            IMLOpsContext unitUnderTest = new MLOpsBuilder()
+                .UseSQLite(tmpDbPath)
+                .UseModelRepository(new Mock<IModelRepository>().Object)
+                .Build();
+
+            unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
+
+            //Assert
+            File.Exists(tmpDbPath).Should().BeTrue();
         }
     }
 }
