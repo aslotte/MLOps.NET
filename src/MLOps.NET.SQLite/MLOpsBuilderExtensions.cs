@@ -12,11 +12,14 @@ namespace MLOps.NET.SQLite
         /// Enables the usage of SQLite
         /// </summary>
         /// <param name="builder">MLOpsBuilder for using SQLite</param>
+        /// <param name="dbFileLocation">Path to SQLite database file</param>
         /// <returns>Provided MLOpsBuilder for chaining</returns>
-        public static MLOpsBuilder UseSQLite(this MLOpsBuilder builder)
+        public static MLOpsBuilder UseSQLite(this MLOpsBuilder builder, string dbFileLocation = null)
         {
+            var location = dbFileLocation == null ? "local.db" : dbFileLocation;
+
             var options = new DbContextOptionsBuilder()
-                .UseSqlite("Data Source=local.db")
+                .UseSqlite($"Data Source={location}")
                 .Options;
 
             var contextFactory = new DbContextFactory(() => new MLOpsSQLiteDbContext(options));
