@@ -56,24 +56,5 @@ namespace MLOps.NET.SQLite.Tests
             //Assert
             unitUnderTest.LifeCycle.Should().NotBeNull();
         }
-
-        [TestMethod]
-        public void UseSqlLite_ConfiguresAlternativeSQLiteDbPath()
-        {
-            var tempPath = Path.GetTempPath();
-            var tempDbName = Guid.NewGuid().ToString();
-            var tempDbPath = Path.Combine(tempPath, $"{tempDbName}.db");
-
-            //Act
-            IMLOpsContext unitUnderTest = new MLOpsBuilder()
-                .UseSQLite(tempDbPath)
-                .UseModelRepository(new Mock<IModelRepository>().Object)
-                .Build();
-
-            unitUnderTest.Should().BeOfType<MLOpsContext>("Because the default IMLLifeCycleManager is MLLifeCycleManager");
-
-            //Assert
-            File.Exists(tempDbPath).Should().BeTrue();
-        }
     }
 }
