@@ -60,7 +60,7 @@ namespace MLOps.NET.Docker
                     var imageDir = Path.Join(directory, "image");
 
                     Console.WriteLine("Files in image directory are:");
-                    var files = Directory.GetFiles(directory);
+                    var files = Directory.GetFiles(imageDir);
                     foreach (var file in files)
                     {
                         Console.WriteLine(file);

@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Docker
@@ -34,7 +35,9 @@ namespace MLOps.NET.Docker
                 .PackageDepedencies;
 
             await cliExecutor.InstallTemplatePackage(dockerSettings);
+            Thread.Sleep(5000);
             await cliExecutor.CreateTemplateProject(dockerSettings);
+            Thread.Sleep(5000);
             await cliExecutor.AddPackageDependencies(dockerSettings, packageDependencies);
 
             await this.CopyModel(model);
