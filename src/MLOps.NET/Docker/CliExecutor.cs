@@ -37,7 +37,7 @@ namespace MLOps.NET.Docker
         public async Task AddPackageDependencies(DockerSettings dockerSettings, List<PackageDependency> packageDependencies)
         {
             var directory = Directory.GetCurrentDirectory();
-            var projectPath = Path.Join(directory, dockerSettings.DirectoryName, dockerSettings.ProjectName);
+            var projectPath = Path.Join(dockerSettings.DirectoryName, dockerSettings.ProjectName);
 
             foreach (var package in packageDependencies)
             {
@@ -60,7 +60,7 @@ namespace MLOps.NET.Docker
                     var imageDir = Path.Join(directory, "image");
 
                     Console.WriteLine("Files in image directory are:");
-                    var files = Directory.GetFiles(imageDir);
+                    var files = Directory.GetFiles(directory);
                     foreach (var file in files)
                     {
                         Console.WriteLine(file);
