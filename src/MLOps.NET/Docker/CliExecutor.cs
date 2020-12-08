@@ -36,7 +36,8 @@ namespace MLOps.NET.Docker
         ///<inheritdoc cref="ICliExecutor"/>
         public async Task AddPackageDependencies(DockerSettings dockerSettings, List<PackageDependency> packageDependencies)
         {
-            var projectPath = Path.Join(dockerSettings.DirectoryName, dockerSettings.ProjectName);
+            var directory = Directory.GetCurrentDirectory();
+            var projectPath = Path.Join(directory, dockerSettings.DirectoryName, dockerSettings.ProjectName);
 
             foreach (var package in packageDependencies)
             {
@@ -53,8 +54,7 @@ namespace MLOps.NET.Docker
                         Console.WriteLine("The project does indeed exist");
                     }
 
-                    
-                    var directory = Directory.GetCurrentDirectory();
+                   
                     Console.WriteLine($"Current directory is {directory}");
 
                     var imageDir = Path.Join(directory, "image");
