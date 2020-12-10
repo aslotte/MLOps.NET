@@ -20,6 +20,7 @@ namespace MLOps.NET.Docker.Interfaces
         /// <summary>
         /// Adds package dependencies
         /// </summary>
+        /// <param name="packageDependencies"></param>
         /// <returns></returns>
         Task AddPackageDependencies(List<PackageDependency> packageDependencies);
 
