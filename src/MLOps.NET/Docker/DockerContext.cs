@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MLOps.NET.Docker
@@ -33,9 +34,9 @@ namespace MLOps.NET.Docker
                 .First(x => x.RunId == registeredModel.RunId)
                 .PackageDepedencies;
 
-            await cliExecutor.InstallTemplatePackage(dockerSettings);
-            await cliExecutor.CreateTemplateProject(dockerSettings);
-            await cliExecutor.AddPackageDependencies(dockerSettings, packageDependencies);
+            await cliExecutor.InstallTemplatePackage();
+            await cliExecutor.CreateTemplateProject();
+            await cliExecutor.AddPackageDependencies(packageDependencies);
 
             await this.CopyModel(model);
             await this.CopySchema(GetSchema);
@@ -43,7 +44,7 @@ namespace MLOps.NET.Docker
 
             var imageName = ComposeImageName(experiment.ExperimentName, registeredModel);
 
-            await cliExecutor.RunDockerBuild(dockerSettings, imageName);
+            await cliExecutor.RunDockerBuild(imageName);
         }
 
         ///<inheritdoc cref="IDockerContext"/>
@@ -57,16 +58,16 @@ namespace MLOps.NET.Docker
 
         private void ResetImageDirectory()
         {
-            if (fileSystem.Directory.Exists(dockerSettings.DirectoryName))
+            if (fileSystem.Directory.Exists(DockerSettings.DirectoryName))
             {
-                fileSystem.Directory.Delete(dockerSettings.DirectoryName, recursive: true);
+                fileSystem.Directory.Delete(DockerSettings.DirectoryName, recursive: true);
             }
-            fileSystem.Directory.CreateDirectory(dockerSettings.DirectoryName);
+            fileSystem.Directory.CreateDirectory(DockerSettings.DirectoryName);
         }
 
         private async Task CopyModel(Stream model)
         {
-            var path = $"{dockerSettings.DirectoryName}/{dockerSettings.ModelName}";
+            var path = $"{DockerSettings.DirectoryName}/{DockerSettings.ModelName}";
             using var fileStream = fileSystem.FileStream.Create(path, FileMode.Create, FileAccess.Write);
 
             await model.CopyToAsync(fileStream);
@@ -76,7 +77,7 @@ namespace MLOps.NET.Docker
         {
             var (modelInput, modelOutput) = GetSchema();
 
-            var directoryPath = $"{dockerSettings.DirectoryName}/Schema";
+            var directoryPath = $"{DockerSettings.DirectoryName}/Schema";
             fileSystem.Directory.CreateDirectory(directoryPath);
 
             await fileSystem.File.WriteAllTextAsync($"{directoryPath}/{Constant.ModelInput}.cs", modelInput);

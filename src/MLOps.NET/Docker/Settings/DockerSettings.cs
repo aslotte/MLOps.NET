@@ -1,4 +1,6 @@
-﻿namespace MLOps.NET.Docker.Settings
+﻿using System.IO;
+
+namespace MLOps.NET.Docker.Settings
 {
     /// <summary>
     /// DockerSettings
@@ -24,23 +26,28 @@
         /// <summary>
         /// Name of directory to build image in
         /// </summary>
-        public string DirectoryName => "image";
+        public static string DirectoryName => "image";
         /// <summary>
         /// Name of ML.NET model
         /// </summary>
-        public string ModelName => "model.zip";
+        public static string ModelName => "model.zip";
         /// <summary>
         /// Verision of ML.NET.Templates
         /// </summary>
-        public string TemplatePackageVersion => "0.3.0-beta";
+        public static string TemplatePackageVersion => "0.3.0-beta";
         /// <summary>
         /// dotnet new template name
         /// </summary>
-        public string TemplateName => "mlnet-web-embedded";
+        public static string TemplateName => "mlnet-web-embedded";
 
         /// <summary>
         /// Project name
         /// </summary>
-        public string ProjectName => "ML.NET.Web.Embedded.csproj";
+        public static string ProjectName => "ML.NET.Web.Embedded.csproj";
+
+        /// <summary>
+        /// Path to template project
+        /// </summary>
+        public static string ProjectPath => Path.Join(Directory.GetCurrentDirectory(), DirectoryName, ProjectName);
     }
 }

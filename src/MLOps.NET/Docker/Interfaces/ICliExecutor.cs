@@ -14,15 +14,15 @@ namespace MLOps.NET.Docker.Interfaces
         /// <summary>
         /// Installs the dotnet new template package ML.NET.Templates
         /// </summary>
-        /// <param name="dockerSettings"></param>
         /// <returns></returns>
-        Task InstallTemplatePackage(DockerSettings dockerSettings);
+        Task InstallTemplatePackage();
 
         /// <summary>
         /// Adds package dependencies
         /// </summary>
+        /// <param name="packageDependencies"></param>
         /// <returns></returns>
-        Task AddPackageDependencies(DockerSettings dockerSettings, List<PackageDependency> packageDependencies);
+        Task AddPackageDependencies(List<PackageDependency> packageDependencies);
 
         /// <summary>
         /// Uninstall the dotnet new template package for ML.NET.Templates
@@ -33,17 +33,15 @@ namespace MLOps.NET.Docker.Interfaces
         /// <summary>
         /// Creates a template project
         /// </summary>
-        /// <param name="dockerSettings"></param>
         /// <returns></returns>
-        Task CreateTemplateProject(DockerSettings dockerSettings);
+        Task CreateTemplateProject();
 
         /// <summary>
         /// Runs docker build
         /// </summary>
         /// <param name="imageName"></param>
-        /// <param name="dockerSettings"></param>
         /// <returns></returns>
-        Task RunDockerBuild(DockerSettings dockerSettings, string imageName);
+        Task RunDockerBuild(string imageName);
 
         /// <summary>
         /// Runs docker login if username and password have been provided

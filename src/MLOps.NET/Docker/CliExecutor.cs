@@ -15,29 +15,48 @@ namespace MLOps.NET.Docker
 {
     ///<inheritdoc cref="ICliExecutor"/>
     internal class CliExecutor : ICliExecutor
-    { 
+    {
         ///<inheritdoc cref="ICliExecutor"/>
-        public async Task InstallTemplatePackage(DockerSettings dockerSettings)
+        public async Task InstallTemplatePackage()
         {
             try
             {
                 Console.WriteLine("Installing dotnet new templates...");
 
                 await Cli.Wrap("dotnet")
-                    .WithArguments($"new --install ML.NET.Templates::{dockerSettings.TemplatePackageVersion}")
+                    .WithArguments($"new --install ML.NET.Templates::{DockerSettings.TemplatePackageVersion}")
                     .ExecuteBufferedAsync();
+
+                await WaitUntilTemplateIsInstalled();
+
+                static async Task WaitUntilTemplateIsInstalled()
+                {
+                    int timeout = 1 * 60 * 1000;
+                    int timePassed = 0;
+                    int interval = 1 * 1000;
+
+                    while (timePassed < timeout)
+                    {
+                        Thread.Sleep(interval);
+                        timePassed += interval;
+
+                        var output = await Cli.Wrap("dotnet")
+                            .WithArguments($"new")
+                            .ExecuteBufferedAsync();
+
+                        if (output.StandardOutput.Contains($"{DockerSettings.TemplateName}")) return;
+                    }
+                }
             }
             catch (Exception ex)
             {
-                throw new TemplateInstallationException($"Unable to install dotnet new template package ML.NET.Templates with version {dockerSettings.TemplatePackageVersion}", ex);
+                throw new TemplateInstallationException($"Unable to install dotnet new template package ML.NET.Templates with version {DockerSettings.TemplatePackageVersion}", ex);
             }
         }
 
         ///<inheritdoc cref="ICliExecutor"/>
-        public async Task AddPackageDependencies(DockerSettings dockerSettings, List<PackageDependency> packageDependencies)
+        public async Task AddPackageDependencies(List<PackageDependency> packageDependencies)
         {
-            var projectPath = Path.Join(dockerSettings.DirectoryName, dockerSettings.ProjectName);
-
             foreach (var package in packageDependencies)
             {
                 try
@@ -45,7 +64,7 @@ namespace MLOps.NET.Docker
                     Console.WriteLine($"Installing dotnet package dependency {package.Name} with version {package.Version}...");
 
                     await Cli.Wrap("dotnet")
-                        .WithArguments($"add {projectPath} package {package.Name} --version {package.Version}")
+                        .WithArguments($"add {DockerSettings.ProjectPath} package {package.Name} --version {package.Version}")
                         .ExecuteBufferedAsync();
                 }
                 catch (Exception ex)
@@ -64,30 +83,30 @@ namespace MLOps.NET.Docker
         }
 
         ///<inheritdoc cref="ICliExecutor"/>
-        public async Task CreateTemplateProject(DockerSettings dockerSettings)
+        public async Task CreateTemplateProject()
         {
             try
             {
                 Console.WriteLine("Creating template project...");
 
                 await Cli.Wrap("dotnet")
-                    .WithArguments($"new {dockerSettings.TemplateName} --force --output {dockerSettings.DirectoryName}")
+                    .WithArguments($"new {DockerSettings.TemplateName} --force --output {DockerSettings.DirectoryName}")
                     .ExecuteBufferedAsync();
             }
             catch (Exception ex)
             {
-                throw new TemplateCreationException($"Unable to create project from dotnet new template {dockerSettings.TemplateName}", ex);
+                throw new TemplateCreationException($"Unable to create project from dotnet new template {DockerSettings.TemplateName}", ex);
             }
         }
 
-        public async Task RunDockerBuild(DockerSettings dockerSettings, string imageName)
+        public async Task RunDockerBuild(string imageName)
         {
             try
             {
                 Console.WriteLine("Running docker build...");
 
                 await Cli.Wrap("docker")
-                    .WithArguments($"build --tag {imageName.ToLower()} --file {dockerSettings.DirectoryName}/Dockerfile {dockerSettings.DirectoryName}")
+                    .WithArguments($"build --tag {imageName.ToLower()} --file {DockerSettings.DirectoryName}/Dockerfile {DockerSettings.DirectoryName}")
                     .ExecuteBufferedAsync();
             }
             catch (Exception ex)
