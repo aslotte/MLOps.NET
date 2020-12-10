@@ -15,7 +15,7 @@ namespace MLOps.NET.Docker
 {
     ///<inheritdoc cref="ICliExecutor"/>
     internal class CliExecutor : ICliExecutor
-    { 
+    {
         ///<inheritdoc cref="ICliExecutor"/>
         public async Task InstallTemplatePackage(DockerSettings dockerSettings)
         {
@@ -24,50 +24,26 @@ namespace MLOps.NET.Docker
                 Console.WriteLine("Installing dotnet new templates...");
 
                 await Cli.Wrap("dotnet")
-                    .WithArguments($"new --install ML.NET.Templates::{dockerSettings.TemplatePackageVersion}")
+                    .WithArguments($"new --install ML.NET.Templates::{DockerSettings.TemplatePackageVersion}")
                     .ExecuteBufferedAsync();
             }
             catch (Exception ex)
             {
-                throw new TemplateInstallationException($"Unable to install dotnet new template package ML.NET.Templates with version {dockerSettings.TemplatePackageVersion}", ex);
+                throw new TemplateInstallationException($"Unable to install dotnet new template package ML.NET.Templates with version {DockerSettings.TemplatePackageVersion}", ex);
             }
         }
 
         ///<inheritdoc cref="ICliExecutor"/>
         public async Task AddPackageDependencies(DockerSettings dockerSettings, List<PackageDependency> packageDependencies)
         {
-            var directory = Directory.GetCurrentDirectory();
-            var projectPath = Path.Join(dockerSettings.DirectoryName, dockerSettings.ProjectName);
-
             foreach (var package in packageDependencies)
             {
                 try
                 {
                     Console.WriteLine($"Installing dotnet package dependency {package.Name} with version {package.Version}...");
 
-                    if (Directory.Exists("image"))
-                    {
-                        Console.WriteLine("The image directory does indeed exist");
-                    }
-                    if (File.Exists(projectPath))
-                    {
-                        Console.WriteLine("The project does indeed exist");
-                    }
-
-                   
-                    Console.WriteLine($"Current directory is {directory}");
-
-                    var imageDir = Path.Join(directory, "image");
-
-                    Console.WriteLine("Files in image directory are:");
-                    var files = Directory.GetFiles(imageDir);
-                    foreach (var file in files)
-                    {
-                        Console.WriteLine(file);
-                    }
-
                     await Cli.Wrap("dotnet")
-                        .WithArguments($"add {projectPath} package {package.Name} --version {package.Version}")
+                        .WithArguments($"add {dockerSettings.ProjectPath} package {package.Name} --version {package.Version}")
                         .ExecuteBufferedAsync();
                 }
                 catch (Exception ex)
@@ -93,12 +69,30 @@ namespace MLOps.NET.Docker
                 Console.WriteLine("Creating template project...");
 
                 await Cli.Wrap("dotnet")
-                    .WithArguments($"new {dockerSettings.TemplateName} --force --output {dockerSettings.DirectoryName}")
+                    .WithArguments($"new {DockerSettings.TemplateName} --force --output {DockerSettings.DirectoryName}")
                     .ExecuteBufferedAsync();
+
+                WaitForCompletion();
+
+                void WaitForCompletion()
+                {
+                    int timeout = 3 * 60 * 1000;
+                    int timePassed = 0;
+                    int interval = 1 * 1000;
+
+                    while (timePassed < timeout)
+                    {
+                        Thread.Sleep(interval);
+                        timePassed += interval;
+
+                        if (File.Exists(dockerSettings.ProjectPath)) return;
+                    }
+                    throw new InvalidOperationException("The template project file was not created within the allocated time");
+                }
             }
             catch (Exception ex)
             {
-                throw new TemplateCreationException($"Unable to create project from dotnet new template {dockerSettings.TemplateName}", ex);
+                throw new TemplateCreationException($"Unable to create project from dotnet new template {DockerSettings.TemplateName}", ex);
             }
         }
 
@@ -109,7 +103,7 @@ namespace MLOps.NET.Docker
                 Console.WriteLine("Running docker build...");
 
                 await Cli.Wrap("docker")
-                    .WithArguments($"build --tag {imageName.ToLower()} --file {dockerSettings.DirectoryName}/Dockerfile {dockerSettings.DirectoryName}")
+                    .WithArguments($"build --tag {imageName.ToLower()} --file {DockerSettings.DirectoryName}/Dockerfile {DockerSettings.DirectoryName}")
                     .ExecuteBufferedAsync();
             }
             catch (Exception ex)

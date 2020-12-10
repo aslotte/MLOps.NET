@@ -35,9 +35,7 @@ namespace MLOps.NET.Docker
                 .PackageDepedencies;
 
             await cliExecutor.InstallTemplatePackage(dockerSettings);
-            Thread.Sleep(5000);
             await cliExecutor.CreateTemplateProject(dockerSettings);
-            Thread.Sleep(5000);
             await cliExecutor.AddPackageDependencies(dockerSettings, packageDependencies);
 
             await this.CopyModel(model);
@@ -60,16 +58,16 @@ namespace MLOps.NET.Docker
 
         private void ResetImageDirectory()
         {
-            if (fileSystem.Directory.Exists(dockerSettings.DirectoryName))
+            if (fileSystem.Directory.Exists(DockerSettings.DirectoryName))
             {
-                fileSystem.Directory.Delete(dockerSettings.DirectoryName, recursive: true);
+                fileSystem.Directory.Delete(DockerSettings.DirectoryName, recursive: true);
             }
-            fileSystem.Directory.CreateDirectory(dockerSettings.DirectoryName);
+            fileSystem.Directory.CreateDirectory(DockerSettings.DirectoryName);
         }
 
         private async Task CopyModel(Stream model)
         {
-            var path = $"{dockerSettings.DirectoryName}/{dockerSettings.ModelName}";
+            var path = $"{DockerSettings.DirectoryName}/{DockerSettings.ModelName}";
             using var fileStream = fileSystem.FileStream.Create(path, FileMode.Create, FileAccess.Write);
 
             await model.CopyToAsync(fileStream);
@@ -79,7 +77,7 @@ namespace MLOps.NET.Docker
         {
             var (modelInput, modelOutput) = GetSchema();
 
-            var directoryPath = $"{dockerSettings.DirectoryName}/Schema";
+            var directoryPath = $"{DockerSettings.DirectoryName}/Schema";
             fileSystem.Directory.CreateDirectory(directoryPath);
 
             await fileSystem.File.WriteAllTextAsync($"{directoryPath}/{Constant.ModelInput}.cs", modelInput);
