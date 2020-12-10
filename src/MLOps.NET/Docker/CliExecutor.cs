@@ -26,6 +26,9 @@ namespace MLOps.NET.Docker
                 await Cli.Wrap("dotnet")
                     .WithArguments($"new --install ML.NET.Templates::{DockerSettings.TemplatePackageVersion}")
                     .ExecuteBufferedAsync();
+
+                //This hurts my soul but CLI wrap seems to return prior to completion 
+                Thread.Sleep(2000);
             }
             catch (Exception ex)
             {
@@ -71,43 +74,6 @@ namespace MLOps.NET.Docker
                 await Cli.Wrap("dotnet")
                     .WithArguments($"new {DockerSettings.TemplateName} --force --output {DockerSettings.DirectoryName}")
                     .ExecuteBufferedAsync();
-
-                WaitForCompletion();
-
-                static void WaitForCompletion()
-                {
-                    int timeout = 3 * 60 * 1000;
-                    int timePassed = 0;
-                    int interval = 1 * 1000;
-
-                    while (timePassed < timeout)
-                    {
-                        Thread.Sleep(interval);
-                        timePassed += interval;
-
-                        Console.WriteLine($"Currently in directory: {Directory.GetCurrentDirectory()}");
-
-                        if (Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), DockerSettings.DirectoryName)))
-                        {
-                            Console.WriteLine("Image dir has been created");
-
-                            var files = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), DockerSettings.DirectoryName));
-
-                            Console.WriteLine("Current files:");
-                            foreach (var file in files)
-                            {
-                                Console.WriteLine(file);
-                            }
-                        }
-                        if (File.Exists(Path.Combine(DockerSettings.ProjectPath)))
-                        {
-                            Console.WriteLine("Project file has been created");
-                        }
-
-                        if (File.Exists(DockerSettings.ProjectPath)) return;
-                    }
-                    throw new InvalidOperationException("The template project file was not created within the allocated time");
-                }
             }
             catch (Exception ex)
             {
