@@ -35,6 +35,7 @@ namespace MLOps.NET.Docker
                 .PackageDepedencies;
 
             await cliExecutor.InstallTemplatePackage(dockerSettings);
+            Thread.Sleep(5000);
             await cliExecutor.CreateTemplateProject(dockerSettings);
             await cliExecutor.AddPackageDependencies(dockerSettings, packageDependencies);
 
