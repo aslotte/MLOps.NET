@@ -27,8 +27,26 @@ namespace MLOps.NET.Docker
                     .WithArguments($"new --install ML.NET.Templates::{DockerSettings.TemplatePackageVersion}")
                     .ExecuteBufferedAsync();
 
-                //This hurts my soul but CLI wrap seems to return prior to completion 
-                Thread.Sleep(2000);
+                await WaitUntilInstalled();
+
+                static async Task WaitUntilInstalled()
+                {
+                    int timeout = 1 * 60 * 1000;
+                    int timePassed = 0;
+                    int interval = 1 * 1000;
+
+                    while (timePassed < timeout)
+                    {
+                        Thread.Sleep(interval);
+                        timePassed += interval;
+
+                        var output = await Cli.Wrap("dotnet")
+                            .WithArguments($"new")
+                            .ExecuteBufferedAsync();
+
+                        if (output.StandardOutput.Contains($"{DockerSettings.TemplateName}")) return;
+                    }
+                }
             }
             catch (Exception ex)
             {
