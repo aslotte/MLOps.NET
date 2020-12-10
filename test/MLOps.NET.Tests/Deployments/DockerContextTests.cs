@@ -59,7 +59,7 @@ namespace MLOps.NET.Tests.Deployments
             await sut.BuildImage(experiment, registeredModel, new MemoryStream(), GetSchema);
 
             //Assert
-            mockCliExecutor.Verify(x => x.InstallTemplatePackage(dockerSettings), Times.Once());
+            mockCliExecutor.Verify(x => x.InstallTemplatePackage(), Times.Once());
         }
 
         [TestMethod]
@@ -78,7 +78,7 @@ namespace MLOps.NET.Tests.Deployments
             await sut.BuildImage(experiment, registeredModel, new MemoryStream(), GetSchema);
 
             //Assert
-            mockCliExecutor.Verify(x => x.CreateTemplateProject(dockerSettings), Times.Once());
+            mockCliExecutor.Verify(x => x.CreateTemplateProject(), Times.Once());
         }
 
         [TestMethod]
@@ -98,7 +98,7 @@ namespace MLOps.NET.Tests.Deployments
 
             //Assert
             var imageName = $"{dockerSettings.RegistryName}/Test:{registeredModel.Version}".ToLower();
-            mockCliExecutor.Verify(x => x.RunDockerBuild(dockerSettings, imageName), Times.Once());
+            mockCliExecutor.Verify(x => x.RunDockerBuild(imageName), Times.Once());
         }
 
         [TestMethod]
@@ -164,7 +164,7 @@ namespace MLOps.NET.Tests.Deployments
             await sut.BuildImage(experiment, registeredModel, new MemoryStream(), GetSchema);
 
             //Assert
-            mockCliExecutor.Verify(x => x.AddPackageDependencies(dockerSettings, packageDependencies), Times.Once());
+            mockCliExecutor.Verify(x => x.AddPackageDependencies(packageDependencies), Times.Once());
         }
 
         private (string ModelInput, string ModelOutput) GetSchema() => ("input", "output");

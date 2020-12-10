@@ -17,7 +17,7 @@ namespace MLOps.NET.Docker
     internal class CliExecutor : ICliExecutor
     {
         ///<inheritdoc cref="ICliExecutor"/>
-        public async Task InstallTemplatePackage(DockerSettings dockerSettings)
+        public async Task InstallTemplatePackage()
         {
             try
             {
@@ -37,7 +37,7 @@ namespace MLOps.NET.Docker
         }
 
         ///<inheritdoc cref="ICliExecutor"/>
-        public async Task AddPackageDependencies(DockerSettings dockerSettings, List<PackageDependency> packageDependencies)
+        public async Task AddPackageDependencies(List<PackageDependency> packageDependencies)
         {
             foreach (var package in packageDependencies)
             {
@@ -65,7 +65,7 @@ namespace MLOps.NET.Docker
         }
 
         ///<inheritdoc cref="ICliExecutor"/>
-        public async Task CreateTemplateProject(DockerSettings dockerSettings)
+        public async Task CreateTemplateProject()
         {
             try
             {
@@ -81,7 +81,7 @@ namespace MLOps.NET.Docker
             }
         }
 
-        public async Task RunDockerBuild(DockerSettings dockerSettings, string imageName)
+        public async Task RunDockerBuild(string imageName)
         {
             try
             {

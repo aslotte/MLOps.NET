@@ -34,9 +34,9 @@ namespace MLOps.NET.Docker
                 .First(x => x.RunId == registeredModel.RunId)
                 .PackageDepedencies;
 
-            await cliExecutor.InstallTemplatePackage(dockerSettings);
-            await cliExecutor.CreateTemplateProject(dockerSettings);
-            await cliExecutor.AddPackageDependencies(dockerSettings, packageDependencies);
+            await cliExecutor.InstallTemplatePackage();
+            await cliExecutor.CreateTemplateProject();
+            await cliExecutor.AddPackageDependencies(packageDependencies);
 
             await this.CopyModel(model);
             await this.CopySchema(GetSchema);
@@ -44,7 +44,7 @@ namespace MLOps.NET.Docker
 
             var imageName = ComposeImageName(experiment.ExperimentName, registeredModel);
 
-            await cliExecutor.RunDockerBuild(dockerSettings, imageName);
+            await cliExecutor.RunDockerBuild(imageName);
         }
 
         ///<inheritdoc cref="IDockerContext"/>

@@ -26,10 +26,10 @@ namespace MLOps.NET.IntegrationTests.Docker
         {
             //Arrange
             await sut.UninstallTemplatePackage();
-            await sut.InstallTemplatePackage(dockerSettings);
+            await sut.InstallTemplatePackage();
 
             //Act
-            await sut.CreateTemplateProject(dockerSettings);
+            await sut.CreateTemplateProject();
 
             //Assert
             File.Exists("image/ML.NET.Web.Embedded.csproj").Should().BeTrue();
