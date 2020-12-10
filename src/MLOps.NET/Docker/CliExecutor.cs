@@ -27,9 +27,9 @@ namespace MLOps.NET.Docker
                     .WithArguments($"new --install ML.NET.Templates::{DockerSettings.TemplatePackageVersion}")
                     .ExecuteBufferedAsync();
 
-                await WaitUntilInstalled();
+                await WaitUntilTemplateIsInstalled();
 
-                static async Task WaitUntilInstalled()
+                static async Task WaitUntilTemplateIsInstalled()
                 {
                     int timeout = 1 * 60 * 1000;
                     int timePassed = 0;
