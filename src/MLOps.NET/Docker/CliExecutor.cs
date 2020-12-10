@@ -43,7 +43,7 @@ namespace MLOps.NET.Docker
                     Console.WriteLine($"Installing dotnet package dependency {package.Name} with version {package.Version}...");
 
                     await Cli.Wrap("dotnet")
-                        .WithArguments($"add {dockerSettings.ProjectPath} package {package.Name} --version {package.Version}")
+                        .WithArguments($"add {DockerSettings.ProjectPath} package {package.Name} --version {package.Version}")
                         .ExecuteBufferedAsync();
                 }
                 catch (Exception ex)
@@ -74,7 +74,7 @@ namespace MLOps.NET.Docker
 
                 WaitForCompletion();
 
-                void WaitForCompletion()
+                static void WaitForCompletion()
                 {
                     int timeout = 3 * 60 * 1000;
                     int timePassed = 0;
@@ -85,7 +85,8 @@ namespace MLOps.NET.Docker
                         Thread.Sleep(interval);
                         timePassed += interval;
 
-                        if (File.Exists(dockerSettings.ProjectPath)) return;
+                        Console.WriteLine($"Currently in directory: {Directory.GetCurrentDirectory()}");
+                        if (File.Exists(DockerSettings.ProjectPath)) return;
                     }
                     throw new InvalidOperationException("The template project file was not created within the allocated time");
                 }

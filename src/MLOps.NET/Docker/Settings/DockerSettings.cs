@@ -48,6 +48,6 @@ namespace MLOps.NET.Docker.Settings
         /// <summary>
         /// Path to template project
         /// </summary>
-        public string ProjectPath => Path.Join(DirectoryName, ProjectName);
+        public static string ProjectPath => Path.Join(Directory.GetCurrentDirectory(), DirectoryName, ProjectName);
     }
 }
