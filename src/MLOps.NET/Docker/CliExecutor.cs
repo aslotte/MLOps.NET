@@ -86,6 +86,24 @@ namespace MLOps.NET.Docker
                         timePassed += interval;
 
                         Console.WriteLine($"Currently in directory: {Directory.GetCurrentDirectory()}");
+
+                        if (Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), DockerSettings.DirectoryName)))
+                        {
+                            Console.WriteLine("Image dir has been created");
+
+                            var files = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), DockerSettings.DirectoryName));
+
+                            Console.WriteLine("Current files:");
+                            foreach (var file in files)
+                            {
+                                Console.WriteLine(file);
+                            }
+                        }
+                        if (File.Exists(Path.Combine(DockerSettings.ProjectPath)))
+                        {
+                            Console.WriteLine("Project file has been created");
+                        }
+
                         if (File.Exists(DockerSettings.ProjectPath)) return;
                     }
                     throw new InvalidOperationException("The template project file was not created within the allocated time");
