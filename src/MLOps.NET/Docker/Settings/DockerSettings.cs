@@ -34,7 +34,7 @@ namespace MLOps.NET.Docker.Settings
         /// <summary>
         /// Verision of ML.NET.Templates
         /// </summary>
-        public static string TemplatePackageVersion => "0.3.0-beta";
+        public static string TemplatePackageVersion => "0.4.0-beta";
         /// <summary>
         /// dotnet new template name
         /// </summary>
