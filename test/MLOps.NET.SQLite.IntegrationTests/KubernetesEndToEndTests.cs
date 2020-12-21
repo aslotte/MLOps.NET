@@ -46,7 +46,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
             //Arrange and Act
             var mlContext = new MLContext(seed: 2);
 
-            var seed = new Random().Next(0, 50);
+            var seed = new Random().Next(0, 1000);
             var experimentName = $"titanic-{seed}";
 
             var run = await sut.LifeCycle.CreateRunAsync(experimentName);
