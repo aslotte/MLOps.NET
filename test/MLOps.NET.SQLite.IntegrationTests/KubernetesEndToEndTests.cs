@@ -11,6 +11,7 @@ using MLOps.NET.SQLite.IntegrationTests.Constants;
 using MLOps.NET.SQLite.IntegrationTests.Schema;
 using MLOps.NET.Tests.Common.Configuration;
 using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -45,7 +46,10 @@ namespace MLOps.NET.SQLite.IntegrationTests
             //Arrange and Act
             var mlContext = new MLContext(seed: 2);
 
-            var run = await sut.LifeCycle.CreateRunAsync("titanic");
+            var seed = new Random().Next(0, 50);
+            var experimentName = $"titanic-{seed}";
+
+            var run = await sut.LifeCycle.CreateRunAsync(experimentName);
 
             var data = mlContext.Data.LoadFromTextFile<ModelInput>("Data/titanic.csv", hasHeader: true, separatorChar: ',');
             var testTrainTest = mlContext.Data.TrainTestSplit(data);
