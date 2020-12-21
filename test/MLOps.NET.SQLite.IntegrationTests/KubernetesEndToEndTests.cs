@@ -82,7 +82,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
             var response = await CallDeployedApi(deployment);
             response.IsSuccessStatusCode.Should().BeTrue();
 
-            await CleanUpKubernetesResourcesAsync();
+            await CleanUpKubernetesResourcesAsync(experimentName);
         }
 
         [TestMethod]
@@ -91,7 +91,11 @@ namespace MLOps.NET.SQLite.IntegrationTests
             //Arrange and Act
             var mlContext = new MLContext(seed: 2);
 
-            var run = await sut.LifeCycle.CreateRunAsync("titanic");
+            var seed = new Random().Next(0, 1000);
+            var experimentName = $"titanic-{seed}";
+
+            var run = await sut.LifeCycle.CreateRunAsync(experimentName);
+
             await sut.LifeCycle.RegisterModelSchema<ModelInput, ModelOutput>(run.RunId);
 
             var data = mlContext.Data.LoadFromTextFile<ModelInput>("Data/titanic.csv", hasHeader: true, separatorChar: ',');
@@ -125,7 +129,7 @@ namespace MLOps.NET.SQLite.IntegrationTests
             var response = await CallDeployedApi(deployment);
             response.IsSuccessStatusCode.Should().BeTrue();
 
-            await CleanUpKubernetesResourcesAsync();
+            await CleanUpKubernetesResourcesAsync(experimentName);
         }
 
         [ExpectedException(typeof(ModelSchemaNotRegisteredException))]
@@ -182,11 +186,11 @@ namespace MLOps.NET.SQLite.IntegrationTests
             return await client.PostAsync(deployment.DeploymentUri, requestMessage);
         }
 
-        private async Task CleanUpKubernetesResourcesAsync()
+        private async Task CleanUpKubernetesResourcesAsync(string experimentName)
         {
             var path = SetKubeConfig(ConfigurationFactory.GetConfiguration()[ConfigurationKeys.KubeConfig]);
 
-            await Cli.Wrap("kubectl").WithArguments($"delete ns titanic-test --kubeconfig {path}").ExecuteBufferedAsync();
+            await Cli.Wrap("kubectl").WithArguments($"delete ns {experimentName}-test --kubeconfig {path}").ExecuteBufferedAsync();
         }
 
         private static string SetKubeConfig(string kubeconfigPathOrContent)
