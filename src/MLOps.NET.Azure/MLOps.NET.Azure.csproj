@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.8.0" />
     <PackageReference Include="Microsoft.Azure.Cosmos.Table" Version="1.0.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="5.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="5.0.3" />
   </ItemGroup>
 
   <ItemGroup>
