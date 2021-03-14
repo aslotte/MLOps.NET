@@ -24,7 +24,7 @@ namespace MLOps.NET.Tests.Deployments
 
             //Assert
             packageDependencies.All(x => x.Name.StartsWith("Microsoft.ML")).Should().BeTrue();
-            packageDependencies.All(x => x.Version == "1.5.4").Should().BeTrue();
+            packageDependencies.All(x => x.Version == "1.5.5").Should().BeTrue();
         }
 
         [TestMethod]
@@ -34,7 +34,7 @@ namespace MLOps.NET.Tests.Deployments
             var packageDependencies = sut.IdentifyPackageDependencies();
 
             //Assert
-            packageDependencies.Any(x => x.Name == "Microsoft.ML.FastTree" && x.Version == "1.5.4").Should().BeTrue();
+            packageDependencies.Any(x => x.Name == "Microsoft.ML.FastTree" && x.Version == "1.5.5").Should().BeTrue();
         }
     }
 }

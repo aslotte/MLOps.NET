@@ -180,9 +180,9 @@ namespace MLOps.NET.IntegrationTests
 
             var references = projectFile.Where(x => x.Contains("PackageReference"));
 
-            references.Any(x => x.Contains(@"Include=""Microsoft.ML"" Version=""1.5.4""")).Should().BeTrue();
-            references.Any(x => x.Contains(@"Include=""Microsoft.ML.CpuMath"" Version=""1.5.4""")).Should().BeTrue();
-            references.Any(x => x.Contains(@"Include=""Microsoft.ML.DataView"" Version=""1.5.4""")).Should().BeTrue();
+            references.Any(x => x.Contains(@"Include=""Microsoft.ML"" Version=""1.5.5""")).Should().BeTrue();
+            references.Any(x => x.Contains(@"Include=""Microsoft.ML.CpuMath"" Version=""1.5.5""")).Should().BeTrue();
+            references.Any(x => x.Contains(@"Include=""Microsoft.ML.DataView"" Version=""1.5.5""")).Should().BeTrue();
         }
     }
 }
