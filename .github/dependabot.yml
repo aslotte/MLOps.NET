@@ -1,0 +1,36 @@
+version: 2
+updates:
+- package-ecosystem: nuget
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "10:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: AWSSDK.S3
+    versions:
+    - 3.5.7.11
+    - 3.5.9.5
+    - 3.5.9.6
+    - 3.7.0.7
+  - dependency-name: Microsoft.ML.FastTree
+    versions:
+    - 1.5.5
+  - dependency-name: Microsoft.ML
+    versions:
+    - 1.5.5
+  - dependency-name: Microsoft.EntityFrameworkCore.Tools
+    versions:
+    - 5.0.4
+  - dependency-name: Microsoft.EntityFrameworkCore.SqlServer
+    versions:
+    - 5.0.4
+  - dependency-name: Microsoft.Data.Sqlite.Core
+    versions:
+    - 5.0.4
+  - dependency-name: Microsoft.EntityFrameworkCore.Sqlite
+    versions:
+    - 5.0.4
+  - dependency-name: System.IO.Abstractions
+    versions:
+    - 13.2.24
