@@ -61,7 +61,7 @@ namespace MLOps.NET.IntegrationTests
         }
 
         [TestMethod]
-        public void SetTrainingTimeAsync_NoRunProvided_ThrowsException()
+        public async Task SetTrainingTimeAsync_NoRunProvided_ThrowsException()
         {
             var expectedTrainingTime = new TimeSpan(0, 5, 0);
 
@@ -69,9 +69,9 @@ namespace MLOps.NET.IntegrationTests
             var runId = Guid.NewGuid();
             var expectedMessage = $"The run with id {runId} does not exist";
 
-            Func<Task> func = new Func<Task>(async () => await sut.LifeCycle.SetTrainingTimeAsync(runId, expectedTrainingTime));
+            Func<Task> func = new(async () => await sut.LifeCycle.SetTrainingTimeAsync(runId, expectedTrainingTime));
 
-            func.Should().Throw<InvalidOperationException>(expectedMessage);
+            await func.Should().ThrowAsync<InvalidOperationException>(expectedMessage);
         }
 
 
