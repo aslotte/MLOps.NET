@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="AWSSDK.S3" Version="3.7.3.15" />
-    <PackageReference Include="Nerdbank.GitVersioning" Version="3.4.240" />
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.4.244" />
   </ItemGroup>
 
   <ItemGroup>
