@@ -18,6 +18,7 @@ namespace MLOps.NET.IntegrationTests
         private CliExecutor cliExecutor;
         private readonly string experimentName = "MyExperiment";
 
+
         protected void SetUp()
         {
             this.dockerSettings = new DockerSettings
