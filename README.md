@@ -25,10 +25,10 @@ MLOps.NET is a data science tool to track and manage the lifecycle of a [ML.NET]
 A client application to vizualize and manage the ML lifecycle is currently in the [roadmap](https://github.com/aslotte/MLOps.NET/blob/master/images/roadmap.png) to be worked on.
 
 ### Articles
-- [Announcing MLOps.NET v1.2.0](https://www.alexanderslotte.com/announcing-mlops-net-v1-2/)
-- [Get Started with MLOps.NET](https://www.alexanderslotte.com/get-started-with-mlops-net/)
-- [Experiment Tracking with MLOps.NET](https://www.alexanderslotte.com/how-to-track-your-model-training-with-mlops-net/)
-- [Exploring Model Repositories with MLOps.NET](https://www.alexanderslotte.com/exploring-model-repositories-with-mlops-net/)
+- [Announcing MLOps.NET v1.2.0](https://aslotte.github.io/announcing-mlops-net-v1-2/)
+- [Get Started with MLOps.NET](https://aslotte.github.io/get-started-with-mlops-net/)
+- [Experiment Tracking with MLOps.NET](https://aslotte.github.io/how-to-track-your-model-training-with-mlops-net/)
+- [Exploring Model Repositories with MLOps.NET](https://aslotte.github.io/exploring-model-repositories-with-mlops-net/)
 
 ### Getting started
 
